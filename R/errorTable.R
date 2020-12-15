@@ -1,0 +1,172 @@
+#' @import dplyr
+#' @import tidyr
+#' @import stringr
+#' @import tibble
+#' @import ggplot2
+
+errorTable <-
+  # x = proofed data tibble
+  # loc = "all" or specific state abbreviation
+  # field = "all", "NA", or specific choice
+  function(x, loc = "all", field = "all"){
+
+    states_provinces_and_canada <-
+      c("AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "DC", "FL", "GA", "HI",
+        "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN",
+        "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH",
+        "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA",
+        "WV", "WI", "WY", "AS", "GU", "MP", "PR", "VI", "UM", "FM", "MH", "PW",
+        "AA", "AE", "AP", "CM", "CZ", "NB", "PI", "TT", "ON", "QC", "NS", "NB",
+        "MB", "BC", "PE", "SK", "AB", "NL")
+
+    summary_table <-
+      suppressWarnings(
+        suppressMessages(
+          if(loc == "all" & field == "all") {
+            # Summary table of errors by state and field
+            x %>%
+              select(errors, state) %>%
+              filter(!is.na(errors)) %>%
+              mutate(temp_key = row_number()) %>%
+              separate(errors, into = as.character(c(1:25)), sep = "-") %>%
+              pivot_longer(1:25, names_to = "name") %>%
+              select(-name) %>%
+              rename(errors = value) %>%
+              filter(!is.na(errors)) %>%
+              mutate(temp_key = 1) %>%
+              group_by(state, errors) %>%
+              summarize(error_count = sum(temp_key)) %>%
+              ungroup() %>%
+              filter(state %in% states_provinces_and_canada) %>%
+              rename(error = errors)
+          }
+          else if(loc == "all" & field == "none"){
+            # Summary table of errors by state only
+            x %>%
+              select(errors, state) %>%
+              filter(!is.na(errors)) %>%
+              mutate(temp_key = row_number()) %>%
+              separate(errors, into = as.character(c(1:25)), sep = "-") %>%
+              pivot_longer(1:25, names_to = "name") %>%
+              select(-name) %>%
+              rename(errors = value) %>%
+              filter(!is.na(errors)) %>%
+              mutate(temp_key = 1) %>%
+              group_by(state) %>%
+              summarize(error_count = sum(temp_key)) %>%
+              ungroup() %>%
+              filter(state %in% states_provinces_and_canada)
+          }
+          else if(loc == "none" & field == "all"){
+            # Summary table of errors by field name
+            x %>%
+              select(errors, state) %>%
+              filter(!is.na(errors)) %>%
+              mutate(temp_key = row_number()) %>%
+              separate(errors, into = as.character(c(1:25)), sep = "-") %>%
+              pivot_longer(1:25, names_to = "name") %>%
+              select(-name) %>%
+              rename(errors = value) %>%
+              filter(!is.na(errors)) %>%
+              mutate(temp_key = 1) %>%
+              group_by(errors) %>%
+              summarize(error_count = sum(temp_key)) %>%
+              ungroup() %>%
+              rename(error = errors)
+          }
+          else if(loc == "all" & !str_detect(field, "none|all")){
+            # Summary table across all states for a particular field
+            x %>%
+              select(errors, state) %>%
+              filter(!is.na(errors)) %>%
+              mutate(temp_key = row_number()) %>%
+              separate(errors, into = as.character(c(1:25)), sep = "-") %>%
+              pivot_longer(1:25, names_to = "name") %>%
+              select(-name) %>%
+              rename(errors = value) %>%
+              filter(!is.na(errors)) %>%
+              mutate(temp_key = 1) %>%
+              group_by(errors) %>%
+              summarize(error_count = sum(temp_key)) %>%
+              ungroup() %>%
+              rename(error = errors) %>%
+              filter(error == field)
+          }
+          else if(!str_detect(loc, "none|all") & field == "all"){
+            # Summary table for a particular state with all fields
+            if(loc %in% states_provinces_and_canada){
+              x %>%
+                select(errors, state) %>%
+                filter(state == loc) %>%
+                filter(!is.na(errors)) %>%
+                mutate(temp_key = row_number()) %>%
+                separate(errors, into = as.character(c(1:25)), sep = "-") %>%
+                pivot_longer(1:25, names_to = "name") %>%
+                select(-name) %>%
+                rename(errors = value) %>%
+                filter(!is.na(errors)) %>%
+                mutate(temp_key = 1) %>%
+                group_by(state, errors) %>%
+                summarize(error_count = sum(temp_key)) %>%
+                ungroup() %>%
+                rename(error = errors)}
+            else{
+              c("Invalid location.")
+            }
+          }
+          else if(!str_detect(loc, "none|all") & field == "none"){
+            # Summary table for a particular state with all fields
+            if(loc %in% states_provinces_and_canada){
+              x %>%
+                select(errors, state) %>%
+                filter(state == loc) %>%
+                filter(!is.na(errors)) %>%
+                mutate(temp_key = row_number()) %>%
+                separate(errors, into = as.character(c(1:25)), sep = "-") %>%
+                pivot_longer(1:25, names_to = "name") %>%
+                select(-name) %>%
+                rename(errors = value) %>%
+                filter(!is.na(errors)) %>%
+                mutate(temp_key = 1) %>%
+                group_by(state) %>%
+                summarize(error_count = sum(temp_key)) %>%
+                ungroup() %>%
+                rename(total_errors = error_count)
+            }
+            else{
+              c("Invalid location.")
+            }
+          }
+          else if(
+            !str_detect(loc, "none|all") & !str_detect(field, "none|all")){
+            # Summary table for a particular state and particular field name
+            if(loc %in% states_provinces_and_canada){
+              x %>%
+                select(errors, state) %>%
+                filter(state == loc) %>%
+                filter(!is.na(errors)) %>%
+                mutate(temp_key = row_number()) %>%
+                separate(errors, into = as.character(c(1:25)), sep = "-") %>%
+                pivot_longer(1:25, names_to = "name") %>%
+                select(-name) %>%
+                rename(errors = value) %>%
+                filter(!is.na(errors)) %>%
+                mutate(temp_key = 1) %>%
+                group_by(state, errors) %>%
+                summarize(error_count = sum(temp_key)) %>%
+                ungroup() %>%
+                rename(error = errors) %>%
+                filter(error == field)
+            }
+            else{
+              c("Invalid location.")
+            }
+          }
+          else{
+            NULL
+          }
+        )
+      )
+
+    return(summary_table)
+  }

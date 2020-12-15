@@ -1,0 +1,30 @@
+Package: migbirdHarvestData
+Title: Process USFWS Migratory Bird Harvest Information Program Data in R
+Version: 0.0.0.9000
+Imports: 
+    dplyr,
+    tidyr,
+    stringr,
+    purrr,
+    readr,
+    tibble,
+    ggplot2,
+    lifecycle
+Suggests:
+    knitr,
+    rmarkdown
+Authors@R: 
+    person(given = "Abby",
+           family = "Walter",
+           role = c("aut", "cre"),
+           email = "abby_walter@fws.gov",
+           comment = c(ORCID = "0000-0003-4017-5596"))
+Description: Easy-to-use functions specifically designed to handle biweekly HIP 
+    download data. A sequential process organizes state files into a tidy format
+    and flags errors that should be inspected. Errors can be visualized in 
+    simple plots and summarized in bite-sized tables.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.1
