@@ -1,7 +1,19 @@
+#' Flag errors
+#'
+#' After tidying the data with \code{\link{tidy}}, compare each field to an expected range of values and flag non-conforming values in a new "errors" column.
+#'
 #' @import dplyr
 #' @import tidyr
 #' @import stringr
 #' @import tibble
+#'
+#' @param x The object created after tidying data with \code{\link{tidy}}
+#' @param year The year in which the Harvest Information Program data were collected
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHarvestData}
+#'
+#' @export
 
 proof <-
   # x = the dataframe created in step 2, year = the survey year
