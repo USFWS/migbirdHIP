@@ -24,7 +24,7 @@ errorPlot_fields <-
             ggplot() +
             geom_bar(aes(x = errors), stat = "count") +
             geom_text(
-              stat = "count", aes(x = errors, label = ..count.., angle = 90),
+              stat = "count", aes(x = errors, label = stat(count), angle = 90),
               vjust = 0.2,
               hjust = -0.2
             ) +
@@ -46,7 +46,7 @@ errorPlot_fields <-
             ggplot() +
             geom_bar(aes(x = errors), stat = "count") +
             geom_text(
-              stat = "count", aes(x = errors, label = ..count.., angle = 90),
+              stat = "count", aes(x = errors, label = stat(count), angle = 90),
               vjust = 0.2,
               hjust = -0.2
             ) +

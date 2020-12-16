@@ -22,7 +22,6 @@ utils::globalVariables(
     "X8",
     "X9",
     "X10",
-    "X11",
     "X12",
     "X13",
     "X14",
@@ -69,4 +68,5 @@ utils::globalVariables(
     "filename",
     "flag",
     "name",
-    "value"))
+    "value",
+    "source_file"))

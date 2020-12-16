@@ -96,8 +96,13 @@ findDuplicates <-
           ifelse(
             str_detect(duplicate_type, "NA\\-|\\-NA"),
             str_remove_all(duplicate_type, "NA\\-|\\-NA"),
-            duplicate_type) %>%
-          ifelse(str_detect(., "^NA$"), NA, .)
+            duplicate_type),
+        # Can't pipe '.' so repeat mutate
+        duplicate_type =
+          ifelse(
+            str_detect(duplicate_type, "^NA$"),
+            NA,
+            duplicate_type)
       ) %>%
       arrange(hunter_key) %>%
       select(hunter_key, duplicate_type) %>%
@@ -108,7 +113,7 @@ findDuplicates <-
       ggplot(aes(x = duplicate_type)) +
       geom_bar(stat = "count") +
       geom_text(
-        aes(x = duplicate_type, label = ..count..),
+        aes(x = duplicate_type, label = stat(count)),
         stat = "count",
         vjust = -1) +
       labs(
