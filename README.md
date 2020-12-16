@@ -1,7 +1,14 @@
 # Migratory Bird Harvest Information Program Data Package
 
-In progress.
+### Installation
 
+```
+library(devtools)
+install_github("USFWS/migbirdHarvestData")
+```
+
+
+In progress.
 
 ### USFWS Disclaimer
 
