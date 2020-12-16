@@ -1,7 +1,18 @@
+#' Tidy data
+#'
+#' After reading the data with \code{\link{compile}}, rename the column names and do preliminary cleaning of firstname, lastname, middle initial, and suffixes.
+#'
 #' @import dplyr
 #' @import tidyr
 #' @import stringr
 #' @import tibble
+#'
+#' @param x The object created after reading in data with \code{\link{compile}}
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHarvestData}
+#'
+#' @export
 
 tidy <-
   # x = the dataframe created in step 1

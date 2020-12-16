@@ -1,10 +1,21 @@
+#' Read in data
+#'
+#' Compile data from all state-exported text files by providing a path to the download directory
+#'
 #' @import dplyr
 #' @import tidyr
 #' @import stringr
 #' @import readr
 #' @import purrr
 #' @import tibble
+#'
+#' @param path The path to the raw data file to be checked
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHarvestData}
+#'
 #' @export
+
 
 compile <-
   # Path should be the directory to folder containing download data
