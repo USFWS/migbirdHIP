@@ -4,6 +4,7 @@
 #' @import readr
 #' @import purrr
 #' @import tibble
+#' @export
 
 compile <-
   # Path should be the directory to folder containing download data
