@@ -56,7 +56,7 @@ compile <-
             # state_files for joining. This allows us to report exactly which
             # file(s) is/are UTF-16.
             slice_head(
-              guess_encoding(pull(test1[i, ]))
+              guess_encoding(pull(state_files[i, ]))
             )
           })
       ) %>%
