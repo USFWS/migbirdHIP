@@ -56,18 +56,16 @@ compile <-
             # state_files for joining. This allows us to report exactly which
             # file(s) is/are UTF-16.
             slice_head(
-              guess_encoding(pull(state_files[i, ]))
-            ) %>%
-              select(-confidence)
-            #)
+              guess_encoding(pull(test1[i, ]))
+            )
           })
       ) %>%
-      filter(str_detect(encoding, "UTF\\-16"))
+      filter(str_detect(encoding, "UTF\\-16") | confidence < 1)
 
     if(nrow(checked_state_files) != 0){
 
       print(checked_state_files)
-      message("Error: Directory contains file(s) with UTF-16 encoding.")
+      message("Error: Directory contains file(s) with non-UTF-8 encoding.")
 
     }
 
