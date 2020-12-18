@@ -24,20 +24,20 @@ compile <-
     state_files <-
       list.files(path, recursive = "TRUE")  %>%
       as_tibble() %>%
-      transmute(filename = as.character(value)) %>%
-      mutate(filename = str_replace(filename, "TXT", "txt")) %>%
+      transmute(filepath = as.character(value)) %>%
+      mutate(filepath = str_replace(filepath, "TXT", "txt")) %>%
       # Keep only txt files
-      filter(str_detect(filename, "(?<=\\.)txt$")) %>%
+      filter(str_detect(filepath, "(?<=\\.)txt$")) %>%
       # Create new complete file paths
-      mutate(filename = paste(path, filename, sep = "/")) %>%
+      mutate(filepath = paste(path, filepath, sep = "/")) %>%
       # Filter out blank files
       mutate(
-        filename =
+        filepath =
           ifelse(
-            file.size(filename) == 0,
+            file.size(filepath) == 0,
             "blank",
-            filename)) %>%
-      filter(filename != "blank")
+            filepath)) %>%
+      filter(filepath != "blank")
 
     # Check encodings
 
@@ -58,7 +58,9 @@ compile <-
             )
           })
       ) %>%
-      filter(str_detect(encoding, "UTF\\-16") | confidence < 1)
+      group_by(filepath) %>%
+      filter(str_detect(encoding, "UTF\\-16") | confidence < 1 | n() > 1) %>%
+      ungroup()
 
     if(nrow(checked_state_files) != 0){
 
