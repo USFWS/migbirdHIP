@@ -7,7 +7,7 @@
 compile(path)
 }
 \arguments{
-\item{path}{The path to the raw data file to be checked}
+\item{path}{The path to the data .txt files}
 }
 \description{
 Compile data from all state-exported text files by providing a path to the download directory. If the error "Directory contains file(s) with non-UTF-8 encoding." is shown, use \code{\link{compile_to_utf8}} instead.

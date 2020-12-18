@@ -7,7 +7,7 @@
 compile_to_utf8(path)
 }
 \arguments{
-\item{path}{The path to the raw data file to be checked}
+\item{path}{The path to the data .txt files}
 }
 \description{
 Compile data from all state-exported text files by providing a path to the download directory

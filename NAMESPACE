@@ -3,6 +3,7 @@
 export(compile)
 export(compile_to_utf8)
 export(correct)
+export(encodingCheck)
 export(errorPlot_fields)
 export(errorPlot_states)
 export(errorTable)
