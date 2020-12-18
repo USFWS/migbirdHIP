@@ -10,7 +10,7 @@ compile(path)
 \item{path}{The path to the raw data file to be checked}
 }
 \description{
-Compile data from all state-exported text files by providing a path to the download directory.
+Compile data from all state-exported text files by providing a path to the download directory. If the error "Directory contains file(s) with non-UTF-8 encoding." is shown, use \code{\link{compile_to_utf8}} instead.
 }
 \references{
 \url{https://github.com/USFWS/migbirdHarvestData}

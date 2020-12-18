@@ -66,6 +66,7 @@ utils::globalVariables(
     "duplicate_type",
     "temp_key",
     "filename",
+    "filepath",
     "flag",
     "name",
     "value",
