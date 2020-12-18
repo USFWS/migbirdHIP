@@ -9,7 +9,7 @@
 #' @import purrr
 #' @import tibble
 #'
-#' @param path The path to the raw data file to be checked
+#' @param path The path to the data .txt files
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHarvestData}
@@ -38,7 +38,6 @@ compile_to_utf8 <-
             "blank",
             filepath)) %>%
       filter(filepath != "blank")
-
 
     # Check encodings
 

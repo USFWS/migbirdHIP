@@ -9,7 +9,7 @@
 #' @import purrr
 #' @import tibble
 #'
-#' @param path The path to the raw data file to be checked
+#' @param path The path to the data .txt files
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHarvestData}
@@ -42,25 +42,20 @@ compile <-
     # Check encodings
 
     checked_state_files <-
-      state_files %>%
-      # Compile each file's encoding into one table
-      bind_cols(
-        map_dfr(
-          1:nrow(state_files),
-          function(i) {
-            # Since guess_encoding can report more than one guess, we unselect
-            # the confidence column and  pull the first row of the tibble
-            # with slice_head to make a column of the same length of
-            # state_files for joining. This allows us to report exactly which
-            # file(s) is/are UTF-16.
-            slice_tail(
-              guess_encoding(pull(state_files[i, ]))
-            )
-          })
+      map_dfr(
+        1:nrow(state_files),
+        function(i) {
+          guess_encoding(pull(state_files[i,])) %>%
+            mutate(filepath = pull(state_files[i,]))
+        }
       ) %>%
       group_by(filepath) %>%
-      filter(str_detect(encoding, "UTF\\-16") | confidence < 1 | n() > 1) %>%
-      ungroup()
+      filter(str_detect(encoding, "UTF\\-16") | confidence < 1| n() > 1) %>%
+      ungroup() %>%
+      filter(encoding != "UTF-8") %>%
+      select(filepath, encoding, confidence)
+
+    # Report error if data are not UTF-8
 
     if(nrow(checked_state_files) != 0){
 
@@ -69,8 +64,9 @@ compile <-
 
     }
 
+    # Pull the data
+
     else{
-      # Pull the data
 
       pulled_data <-
         # If .txt files don't contain all the expected cols, warnings are thrown
