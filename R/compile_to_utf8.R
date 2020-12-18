@@ -16,7 +16,6 @@
 #'
 #' @export
 
-
 compile_to_utf8 <-
   function(path) {
 
@@ -40,31 +39,30 @@ compile_to_utf8 <-
             filename)) %>%
       filter(filename != "blank")
 
+
     # Check encodings
 
     checked_state_files <-
-      state_files %>%
-      # Compile each file's encoding into one table
-      bind_cols(
-        map_dfr(
-          1:nrow(state_files),
-          function(i) {
-            # Since guess_encoding can report more than one guess, we unselect
-            # the confidence column and  pull the first row of the tibble
-            # with slice_head to make a column of the same length of
-            # state_files for joining. This allows us to report exactly which
-            # file(s) is/are UTF-16.
-            slice_head(
-              guess_encoding(pull(state_files[i, ]))
-            )
-          })
+      map_dfr(
+        1:nrow(test1),
+        function(i) {
+          guess_encoding(pull(test1[i,])) %>%
+            mutate(filepath = pull(test1[i,]))
+        }
       ) %>%
-      filter(str_detect(encoding, "UTF\\-16"))
+      group_by(filepath) %>%
+      filter(str_detect(encoding, "UTF\\-16") | confidence < 1| n() > 1) %>%
+      ungroup() %>%
+      select(filepath, encoding, confidence)
+
+
+    # Fix encodings to UTF-8 if they're anything other than UTF-8
 
     if(nrow(checked_state_files) != 0){
 
       print(checked_state_files)
-      message("Error: Directory contains file(s) with UTF-16 encoding.")
+      message("Error: Directory contains file(s) with non-UTF-8 encoding.")
+      message("These files will be converted to UTF-8 now.")
 
     }
 
