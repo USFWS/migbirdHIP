@@ -15,7 +15,6 @@
 #' @export
 
 tidy <-
-  # x = the dataframe created in step 1
   function(x){
     x <-
       x %>%

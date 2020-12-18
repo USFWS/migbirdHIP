@@ -1,11 +1,21 @@
+#' Find duplicates
+#'
+#' Determine how many duplicate records are in the data. Plot and tabulate which fields are duplicates of individual hunters (i.e. data grouped by first name, last name, city, state, and birth date).
+#'
 #' @import dplyr
 #' @import tidyr
 #' @import stringr
 #' @import tibble
 #' @import ggplot2
+#'
+#' @param x A proofed data table created by \code{\link{proof}}
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHarvestData}
+#'
+#' @export
 
 findDuplicates <-
-  # x = proofed data tibble
   function(x){
 
     # Group by name and address

@@ -1,12 +1,34 @@
+#' Table of errors
+#'
+#' Create a tibble of existing errors in the data, customizing the output with value specifications.
+#'
 #' @import dplyr
 #' @import tidyr
 #' @import stringr
 #' @import tibble
-#' @import ggplot2
+#'
+#' @param x A proofed data table created by \code{\link{proof}}
+#' @param loc Which location the error data should be tabulated by
+#' Acceptable values include:
+#'  \itemize{
+#'  \item all - All states, provinces, and/or territories that exist in the data
+#'  \item ... - A specific state, province, or territory represented by one of the following abbreviations: AL, AK, AZ, AR, CA, CO, CT, DE, DC, FL, GA, HI, ID, IL, IN, IA, KS, KY, LA, ME, MD, MA, MI, MN, MS, MO, MT, NE, NV, NH, NJ, NM, NY, NC, ND, OH, OK, OR, PA, RI, SC, SD, TN, TX, UT, VT, VA, WA, WV, WI, WY, AS, GU, MP, PR, VI, UM, FM, MH, PW, AA, AE, AP, CM, CZ, NB, PI, TT, ON, QC, NS, NB, MB, BC, PE, SK, AB, NL
+#'  \item NA - Table will not include location in its output
+#'  }
+#' @param field Field the error data should be tabulated by
+#' #' Acceptable values include:
+#'  \itemize{
+#'  \item all - All fields in the data
+#'  \item ... - A specific field from the following list: title, firstname, middle, lastname, suffix, address, city, state, zip, birth_date, issue_date, hunt_mig_birds, ducks_bag, geese_bag, dove_bag, woodcock_bag, coots_snipe_bag, rails_gallinules_bag, cranes, band_tailed_pigeon, brant, seaducks, registration_year, email
+#'  \item NA - Table will not include field in its output
+#'  }
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHarvestData}
+#'
+#' @export
 
 errorTable <-
-  # x = proofed data tibble
-  # loc = "all" or specific state abbreviation
   # field = "all", "NA", or specific choice
   function(x, loc = "all", field = "all"){
 

@@ -1,4 +1,4 @@
-#' Read in data
+#' Read in data with non-utf-8 encoding
 #'
 #' Compile data from all state-exported text files by providing a path to the download directory
 #'
@@ -17,7 +17,7 @@
 #' @export
 
 
-compile <-
+compile_to_utf8 <-
   function(path) {
 
     path <- path
@@ -54,17 +54,17 @@ compile <-
             # with slice_head to make a column of the same length of
             # state_files for joining. This allows us to report exactly which
             # file(s) is/are UTF-16.
-            slice_tail(
+            slice_head(
               guess_encoding(pull(state_files[i, ]))
             )
           })
       ) %>%
-      filter(str_detect(encoding, "UTF\\-16") | confidence < 1)
+      filter(str_detect(encoding, "UTF\\-16"))
 
     if(nrow(checked_state_files) != 0){
 
       print(checked_state_files)
-      message("Error: Directory contains file(s) with non-UTF-8 encoding.")
+      message("Error: Directory contains file(s) with UTF-16 encoding.")
 
     }
 

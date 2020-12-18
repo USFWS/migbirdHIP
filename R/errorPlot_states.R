@@ -1,8 +1,25 @@
+#' Plot errors by state
+#'
+#' Create a bar plot of errors by state, either by count or proportion
+#'
 #' @import dplyr
 #' @import tidyr
 #' @import stringr
 #' @import tibble
 #' @import ggplot2
+#'
+#' @param x A proofed data table created by \code{\link{proof}}
+#' @param type Type of plot to create
+#' Acceptable values include:
+#'  \itemize{
+#'  \item proportion - Number of errors divided by the number of records per state
+#'  \item count - Count of total errors per state
+#'  }
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHarvestData}
+#'
+#' @export
 
 errorPlot_states <-
   # x = proofed data tibble

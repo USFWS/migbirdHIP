@@ -1,11 +1,22 @@
+#' Youth hunters
+#'
+#' Create a tibble and plot of youth hunters (hunters born < 16 years ago) who have reported hunting migratory waterfowl.
+#'
 #' @import dplyr
 #' @import tidyr
 #' @import stringr
 #' @import tibble
 #' @import ggplot2
+#'
+#' @param x A proofed data table created by \code{\link{proof}}
+#' @param year The year in which the Harvest Information Program data were collected
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHarvestData}
+#'
+#' @export
 
 youthHunters <-
-  # x = proofed data tibble, year = current HIP year
   function(x, year){
 
     total_hunters <-

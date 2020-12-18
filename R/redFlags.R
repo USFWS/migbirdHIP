@@ -1,7 +1,25 @@
+#' Pull bad data
+#'
+#' Create a tibble of error data by state or field. Data are reported using a threshold of proportion of error.
+#'
 #' @import dplyr
 #' @import tidyr
 #' @import stringr
 #' @import tibble
+#'
+#' @param x A proofed data table created by \code{\link{proof}}
+#' @param type Type of tibble to report
+#' Acceptable values include:
+#'  \itemize{
+#'  \item state - Errors by state
+#'  \item field - Errors by field
+#'  }
+#' @param threshold Value above which errors should be tabulated
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHarvestData}
+#'
+#' @export
 
 redFlags <-
   function(x, type, threshold = 0){

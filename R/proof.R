@@ -16,7 +16,6 @@
 #' @export
 
 proof <-
-  # x = the dataframe created in step 2, year = the survey year
   function(x, year){
 
     states_provinces_and_canada <-

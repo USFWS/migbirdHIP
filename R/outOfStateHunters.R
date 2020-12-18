@@ -1,12 +1,22 @@
+#' Find out-of-state hunters
+#'
+#' Create a tibble and plot of hunters who have reported hunting migratory waterfowl outside of the state associated with their address.
+#'
 #' @import dplyr
 #' @import tidyr
 #' @import stringr
 #' @import tibble
 #' @import ggplot2
 #' @importFrom stats reorder
+#'
+#' @param x A proofed data table created by \code{\link{proof}}
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHarvestData}
+#'
+#' @export
 
 outOfStateHunters <-
-  # x = proofed data tibble
   function(x){
 
     out_of_staters <-
