@@ -1,6 +1,6 @@
 #' Youth hunters
 #'
-#' Create a tibble and plot of youth hunters (hunters born < 16 years ago) who have reported hunting migratory waterfowl.
+#' Create a tibble and plot of youth hunters (hunters born < 16 years ago).
 #'
 #' @import dplyr
 #' @import tidyr

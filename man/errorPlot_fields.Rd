@@ -9,11 +9,12 @@ errorPlot_fields(x, loc = "all")
 \arguments{
 \item{x}{A proofed data table created by \code{\link{proof}}}
 
-\item{loc}{Which location the error data should be plotted for
-Acceptable values include:
+\item{loc}{Which location the error data should be plotted for. Acceptable values include:
 \itemize{
 \item all - All states, provinces, and/or territories that exist in the data
-\item ... - A specific state, province, or territory represented by one of the following abbreviations: AL, AK, AZ, AR, CA, CO, CT, DE, DC, FL, GA, HI, ID, IL, IN, IA, KS, KY, LA, ME, MD, MA, MI, MN, MS, MO, MT, NE, NV, NH, NJ, NM, NY, NC, ND, OH, OK, OR, PA, RI, SC, SD, TN, TX, UT, VT, VA, WA, WV, WI, WY, AS, GU, MP, PR, VI, UM, FM, MH, PW, AA, AE, AP, CM, CZ, NB, PI, TT, ON, QC, NS, NB, MB, BC, PE, SK, AB, NL
+\item A specific state, province, or territory represented by one of the following abbreviations:
+\itemize{
+\item AL, AK, AZ, AR, CA, CO, CT, DE, DC, FL, GA, HI, ID, IL, IN, IA, KS, KY, LA, ME, MD, MA, MI, MN, MS, MO, MT, NE, NV, NH, NJ, NM, NY, NC, ND, OH, OK, OR, PA, RI, SC, SD, TN, TX, UT, VT, VA, WA, WV, WI, WY, AS, GU, MP, PR, VI, UM, FM, MH, PW, AA, AE, AP, CM, CZ, NB, PI, TT, ON, QC, NS, NB, MB, BC, PE, SK, AB, NL}
 }}
 }
 \description{

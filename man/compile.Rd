@@ -10,7 +10,7 @@ compile(path)
 \item{path}{The path to the raw data file to be checked}
 }
 \description{
-Compile data from all state-exported text files by providing a path to the download directory
+Compile data from all state-exported text files by providing a path to the download directory.
 }
 \references{
 \url{https://github.com/USFWS/migbirdHarvestData}

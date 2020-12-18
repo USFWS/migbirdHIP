@@ -9,11 +9,10 @@ redFlags(x, type, threshold = 0)
 \arguments{
 \item{x}{A proofed data table created by \code{\link{proof}}}
 
-\item{type}{Type of tibble to report
-Acceptable values include:
+\item{type}{Type of tibble to report. Acceptable values include:
 \itemize{
-\item state - Errors by state
-\item field - Errors by field
+\item state
+\item field
 }}
 
 \item{threshold}{Value above which errors should be tabulated}

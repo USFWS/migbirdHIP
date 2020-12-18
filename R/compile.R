@@ -1,6 +1,6 @@
 #' Read in data
 #'
-#' Compile data from all state-exported text files by providing a path to the download directory
+#' Compile data from all state-exported text files by providing a path to the download directory.
 #'
 #' @import dplyr
 #' @import tidyr

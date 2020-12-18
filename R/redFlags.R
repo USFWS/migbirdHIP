@@ -8,11 +8,10 @@
 #' @import tibble
 #'
 #' @param x A proofed data table created by \code{\link{proof}}
-#' @param type Type of tibble to report
-#' Acceptable values include:
+#' @param type Type of tibble to report. Acceptable values include:
 #'  \itemize{
-#'  \item state - Errors by state
-#'  \item field - Errors by field
+#'  \item state
+#'  \item field
 #'  }
 #' @param threshold Value above which errors should be tabulated
 #'

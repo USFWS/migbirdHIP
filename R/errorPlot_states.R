@@ -1,6 +1,6 @@
 #' Plot errors by state
 #'
-#' Create a bar plot of errors by state, either by count or proportion
+#' Create a bar plot of errors by state, either by count or proportion.
 #'
 #' @import dplyr
 #' @import tidyr
