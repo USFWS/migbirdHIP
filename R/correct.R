@@ -16,5 +16,10 @@
 
 correct <-
   function(x){
-    x <-
-      x}
+
+    corrected_x <-
+      x
+
+    return(corrected_x)
+
+    }

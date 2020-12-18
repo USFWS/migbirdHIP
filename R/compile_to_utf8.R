@@ -112,10 +112,7 @@ compile_to_utf8 <-
         # Remove duplicates
         distinct()
 
-      return(pulled_data)
-
     }
-
 
     # If the files are all UTF-8 already, just compile as usual
 
@@ -155,7 +152,6 @@ compile_to_utf8 <-
         ) %>%
         # Remove duplicates
         distinct()
-
-      return(pulled_data)
     }
+    return(pulled_data)
   }

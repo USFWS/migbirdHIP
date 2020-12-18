@@ -14,7 +14,7 @@
 #'  \itemize{
 #'  \item AL, AK, AZ, AR, CA, CO, CT, DE, DC, FL, GA, HI, ID, IL, IN, IA, KS, KY, LA, ME, MD, MA, MI, MN, MS, MO, MT, NE, NV, NH, NJ, NM, NY, NC, ND, OH, OK, OR, PA, RI, SC, SD, TN, TX, UT, VT, VA, WA, WV, WI, WY, AS, GU, MP, PR, VI, UM, FM, MH, PW, AA, AE, AP, CM, CZ, NB, PI, TT, ON, QC, NS, NB, MB, BC, PE, SK, AB, NL}
 #'  \item all - All states, provinces, and/or territories that exist in the data
-#'  \item NA - Table will not include location in its output
+#'  \item none - Table will not include location in its output
 #'  }
 #' @param field Field the error data should be tabulated by. Acceptable values include:
 #'  \itemize{
@@ -22,7 +22,7 @@
 #'  \itemize{
 #'  \item title, firstname, middle, lastname, suffix, address, city, state, zip, birth_date, issue_date, hunt_mig_birds, ducks_bag, geese_bag, dove_bag, woodcock_bag, coots_snipe_bag, rails_gallinules_bag, cranes, band_tailed_pigeon, brant, seaducks, registration_year, email}
 #'  \item all - All fields in the data
-#'  \item NA - Table will not include field in its output
+#'  \item none - Table will not include field in its output
 #'  }
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
