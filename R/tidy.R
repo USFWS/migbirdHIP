@@ -354,7 +354,7 @@ tidy <-
           )) %>%
       # Delete white space around strings
       mutate_all(str_trim) %>%
-      # Convert N/A strings to NA -- had to delete the leading '.' here!
+      # Convert N/A strings to NA
       na_if("N/A")
 
     return(x)

@@ -9,7 +9,7 @@
 #' @import purrr
 #' @import tibble
 #'
-#' @param path The path to the data .txt files
+#' @param path The path to HIP .txt files
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHarvestData}
@@ -70,9 +70,7 @@ compile_to_utf8 <-
               readLines(checked_state_files$filepath[i]),
               from = checked_state_files$encoding[i],
               to = "UTF8"),
-            file(
-              checked_state_files$filepath[i],
-              encoding = "UTF-8")
+            checked_state_files$filepath[i]
           )
         }
       )
