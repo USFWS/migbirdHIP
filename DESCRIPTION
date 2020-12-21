@@ -13,6 +13,7 @@ Imports:
 Suggests:
     knitr,
     rmarkdown
+VignetteBuilder: knitr
 Authors@R: 
     person(given = "Abby",
            family = "Walter",

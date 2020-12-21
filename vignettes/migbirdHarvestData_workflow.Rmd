@@ -1,0 +1,218 @@
+---
+title: "The migbirdHarvestData Workflow"
+author: "Abby Walter"
+date: "`r Sys.Date()`"
+package: migbirdHarvestData
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{The migbirdHarvestData Workflow}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+## Table of Contents
+
+- [Introduction](#introduction)
+- [Stage 1: Import Data](#stage-1-import-data)
+    - [compile](#compile)
+    - [compile_to_utf8](#compile_to_utf8)
+    - [tidy](#tidy)
+    - [proof](#proof)
+- [Stage 2: Visualize Data](#stage-2-visualize-data)
+    - [errorPlot_fields](#errorplot_fields)
+    - [errorPlot_states](#errorplot_states)
+    - [findDuplicates](#findduplicates)
+    - [outOfStateHunters](#outofstatehunters)
+    - [youthHunters](#youthhunters)
+- [Stage 3: Explore Errors](#stage-3-explore-errors)
+    - [errorTable](#errortable)
+    - [pullErrors](#pullerrors)
+    - [redFlags](#redflags)
+- [Troubleshooting](#troubleshooting)
+
+## Introduction
+
+The migbirdHarvestData package provides an easy-to-use automated workflow for the U.S. Fish and Wildlife Service to wrangle, tidy, and visualize Harvest Information Program data.
+
+The package can be installed using:
+```{r, install, message = FALSE, eval = FALSE}
+library(devtools)
+install_github("USFWS/migbirdHarvestData")
+```
+
+
+## Stage 1: Import Data
+
+### compile
+
+The first step is to import the .txt files containing harvest data. To do this, we attempt to use the `compile` function.
+
+```{r, compile}
+library(migbirdHarvestData)
+
+DL1202 <- compile(path = "C:/HIP/DL_1202")
+```
+
+As you can see above, if the files contained in the directory are not all entirely encoded as UTF-8, `compile` will not work. It instead provides a tibble of filepaths with non-utf-8 encoding along with an error message. 
+
+To remedy the situation, we use the next function, `compile_to_utf8`.
+
+### compile_to_utf8
+
+Encoding issues are a nuisance, but `compile_to_utf8` will identify and convert non-utf-8 text files before importing from them into R from the supplied directory. Please note that this function will overwrite existing files.
+
+```{r, compileutf}
+DL1202_utf8 <- compile_to_utf8(path = "C:/HIP/DL_1202")
+```
+
+### tidy
+
+After data are imported, we tidy:
+
+```{r, tidy}
+DL1202_tidied <- tidy(DL1202_utf8)
+```
+
+This function renames columns and does simple mutations, such as:
+
+* Converts names to uppercase
+* Moves suffixes from first or last name columns to the appropriate suffix column
+* Removes punctuation from middle initial column
+* Removes ending hyphen from zip codes with only 5 digits
+
+### proof
+
+After data are tidied, we proof:
+
+```{r proof}
+DL1202_proofed <- proof(DL1202_tidied, year = 2020)
+```
+
+Data that are considered irregular are flagged in a new column called "errors". For each field, values are compared to standard expected formats and are flagged in the error column if they do not conform. No actual corrections take place in this step. All data are identical except for the new "errors" column. The year of the Harvest Information Program must be supplied as a parameter. 
+
+### correct
+
+In progress.
+
+## Stage 2: Visualize Data
+
+### errorPlot_fields
+
+The `errorPlot_fields` function can be run on all states, provinces, and/or territories in the data...
+
+```{r errorfieldsplotall, fig.width = 6}
+errorPlot_fields(DL1202_proofed, loc = "all")
+```
+
+... or it can be limited to just one.
+
+```{r errorfieldsplotsc, fig.width = 6}
+errorPlot_fields(DL1202_proofed, loc = "SC")
+```
+
+### errorPlot_states
+
+The `errorPlot_states` function can plot errors as either proportions or counts by state. 
+
+```{r errorstatesprop, fig.width = 6}
+errorPlot_states(DL1202_proofed, type = "proportion")
+```
+
+```{r errorstatescount, fig.width = 6}
+errorPlot_states(DL1202_proofed, type = "count")
+```
+
+### findDuplicates
+
+The `findDuplicates` function ...
+
+```{r findDuplicates, fig.width = 6}
+findDuplicates(DL1202_proofed)
+```
+
+### outOfStateHunters
+
+```{r outofstate, fig.width = 6}
+outOfStateHunters(DL1202_proofed)
+```
+
+### youthHunters
+
+```{r youth, fig.width = 6}
+youthHunters(DL1202_proofed, year = 2020)
+```
+
+## Stage 3: Explore Errors
+
+### errorTable
+
+The `errorTable` function is a flexible way to obtain error data as a tibble, which can be assessed as needed or exported to create records of download cycle errors. The basic function reports errors by both location and field.
+
+```{r errortable1}
+errorTable(DL1202_proofed)
+```
+
+Errors can be reported by only location by turning off the `field` parameter.
+
+```{r errortable2}
+errorTable(DL1202_proofed, field = "none")
+```
+
+Errors can be reported by only field by turning off the `loc` parameter.
+
+```{r errortable3}
+errorTable(DL1202_proofed, loc = "none")
+```
+
+Location can be specified.
+
+```{r errortable4}
+errorTable(DL1202_proofed, loc = "CA")
+```
+
+Field can be specified.
+
+```{r errortable5}
+errorTable(DL1202_proofed, field = "suffix")
+```
+
+Total errors for a location can be pulled.
+
+```{r errortable6}
+errorTable(DL1202_proofed, loc = "CA", field = "none")
+```
+
+Total errors for a location's particular field can be pulled.
+
+```{r errortable7}
+errorTable(DL1202_proofed, loc = "CA", field = "zip")
+```
+
+### pullErrors
+
+The `pullErrors` function can be used to view all of the actual values that were flagged as errors in a particular field. In this example, we find that the "dove_bag" field contains entries of "4" and "9", when the only values permissible are 0, 1, 2, 3, and 5.
+
+```{r pullerrors}
+pullErrors(DL1202_proofed, error = "dove_bag")
+```
+
+### redFlags
+
+#### By state
+States with an unacceptable level of error can be pulled into a tibble. The tibble contains information pertaining to state, the count of errors from that state, the number of correct records from that state, the proportion of error per state, and a "flag" column that prints the threshold used. Any threshold can be supplied; in this example, we see which states had more than 3% error.
+
+```{r redflags1}
+redFlags(DL1202_proofed, type = "state", threshold = 0.03)
+```
+
+#### By field
+
+The same can be done for data fields. In this example, we see which fields had more than 1% error.
+
+```{r redflags2}
+redFlags(DL1202_proofed, type = "field", threshold = 0.01)
+```
+
+## Troubleshooting
+
+In progress.
