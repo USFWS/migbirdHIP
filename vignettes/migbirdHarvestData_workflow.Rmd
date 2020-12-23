@@ -28,6 +28,7 @@ vignette: >
     - [errorTable](#errortable)
     - [pullErrors](#pullerrors)
     - [redFlags](#redflags)
+- [Correct](#correct)
 - [Troubleshooting](#troubleshooting)
 
 ## Introduction
@@ -212,6 +213,18 @@ The same can be done for data fields. In this example, we see which fields had m
 ```{r redflags2}
 redFlags(DL1202_proofed, type = "field", threshold = 0.01)
 ```
+
+## Correct
+
+After the download data are proofed, the next step is to correct the data to the best of our ability. Data can be corrected by running the `correct` function on the proofed tibble.
+
+```{r correct}
+DL1202_corrected <- correct(DL1202_proofed)
+```
+
+If errors remain after running automated corrections, they may be corrected semi-manually. 
+
+All functions in Stage 2 and Stage 3 will run on the corrected tibble, DL1202_corrected. Errors can be compared between the proofed stage and corrected stage to get a better idea of which errors were serious (i.e., difficult to correct automatically) and determine how the serious errors can be prevented in the future.
 
 ## Troubleshooting
 
