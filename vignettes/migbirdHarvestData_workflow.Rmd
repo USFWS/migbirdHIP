@@ -28,7 +28,8 @@ vignette: >
     - [errorTable](#errortable)
     - [pullErrors](#pullerrors)
     - [redFlags](#redflags)
-- [Correct](#correct)
+- [Stage 4: Correct and Compare](#stage-4-correct-and-compare)
+    - [correct](#correct)
 - [Troubleshooting](#troubleshooting)
 
 ## Introduction
@@ -46,7 +47,7 @@ install_github("USFWS/migbirdHarvestData")
 
 ### compile
 
-The first step is to import the .txt files containing harvest data. To do this, we attempt to use the `compile` function.
+The first step is to import .txt files containing harvest data. To do this, we attempt to use the `compile` function.
 
 ```{r, compile}
 library(migbirdHarvestData)
@@ -54,13 +55,13 @@ library(migbirdHarvestData)
 DL1202 <- compile(path = "C:/HIP/DL_1202")
 ```
 
-As you can see above, if the files contained in the directory are not all entirely encoded as UTF-8, `compile` will not work. It instead provides a tibble of filepaths with non-utf-8 encoding along with an error message. 
+The error message above tells us that `compile` did not work because the files contained in the directory are not all encoded as UTF-8. We are provided a tibble of paths to .txt files that threw the error with additional information about their non-UTF-8 encodings. In this example, Latin-1 (ISO-8859-1) and Latin-2 (ISO-8859-2) character sets (which include letters with accents such as ê and á) were the reason the files in the directory were not compatible with the function.
 
-To remedy the situation, we use the next function, `compile_to_utf8`.
+To remedy the situation, we use a different function, `compile_to_utf8`.
 
 ### compile_to_utf8
 
-Encoding issues are a nuisance, but `compile_to_utf8` will identify and convert non-utf-8 text files before importing from them into R from the supplied directory. Please note that this function will overwrite existing files.
+Encoding issues are a nuisance, but `compile_to_utf8` will identify and convert non-UTF-8 text files before importing from them into R from the supplied directory. Please note that this function will overwrite existing files.
 
 ```{r, compileutf}
 DL1202_utf8 <- compile_to_utf8(path = "C:/HIP/DL_1202")
@@ -68,7 +69,7 @@ DL1202_utf8 <- compile_to_utf8(path = "C:/HIP/DL_1202")
 
 ### tidy
 
-After data are imported, we tidy:
+After data are imported, we `tidy`:
 
 ```{r, tidy}
 DL1202_tidied <- tidy(DL1202_utf8)
@@ -83,17 +84,15 @@ This function renames columns and does simple mutations, such as:
 
 ### proof
 
-After data are tidied, we proof:
+After data are tidied, we `proof`:
 
-```{r proof}
+```{r, proof}
 DL1202_proofed <- proof(DL1202_tidied, year = 2020)
 ```
 
-Data that are considered irregular are flagged in a new column called "errors". For each field, values are compared to standard expected formats and are flagged in the error column if they do not conform. No actual corrections take place in this step. All data are identical except for the new "errors" column. The year of the Harvest Information Program must be supplied as a parameter. 
+Data that are considered irregular are flagged in a new column called "errors". No actual corrections take place in this step; all data remain identical except for the new "errors" column. For each field, values are compared to standard expected formats and if they do not conform, the field name is pasted as a string in the "errors" column. Each row can have from zero errors (NA) to all column names listed. Multiple flags are hyphen delimited. 
 
-### correct
-
-In progress.
+The year of the Harvest Information Program must be supplied as a parameter. This aids in checking dates when licenses were issued.
 
 ## Stage 2: Visualize Data
 
@@ -125,7 +124,7 @@ errorPlot_states(DL1202_proofed, type = "count")
 
 ### findDuplicates
 
-The `findDuplicates` function ...
+The `findDuplicates` function ... (in progress)
 
 ```{r findDuplicates, fig.width = 6}
 findDuplicates(DL1202_proofed)
@@ -133,11 +132,15 @@ findDuplicates(DL1202_proofed)
 
 ### outOfStateHunters
 
+The `outOfStateHunters` function allows us to visualize how many hunters report harvests from a location that does not match the state, province, or territory of their address. A list is returned from this function, so a table can be written to .csv from the first list element if needed.
+
 ```{r outofstate, fig.width = 6}
 outOfStateHunters(DL1202_proofed)
 ```
 
 ### youthHunters
+
+The `youthHunters` function returns a listed table and plot of the number of hunters with birth dates < 16 years from the year of HIP data collection. These data are interesting to explore because hunters younger than 16 years of age are not required to have a migratory bird hunting license in the United States. 
 
 ```{r youth, fig.width = 6}
 youthHunters(DL1202_proofed, year = 2020)
@@ -183,7 +186,7 @@ Total errors for a location can be pulled.
 errorTable(DL1202_proofed, loc = "CA", field = "none")
 ```
 
-Total errors for a location's particular field can be pulled.
+Total errors for a field in a particular location can be pulled.
 
 ```{r errortable7}
 errorTable(DL1202_proofed, loc = "CA", field = "zip")
@@ -199,24 +202,25 @@ pullErrors(DL1202_proofed, error = "dove_bag")
 
 ### redFlags
 
-#### By state
+<b>By state.</b>
 States with an unacceptable level of error can be pulled into a tibble. The tibble contains information pertaining to state, the count of errors from that state, the number of correct records from that state, the proportion of error per state, and a "flag" column that prints the threshold used. Any threshold can be supplied; in this example, we see which states had more than 3% error.
 
 ```{r redflags1}
 redFlags(DL1202_proofed, type = "state", threshold = 0.03)
 ```
 
-#### By field
-
+<b>By field.</b>
 The same can be done for data fields. In this example, we see which fields had more than 1% error.
 
 ```{r redflags2}
 redFlags(DL1202_proofed, type = "field", threshold = 0.01)
 ```
 
-## Correct
+## Stage 4: Correct and Compare
 
-After the download data are proofed, the next step is to correct the data to the best of our ability. Data can be corrected by running the `correct` function on the proofed tibble.
+### correct
+
+After the download data are proofed, the next step is to fix the data to the best of our ability. Data can be corrected by running the `correct` function on the proofed tibble.
 
 ```{r correct}
 DL1202_corrected <- correct(DL1202_proofed)
@@ -224,8 +228,9 @@ DL1202_corrected <- correct(DL1202_proofed)
 
 If errors remain after running automated corrections, they may be corrected semi-manually. 
 
-All functions in Stage 2 and Stage 3 will run on the corrected tibble, DL1202_corrected. Errors can be compared between the proofed stage and corrected stage to get a better idea of which errors were serious (i.e., difficult to correct automatically) and determine how the serious errors can be prevented in the future.
+All functions in <b>Stage 2</b> and <b>Stage 3</b> will run on the corrected tibble, DL1202_corrected, just as they worked on the example tibble DL1202_proofed. Errors can be compared between the proofed stage and corrected stage to get a better idea of which errors were serious (i.e., difficult to correct automatically) and determine how serious errors can be prevented in the future.
 
 ## Troubleshooting
 
-In progress.
+<b>Questions?</b> Contact Abby Walter, abby_walter@fws.gov
+
