@@ -6,9 +6,13 @@
 library(devtools)
 install_github("USFWS/migbirdHarvestData")
 ```
-
-
 In progress.
+
+### About
+
+The migbirdHarvestData package provides an easy-to-use automated set of R functions for the U.S. Fish and Wildlife Service to wrangle, tidy, and visualize [Harvest Information Program](https://www.fws.gov/harvestsurvey) data.
+
+For a detailed how-to guide on using this package, please read our vignette titled <i>The migbirdHarvestData Workflow</i>.
 
 ### USFWS Disclaimer
 
