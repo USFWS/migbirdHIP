@@ -44,21 +44,6 @@ correct <-
               "-",
               str_extract(zip,"[0-9]{4}$")),
             zip),
-
-        # In progress!
-
-        # Hunt migratory birds correction
-        # Bag correction: ducks
-        # Bag correction: geese
-        # Bag correction: dove
-        # Bag correction: woodcock
-        # Bag correction: coots and snipe
-        # Bag correction: rails and gallinules
-        # Bag correction: cranes
-        # Bag correction: band-tailed pigeon
-        # Bag correction: brant
-        # Bag correction: seaducks
-
         # Email
         email =
           # Delete spaces
@@ -132,8 +117,109 @@ correct <-
             str_detect(email, "^@$") ~ NA_character_,
             TRUE ~ email
           )
-      )
+      ) %>%
+      # Hunt migratory birds correction
+      # Bag correction: ducks
+      left_join(
+        hip_bags_ref %>%
+          mutate(ducks_bag = as.character(stateBagValue)) %>%
+          filter(spp == "ducks_bag") %>%
+          select(-c("stateBagValue", "spp")),
+        by = c("state", "ducks_bag")
+      ) %>%
+      mutate(ducks_bag = FWSstratum) %>%
+      select(-FWSstratum) %>%
+      # Bag correction: geese
+      left_join(
+        hip_bags_ref %>%
+          mutate(geese_bag = as.character(stateBagValue)) %>%
+          filter(spp == "geese_bag") %>%
+          select(-c("stateBagValue", "spp")),
+        by = c("state", "geese_bag")
+      ) %>%
+      mutate(geese_bag = FWSstratum) %>%
+      select(-FWSstratum) %>%
+      # Bag correction: dove
+      left_join(
+        hip_bags_ref %>%
+          mutate(dove_bag = as.character(stateBagValue)) %>%
+          filter(spp == "dove_bag") %>%
+          select(-c("stateBagValue", "spp")),
+        by = c("state", "dove_bag")
+      ) %>%
+      mutate(dove_bag = FWSstratum) %>%
+      select(-FWSstratum) %>%
+      # Bag correction: woodcock
+      left_join(
+        hip_bags_ref %>%
+          mutate(woodcock_bag = as.character(stateBagValue)) %>%
+          filter(spp == "woodcock_bag") %>%
+          select(-c("stateBagValue", "spp")),
+        by = c("state", "woodcock_bag")
+      ) %>%
+      mutate(woodcock_bag = FWSstratum) %>%
+      select(-FWSstratum) %>%
+      # Bag correction: coots and snipe
+      left_join(
+        hip_bags_ref %>%
+          mutate(coots_snipe_bag = as.character(stateBagValue)) %>%
+          filter(spp == "coots_snipe_bag") %>%
+          select(-c("stateBagValue", "spp")),
+        by = c("state", "coots_snipe_bag")
+      ) %>%
+      mutate(coots_snipe_bag = FWSstratum) %>%
+      select(-FWSstratum) %>%
+      # Bag correction: rails and gallinules
+      left_join(
+        hip_bags_ref %>%
+          mutate(rails_gallinules_bag = as.character(stateBagValue)) %>%
+          filter(spp == "rails_gallinules_bag") %>%
+          select(-c("stateBagValue", "spp")),
+        by = c("state", "rails_gallinules_bag")
+      ) %>%
+      mutate(rails_gallinules_bag = FWSstratum) %>%
+      select(-FWSstratum) %>%
+      # Bag correction: cranes
+      left_join(
+        hip_bags_ref %>%
+          mutate(cranes = as.character(stateBagValue)) %>%
+          filter(spp == "cranes") %>%
+          select(-c("stateBagValue", "spp")),
+        by = c("state", "cranes")
+      ) %>%
+      mutate(cranes = FWSstratum) %>%
+      select(-FWSstratum) %>%
+      # Bag correction: band-tailed pigeon
+      left_join(
+        hip_bags_ref %>%
+          mutate(band_tailed_pigeon = as.character(stateBagValue)) %>%
+          filter(spp == "band_tailed_pigeon") %>%
+          select(-c("stateBagValue", "spp")),
+        by = c("state", "band_tailed_pigeon")
+      ) %>%
+      mutate(band_tailed_pigeon = FWSstratum) %>%
+      select(-FWSstratum) %>%
+      # Bag correction: brant
+      left_join(
+        hip_bags_ref %>%
+          mutate(brant = as.character(stateBagValue)) %>%
+          filter(spp == "brant") %>%
+          select(-c("stateBagValue", "spp")),
+        by = c("state", "brant")
+      ) %>%
+      mutate(brant = FWSstratum) %>%
+      select(-FWSstratum) %>%
+      # Bag correction: seaducks
+      left_join(
+        hip_bags_ref %>%
+          mutate(seaducks = as.character(stateBagValue)) %>%
+          filter(spp == "seaducks") %>%
+          select(-c("stateBagValue", "spp")),
+        by = c("state", "seaducks")
+      ) %>%
+      mutate(seaducks = FWSstratum) %>%
+      select(-FWSstratum)
 
     return(corrected_x)
 
-    }
+  }

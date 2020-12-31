@@ -70,4 +70,7 @@ utils::globalVariables(
     "flag",
     "name",
     "value",
-    "source_file"))
+    "source_file",
+    "stateBagValue",
+    "spp",
+    "FWSstratum"))
