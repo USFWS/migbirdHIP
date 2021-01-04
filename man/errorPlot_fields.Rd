@@ -4,7 +4,7 @@
 \alias{errorPlot_fields}
 \title{Plot errors by field}
 \usage{
-errorPlot_fields(x, loc = "all")
+errorPlot_fields(x, loc = "all", year = NA)
 }
 \arguments{
 \item{x}{A proofed data table created by \code{\link{proof}}}
@@ -16,6 +16,8 @@ errorPlot_fields(x, loc = "all")
 \itemize{
 \item AL, AK, AZ, AR, CA, CO, CT, DE, DC, FL, GA, HI, ID, IL, IN, IA, KS, KY, LA, ME, MD, MA, MI, MN, MS, MO, MT, NE, NV, NH, NJ, NM, NY, NC, ND, OH, OK, OR, PA, RI, SC, SD, TN, TX, UT, VT, VA, WA, WV, WI, WY, AS, GU, MP, PR, VI, UM, FM, MH, PW, AA, AE, AP, CM, CZ, NB, PI, TT, ON, QC, NS, NB, MB, BC, PE, SK, AB, NL}
 }}
+
+\item{year}{The year in which the Harvest Information Program data were collected. This parameter allows youth hunters (< 16 years of age) to be plotted, revealing the remaining birth_date errors for further consideration.}
 }
 \description{
 Create a bar plot of errors per field, either by all states in the data set or a specific state, province, or territory.

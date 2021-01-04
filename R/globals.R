@@ -73,4 +73,5 @@ utils::globalVariables(
     "source_file",
     "stateBagValue",
     "spp",
-    "FWSstratum"))
+    "FWSstratum",
+    "specifics"))

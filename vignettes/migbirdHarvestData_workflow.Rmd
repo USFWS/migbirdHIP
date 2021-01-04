@@ -1,7 +1,5 @@
 ---
 title: "The migbirdHarvestData Workflow"
-author: "Abby Walter"
-date: "`r Sys.Date()`"
 package: migbirdHarvestData
 output: rmarkdown::html_vignette
 vignette: >
@@ -92,7 +90,7 @@ DL1202_proofed <- proof(DL1202_tidied, year = 2020)
 
 Data that are considered irregular are flagged in a new column called "errors". No actual corrections take place in this step; all data remain identical except for the new "errors" column. For each field, values are compared to standard expected formats and if they do not conform, the field name is pasted as a string in the "errors" column. Each row can have from zero errors (NA) to all column names listed. Multiple flags are hyphen delimited. 
 
-The year of the Harvest Information Program must be supplied as a parameter. This aids in checking dates when licenses were issued.
+The year of the Harvest Information Program must be supplied as a parameter. This aids in checking dates when licenses were issued, as one example.
 
 ## Stage 2: Visualize Data
 
@@ -109,6 +107,13 @@ errorPlot_fields(DL1202_proofed, loc = "all")
 ```{r errorfieldsplotsc, fig.width = 6}
 errorPlot_fields(DL1202_proofed, loc = "SC")
 ```
+
+The year can also be specified in `errorPlot_fields` to visualize the proportion of "errors" created by youth hunters, since their birth dates fall outside the expected parameters of the `proof` function.
+
+```{r errorfieldsplotyouth, fig.width = 6}
+errorPlot_fields(DL1202_proofed, loc = "SC", year = 2020)
+```
+
 
 ### errorPlot_states
 
@@ -222,11 +227,13 @@ redFlags(DL1202_proofed, type = "field", threshold = 0.01)
 
 After the download data are proofed, the next step is to fix the data to the best of our ability. Data can be corrected by running the `correct` function on the proofed tibble.
 
+The year of the Harvest Information Program must be supplied as a parameter. Since the "errors" column is re-created using `correct`, supplying the year is necessary for the same reasons it is required by `proof`. 
+
 ```{r correct}
-DL1202_corrected <- correct(DL1202_proofed)
+DL1202_corrected <- correct(DL1202_proofed, year = 2020)
 ```
 
-If errors remain after running automated corrections, they may be corrected semi-manually. 
+If errors remain after running automated corrections, they may be corrected semi-manually. This feature is in progress.
 
 All functions in <b>Stage 2</b> and <b>Stage 3</b> will run on the corrected tibble, DL1202_corrected, just as they worked on the example tibble DL1202_proofed. Errors can be compared between the proofed stage and corrected stage to get a better idea of which errors were serious (i.e., difficult to correct automatically) and determine how serious errors can be prevented in the future.
 
