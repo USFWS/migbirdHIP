@@ -8,6 +8,7 @@
 #' @import tibble
 #'
 #' @param x The object created after error flagging data with \code{\link{proof}}
+#' @param year The year in which the Harvest Information Program data were collected
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHarvestData}
@@ -15,7 +16,7 @@
 #' @export
 
 correct <-
-  function(x){
+  function(x, year){
 
     corrected_x <-
       x %>%
@@ -220,6 +221,9 @@ correct <-
       mutate(seaducks = FWSstratum) %>%
       select(-FWSstratum)
 
-    return(corrected_x)
+    # Re-run the proof script to get an updated errors column
+    corrproof_x <- proof(corrected_x, year = year)
+
+    return(corrproof_x)
 
   }
