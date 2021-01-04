@@ -12,7 +12,9 @@ In progress.
 
 The migbirdHarvestData package provides an easy-to-use automated set of R functions for the U.S. Fish and Wildlife Service to wrangle, tidy, and visualize [Harvest Information Program](https://www.fws.gov/harvestsurvey) data.
 
-For a detailed how-to guide on using this package, please read the vignette titled <i>The migbirdHarvestData Workflow</i>. Once the migbirdHarvestData package is installed, you can view workflow vignette by running `vignette(topic = "migbirdHarvestData_workflow", package = "migbirdHarvestData")` in R.
+For a detailed how-to guide on using this package, please read the vignette titled <i>The migbirdHarvestData Workflow</i>. Once the migbirdHarvestData package is installed, you can view workflow vignette by running:
+
+`vignette(topic = "migbirdHarvestData_workflow", package = "migbirdHarvestData")` 
 
 ### USFWS Disclaimer
 
