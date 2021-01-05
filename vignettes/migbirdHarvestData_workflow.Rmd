@@ -129,7 +129,7 @@ errorPlot_states(DL1202_proofed, type = "count")
 
 ### findDuplicates
 
-The `findDuplicates` function ... (in progress)
+The `findDuplicates` function finds hunters that have more than one record in the download data. Hunters are grouped by first name, last name, city, state, and birth date. If the same hunter has 2 or more records with the same issue date, download date, or download state, they (and combinations thereof) are counted and summarized in a tibble and plot. Duplicate hunters should be investigated manually to determine why they occur more than once. Counts in the NA category indicate that hunters are duplicated across some other field in the data.
 
 ```{r findDuplicates, fig.width = 6}
 findDuplicates(DL1202_proofed)
