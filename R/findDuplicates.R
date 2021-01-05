@@ -150,8 +150,7 @@ findDuplicates <-
         dupl_tibble %>%
           group_by(duplicate_type) %>%
           summarize(count = n()) %>%
-          ungroup()
-      )
+          ungroup())
 
     dupl_list <-
       list(

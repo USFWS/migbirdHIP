@@ -16,7 +16,6 @@
 #' @export
 
 pullErrors <-
-  # x = proofed data tibble, error = field you want to check
   function(x, error){
 
     pulled_error <-

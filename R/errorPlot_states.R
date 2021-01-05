@@ -22,8 +22,6 @@
 #' @export
 
 errorPlot_states <-
-  # x = proofed data tibble
-  # type = "proportion" for proportions plot or "count" for counts
   function(x, type) {
 
     states_provinces_and_canada <-

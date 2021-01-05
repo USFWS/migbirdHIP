@@ -31,7 +31,6 @@
 #' @export
 
 errorTable <-
-  # field = "all", "NA", or specific choice
   function(x, loc = "all", field = "all"){
 
     states_provinces_and_canada <-
