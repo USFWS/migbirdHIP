@@ -31,12 +31,6 @@ correct <-
           ifelse(str_detect(errors, "suffix"), NA, suffix),
         # Zip code correction
         zip =
-          # Remove trailing -0000
-          ifelse(
-            str_detect(zip, "\\-0000"),
-            str_remove(zip, "\\-0000"),
-            zip),
-        zip =
           # Insert a hyphen in continuous 9 digit zip codes
           ifelse(
             str_detect(zip, "^[0-9]{9}$"),
@@ -44,6 +38,24 @@ correct <-
               str_extract(zip, "^[0-9]{5}"),
               "-",
               str_extract(zip,"[0-9]{4}$")),
+            zip),
+        zip =
+          # Insert a hyphen in 9 digit zip codes with a middle space
+          ifelse(
+            str_detect(zip, "^[0-9]{5}\\s[0-9]{4}$"),
+            str_replace(zip, "\\s", "\\-"),
+            zip),
+        zip =
+          # Remove trailing -0000
+          ifelse(
+            str_detect(zip, "\\-0000"),
+            str_remove(zip, "\\-0000"),
+            zip),
+        zip =
+          # Remove trailing -___
+          ifelse(
+            str_detect(zip, "\\-\\_+"),
+            str_remove(zip, "\\-\\_+"),
             zip),
         # Email
         email =
@@ -221,8 +233,67 @@ correct <-
       mutate(seaducks = FWSstratum) %>%
       select(-FWSstratum)
 
+    # Check zip codes...
+
+    prefix_3 <-
+      zip_code_ref %>%
+      filter(str_detect(zipPrefix, "^[0-9]{3}$")) %>%
+      select(state) %>%
+      distinct() %>%
+      arrange(state) %>%
+      pull()
+
+    prefix_2 <-
+      zip_code_ref %>%
+      filter(str_detect(zipPrefix, "^[0-9]{2}$")) %>%
+      select(state) %>%
+      distinct() %>%
+      arrange(state) %>%
+      pull()
+
+    prefix_1 <-
+      zip_code_ref %>%
+      filter(str_detect(zipPrefix, "^[0-9]{1}$")) %>%
+      select(state) %>%
+      distinct() %>%
+      arrange(state) %>%
+      pull()
+
     # Re-run the proof script to get an updated errors column
-    corrproof_x <- proof(corrected_x, year = year)
+
+    corrproof_x <-
+      proof(corrected_x, year = year) %>%
+      # Proof the zip codes -- are they associated with the correct states?
+      # Make a zipPrefix to join the reference table by
+      mutate(
+        # Pull the appropriate number of zip numbers according to the state
+        zipPrefix =
+          case_when(
+            state %in% prefix_3 ~ str_extract(zip, "^[0-9]{3}"),
+            state %in% prefix_2 ~ str_extract(zip, "^[0-9]{2}"),
+            state %in% prefix_1 ~ str_extract(zip, "^[0-9]{1}"),
+            TRUE ~ NA_character_),
+        # Since NY has 1 and 3 zipPrefix numbers, do a quick correction
+        zipPrefix =
+          ifelse(
+            state == "NY" & str_detect(zip, "^5"),
+            "5",
+            zipPrefix)) %>%
+      left_join(
+        zip_code_ref %>%
+          mutate(zipPrefix = as.character(zipPrefix)) %>%
+          select(zipPrefix, zipState = state),
+        by = "zipPrefix") %>%
+      # Add an error if the state doesn't match zipState
+      mutate(
+        errors =
+          case_when(
+            state != zipState & is.na(errors) ~ "zip",
+            state != zipState & !is.na(errors) & !str_detect(errors, "zip") ~
+              paste0(errors, "-zip"),
+            TRUE ~ errors)
+      ) %>%
+      select(-zipPrefix)
 
     return(corrproof_x)
 
