@@ -233,55 +233,15 @@ correct <-
       mutate(seaducks = FWSstratum) %>%
       select(-FWSstratum)
 
-    # Check zip codes...
-
-    prefix_3 <-
-      zip_code_ref %>%
-      filter(str_detect(zipPrefix, "^[0-9]{3}$")) %>%
-      select(state) %>%
-      distinct() %>%
-      arrange(state) %>%
-      pull()
-
-    prefix_2 <-
-      zip_code_ref %>%
-      filter(str_detect(zipPrefix, "^[0-9]{2}$")) %>%
-      select(state) %>%
-      distinct() %>%
-      arrange(state) %>%
-      pull()
-
-    prefix_1 <-
-      zip_code_ref %>%
-      filter(str_detect(zipPrefix, "^[0-9]{1}$")) %>%
-      select(state) %>%
-      distinct() %>%
-      arrange(state) %>%
-      pull()
-
     # Re-run the proof script to get an updated errors column
 
     corrproof_x <-
       proof(corrected_x, year = year) %>%
       # Proof the zip codes -- are they associated with the correct states?
-      # Make a zipPrefix to join the reference table by
-      mutate(
-        # Pull the appropriate number of zip numbers according to the state
-        zipPrefix =
-          case_when(
-            state %in% prefix_3 ~ str_extract(zip, "^[0-9]{3}"),
-            state %in% prefix_2 ~ str_extract(zip, "^[0-9]{2}"),
-            state %in% prefix_1 ~ str_extract(zip, "^[0-9]{1}"),
-            TRUE ~ NA_character_),
-        # Since NY has 1 and 3 zipPrefix numbers, do a quick correction
-        zipPrefix =
-          ifelse(
-            state == "NY" & str_detect(zip, "^5"),
-            "5",
-            zipPrefix)) %>%
+      # Make a zipPrefix to join by; pull the first 3 zip digits
+      mutate(zipPrefix = str_extract(zip, "^[0-9]{3}")) %>%
       left_join(
         zip_code_ref %>%
-          mutate(zipPrefix = as.character(zipPrefix)) %>%
           select(zipPrefix, zipState = state),
         by = "zipPrefix") %>%
       # Add an error if the state doesn't match zipState
@@ -293,7 +253,7 @@ correct <-
               paste0(errors, "-zip"),
             TRUE ~ errors)
       ) %>%
-      select(-zipPrefix)
+      select(-c("zipPrefix", "zipState"))
 
     return(corrproof_x)
 

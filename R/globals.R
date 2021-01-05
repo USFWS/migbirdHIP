@@ -74,4 +74,5 @@ utils::globalVariables(
     "stateBagValue",
     "spp",
     "FWSstratum",
-    "specifics"))
+    "specifics",
+    "zipPrefix"))

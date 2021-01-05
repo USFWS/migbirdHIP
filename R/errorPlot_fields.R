@@ -16,7 +16,7 @@
 #'  \itemize{
 #'  \item AL, AK, AZ, AR, CA, CO, CT, DE, DC, FL, GA, HI, ID, IL, IN, IA, KS, KY, LA, ME, MD, MA, MI, MN, MS, MO, MT, NE, NV, NH, NJ, NM, NY, NC, ND, OH, OK, OR, PA, RI, SC, SD, TN, TX, UT, VT, VA, WA, WV, WI, WY, AS, GU, MP, PR, VI, UM, FM, MH, PW, AA, AE, AP, CM, CZ, NB, PI, TT, ON, QC, NS, NB, MB, BC, PE, SK, AB, NL}
 #'  }
-#' @param year The year in which the Harvest Information Program data were collected. This parameter allows youth hunters (< 16 years of age) to be plotted, revealing the remaining birth_date errors for further consideration.
+#' @param specify The year in which the Harvest Information Program data were collected must be supplied to activate this feature. This parameter breaks down errors *birth_date* and *zip* into color-coded categories to display youth hunters (< 16 years of age) and foreign zip codes.
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHarvestData}
@@ -24,15 +24,15 @@
 #' @export
 
 errorPlot_fields <-
-  function(x, loc = "all", year = NA){
+  function(x, loc = "all", specify = NA){
 
     # Plot errors by field name
     fields_plot <-
       suppressWarnings(
-        if(!is.na(year)){
+        if(!is.na(specify)){
           if(loc == "all"){
             x %>%
-              select(errors, birth_date) %>%
+              select(errors, birth_date, zip) %>%
               separate(errors, into = as.character(c(1:25)), sep = "-") %>%
               pivot_longer(1:25, names_to = "name") %>%
               select(-name) %>%
@@ -40,13 +40,19 @@ errorPlot_fields <-
               rename(errors = value) %>%
               mutate(
                 specifics =
-                  # Denote when birth date error is due to youth hunters
-                  ifelse(
+                  case_When(
+                    # Denote when birth date error is due to youth hunters
                     str_detect(errors, "birth_date") &
-                      (year - as.numeric(str_extract(birth_date, "[0-9]{4}$"))) < 16,
-                    "Youth Hunter",
-                    NA)
-              ) %>%
+                      (specify -
+                         as.numeric(
+                           str_extract(birth_date, "[0-9]{4}$"))) < 16 ~
+                      "Youth Hunter",
+                    # Denote Canadian zip codes
+                    str_detect(
+                      zip,
+                      "^[A-Za-z]\\d[A-Za-z][ -]?\\d[A-Za-z]\\d$") ~
+                      "Canada Zip",
+                    TRUE ~ NA_character_)) %>%
               ggplot() +
               geom_bar(aes(x = errors, fill = specifics), stat = "count") +
               geom_text(
@@ -68,7 +74,7 @@ errorPlot_fields <-
           else{
             x %>%
               filter(state == loc) %>%
-              select(errors, birth_date) %>%
+              select(errors, birth_date, zip) %>%
               separate(errors, into = as.character(c(1:25)), sep = "-") %>%
               pivot_longer(1:25, names_to = "name") %>%
               select(-name) %>%
@@ -76,13 +82,19 @@ errorPlot_fields <-
               rename(errors = value) %>%
               mutate(
                 specifics =
-                  # Denote when birth date error is due to youth hunters
-                  ifelse(
+                  case_When(
+                    # Denote when birth date error is due to youth hunters
                     str_detect(errors, "birth_date") &
-                      (year - as.numeric(str_extract(birth_date, "[0-9]{4}$"))) < 16,
-                    "Youth Hunter",
-                    NA)
-              ) %>%
+                      (specify -
+                         as.numeric(
+                           str_extract(birth_date, "[0-9]{4}$"))) < 16 ~
+                      "Youth Hunter",
+                    # Denote Canadian zip codes
+                    str_detect(
+                      zip,
+                      "^[A-Za-z]\\d[A-Za-z][ -]?\\d[A-Za-z]\\d$") ~
+                      "Canada Zip",
+                    TRUE ~ NA_character_)) %>%
               ggplot() +
               geom_bar(aes(x = errors, fill = specifics), stat = "count") +
               geom_text(
