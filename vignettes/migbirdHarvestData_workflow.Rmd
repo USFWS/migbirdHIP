@@ -59,7 +59,7 @@ To remedy the situation, we use a different function, `compile_to_utf8`.
 
 ### compile_to_utf8
 
-Encoding issues are a nuisance, but `compile_to_utf8` will identify and convert non-UTF-8 text files before importing from them into R from the supplied directory. Please note that this function will overwrite existing files.
+Encoding issues are a nuisance, but `compile_to_utf8` will identify and convert non-UTF-8 text files before importing from them into R from the supplied directory. Please note that this function will overwrite existing files but no changes to the data will occur.
 
 ```{r, compileutf}
 DL1202_utf8 <- compile_to_utf8(path = "C:/HIP/DL_1202")
