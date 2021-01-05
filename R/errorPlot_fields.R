@@ -40,7 +40,7 @@ errorPlot_fields <-
               rename(errors = value) %>%
               mutate(
                 specifics =
-                  case_When(
+                  case_when(
                     # Denote when birth date error is due to youth hunters
                     str_detect(errors, "birth_date") &
                       (specify -
@@ -82,7 +82,7 @@ errorPlot_fields <-
               rename(errors = value) %>%
               mutate(
                 specifics =
-                  case_When(
+                  case_when(
                     # Denote when birth date error is due to youth hunters
                     str_detect(errors, "birth_date") &
                       (specify -
