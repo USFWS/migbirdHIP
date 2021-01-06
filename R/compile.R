@@ -90,11 +90,12 @@ compile <-
                   dl_date =
                     str_extract(
                       pull(state_files[i, ]), "(?<=[A-Z]{2})[0-9]{8}(?=\\.txt)"),
+                  # Add download cycle as a column
                   dl_cycle =
                     str_extract(path, "(?<=\\/DL).+$"),
+                  # Add source file as a column
                   source_file =
                     str_remove(pull(state_files[i, ]), path),
-                  # Add another mutate because can't pipe '.'
                   source_file =
                     str_remove(source_file, "^\\/")
                 )
