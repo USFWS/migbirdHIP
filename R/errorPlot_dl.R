@@ -30,17 +30,17 @@ errorPlot_dl <-
       suppressWarnings(
         if(loc == "all") {
           x %>%
-            select(errors, dl_date) %>%
+            select(errors, dl_cycle) %>%
             separate(errors, into = as.character(c(1:25)), sep = "-") %>%
             pivot_longer(1:25, names_to = "name") %>%
             select(-name) %>%
             filter(!is.na(value)) %>%
             select(-value) %>%
             ggplot() +
-            geom_bar(aes(x = dl_date), stat = "count") +
+            geom_bar(aes(x = dl_cycle), stat = "count") +
             geom_text(
               stat = "count",
-              aes(x = dl_date, label = stat(count), angle = 90),
+              aes(x = dl_cycle, label = stat(count), angle = 90),
               vjust = 0.2,
               hjust = -0.2
             ) +
@@ -56,17 +56,17 @@ errorPlot_dl <-
         else{
           x %>%
             filter(state == loc) %>%
-            select(errors, dl_date) %>%
+            select(errors, dl_cycle) %>%
             separate(errors, into = as.character(c(1:25)), sep = "-") %>%
             pivot_longer(1:25, names_to = "name") %>%
             select(-name) %>%
             filter(!is.na(value)) %>%
             select(-value) %>%
             ggplot() +
-            geom_bar(aes(x = dl_date), stat = "count") +
+            geom_bar(aes(x = dl_cycle), stat = "count") +
             geom_text(
               stat = "count",
-              aes(x = dl_date, label = stat(count), angle = 90),
+              aes(x = dl_cycle, label = stat(count), angle = 90),
               vjust = 0.2,
               hjust = -0.2
             ) +
