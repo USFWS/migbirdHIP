@@ -227,45 +227,49 @@ redFlags(DL1202_proofed, type = "field", threshold = 0.01)
 
 After the download data are proofed, the next step is to fix the data to the best of our ability. Data can be corrected by running the `correct` function on the proofed tibble.
 
-Examples of data changed by the `correct` function include:
+```{r correct}
+DL1202_corrected <- correct(DL1202_proofed, year = 2020)
+```
 
-* Title is changed to NA if it does not equal 1 or 2
-* First name is not changed, but remains flagged as an error if it breaks a following rule:
+The following changes are made by the `correct` function:
+
+* *Title* is changed to NA if it does not equal 1 or 2
+* *First name* is not changed, but remains flagged as an error if it breaks a following rule:
     * Not > 1 letter
     * Contains a first initial and middle name
     * Contains a first name and middle initial
     * Contains non-alpha characters other than space or hyphen
     * No full names (detected with 2+ spaces)
     * Is not "BLANK", "INAUDIBLE", "TEST", "USER", or "RESIDENT"
-* Middle initial is not changed, but remains flagged if it is not exactly 1 letter
-* Last name is not changed, but remains flagged as an error if it breaks a following rule:
+* *Middle initial* is not changed, but remains flagged if it is not exactly 1 letter
+* *Last name* is not changed, but remains flagged as an error if it breaks a following rule:
     * Not > 1 letter
     * Contains a non-alpha character other than space, period, hyphen, or apostrophe
     * No full names (Detected with 2+ spaces)
     * Is not "INAUDIBLE"
-* Suffix is changed to NA if it is not equal to:
+* *Suffix* is changed to NA if it is not equal to:
     * A value between I and XX in Roman numerals
     * An ordinal number between 1ST and 20TH
     * ESQ
-* Address is not changed, but remains flagged if it contains a |, tab, or non-UTF8 character
-* City is not changed, but remains flagged if it contains any non-alpha character
-* State is not changed, but remains flagged if it is not contained in the following list of abbreviations for US and Canada states, provinces, and territories:
+* *Address* is not changed, but remains flagged if it contains a |, tab, or non-UTF8 character
+* *City* is not changed, but remains flagged if it contains any non-alpha character
+* *State* is not changed, but remains flagged if it is not contained in the following list of abbreviations for US and Canada states, provinces, and territories:
     * AL, AK, AZ, AR, CA, CO, CT, DE, DC, FL, GA, HI, ID, IL, IN, IA, KS, KY, LA, ME, MD, MA, MI, MN, MS, MO, MT, NE, NV, NH, NJ, NM, NY, NC, ND, OH, OK, OR, PA, RI, SC, SD, TN, TX, UT, VT, VA, WA, WV, WI, WY, AS, GU, MP, PR, VI, UM, FM, MH, PW, AA, AE, AP, CM, CZ, NB, PI, TT, ON, QC, NS, NB, MB, BC, PE, SK, AB, NL
-* Zip code is corrected by:
+* *Zip* is corrected by:
     * Inserting a hyphen into continuous 9-digit zip codes
     * Replacing a central space with a hyphen
     * Deleting trailing -0000 and -____
     * Checking corrected zip codes against a master list of USA postal codes; if the hunter's address doesn't have a zip that should be in their state, it's flagged
     * Foreign zip codes are flagged
     * Zip codes that do not match a 5-digit or 9-digit hyphenated format are flagged
-* Birth date is not changed, but remains flagged if the birth year was > 100 or < 16 years ago
-* Issue date is not changed, but remains flagged if it is not equal to or +/- 1 year from the HIP data collection year
-* Hunt migratory birds is not changed, and remains flagged if it is not equal to 1 or 2
-* Bag limits
+* *Birth date* is not changed, but remains flagged if the birth year was > 100 or < 16 years ago
+* *Issue date* is not changed, but remains flagged if it is not equal to or +/- 1 year from the HIP data collection year
+* *Hunt migratory birds* is not changed, and remains flagged if it is not equal to 1 or 2
+* *Bag limits*
     * State numbers that do not meet expected parameters are compared to a master list by state and species, then corrected to the standard FWS format
     * Any parameter that can't be converted is changed to NA
-* Registration year is not changed, but remains flagged if it is not equal to or +/- 1 year from the HIP data collection year
-* Email is corrected by:
+* *Registration year* is not changed, but remains flagged if it is not equal to or +/- 1 year from the HIP data collection year
+* *Email* is corrected by:
     * Removing spaces, commas, and/or forward slash symbols
     * Changing to lowercase
     * Replacing multiple @ symbols with a single @
@@ -286,12 +290,6 @@ Examples of data changed by the `correct` function include:
     * Any email that wasn't corrected and doesn't fit the standardized email regex remains flagged
 
 The year of the Harvest Information Program must be supplied as a parameter. Since the "errors" column is re-created using `correct`, supplying the year is necessary for the same reasons it is required by `proof`. 
-
-```{r correct}
-DL1202_corrected <- correct(DL1202_proofed, year = 2020)
-```
-
-If errors remain after running automated corrections, they may be corrected semi-manually. This feature is in progress.
 
 All functions in <b>Stage 2</b> and <b>Stage 3</b> will run on the corrected tibble, DL1202_corrected, just as they worked on the example tibble DL1202_proofed. Errors can be compared between the proofed stage and corrected stage to get a better idea of which errors were serious (i.e., difficult to correct automatically) and determine how serious errors can be prevented in the future.
 
