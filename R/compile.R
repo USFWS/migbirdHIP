@@ -82,11 +82,11 @@ compile <-
                              1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4, NA)),
                 col_types = "cccccccccccccccccccccccc") %>%
                 mutate(
-                  # Add the download's state as a column
+                  # Add the download state as a column
                   dl_state =
                     str_extract(
                       pull(state_files[i, ]), "[A-Z]{2}(?=[0-9]{8}\\.txt)"),
-                  # Add the download's date as a column
+                  # Add the download date as a column
                   dl_date =
                     str_extract(
                       pull(state_files[i, ]), "(?<=[A-Z]{2})[0-9]{8}(?=\\.txt)"),

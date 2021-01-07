@@ -131,19 +131,20 @@ compile_to_utf8 <-
                              1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4, NA)),
                 col_types = "cccccccccccccccccccccccc") %>%
                 mutate(
-                  # Add the download's state as a column
+                  # Add the download state as a column
                   dl_state =
                     str_extract(
                       pull(state_files[i, ]), "[A-Z]{2}(?=[0-9]{8}\\.txt)"),
-                  # Add the download's date as a column
+                  # Add the download date as a column
                   dl_date =
                     str_extract(
                       pull(state_files[i, ]), "(?<=[A-Z]{2})[0-9]{8}(?=\\.txt)"),
+                  # Add the download cycle as a column
                   dl_cycle =
                     str_extract(path, "(?<=\\/DL).+$"),
+                  # Add the source file as a column
                   source_file =
                     str_remove(pull(state_files[i, ]), path),
-                  # Add another mutate because can't pipe '.'
                   source_file =
                     str_remove(source_file, "^\\/")
                 )
