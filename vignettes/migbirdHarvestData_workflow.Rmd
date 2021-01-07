@@ -22,6 +22,7 @@ vignette: >
     - [findDuplicates](#findduplicates)
     - [outOfStateHunters](#outofstatehunters)
     - [youthHunters](#youthhunters)
+    - [errorPlot_dl](#errorplot_dl)
 - [Stage 3: Explore Errors](#stage-3-explore-errors)
     - [errorTable](#errortable)
     - [pullErrors](#pullerrors)
@@ -150,6 +151,13 @@ The `youthHunters` function returns a listed table and plot of the number of hun
 ```{r youth, fig.width = 6}
 youthHunters(DL1202_proofed, year = 2020)
 ```
+
+### errorPlot_dl
+
+This function should not be used unless you want to visualize an entire season of data, rather than a single download cycle. The `errorPlot_dl` function plots total errors per download cycle across the year. Location may be specified to see a particular state over time. 
+
+`errorPlot(DL1202_proofed, loc = "MI")`
+
 
 ## Stage 3: Explore Errors
 
