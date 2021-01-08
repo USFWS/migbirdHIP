@@ -15,8 +15,6 @@ knitr::opts_chunk$set(
 
 # migbirdHarvestData
 
-#### A USFWS Migratory Bird Harvest Information Program data processing package
-
 <!-- badges: start -->
 `r usethis::use_lifecycle_badge("experimental")`
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
@@ -24,9 +22,17 @@ knitr::opts_chunk$set(
 
 ## Overview
 
-The migbirdHarvestData package provides an easy-to-use automated set of R functions for the U.S. Fish and Wildlife Service to wrangle, tidy, and visualize [Harvest Information Program](https://www.fws.gov/harvestsurvey) data.
+The migbirdHarvestData package provides an easy-to-use set of R functions for the U.S. Fish and Wildlife Service Migratory Bird Program to wrangle, tidy, and visualize [Harvest Information Program](https://www.fws.gov/harvestsurvey) data.
 
-In progress.
+Tasks that can be accomplished with this package include:
+
+* `compile` and `compile_to_utf8` import data
+* `tidy` renames field names
+* `proof` checks values for errors
+* `correct` systematically fixes erroneous values
+* Error visualization with `errorPlot_dl`, `errorPlot_fields`, and `errorPlot_states`
+* Exploration of specific errors with `findDuplicates`, `youthHunters`, and `outOfStateHunters`
+* Detailed error reporting with `errorTable`, `pullErrors`, and `redFlags`
 
 ## Installation
 
@@ -35,9 +41,9 @@ library(devtools)
 install_github("USFWS/migbirdHarvestData", build_vignettes = TRUE)
 ```
 
-Once the migbirdHarvestData package is installed, you can find a detailed how-to guide in the workflow vignette by running:
+#### Vignette
 
-`vignette(topic = "migbirdHarvestData_workflow", package = "migbirdHarvestData")`
+Once the migbirdHarvestData package is installed, you can find a detailed how-to guide in *The migbirdHarvestData Workflow* vignette by running: `vignette(topic = "migbirdHarvestData_workflow", package = "migbirdHarvestData")`
 
 ## USFWS Disclaimer
 
