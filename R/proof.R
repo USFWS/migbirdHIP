@@ -160,20 +160,20 @@ proof <-
           mutate(error = "rails_gallinules_bag"),
         # Cranes should only = 0, 1, 2
         keyed_x %>%
-          filter(!str_detect(cranes, "0|1|2")) %>%
-          mutate(error = "cranes"),
+          filter(!str_detect(cranes_bag, "0|1|2")) %>%
+          mutate(error = "cranes_bag"),
         # Band-tailed Pigeon should only = 0, 1, 2
         keyed_x %>%
-          filter(!str_detect(band_tailed_pigeon, "0|1|2")) %>%
-          mutate(error = "band_tailed_pigeon"),
+          filter(!str_detect(bt_pigeon_bag, "0|1|2")) %>%
+          mutate(error = "bt_pigeon_bag"),
         # Brant should only = 0, 1, 2
         keyed_x %>%
-          filter(!str_detect(brant, "0|1|2")) %>%
-          mutate(error = "brant"),
+          filter(!str_detect(brant_bag, "0|1|2")) %>%
+          mutate(error = "brant_bag"),
         # Seaducks should only = 0, 1, 2
         keyed_x %>%
-          filter(!str_detect(seaducks, "0|1|2")) %>%
-          mutate(error = "seaducks"),
+          filter(!str_detect(seaducks_bag, "0|1|2")) %>%
+          mutate(error = "seaducks_bag"),
         # Registration year should = survey year +/- 1
         keyed_x %>%
           filter(

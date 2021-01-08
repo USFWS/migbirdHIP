@@ -195,42 +195,42 @@ correct <-
       # Bag correction: cranes
       left_join(
         hip_bags_ref %>%
-          mutate(cranes = as.character(stateBagValue)) %>%
+          mutate(cranes_bag = as.character(stateBagValue)) %>%
           filter(spp == "cranes") %>%
           select(-c("stateBagValue", "spp")),
-        by = c("state", "cranes")
+        by = c("state", "cranes_bag")
       ) %>%
-      mutate(cranes = FWSstratum) %>%
+      mutate(cranes_bag = FWSstratum) %>%
       select(-FWSstratum) %>%
       # Bag correction: band-tailed pigeon
       left_join(
         hip_bags_ref %>%
-          mutate(band_tailed_pigeon = as.character(stateBagValue)) %>%
+          mutate(bt_pigeon_bag = as.character(stateBagValue)) %>%
           filter(spp == "band_tailed_pigeon") %>%
           select(-c("stateBagValue", "spp")),
-        by = c("state", "band_tailed_pigeon")
+        by = c("state", "bt_pigeon_bag")
       ) %>%
-      mutate(band_tailed_pigeon = FWSstratum) %>%
+      mutate(bt_pigeon_bag = FWSstratum) %>%
       select(-FWSstratum) %>%
       # Bag correction: brant
       left_join(
         hip_bags_ref %>%
-          mutate(brant = as.character(stateBagValue)) %>%
+          mutate(brant_bag = as.character(stateBagValue)) %>%
           filter(spp == "brant") %>%
           select(-c("stateBagValue", "spp")),
-        by = c("state", "brant")
+        by = c("state", "brant_bag")
       ) %>%
-      mutate(brant = FWSstratum) %>%
+      mutate(brant_bag = FWSstratum) %>%
       select(-FWSstratum) %>%
       # Bag correction: seaducks
       left_join(
         hip_bags_ref %>%
-          mutate(seaducks = as.character(stateBagValue)) %>%
+          mutate(seaducks_bag = as.character(stateBagValue)) %>%
           filter(spp == "seaducks") %>%
           select(-c("stateBagValue", "spp")),
-        by = c("state", "seaducks")
+        by = c("state", "seaducks_bag")
       ) %>%
-      mutate(seaducks = FWSstratum) %>%
+      mutate(seaducks_bag = FWSstratum) %>%
       select(-FWSstratum)
 
     # Re-run the proof script to get an updated errors column
