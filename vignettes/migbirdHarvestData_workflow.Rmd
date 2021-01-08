@@ -30,6 +30,8 @@ vignette: >
 - [Stage 4: Correct and Compare](#stage-4-correct-and-compare)
     - [correct](#correct)
 - [Troubleshooting](#troubleshooting)
+    - [Memory Issues](#memory-issues)
+    - [Other](#other)
 
 ## Introduction
 
@@ -294,7 +296,7 @@ The following changes are made by the `correct` function:
     * Add missing periods before net, com, edu, and gov
     * Change email to NA if:
         * There is no @ symbol in the email string
-        * If the email is invalid (i.e. none@none, noemail, n/a)
+        * If the email is invalid (i.e. none<!-- breaklink -->@none, noemail, n/a)
     * Any email that wasn't corrected and doesn't fit the standardized email regex remains flagged
 
 The year of the Harvest Information Program must be supplied as a parameter. Since the "errors" column is re-created using `correct`, supplying the year is necessary for the same reasons it is required by `proof`. 
@@ -303,5 +305,23 @@ All functions in <b>Stage 2</b> and <b>Stage 3</b> will run on the corrected tib
 
 ## Troubleshooting
 
-<b>Questions?</b> Contact Abby Walter, abby_walter@fws.gov
+### Memory Issues
+
+Some of these functions require a lot of memory to run. To help your R process these data, especially when working with the large season totals, you can do a few things:
+
+1. Remove objects from the environment. If you have already run `compile`, `tidy`, and `proof`, you may no longer need your original dataframe or your tidied dataframe, since most error checking functions work from the proofed or corrected versions of the data. To remove an unneeded object like the tidied dataframe, run `rm(DL1202_tidied)`.
+
+2. Check your memory using `memory.limit()`
+
+3. Increase your memory, e.g. `memory.limit(size = 55000)`
+
+### Other
+
+<b>Issue Reporting</b>
+
+If you find a bug in the package, it's advised to [create an issue](https://github.com/USFWS/migbirdHarvestData/issues) at the package's GitHub repo, https://github.com/USFWS/migbirdHarvestData.
+
+<b>Questions?</b> 
+
+Contact Abby Walter, abby_walter@fws.gov
 
