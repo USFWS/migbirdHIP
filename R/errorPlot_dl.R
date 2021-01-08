@@ -81,6 +81,6 @@ errorPlot_dl <-
         }
       )
 
-    return(errorPlot_dl)
+    return(dl_plot)
 
   }
