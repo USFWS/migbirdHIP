@@ -75,4 +75,5 @@ utils::globalVariables(
     "spp",
     "FWSstratum",
     "specifics",
-    "zipPrefix"))
+    "zipPrefix",
+    "dl_cycle"))
