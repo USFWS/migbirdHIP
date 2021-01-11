@@ -63,14 +63,18 @@ validate <-
       select(dl_state, dl_date, uniformity) %>%
       distinct()
 
-    if (nrow(validated_x) != 0) {
+    if(nrow(validated_x) != 0) {
 
-      return(validated_x)
-      message(
-        paste0(
-          "Warning: Uniform value detected across one or more fields, ",
-          "please review.")
+      validation_message <-
+        message(
+          paste0(
+              "Warning: Uniform value detected across one or more fields, ",
+              "please review.")
         )
+
+      validate_bad <- list(validated_x, validation_message)
+
+      return(validate_bad)
 
     }
     else{
