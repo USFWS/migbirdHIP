@@ -18,39 +18,38 @@ validate <-
   function(x){
 
     validated_x <-
-      renamed_x %>%
+      x %>%
       select(dl_state, dl_date, contains("bag")) %>%
       group_by(dl_state, dl_date) %>%
-      summarize(across(contains("bag"), ~n_distinct(.))) %>%
+      suppressMessages(summarize(across(contains("bag"), ~n_distinct(.)))) %>%
       mutate(
         uniformity =
           case_when(
-            uniform(ducks_bag) == 1 ~ "ducks_bag",
-            uniform(geese_bag) == 1 ~ "geese_bag",
-            uniform(dove_bag) == 1 ~ "dove_bag",
-            uniform(woodcock_bag) == 1 ~ "woodcock_bag",
-            uniform(coots_snipe_bag) == 1 ~ "coots_snipe_bag",
-            uniform(rails_gallinules_bag) == 1 ~ "rails_gallinules_bag",
-            uniform(cranes_bag) == 1 ~ "cranes_bag",
-            uniform(bt_pigeon_bag) == 1 ~ "bt_pigeon_bag",
-            uniform(brant_bag) == 1 ~ "brant_bag",
-            uniform(seaducks_bag) == 1 ~ "seaducks_bag",
+            as.numeric(length(unique(ducks_bag))) == 1 ~ "ducks_bag",
+            as.numeric(length(unique(geese_bag))) == 1 ~ "geese_bag",
+            as.numeric(length(unique(dove_bag))) == 1 ~ "dove_bag",
+            as.numeric(length(unique(woodcock_bag))) == 1 ~ "woodcock_bag",
+            as.numeric(length(unique(coots_snipe_bag))) == 1 ~ "coots_snipe_bag",
+            as.numeric(length(unique(rails_gallinules_bag))) == 1 ~ "rails_gallinules_bag",
+            as.numeric(length(unique(cranes_bag))) == 1 ~ "cranes_bag",
+            as.numeric(length(unique(bt_pigeon_bag))) == 1 ~ "bt_pigeon_bag",
+            as.numeric(length(unique(brant_bag))) == 1 ~ "brant_bag",
+            as.numeric(length(unique(seaducks_bag))) == 1 ~ "seaducks_bag",
             TRUE ~ NA_character_
           )
       ) %>%
-      filter(!is.na(uniformity))
+      filter(!is.na(uniformity)) %>%
+      select(dl_state, dl_date, uniformity) %>%
+      distinct()
 
-  if(nrow(validated_x) != 0){
+    if (nrow(validated_x) != 0) {
 
-    return(validated_x)
+      return(validated_x)
+      message("Warning: Uniform value detected across one or more fields, please review.")
 
-    message("Warning: Uniform value detected across one or more fields, please review.")
+    }
+    else{
+      message("Data are good to go!")
 
+    }
   }
-
-  else{
-
-    message("Data are good to go!")
-
-  }
-}

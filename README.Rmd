@@ -28,6 +28,7 @@ Tasks that can be accomplished with this package include:
 
 * `compile` and `compile_to_utf8` import data
 * `tidy` renames field names
+* `validate` checks for table-wide repetition
 * `proof` checks values for errors
 * `correct` systematically fixes erroneous values
 * Error visualization with `errorPlot_dl`, `errorPlot_fields`, and `errorPlot_states`

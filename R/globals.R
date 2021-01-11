@@ -78,5 +78,4 @@ utils::globalVariables(
     "zipPrefix",
     "dl_cycle",
     "validate",
-    "renamed_x",
     "uniformity"))
