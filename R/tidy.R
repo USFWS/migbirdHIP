@@ -39,12 +39,12 @@ tidy <-
         geese_bag = X14,
         dove_bag = X15,
         woodcock_bag = X16,
-        coots_snipe_bag = X17,
-        rails_gallinules_bag = X18,
-        cranes_bag = X19,
-        bt_pigeon_bag = X20,
-        brant_bag = X21,
-        seaducks_bag = X22,
+        coots_snipe = X17,
+        rails_gallinules = X18,
+        cranes = X19,
+        band_tailed_pigeon = X20,
+        brant = X21,
+        seaducks = X22,
         registration_yr = X23,
         email = X24) %>%
         # Add a download key

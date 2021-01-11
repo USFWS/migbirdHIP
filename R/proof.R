@@ -152,28 +152,28 @@ proof <-
           mutate(error = "woodcock_bag"),
         # Coots/snipe bag should only = 0, 1, 2
         keyed_x %>%
-          filter(!str_detect(coots_snipe_bag, "0|1|2")) %>%
-          mutate(error = "coots_snipe_bag"),
+          filter(!str_detect(coots_snipe, "0|1|2")) %>%
+          mutate(error = "coots_snipe"),
         # Rails/gallinules bag should only = 0, 1, 2
         keyed_x %>%
-          filter(!str_detect(rails_gallinules_bag, "0|1|2")) %>%
-          mutate(error = "rails_gallinules_bag"),
+          filter(!str_detect(rails_gallinules, "0|1|2")) %>%
+          mutate(error = "rails_gallinules"),
         # Cranes should only = 0, 1, 2
         keyed_x %>%
-          filter(!str_detect(cranes_bag, "0|1|2")) %>%
-          mutate(error = "cranes_bag"),
+          filter(!str_detect(cranes, "0|1|2")) %>%
+          mutate(error = "cranes"),
         # Band-tailed Pigeon should only = 0, 1, 2
         keyed_x %>%
-          filter(!str_detect(bt_pigeon_bag, "0|1|2")) %>%
-          mutate(error = "bt_pigeon_bag"),
+          filter(!str_detect(band_tailed_pigeon, "0|1|2")) %>%
+          mutate(error = "band_tailed_pigeon"),
         # Brant should only = 0, 1, 2
         keyed_x %>%
-          filter(!str_detect(brant_bag, "0|1|2")) %>%
-          mutate(error = "brant_bag"),
+          filter(!str_detect(brant, "0|1|2")) %>%
+          mutate(error = "brant"),
         # Seaducks should only = 0, 1, 2
         keyed_x %>%
-          filter(!str_detect(seaducks_bag, "0|1|2")) %>%
-          mutate(error = "seaducks_bag"),
+          filter(!str_detect(seaducks, "0|1|2")) %>%
+          mutate(error = "seaducks"),
         # Registration year should = survey year +/- 1
         keyed_x %>%
           filter(

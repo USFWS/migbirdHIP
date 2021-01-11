@@ -175,62 +175,62 @@ correct <-
       # Bag correction: coots and snipe
       left_join(
         hip_bags_ref %>%
-          mutate(coots_snipe_bag = as.character(stateBagValue)) %>%
+          mutate(coots_snipe = as.character(stateBagValue)) %>%
           filter(spp == "coots_snipe_bag") %>%
           select(-c("stateBagValue", "spp")),
-        by = c("state", "coots_snipe_bag")
+        by = c("state", "coots_snipe")
       ) %>%
-      mutate(coots_snipe_bag = FWSstratum) %>%
+      mutate(coots_snipe = FWSstratum) %>%
       select(-FWSstratum) %>%
       # Bag correction: rails and gallinules
       left_join(
         hip_bags_ref %>%
-          mutate(rails_gallinules_bag = as.character(stateBagValue)) %>%
+          mutate(rails_gallinules = as.character(stateBagValue)) %>%
           filter(spp == "rails_gallinules_bag") %>%
           select(-c("stateBagValue", "spp")),
-        by = c("state", "rails_gallinules_bag")
+        by = c("state", "rails_gallinules")
       ) %>%
-      mutate(rails_gallinules_bag = FWSstratum) %>%
+      mutate(rails_gallinules = FWSstratum) %>%
       select(-FWSstratum) %>%
       # Bag correction: cranes
       left_join(
         hip_bags_ref %>%
-          mutate(cranes_bag = as.character(stateBagValue)) %>%
+          mutate(cranes = as.character(stateBagValue)) %>%
           filter(spp == "cranes") %>%
           select(-c("stateBagValue", "spp")),
-        by = c("state", "cranes_bag")
+        by = c("state", "cranes")
       ) %>%
-      mutate(cranes_bag = FWSstratum) %>%
+      mutate(cranes = FWSstratum) %>%
       select(-FWSstratum) %>%
       # Bag correction: band-tailed pigeon
       left_join(
         hip_bags_ref %>%
-          mutate(bt_pigeon_bag = as.character(stateBagValue)) %>%
+          mutate(band_tailed_pigeon = as.character(stateBagValue)) %>%
           filter(spp == "band_tailed_pigeon") %>%
           select(-c("stateBagValue", "spp")),
-        by = c("state", "bt_pigeon_bag")
+        by = c("state", "band_tailed_pigeon")
       ) %>%
-      mutate(bt_pigeon_bag = FWSstratum) %>%
+      mutate(band_tailed_pigeon = FWSstratum) %>%
       select(-FWSstratum) %>%
       # Bag correction: brant
       left_join(
         hip_bags_ref %>%
-          mutate(brant_bag = as.character(stateBagValue)) %>%
+          mutate(brant = as.character(stateBagValue)) %>%
           filter(spp == "brant") %>%
           select(-c("stateBagValue", "spp")),
-        by = c("state", "brant_bag")
+        by = c("state", "brant")
       ) %>%
-      mutate(brant_bag = FWSstratum) %>%
+      mutate(brant = FWSstratum) %>%
       select(-FWSstratum) %>%
       # Bag correction: seaducks
       left_join(
         hip_bags_ref %>%
-          mutate(seaducks_bag = as.character(stateBagValue)) %>%
+          mutate(seaducks = as.character(stateBagValue)) %>%
           filter(spp == "seaducks") %>%
           select(-c("stateBagValue", "spp")),
-        by = c("state", "seaducks_bag")
+        by = c("state", "seaducks")
       ) %>%
-      mutate(seaducks_bag = FWSstratum) %>%
+      mutate(seaducks = FWSstratum) %>%
       select(-FWSstratum)
 
     # Re-run the proof script to get an updated errors column

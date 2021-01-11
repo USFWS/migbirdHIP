@@ -19,7 +19,10 @@ validate <-
 
     validated_x <-
       x %>%
-      select(dl_state, dl_date, contains("bag")) %>%
+      select(
+        dl_state,
+        dl_date,
+        matches("bag|coots|rails|cranes|pigeon|brant|seaducks")) %>%
       group_by(dl_state, dl_date) %>%
       suppressMessages(summarize(across(contains("bag"), ~n_distinct(.)))) %>%
       mutate(
@@ -37,18 +40,18 @@ validate <-
               paste0(uniformity, "-dove_bag"),
             as.numeric(length(unique(woodcock_bag))) == 1 ~
               paste0(uniformity, "-woodcock_bag"),
-            as.numeric(length(unique(coots_snipe_bag))) == 1 ~
-              paste0(uniformity, "-coots_snipe_bag"),
-            as.numeric(length(unique(rails_gallinules_bag))) == 1 ~
-              paste0(uniformity, "-rails_gallinules_bag"),
-            as.numeric(length(unique(cranes_bag))) == 1 ~
-              paste0(uniformity, "-cranes_bag"),
-            as.numeric(length(unique(bt_pigeon_bag))) == 1 ~
-              paste0(uniformity, "-bt_pigeon_bag"),
-            as.numeric(length(unique(brant_bag))) == 1 ~
-              paste0(uniformity, "-brant_bag"),
-            as.numeric(length(unique(seaducks_bag))) == 1 ~
-              paste0(uniformity, "-seaducks_bag"),
+            as.numeric(length(unique(coots_snipe))) == 1 ~
+              paste0(uniformity, "-coots_snipe"),
+            as.numeric(length(unique(rails_gallinules))) == 1 ~
+              paste0(uniformity, "-rails_gallinules"),
+            as.numeric(length(unique(cranes))) == 1 ~
+              paste0(uniformity, "-cranes"),
+            as.numeric(length(unique(band_tailed_pigeon))) == 1 ~
+              paste0(uniformity, "-band_tailed_pigeon"),
+            as.numeric(length(unique(brant))) == 1 ~
+              paste0(uniformity, "-brant"),
+            as.numeric(length(unique(seaducks))) == 1 ~
+              paste0(uniformity, "-seaducks"),
             TRUE ~ NA_character_
           ),
         # Remove unnecessary leading NA- strings from the first step
