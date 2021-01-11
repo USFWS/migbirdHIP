@@ -52,7 +52,9 @@ validate <-
             TRUE ~ NA_character_
           ),
         # Remove unnecessary leading NA- strings from the first step
-        uniformity = str_remove(uniformity, "NA\\-")
+        uniformity = str_remove(uniformity, "NA\\-"),
+        # How many values are uniform within the group?
+        n_uniform = n()
       ) %>%
       filter(!is.na(uniformity)) %>%
       select(dl_state, dl_date, uniformity) %>%
@@ -61,7 +63,11 @@ validate <-
     if (nrow(validated_x) != 0) {
 
       return(validated_x)
-      message("Warning: Uniform value detected across one or more fields, please review.")
+      message(
+        paste0(
+          "Warning: Uniform value detected across one or more fields, ",
+          "please review.")
+        )
 
     }
     else{
