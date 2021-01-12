@@ -60,7 +60,7 @@ compile_to_utf8 <-
     if(nrow(checked_state_files) != 0){
 
       print(checked_state_files)
-      message("Warning: File(s) with non-UTF-8 encoding will be re-written.")
+      message("Attention: File(s) with non-UTF-8 encoding will be re-written.")
 
       walk(
         1:nrow(checked_state_files),
