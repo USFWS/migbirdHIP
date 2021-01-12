@@ -31,29 +31,55 @@ validate <-
         # Paste col name into "uniformity" if it has only one value per dl_state
         # and dl_date (the grouping values)
         uniformity =
-          case_when(
-            as.numeric(length(unique(ducks_bag))) == 1 ~
-              paste0(uniformity, "-ducks_bag"),
-            as.numeric(length(unique(geese_bag))) == 1 ~
-              paste0(uniformity, "-geese_bag"),
-            as.numeric(length(unique(dove_bag))) == 1 ~
-              paste0(uniformity, "-dove_bag"),
-            as.numeric(length(unique(woodcock_bag))) == 1 ~
-              paste0(uniformity, "-woodcock_bag"),
-            as.numeric(length(unique(coots_snipe))) == 1 ~
-              paste0(uniformity, "-coots_snipe"),
-            as.numeric(length(unique(rails_gallinules))) == 1 ~
-              paste0(uniformity, "-rails_gallinules"),
-            as.numeric(length(unique(cranes))) == 1 ~
-              paste0(uniformity, "-cranes"),
-            as.numeric(length(unique(band_tailed_pigeon))) == 1 ~
-              paste0(uniformity, "-band_tailed_pigeon"),
-            as.numeric(length(unique(brant))) == 1 ~
-              paste0(uniformity, "-brant"),
-            as.numeric(length(unique(seaducks))) == 1 ~
-              paste0(uniformity, "-seaducks"),
-            TRUE ~ NA_character_
-          ),
+          ifelse(
+            as.numeric(length(unique(ducks_bag))) == 1,
+            paste0(uniformity, "-ducks_bag"),
+            NA),
+        uniformity =
+          ifelse(
+            as.numeric(length(unique(geese_bag))) == 1,
+            paste0(uniformity, "-geese_bag"),
+            NA),
+        uniformity =
+          ifelse(
+            as.numeric(length(unique(dove_bag))) == 1,
+            paste0(uniformity, "-dove_bag"),
+            NA),
+        uniformity =
+          ifelse(
+            as.numeric(length(unique(woodcock_bag))) == 1,
+            paste0(uniformity, "-woodcock_bag"),
+            NA),
+        uniformity =
+          ifelse(
+            as.numeric(length(unique(coots_snipe))) == 1,
+            paste0(uniformity, "-coots_snipe"),
+            NA),
+        uniformity =
+          ifelse(
+            as.numeric(length(unique(rails_gallinules))) == 1,
+            paste0(uniformity, "-rails_gallinules"),
+            NA),
+        uniformity =
+          ifelse(
+            as.numeric(length(unique(cranes))) == 1,
+            paste0(uniformity, "-cranes"),
+            NA),
+        uniformity =
+          ifelse(
+            as.numeric(length(unique(band_tailed_pigeon))) == 1,
+            paste0(uniformity, "-band_tailed_pigeon"),
+            NA),
+        uniformity =
+          ifelse(
+            as.numeric(length(unique(brant))) == 1,
+            paste0(uniformity, "-brant"),
+            NA),
+        uniformity =
+          ifelse(
+            as.numeric(length(unique(seaducks))) == 1,
+            paste0(uniformity, "-seaducks"),
+            NA),
         # Remove unnecessary leading NA- strings from the first step
         uniformity = str_remove(uniformity, "NA\\-")) %>%
       filter(!is.na(uniformity)) %>%
@@ -66,13 +92,13 @@ validate <-
 
     if(nrow(validated_x) != 0) {
 
-      print(validated_x)
-
       message(
         paste0(
-          "Attention: Uniform value detected across one or more fields, ",
+          "Attention: Uniform value detected within one or more fields, ",
           "please review.")
-        )
+      )
+
+      return(validated_x)
 
     }
     else{
