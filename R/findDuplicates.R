@@ -60,12 +60,10 @@ findDuplicates <-
       nrow()
 
     dupl_message <-
-      message(
-        paste(
-          "There are", duplicate_individuals,
-          "hunters with duplicates;", duplicate_total,
-          "total duplicated records.", sep = " ")
-      )
+      paste(
+        "There are", duplicate_individuals,
+        "hunters with duplicates;", duplicate_total,
+        "total duplicated records.", sep = " ")
 
     dupl_tibble <-
       bind_rows(
