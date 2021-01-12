@@ -77,5 +77,6 @@ utils::globalVariables(
     "specifics",
     "zipPrefix",
     "dl_cycle",
-    "validate",
-    "uniformity"))
+    "uniformity",
+    "n_uniform",
+    "species"))

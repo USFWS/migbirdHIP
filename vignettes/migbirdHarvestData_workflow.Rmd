@@ -25,6 +25,7 @@ vignette: >
     - [youthHunters](#youthhunters)
     - [errorPlot_dl](#errorplot_dl)
 - [Stage 3: Explore Errors](#stage-3-explore-errors)
+    - [investigate](#investigate)
     - [errorTable](#errortable)
     - [pullErrors](#pullerrors)
     - [redFlags](#redflags)
@@ -90,7 +91,9 @@ This function renames columns and does simple mutations, such as:
 validate(DL1202_tidied)
 ```
 
-An important intermediate step is to `validate` the data. This function can be run on the data after they are tidied. It looks across download states and download dates to make sure that uniform numbers were not reported across bags. If a uniformity is detected, the errors are returned in a tibble with a warning. If there are no uniformities, a positive message is returned.
+An important intermediate step is to `validate` the data. This function can be run on the data after they are tidied. It looks across download states and download dates to make sure that uniform numbers were not reported across bags. If a uniformity is detected, the errors are returned in a tibble with a warning. If there are no uniformities, a positive message is returned. 
+
+Repeated values returned from the `validate` function can be looked at more closely using `investigate` (see Stage 3: [investigate](#investigate)).
 
 ### proof
 
@@ -171,6 +174,14 @@ This function should not be used unless you want to visualize an entire season o
 
 
 ## Stage 3: Explore Errors
+
+### investigate
+
+Did the `validate` function return repeated values? Are some of those values a high number that are uniform and need to be looked at more closely? The `investigate` function allows you to see what value was repeated for a species. Paramaters required are `dl_date`, `dl_state` and `species`, which are all provided in the output of [validate](#validate).
+
+```{r investigate}
+investigate(DL1202_tidied, dl_state = "TX", dl_date = "20201216", species = "cranes")
+```
 
 ### errorTable
 
