@@ -60,7 +60,7 @@ compile <-
     if(nrow(checked_state_files) != 0){
 
       print(checked_state_files)
-      message("Error: Directory contains file(s) with non-UTF-8 encoding.")
+      warning("Directory contains file(s) with non-UTF-8 encoding.")
 
     }
 
