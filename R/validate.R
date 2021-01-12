@@ -61,15 +61,16 @@ validate <-
       # How many values are uniform within each group?
       mutate(n_uniform = n()) %>%
       ungroup() %>%
-      distinct()
+      distinct() %>%
+      arrange(desc(n_uniform))
 
     if(nrow(validated_x) != 0) {
 
-      return(validated_x)
+      print(validated_x)
 
-      warning(
+      message(
         paste0(
-          "Warning: Uniform value detected across one or more fields, ",
+          "Attention: Uniform value detected across one or more fields, ",
           "please review.")
         )
 
