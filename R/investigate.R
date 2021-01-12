@@ -29,6 +29,12 @@ investigate <-
       select(quo_name(species)) %>%
       distinct()
 
-    return(investigated_x)
+    if(nrow(investigated_x) == 0) {
+      message("Are you sure you entered all of the parameters correctly?")
+    }
+
+    else{
+      return(investigated_x)
+    }
   }
 
