@@ -134,7 +134,7 @@ errorTable <-
                 ungroup() %>%
                 rename(error = errors)}
             else{
-              c("Invalid location.")
+              warning("Invalid location.")
             }
           }
           else if(!str_detect(loc, "none|all") & field == "none"){
@@ -157,7 +157,7 @@ errorTable <-
                 rename(total_errors = error_count)
             }
             else{
-              c("Invalid location.")
+              warning("Invalid location.")
             }
           }
           else if(
@@ -182,7 +182,7 @@ errorTable <-
                 filter(error == field)
             }
             else{
-              c("Invalid location.")
+              warning("Invalid location.")
             }
           }
           else{
