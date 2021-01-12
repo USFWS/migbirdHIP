@@ -4,16 +4,18 @@
 \alias{investigate}
 \title{Investigate data}
 \usage{
-investigate(x, dl_state, dl_date, species)
+investigate(x, loc, date, species)
 }
 \arguments{
 \item{x}{The object created after tidying data with \code{\link{tidy}}}
 
-\item{dl_state}{The download state in question}
+\item{loc}{The download state in question}
 
-\item{dl_date}{The download date in question}
+\item{date}{The download date in question}
 
-\item{species}{The bird group in question}
+\item{species}{The bird group in question. One of the bird groups from the following list may be supplied:
+\itemize{
+\item ducks_bag, geese_bag, dove_bag, woodcock_bag, coots_snipe, rails_gallinules, cranes, band_tailed_pigeon, brant, seaducks}}
 }
 \description{
 After checking the data with \code{\link{validate}}, look into reported repeated values to determine if they are worrisome.

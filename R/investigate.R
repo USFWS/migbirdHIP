@@ -8,9 +8,11 @@
 #' @import tibble
 #'
 #' @param x The object created after tidying data with \code{\link{tidy}}
-#' @param dl_state The download state in question
-#' @param dl_date The download date in question
-#' @param species The bird group in question
+#' @param loc The download state in question
+#' @param date The download date in question
+#' @param species The bird group in question. One of the bird groups from the following list may be supplied:
+#' \itemize{
+#' \item ducks_bag, geese_bag, dove_bag, woodcock_bag, coots_snipe, rails_gallinules, cranes, band_tailed_pigeon, brant, seaducks}
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHarvestData}
@@ -18,13 +20,15 @@
 #' @export
 
 investigate <-
-  function(x, dl_state, dl_date, species){
+  function(x, loc, date, species){
 
     investigated_x <-
       x %>%
-      filter(dl_state == dl_state & dl_date == dl_date) %>%
-      select(species) %>%
+      select(dl_state, dl_date, ducks_bag:seaducks) %>%
+      filter(dl_state == loc & dl_date == date) %>%
+      select(quo_name(species)) %>%
       distinct()
 
     return(investigated_x)
   }
+

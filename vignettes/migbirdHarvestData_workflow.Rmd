@@ -177,10 +177,10 @@ This function should not be used unless you want to visualize an entire season o
 
 ### investigate
 
-Did the `validate` function return repeated values? Are some of those values a high number that are uniform and need to be looked at more closely? The `investigate` function allows you to see what value was repeated for a species. Paramaters required are `dl_date`, `dl_state` and `species`, which are all provided in the output of [validate](#validate).
+Did the `validate` function return repeated values? Are some of those values a high number that are uniform and need to be looked at more closely? The `investigate` function allows you to see what value was repeated for a species. Parameters required are download state, download date, and species, which are all provided in the output of [validate](#validate).
 
 ```{r investigate}
-investigate(DL1202_tidied, dl_state = "TX", dl_date = "20201216", species = "cranes")
+#investigate(DL1202_tidied, loc = "TX", date = "20201216", species = "cranes")
 ```
 
 ### errorTable
