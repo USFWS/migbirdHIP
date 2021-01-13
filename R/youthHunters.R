@@ -64,11 +64,8 @@ youthHunters <-
       theme_classic() +
       theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
 
-    youth_list <-
-      list(
-        youth_hunters,
-        youth_plot)
+    print(youth_plot)
 
-    return(youth_list)
+    return(youth_hunters)
 
   }

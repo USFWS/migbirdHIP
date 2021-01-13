@@ -59,12 +59,6 @@ findDuplicates <-
       distinct() %>%
       nrow()
 
-    dupl_message <-
-      paste(
-        "There are", duplicate_individuals,
-        "hunters with duplicates;", duplicate_total,
-        "total duplicated records.", sep = " ")
-
     dupl_tibble <-
       bind_rows(
         duplicates %>%
@@ -152,12 +146,15 @@ findDuplicates <-
           summarize(count = n()) %>%
           ungroup())
 
-    dupl_list <-
-      list(
-        dupl_message,
-        dupl_summary,
-        dupl_plot)
+    message(
+      paste(
+        "There are", duplicate_individuals,
+        "hunters with duplicates;", duplicate_total,
+        "total duplicated records.", sep = " ")
+    )
 
-    return(dupl_list)
+    print(dupl_plot)
+
+    return(dupl_summary)
 
   }
