@@ -32,7 +32,7 @@ errorPlot_fields <-
         if(!is.na(specify)){
           if(loc == "all"){
             x %>%
-              select(errors, birth_date, zip) %>%
+              select(errors, birth_date, zip, dl_date) %>%
               separate(errors, into = as.character(c(1:25)), sep = "-") %>%
               pivot_longer(1:25, names_to = "name") %>%
               select(-name) %>%
@@ -74,7 +74,7 @@ errorPlot_fields <-
           else{
             x %>%
               filter(state == loc) %>%
-              select(errors, birth_date, zip) %>%
+              select(errors, birth_date, zip, dl_date) %>%
               separate(errors, into = as.character(c(1:25)), sep = "-") %>%
               pivot_longer(1:25, names_to = "name") %>%
               select(-name) %>%
@@ -117,7 +117,7 @@ errorPlot_fields <-
         else{
           if(loc == "all"){
             x %>%
-              select(errors) %>%
+              select(errors, dl_date) %>%
               separate(errors, into = as.character(c(1:25)), sep = "-") %>%
               pivot_longer(1:25, names_to = "name") %>%
               select(-name) %>%
@@ -143,7 +143,7 @@ errorPlot_fields <-
           else{
             x %>%
               filter(state == loc) %>%
-              select(errors) %>%
+              select(errors, dl_date) %>%
               separate(errors, into = as.character(c(1:25)), sep = "-") %>%
               pivot_longer(1:25, names_to = "name") %>%
               select(-name) %>%
