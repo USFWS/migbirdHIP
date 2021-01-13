@@ -52,10 +52,7 @@ outOfStateHunters <-
       theme_classic() +
       theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
 
-    oos_list <-
-      list(
-        out_of_staters,
-        oos_plot)
+    print(oos_plot)
 
-    return(oos_list)
+    return(out_of_staters)
   }
