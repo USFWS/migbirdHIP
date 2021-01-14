@@ -129,6 +129,12 @@ The year in which the HIP data were collected can also be specified in `errorPlo
 errorPlot_fields(DL1202_proofed, specify = 2020)
 ```
 
+Lastly, for season total data, the plot can be faceted using either dl_cycle or dl_date. In addition, it is possible to add any other ggplot2 arguments to the plot.
+
+```{r errorfieldsfacet, eval = FALSE}
+errorPlot_fields(DL1202_proofed, specify = 2020) + facet_wrap(~dl_cycle)
+```
+
 
 ### errorPlot_states
 
