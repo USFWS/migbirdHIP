@@ -24,15 +24,6 @@
 errorPlot_states <-
   function(x, type) {
 
-    states_provinces_and_canada <-
-      c("AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "DC", "FL", "GA", "HI",
-        "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN",
-        "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH",
-        "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA",
-        "WV", "WI", "WY", "AS", "GU", "MP", "PR", "VI", "UM", "FM", "MH", "PW",
-        "AA", "AE", "AP", "CM", "CZ", "NB", "PI", "TT", "ON", "QC", "NS", "NB",
-        "MB", "BC", "PE", "SK", "AB", "NL")
-
     if(type == "proportion") {
 
       # Plot proportion of errors by state
@@ -40,14 +31,13 @@ errorPlot_states <-
         suppressWarnings(
           suppressMessages(
             x %>%
-              select(errors, state) %>%
+              select(errors, dl_state) %>%
               mutate(temp_key = row_number()) %>%
               separate(errors, into = as.character(c(1:25)), sep = "-") %>%
               pivot_longer(1:25, names_to = "name") %>%
               select(-name) %>%
               rename(errors = value) %>%
-              filter(state %in% states_provinces_and_canada) %>%
-              group_by(state) %>%
+              group_by(dl_state) %>%
               summarize(
                 count_errors = sum(!is.na(errors)),
                 count_correct = sum(is.na(errors))) %>%
@@ -58,12 +48,12 @@ errorPlot_states <-
               ggplot() +
               geom_bar(aes(
                 y = proportion,
-                x = reorder(state, proportion)),
+                x = reorder(dl_state, proportion)),
                 stat = "identity") +
               geom_text(
                 aes(
                   y = proportion,
-                  x = reorder(state, proportion),
+                  x = reorder(dl_state, proportion),
                   label = round(proportion, digits = 2),
                   angle = 90),
                 vjust = 0.2,
@@ -87,14 +77,13 @@ errorPlot_states <-
         suppressWarnings(
           suppressMessages(
             x %>%
-              select(errors, state) %>%
+              select(errors, dl_state) %>%
               mutate(temp_key = row_number()) %>%
               separate(errors, into = as.character(c(1:25)), sep = "-") %>%
               pivot_longer(1:25, names_to = "name") %>%
               select(-name) %>%
               rename(errors = value) %>%
-              filter(state %in% states_provinces_and_canada) %>%
-              group_by(state) %>%
+              group_by(dl_state) %>%
               summarize(
                 count_errors = sum(!is.na(errors)),
                 count_correct = sum(is.na(errors))) %>%
@@ -103,12 +92,12 @@ errorPlot_states <-
               ggplot() +
               geom_bar(aes(
                 y = count_errors,
-                x = reorder(state, count_errors)),
+                x = reorder(dl_state, count_errors)),
                 stat = "identity") +
               geom_text(
                 aes(
                   y = count_errors,
-                  x = reorder(state, count_errors),
+                  x = reorder(dl_state, count_errors),
                   label = count_errors,
                   angle = 90),
                 vjust = 0.2,
