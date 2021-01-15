@@ -231,12 +231,7 @@ correct <-
         by = c("state", "seaducks")
       ) %>%
       mutate(seaducks = FWSstratum) %>%
-      select(-FWSstratum) %>%
-      # Rename _bag to _strata
-      rename_at(
-        vars(contains("_bag")),
-        ~str_replace(., "_bag", "_strata")
-      )
+      select(-FWSstratum)
 
     # Re-run the proof script to get an updated errors column
 
@@ -258,7 +253,11 @@ correct <-
               paste0(errors, "-zip"),
             TRUE ~ errors)
       ) %>%
-      select(-c("zipPrefix", "zipState"))
+      select(-c("zipPrefix", "zipState")) %>%
+      # Rename _bag to _strata
+      rename_at(
+        vars(contains("_bag")),
+        ~str_replace(., "_bag", "_strata"))
 
     return(corrproof_x)
 
