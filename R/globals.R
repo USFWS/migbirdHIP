@@ -78,4 +78,6 @@ utils::globalVariables(
     "zipPrefix",
     "dl_cycle",
     "uniformity",
-    "n_uniform"))
+    "n_uniform",
+    "n_total",
+    "outofstate_prop"))

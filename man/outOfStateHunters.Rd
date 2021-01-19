@@ -4,10 +4,17 @@
 \alias{outOfStateHunters}
 \title{Find out-of-state hunters}
 \usage{
-outOfStateHunters(x)
+outOfStateHunters(x, type)
 }
 \arguments{
 \item{x}{A proofed data table created by \code{\link{proof}}}
+
+\item{type}{Type of plot to create
+Acceptable values include:
+\itemize{
+\item proportion - Number of out-of-state hunters divided by the total hunters per state
+\item count - Count of out-of-state hunters per state
+}}
 }
 \description{
 Create a tibble and plot of hunters who have reported hunting migratory waterfowl outside of the state associated with their address.

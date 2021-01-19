@@ -158,15 +158,19 @@ findDuplicates(DL1202_proofed)
 
 ### outOfStateHunters
 
-The `outOfStateHunters` function allows us to visualize how many hunters report harvests from a location that does not match the state, province, or territory of their address. A list is returned from this function, so a table can be written to .csv from the first list element if needed.
+The `outOfStateHunters` function allows us to visualize how many hunters report harvests from a location that does not match the state, province, or territory of their address. This function can plot errors as either proportions or counts by state. 
 
-```{r outofstate, fig.width = 6, fig.height = 3.5}
-outOfStateHunters(DL1202_proofed)
+```{r outofstatect, fig.width = 6, fig.height = 3.5}
+outOfStateHunters(DL1202_proofed, type = "count")
+```
+
+```{r outofstatepr, fig.width = 6, fig.height = 3.5}
+outOfStateHunters(DL1202_proofed, type = "proportion")
 ```
 
 ### youthHunters
 
-The `youthHunters` function returns a listed table and plot of the number of hunters with birth dates < 16 years from the year of HIP data collection. These data are interesting to explore because hunters younger than 16 years of age are not required to have a migratory bird hunting license in the United States. 
+The `youthHunters` function returns a table and plot of the number of hunters with birth dates < 16 years from the year of HIP data collection. These data are interesting to explore because hunters younger than 16 years of age are not required to have a migratory bird hunting license in the United States. 
 
 ```{r youth, fig.width = 6}
 youthHunters(DL1202_proofed, year = 2020)
