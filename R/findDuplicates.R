@@ -160,7 +160,7 @@ findDuplicates <-
         stat = "count",
         vjust = -1) +
       labs(
-        x = "Duplicate Cause",
+        x = "Inconsistent field(s) for duplicated hunters",
         y = "Count",
         title = "Types of duplicates") +
       scale_y_continuous(expand = expansion(mult = c(-0, 0.2))) +
