@@ -60,64 +60,103 @@ findDuplicates <-
       nrow()
 
     dupl_tibble <-
-      bind_rows(
-        duplicates %>%
-          group_by(firstname, lastname, city, state, birth_date, issue_date) %>%
-          mutate(
-            dupl =
-              ifelse(
-                n() > 1,
-                "issue_date",
-                NA)) %>%
-          ungroup(),
-        duplicates %>%
-          group_by(firstname, lastname, city, state, birth_date, dl_date) %>%
-          mutate(
-            dupl =
-              ifelse(
-                n() > 1,
-                "dl_date",
-                NA)) %>%
-          ungroup(),
-        duplicates %>%
-          group_by(firstname, lastname, city, state, birth_date, dl_state) %>%
-          mutate(
-            dupl =
-              ifelse(
-                n() > 1,
-                "dl_state",
-                NA)) %>%
-          ungroup()
-      ) %>%
-      select(hunter_key, dupl) %>%
-      group_by(hunter_key) %>%
+      duplicates
+      select(-c("hunter_key", "duplicate")) %>%
+      group_by(firstname, lastname, city, state, birth_date) %>%
       mutate(
-        duplicate_type =
-          paste(dupl, collapse = "-")) %>%
+        # Hunter key per individual (not per row)
+        hunter_key = cur_group_id(),
+        # Find the reason for the duplicates
+        dupl = "",
+        # Iterate over each field in order to paste the field names together
+        # (can't be done with case_when)
+        dupl =
+          ifelse(
+            length(unique(title)) > 1,
+            paste(dupl, "title", sep = "-"),
+            dupl),
+        dupl =
+          ifelse(
+            length(unique(middle)) > 1,
+            paste(dupl, "middle", sep = "-"),
+            dupl),
+        dupl =
+          ifelse(
+            length(unique(suffix)) > 1,
+            paste(dupl, "suffix", sep = "-"),
+            dupl),
+        dupl =
+          ifelse(
+            length(unique(address)) > 1,
+            paste(dupl, "address", sep = "-"),
+            dupl),
+        dupl =
+          ifelse(
+            length(unique(zip)) > 1,
+            paste(dupl, "zip", sep = "-"),
+            dupl),
+        dupl =
+          ifelse(
+            length(unique(birth_date)) > 1,
+            paste(dupl, "birth_date", sep = "-"),
+            dupl),
+        dupl =
+          ifelse(
+            length(unique(issue_date)) > 1,
+            paste(dupl, "issue_date", sep = "-"),
+            dupl),
+        dupl =
+          ifelse(
+            length(unique(hunt_mig_birds)) > 1,
+            paste(dupl, "hunt_mig_birds", sep = "-"),
+            dupl),
+        dupl =
+          ifelse(
+            length(unique(registration_yr)) > 1,
+            paste(dupl, "registration_yr", sep = "-"),
+            dupl),
+        dupl =
+          ifelse(
+            length(unique(email)) > 1,
+            paste(dupl, "email", sep = "-"),
+            dupl),
+        dupl =
+          ifelse(
+            length(unique(dl_state)) > 1,
+            paste(dupl, "dl_state", sep = "-"),
+            dupl),
+        dupl =
+          ifelse(
+            length(unique(dl_date)) > 1,
+            paste(dupl, "dl_date", sep = "-"),
+            dupl),
+        dupl =
+          ifelse(
+            length(unique(dl_cycle)) > 1,
+            paste(dupl, "dl_cycle", sep = "-"),
+            dupl),
+        dupl = ifelse(str_detect(dupl, "^$"), "bag", dupl),
+        dupl = str_remove(dupl, "^\\-")
+      ) %>%
       ungroup() %>%
-      mutate(
-        duplicate_type =
-          ifelse(
-            str_detect(duplicate_type, "NA\\-|\\-NA"),
-            str_remove_all(duplicate_type, "NA\\-|\\-NA"),
-            duplicate_type),
-        # Can't pipe '.' so repeat mutate
-        duplicate_type =
-          ifelse(
-            str_detect(duplicate_type, "^NA$"),
-            NA,
-            duplicate_type)
-      ) %>%
-      arrange(hunter_key) %>%
-      select(hunter_key, duplicate_type) %>%
+      select(hunter_key, dupl) %>%
       distinct()
 
     dupl_plot <-
       dupl_tibble %>%
-      ggplot(aes(x = duplicate_type)) +
+      mutate(
+        dupl =
+          case_when(
+            str_detect(dupl, "[a-z|a-z\\_a-z|a-z|a-z\\_a-z\\_a-z|a-z\\_a-z]{1,}\\-[a-z|a-z\\_a-z]{1,}\\-[a-z|a-z\\_a-z]{1,}\\-[a-z|a-z\\_a-z]{1,}\\-[a-z|a-z\\_a-z]{1,}") ~ "5+ fields",
+            str_detect(dupl, "[a-z|a-z\\_a-z]{1,}\\-[a-z|a-z\\_a-z]{1,}\\-[a-z|a-z\\_a-z]{1,}\\-[a-z|a-z\\_a-z]{1,}") ~ "4 fields",
+            str_detect(dupl, "[a-z|a-z\\_a-z]{1,}\\-[a-z|a-z\\_a-z]{1,}\\-[a-z|a-z\\_a-z]{1,}") ~ "3 fields",
+            str_detect(dupl, "[a-z|a-z\\_a-z]{1,}\\-[a-z|a-z\\_a-z]{1,}") ~ "2 fields",
+            TRUE ~ dupl)
+      ) %>%
+      ggplot(aes(x = dupl)) +
       geom_bar(stat = "count") +
       geom_text(
-        aes(x = duplicate_type, label = stat(count)),
+        aes(x = dupl, label = stat(count)),
         stat = "count",
         vjust = -1) +
       labs(
@@ -125,24 +164,13 @@ findDuplicates <-
         y = "Count",
         title = "Types of duplicates") +
       scale_y_continuous(expand = expansion(mult = c(-0, 0.2))) +
-      scale_x_discrete(
-        labels =
-          c("dl_date" = "DL Date",
-            "dl_date-dl_state" = "DL Date\nDL State",
-            "dl_state" = "DL State",
-            "issue_date" = "Issue Date",
-            "issue_date-dl_date" = "Issue Date\nDL Date",
-            "issue_date-dl_date-dl_state" = "Issue Date\nDL Date\nDL State",
-            "issue_date-dl_state" = "Issue Date\nDL State",
-            "NA" = "Other")
-      ) +
       theme_classic() +
       theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
 
     dupl_summary <-
       suppressMessages(
         dupl_tibble %>%
-          group_by(duplicate_type) %>%
+          group_by(dupl) %>%
           summarize(count = n()) %>%
           ungroup())
 
