@@ -24,7 +24,8 @@
 
 outOfStateHunters <-
   function(x, type){
-    if (type == "count") {
+
+    if(type == "count"){
 
       out_of_staters <-
         suppressWarnings(suppressMessages(
@@ -64,7 +65,8 @@ outOfStateHunters <-
       print(oos_plot)
       return(out_of_staters)
     }
-    else if (type == "proportion") {
+
+    else if(type == "proportion"){
 
       out_of_staters <-
         suppressWarnings(suppressMessages(
@@ -120,6 +122,7 @@ outOfStateHunters <-
       print(oos_plot)
       return(oos_proportion)
     }
+
     else{
       message("Error: Invalid plot type supplied.")
     }
