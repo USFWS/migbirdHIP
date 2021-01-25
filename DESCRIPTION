@@ -9,10 +9,10 @@ Imports:
     readr,
     tibble,
     ggplot2,
-    lifecycle
-Suggests:
-    knitr,
+    lifecycle,
     rmarkdown
+Suggests:
+    knitr
 VignetteBuilder: knitr
 Authors@R: 
     person(given = "Abby",
