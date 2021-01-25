@@ -22,7 +22,11 @@ writeReport <-
   function(path, type, yr){
 
     render(
-      input = paste0("inst/", type, ".Rmd"),
+      input =
+        system.file(
+          "templates",
+          paste0(type, ".Rmd"),
+          package = "migbirdHarvestData"),
       params =
         list(
           comp_path = path,
