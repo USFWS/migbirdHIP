@@ -1,0 +1,98 @@
+---
+title: "Harvest Information Program Download Cycle Report"
+date: '`r format(Sys.Date(), "%B %d, %Y")`'
+output: 
+  html_document:
+    toc: true
+    toc_depth: 3
+    number_sections: true
+    theme: cerulean
+---
+
+```{r import, include = FALSE}
+
+season_data <- compile_to_utf8(param$comp_path)
+
+tidy_data <- tidy(season_data)
+
+proofed_data <- proof(tidied_data, year = param$year)
+
+corrected_data <- correct(proofed_data, year = param$year)
+
+```
+
+# Introduction
+
+This is a report of download cycle `proofed_data$dl_cycle %>% distinct %>% pull`.
+
+# Visualization of errors
+
+## Error plots
+
+### Errors by field
+
+#### Before correction
+```{r erpf, echo = FALSE}
+errorPlot_fields(proofed_data, specify = param$year)
+```
+
+#### After correction
+```{r erpf_c, echo = FALSE}
+errorPlot_fields(corrected_data, specify = param$year)
+```
+
+### Errors by state
+
+#### Before correction
+```{r erps, echo = FALSE}
+errorPlot_states(proofed_data, type = "proportion")
+```
+
+#### After correction
+```{r erps_c, echo = FALSE}
+errorPlot_states(corrected_data, type = "proportion")
+```
+
+## Duplicates
+
+#### Before correction
+```{r fd, echo = FALSE}
+findDuplicates(proofed_data)
+```
+
+### After correction
+```{r fd_c, echo = FALSE}
+findDuplicates(corrected_data)
+```
+
+## Out-of-state hunters
+
+### Before correction
+```{r oosh, echo = FALSE}
+outOfStateHunters(proofed_data, type = "proportion")
+```
+
+### After correction
+```{r oosh_c, echo = FALSE}
+outOfStateHunters(corrected_data, type = "proportion")
+```
+
+## Youth hunters
+
+```{r yh, echo = FALSE}
+youthHunters(proofed_data, type = "proportion")
+```
+
+# Explore errors
+
+## investigate
+
+
+## errorTable
+
+
+## pullErrors
+
+
+## redFlags
+
