@@ -22,6 +22,10 @@ tidied_data <- tidy(season_data)
 
 proofed_data <- proof(tidied_data, year = params$year)
 
+# Remove original and tidied data to improve memory use
+rm(season_data)
+rm(tidied_data)
+
 corrected_data <- correct(proofed_data, year = params$year)
 
 ```
