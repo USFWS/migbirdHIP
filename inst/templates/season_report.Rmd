@@ -103,7 +103,7 @@ outOfStateHunters(corrected_data, type = "proportion")
 ## Youth hunters
 
 ```{r yh, echo = FALSE}
-youthHunters(proofed_data, type = "proportion")
+youthHunters(proofed_data, year = params$year)
 ```
 
 # Explore errors

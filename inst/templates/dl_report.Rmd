@@ -22,6 +22,10 @@ tidied_data <- tidy(dl_data)
 
 proofed_data <- proof(tidied_data, year = params$year)
 
+# Remove original and tidied data to improve memory use
+rm(dl_data)
+rm(tidied_data)
+
 corrected_data <- correct(proofed_data, year = params$year)
 
 ```
@@ -85,7 +89,7 @@ outOfStateHunters(corrected_data, type = "proportion")
 ## Youth hunters
 
 ```{r yh, echo = FALSE}
-youthHunters(proofed_data, type = "proportion")
+youthHunters(proofed_data, year = params$year)
 ```
 
 # Explore errors
