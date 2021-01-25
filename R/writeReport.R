@@ -19,7 +19,7 @@
 #' @export
 
 writeReport <-
-  function(path, type){
+  function(path, type, yr){
 
     render(
       input = paste0("inst/", type, ".Rmd"),
