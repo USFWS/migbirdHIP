@@ -9,7 +9,7 @@
 #' @import purrr
 #' @import tibble
 #'
-#' @param path The path to the data .txt files
+#' @param path File path to the folder containing HIP .txt files
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHarvestData}

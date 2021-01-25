@@ -7,7 +7,7 @@
 compile_to_utf8(path)
 }
 \arguments{
-\item{path}{The path to HIP .txt files}
+\item{path}{File path to the folder containing HIP .txt files}
 }
 \description{
 Compile data from all state-exported text files by providing a path to the download directory
