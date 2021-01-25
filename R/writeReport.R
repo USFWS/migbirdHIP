@@ -31,6 +31,6 @@ writeReport <-
         list(
           comp_path = path,
           year = yr),
-      output = filename)
+      output_file = filename)
 
   }
