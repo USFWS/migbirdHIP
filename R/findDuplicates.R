@@ -60,7 +60,7 @@ findDuplicates <-
       nrow()
 
     dupl_tibble <-
-      duplicates
+      duplicates %>%
       select(-c("hunter_key", "duplicate")) %>%
       group_by(firstname, lastname, city, state, birth_date) %>%
       mutate(
