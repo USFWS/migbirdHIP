@@ -18,7 +18,7 @@ params:
 
 season_data <- compile_to_utf8(params$comp_path)
 
-tidy_data <- tidy(season_data)
+tidied_data <- tidy(season_data)
 
 proofed_data <- proof(tidied_data, year = params$year)
 

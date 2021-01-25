@@ -16,9 +16,9 @@ params:
 
 ```{r import, include = FALSE}
 
-season_data <- compile_to_utf8(params$comp_path)
+dl_data <- compile_to_utf8(params$comp_path)
 
-tidy_data <- tidy(season_data)
+tidied_data <- tidy(dl_data)
 
 proofed_data <- proof(tidied_data, year = params$year)
 
