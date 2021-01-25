@@ -11,7 +11,7 @@
 #' \item dl_report - for a download cycle summary report
 #' \item season_report - for a summary of the entire HIP season}
 #' @param yr The year in which the Harvest Information Program data were collected
-#'
+#' @param filename What the output .Rmd file should be named
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHarvestData}
@@ -19,7 +19,7 @@
 #' @export
 
 writeReport <-
-  function(path, type, yr){
+  function(path, type, yr, filename){
 
     render(
       input =
@@ -30,6 +30,7 @@ writeReport <-
       params =
         list(
           comp_path = path,
-          year = yr))
+          year = yr),
+      output = filename)
 
   }
