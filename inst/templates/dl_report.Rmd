@@ -7,6 +7,11 @@ output:
     toc_depth: 3
     number_sections: true
     theme: cerulean
+params:
+  comp_path:
+    value: x
+  year:
+    value: x
 ---
 
 ```{r import, include = FALSE}
