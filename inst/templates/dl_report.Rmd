@@ -40,6 +40,8 @@ This is a report of download cycle `r proofed_data$dl_cycle %>% distinct %>% pul
 
 # Visualization of errors
 
+To get a general idea of what the data look like, first we visualize the errors as plots.
+
 ## Error plots
 
 ### Errors by field
@@ -124,15 +126,15 @@ pullErrors(proofed_data, error = et$error[3])
 
 ## High error proportions
 
-**Q: What states and fields had a proportion of error that exceeded a certain threshold?**
+**Q: What states and fields had a proportion of error that exceeded an acceptable threshold?**
 
-States that had more than 3% error in the data sent to the Fish and Wildlife Service...
+**States** with more than 1% error
 
 ```{r rfs, echo = FALSE}
 redFlags(proofed_data, type = "state", threshold = 0.1)
 ```
 
-Fields that had more than 3% error...
+**Fields** with more than 1% error
 
 ```{r rff, echo = FALSE}
 redFlags(proofed_data, type = "field", threshold = 0.1)
