@@ -31,6 +31,8 @@ vignette: >
     - [redFlags](#redflags)
 - [Stage 4: Correct and Compare](#stage-4-correct-and-compare)
     - [correct](#correct)
+- [Stage 5: Write Reports](#stage-5-write-reports)
+    - [writeReport](#writereport)
 - [Troubleshooting](#troubleshooting)
     - [Memory Issues](#memory-issues)
     - [Other](#other)
@@ -332,6 +334,26 @@ The following changes are made by the `correct` function:
 The year of the Harvest Information Program must be supplied as a parameter. Since the "errors" column is re-created using `correct`, supplying the year is necessary for the same reasons it is required by `proof`. 
 
 All functions in <b>Stage 2</b> and <b>Stage 3</b> will run on the corrected tibble, DL1202_corrected, just as they worked on the example tibble DL1202_proofed. Errors can be compared between the proofed stage and corrected stage to get a better idea of which errors were serious (i.e., difficult to correct automatically) and determine how serious errors can be prevented in the future.
+
+## Stage 5: Write Reports
+
+### writeReport
+
+The `writeReport` function can be used to automatically generate an R markdown document with figures, tables, and summary statistics. This can be done at the end of a download cycle (using `type = "dl_report"`) or the entire HIP season (with `type = "season_report"`). Since this is a memory intensive process, it is recommended to increase your memory allocated to R.
+
+```{r, writerpt, eval = FALSE}
+
+# Windows only
+memory.limit(size = 55000)
+
+writeReport(
+  path = "C:/HIP/all_2019", 
+  type = "season_report", 
+  yr = 2019, 
+  dir = "H:/r_projects/hip_data/script", 
+  file = "gadget")
+
+```
 
 ## Troubleshooting
 
