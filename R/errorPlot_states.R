@@ -83,6 +83,7 @@ errorPlot_states <-
               pivot_longer(1:25, names_to = "name") %>%
               select(-name) %>%
               rename(errors = value) %>%
+              filter(!is.na(dl_state)) %>%
               group_by(dl_state) %>%
               summarize(
                 count_errors = sum(!is.na(errors)),
