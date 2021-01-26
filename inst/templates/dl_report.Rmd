@@ -32,7 +32,7 @@ corrected_data <- correct(proofed_data, year = params$year)
 
 # Introduction
 
-This is a report of download cycle `proofed_data$dl_cycle %>% distinct %>% pull`.
+This is a report of download cycle `r proofed_data$dl_cycle %>% distinct %>% pull`. This cycle, `r nrow(proofed_data)` records were submitted from `r proofed_data %>% select(dl_state) %>% distinct %>% nrow()` states.
 
 # Visualization of errors
 
@@ -76,12 +76,6 @@ findDuplicates(corrected_data)
 
 ## Out-of-state hunters
 
-### Before correction
-```{r oosh, echo = FALSE}
-outOfStateHunters(proofed_data, type = "proportion")
-```
-
-### After correction
 ```{r oosh_c, echo = FALSE}
 outOfStateHunters(corrected_data, type = "proportion")
 ```
