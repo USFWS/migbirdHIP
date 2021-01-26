@@ -36,7 +36,7 @@ corrected_data <- correct(proofed_data, year = params$year)
 
 # Introduction
 
-This is a report of download cycle `r proofed_data$dl_cycle %>% distinct %>% pull`. This cycle, `r nrow(proofed_data)` records were submitted from `r proofed_data %>% select(dl_state) %>% distinct %>% nrow()` states.
+This is a report of download cycle `r proofed_data$dl_cycle %>% distinct %>% pull`. This cycle, **`r nrow(proofed_data)`** records were submitted from **`r proofed_data %>% select(dl_state) %>% distinct %>% nrow()`** states.
 
 # Visualization of errors
 
@@ -98,7 +98,7 @@ Let's take a closer look at common errors and issues within this download's HIP 
 
 **Q: What were the most common errors, and what values caused them?**
 
-A: Tibble of most common errors...
+Tibble of most common errors...
 
 ```{r et, echo = FALSE}
 et <- errorTable(proofed_data, loc = "none") %>% arrange(desc(error_count))
@@ -109,19 +109,37 @@ et
 Values associated with error in **`r et$error[1]`**
 
 ```{r pe_1, echo = FALSE}
-pullErrors(proofed_data, error = et$error[1])
+err1 <- pullErrors(proofed_data, error = et$error[1])
+
+if(length(err1) > 20){
+  err1[1:20]
+  } else {
+  err1
+    }
 ```
 
 Values associated with error in **`r et$error[2]`**
 
 ```{r pe_2, echo = FALSE}
-pullErrors(proofed_data, error = et$error[2])
+err2 <- pullErrors(proofed_data, error = et$error[2])
+
+if(length(err2) > 20){
+  err2[1:20]
+  } else {
+  err2
+    }
 ```
 
 Values associated with error in **`r et$error[3]`**
 
 ```{r pe_3, echo = FALSE}
-pullErrors(proofed_data, error = et$error[3])
+err3 <- pullErrors(proofed_data, error = et$error[3])
+
+if(length(err3) > 20){
+  err3[1:20]
+  } else {
+  err3
+    } 
 ```
 
 ## High error proportions
