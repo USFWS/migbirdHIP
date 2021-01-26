@@ -88,14 +88,30 @@ youthHunters(proofed_data, year = params$year)
 
 # Explore errors
 
-## investigate
-
-
 ## errorTable
 
+```{r et, echo = FALSE}
+library(tidyverse)
+
+et <- errorTable(proofed_data, loc = "none") %>% arrange(desc(error_count))
+
+et
+```
 
 ## pullErrors
 
+```{r pe, echo = FALSE}
+pullErrors(proofed_data, error = et$error[1])
+
+pullErrors(proofed_data, error = et$error[2])
+
+pullErrors(proofed_data, error = et$error[3])
+```
 
 ## redFlags
 
+```{r rf, echo = FALSE}
+redFlags(proofed_data, type = "state", threshold = 0.5)
+
+redFlags(proofed_data, type = "field", threshold = 0.5)
+```
