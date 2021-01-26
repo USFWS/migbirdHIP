@@ -156,9 +156,13 @@ findDuplicates <-
       ggplot(aes(x = dupl)) +
       geom_bar(stat = "count") +
       geom_text(
-        aes(x = dupl, label = stat(count)),
+        aes(
+          x = dupl,
+          label = stat(count),
+          angle = 90),
         stat = "count",
-        vjust = -1) +
+        vjust = 0.2,
+        hjust = -0.2) +
       labs(
         x = "Inconsistent field(s) for duplicated hunters",
         y = "Count",
