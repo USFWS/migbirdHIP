@@ -14,6 +14,10 @@ params:
     value: x
 ---
 
+```{r libs, include = FALSE}
+library(tidyverse)
+```
+
 ```{r import, include = FALSE}
 
 dl_data <- compile_to_utf8(params$comp_path)
@@ -41,11 +45,13 @@ This is a report of download cycle `r proofed_data$dl_cycle %>% distinct %>% pul
 ### Errors by field
 
 **Before correction**
+
 ```{r erpf, echo = FALSE}
 errorPlot_fields(proofed_data, specify = params$year)
 ```
 
 **After correction**
+
 ```{r erpf_c, echo = FALSE}
 errorPlot_fields(corrected_data, specify = params$year)
 ```
@@ -53,25 +59,21 @@ errorPlot_fields(corrected_data, specify = params$year)
 ### Errors by state
 
 **Before correction**
+
 ```{r erps, echo = FALSE}
 errorPlot_states(proofed_data, type = "proportion")
 ```
 
 **After correction**
+
 ```{r erps_c, echo = FALSE}
 errorPlot_states(corrected_data, type = "proportion")
 ```
 
 ## Duplicates
 
-**Before correction**
 ```{r fd, echo = FALSE}
 findDuplicates(proofed_data)
-```
-
-**After correction**
-```{r fd_c, echo = FALSE}
-findDuplicates(corrected_data)
 ```
 
 ## Out-of-state hunters
@@ -88,30 +90,48 @@ youthHunters(proofed_data, year = params$year)
 
 # Explore errors
 
-## errorTable
+Let's take a closer look at common errors and issues within this download's HIP data.
+
+## High error counts
+
+**Q: What were the most common errors, and what values caused them?**
+
+A: Tibble of most common errors...
 
 ```{r et, echo = FALSE}
-library(tidyverse)
-
 et <- errorTable(proofed_data, loc = "none") %>% arrange(desc(error_count))
-
-et
 ```
 
-## pullErrors
+Values associated with error in `r et$error[1]`
 
-```{r pe, echo = FALSE}
+```{r pe_1, echo = FALSE}
 pullErrors(proofed_data, error = et$error[1])
+```
 
+Values associated with error in `r et$error[2]`
+
+```{r pe_2, echo = FALSE}
 pullErrors(proofed_data, error = et$error[2])
+```
 
+Values associated with error in `r et$error[3]`
+
+```{r pe_3, echo = FALSE}
 pullErrors(proofed_data, error = et$error[3])
 ```
 
-## redFlags
+## High error proportions
 
-```{r rf, echo = FALSE}
-redFlags(proofed_data, type = "state", threshold = 0.5)
+**Q: What states and fields had a proportion of error that exceeded a certain threshold?**
 
-redFlags(proofed_data, type = "field", threshold = 0.5)
+States that had more than 3% error in the data sent to the FIsh and Wildlife Service...
+
+```{r rfs, echo = FALSE}
+redFlags(proofed_data, type = "state", threshold = 0.3)
+```
+
+Fields that had more than 3% error...
+
+```{r rfs, echo = FALSE}
+redFlags(proofed_data, type = "field", threshold = 0.3)
 ```
