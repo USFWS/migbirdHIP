@@ -339,7 +339,7 @@ All functions in <b>Stage 2</b> and <b>Stage 3</b> will run on the corrected tib
 
 ### writeReport
 
-The `writeReport` function can be used to automatically generate an R markdown document with figures, tables, and summary statistics. This can be done at the end of a download cycle (using `type = "dl_report"`) or the entire HIP season (with `type = "season_report"`). Since this is a memory intensive process, it is recommended to increase your memory allocated to R.
+The `writeReport` function can be used to automatically generate an R markdown document with figures, tables, and summary statistics. This can be done at the end of a download cycle (using `type = "dl_report"`) or the entire HIP season (with `type = "season_report"`). Since this is a memory intensive process, it is recommended to increase your memory allocated to R. You should expect the document writing script to run for ~30 minutes.
 
 ```{r, writerpt, eval = FALSE}
 
