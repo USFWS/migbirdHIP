@@ -32,7 +32,7 @@ corrected_data <- correct(proofed_data, year = params$year)
 
 # Introduction
 
-This is a summary report of the `year` Season of Harvest Information Program (HIP) data.
+This is a summary report of the `r year` Season of Harvest Information Program (HIP) data. This year, `r nrow(proofed_data)` records were submitted from `r proofed_data %>% select(dl_state) %>% distinct %>% nrow()` states.
 
 # Visualization of errors
 
@@ -79,25 +79,19 @@ errorPlot_dl(corrected_data)
 ## Duplicates
 
 #### Before correction
-```{r fd, echo = FALSE}
+```{r fd_p, echo = FALSE}
 findDuplicates(proofed_data)
 ```
 
-### After correction
+#### After correction
 ```{r fd_c, echo = FALSE}
 findDuplicates(corrected_data)
 ```
 
 ## Out-of-state hunters
 
-### Before correction
 ```{r oosh, echo = FALSE}
 outOfStateHunters(proofed_data, type = "proportion")
-```
-
-### After correction
-```{r oosh_c, echo = FALSE}
-outOfStateHunters(corrected_data, type = "proportion")
 ```
 
 ## Youth hunters
