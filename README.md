@@ -29,6 +29,7 @@ Tasks that can be accomplished with this package include:
     `youthHunters`, and `outOfStateHunters`
   - Detailed error reporting with `errorTable`, `pullErrors`, and
     `redFlags`
+  - Automated report writing with `writeReport`
 
 ## Installation
 
