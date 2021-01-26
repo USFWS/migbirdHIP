@@ -4,7 +4,7 @@
 \alias{writeReport}
 \title{Write an R markdown report from template}
 \usage{
-writeReport(path, type, yr, filename)
+writeReport(path, type, yr, dir, file)
 }
 \arguments{
 \item{path}{File path to the folder containing HIP .txt files}
@@ -16,7 +16,9 @@ writeReport(path, type, yr, filename)
 
 \item{yr}{The year in which the Harvest Information Program data were collected}
 
-\item{filename}{What the output .Rmd file should be named}
+\item{dir}{Folder in which to save the completed report}
+
+\item{file}{What the report file should be named}
 }
 \description{
 Create documentation with figures and tables that summarizes HIP download data at a download cycle or season total scale.
