@@ -40,36 +40,36 @@ This is a report of download cycle `r proofed_data$dl_cycle %>% distinct %>% pul
 
 ### Errors by field
 
-#### Before correction
+**Before correction**
 ```{r erpf, echo = FALSE}
 errorPlot_fields(proofed_data, specify = params$year)
 ```
 
-#### After correction
+**After correction**
 ```{r erpf_c, echo = FALSE}
 errorPlot_fields(corrected_data, specify = params$year)
 ```
 
 ### Errors by state
 
-#### Before correction
+**Before correction**
 ```{r erps, echo = FALSE}
 errorPlot_states(proofed_data, type = "proportion")
 ```
 
-#### After correction
+**After correction**
 ```{r erps_c, echo = FALSE}
 errorPlot_states(corrected_data, type = "proportion")
 ```
 
 ## Duplicates
 
-#### Before correction
+**Before correction**
 ```{r fd, echo = FALSE}
 findDuplicates(proofed_data)
 ```
 
-### After correction
+**After correction**
 ```{r fd_c, echo = FALSE}
 findDuplicates(corrected_data)
 ```

@@ -32,45 +32,47 @@ corrected_data <- correct(proofed_data, year = params$year)
 
 # Introduction
 
-This is a summary report of the `params$year` Season of Harvest Information Program (HIP) data. This year, `r nrow(proofed_data)` records were submitted from `r proofed_data %>% select(dl_state) %>% distinct %>% nrow()` states.
+This is a summary report of the `r params$year` Season of Harvest Information Program (HIP) data. This year, `r nrow(proofed_data)` records were submitted from `r proofed_data %>% select(dl_state) %>% distinct %>% nrow()` states.
 
 # Visualization of errors
+
+
 
 ## Error plots
 
 ### Errors by field
 
-#### Before correction
+**Before correction**
 ```{r erpf, echo = FALSE}
 errorPlot_fields(proofed_data, specify = params$year)
 ```
 
-#### After correction
+**After correction**
 ```{r erpf_c, echo = FALSE}
 errorPlot_fields(corrected_data, specify = params$year)
 ```
 
 ### Errors by state
 
-#### Before correction
+**Before correction**
 ```{r erps, echo = FALSE}
 errorPlot_states(proofed_data, type = "proportion")
 ```
 
-#### After correction
+**After correction**
 ```{r erps_c, echo = FALSE}
 errorPlot_states(corrected_data, type = "proportion")
 ```
 
 ### Errors by download
 
-#### Before correction
+**Before correction**
 
 ```{r erpdl, echo = FALSE}
 errorPlot_dl(proofed_data)
 ```
 
-#### After correction
+**After correction**
 
 ```{r erpdl_c, echo = FALSE}
 errorPlot_dl(corrected_data)
@@ -78,12 +80,12 @@ errorPlot_dl(corrected_data)
 
 ## Duplicates
 
-#### Before correction
+**Before correction**
 ```{r fd_p, echo = FALSE}
 findDuplicates(proofed_data)
 ```
 
-#### After correction
+**After correction**
 ```{r fd_c, echo = FALSE}
 findDuplicates(corrected_data)
 ```
