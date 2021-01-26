@@ -38,6 +38,7 @@ youthHunters <-
           summarize(registered_youth = n()) %>%
           ungroup() %>%
           left_join(total_hunters, by = "dl_state") %>%
+          filter(!is.na(dl_state)) %>%
           mutate(
             youth_proportion = registered_youth/total_registered)
       )
