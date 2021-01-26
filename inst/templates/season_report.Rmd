@@ -32,7 +32,7 @@ corrected_data <- correct(proofed_data, year = params$year)
 
 # Introduction
 
-This is a summary report of the `r year` Season of Harvest Information Program (HIP) data. This year, `r nrow(proofed_data)` records were submitted from `r proofed_data %>% select(dl_state) %>% distinct %>% nrow()` states.
+This is a summary report of the `params$year` Season of Harvest Information Program (HIP) data. This year, `r nrow(proofed_data)` records were submitted from `r proofed_data %>% select(dl_state) %>% distinct %>% nrow()` states.
 
 # Visualization of errors
 
