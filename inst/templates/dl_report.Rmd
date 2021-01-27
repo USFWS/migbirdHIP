@@ -36,7 +36,7 @@ corrected_data <- correct(proofed_data, year = params$year)
 
 # Introduction
 
-This is a report of download cycle `r proofed_data$dl_cycle %>% distinct %>% pull`. This cycle, **`r nrow(proofed_data)`** records were submitted from **`r proofed_data %>% select(dl_state) %>% distinct %>% nrow()`** states.
+This is a report of download cycle `r proofed_data %>% select(dl_cycle) %>% distinct %>% pull`. This cycle, **`r nrow(proofed_data)`** records were submitted from **`r proofed_data %>% select(dl_state) %>% distinct %>% nrow()`** states.
 
 # Visualization of errors
 
