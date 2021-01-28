@@ -4,10 +4,16 @@
 \alias{validate}
 \title{Validate data}
 \usage{
-validate(x)
+validate(x, type)
 }
 \arguments{
 \item{x}{The object created after tidying data with \code{\link{tidy}}}
+
+\item{type}{Type of validation to perform. Acceptable values include:
+\itemize{
+\item vertical - Checks for repetition vertically in species and/or bag fields, grouped by dl_state and dl_date
+\item horizontal - Checks for repetition horizontally, across each record
+}}
 }
 \description{
 After tidying the data with \code{\link{tidy}}, check to make sure the data don't have any erroneously repeated values.

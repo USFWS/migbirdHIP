@@ -9,8 +9,7 @@ errorPlot_states(x, type)
 \arguments{
 \item{x}{A proofed data table created by \code{\link{proof}}}
 
-\item{type}{Type of plot to create
-Acceptable values include:
+\item{type}{Type of plot to create. Acceptable values include:
 \itemize{
 \item proportion - Number of errors divided by the number of records per state
 \item count - Count of total errors per state
