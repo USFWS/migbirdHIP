@@ -77,7 +77,8 @@ utils::globalVariables(
     "specifics",
     "zipPrefix",
     "dl_cycle",
-    "uniformity",
+    "v_uniformity",
+    "h_uniformity",
     "n_uniform",
     "n_total",
     "outofstate_prop"))
