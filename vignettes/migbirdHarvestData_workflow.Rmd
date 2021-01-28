@@ -177,6 +177,7 @@ errorPlot_fields(DL1202_proofed, loc = "all")
 ```
 
 <img src="figure/errorfieldsplotall-1.png" title="Figure 1. Plot of all location's errors by field name." alt="Figure 1. Plot of all location's errors by field name." width="500" style="display: block; margin: auto;" />
+
 ... or it can be limited to just one.
 
 

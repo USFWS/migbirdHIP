@@ -119,6 +119,7 @@ The `errorPlot_fields` function can be run on all states...
 ```{r errorfieldsplotall, fig.cap = "Figure 1. Plot of all location's errors by field name.", fig.width = 6, fig.height = 3.6, dpi = 300, out.width = 500, fig.align = "center"}
 errorPlot_fields(DL1202_proofed, loc = "all")
 ```
+
 ... or it can be limited to just one.
 
 ```{r errorfieldsplotsc, fig.cap = "Figure 2. Plot of all South Carolina's errors by field name.", fig.width = 6, fig.height = 3.6, dpi = 300, out.width = 500, fig.align = "center"}
