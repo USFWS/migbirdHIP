@@ -124,7 +124,7 @@ This function renames columns and does simple mutations, such as:
 
 
 ```r
-validate(DL1202_tidied)
+validate(DL1202_tidied, type = "vertical")
 ```
 
 ```
@@ -132,25 +132,25 @@ validate(DL1202_tidied)
 ```
 
 ```
-## # A tibble: 21 x 4
-##    dl_state dl_date  uniformity                               n_uniform
-##    <chr>    <chr>    <chr>                                        <int>
-##  1 TX       20201216 cranes-band_tailed_pigeon-brant-seaducks     15803
-##  2 MS       20201215 cranes-band_tailed_pigeon-brant-seaducks      8929
-##  3 SC       20201202 band_tailed_pigeon-brant-seaducks             7838
-##  4 AL       20201216 cranes-band_tailed_pigeon-brant-seaducks      7073
-##  5 AR       20201216 cranes-band_tailed_pigeon-brant-seaducks      6569
-##  6 OK       20201216 cranes-band_tailed_pigeon-brant-seaducks      4450
-##  7 FL       20201216 cranes-band_tailed_pigeon-brant-seaducks      3657
-##  8 GA       20201216 cranes-band_tailed_pigeon-brant-seaducks      3596
-##  9 LA       20201216 cranes-band_tailed_pigeon-brant-seaducks      3252
-## 10 IA       20201216 seaducks                                      3236
-## # ... with 11 more rows
+## # A tibble: 29 x 4
+##    dl_state dl_date  v_uniformity                                       n_uniform
+##    <chr>    <chr>    <chr>                                                  <int>
+##  1 TX       20201216 cranes-band_tailed_pigeon-brant-seaducks               15803
+##  2 MS       20201215 cranes-band_tailed_pigeon-brant-seaducks                8929
+##  3 SC       20201202 band_tailed_pigeon-brant-seaducks                       7838
+##  4 AL       20201216 cranes-band_tailed_pigeon-brant-seaducks                7073
+##  5 AR       20201216 cranes-band_tailed_pigeon-brant-seaducks                6569
+##  6 MD       20201215 cranes-band_tailed_pigeon                               4650
+##  7 OK       20201216 cranes-band_tailed_pigeon-brant-seaducks                4450
+##  8 CA       20201216 woodcock_bag-cranes                                     3998
+##  9 FL       20201216 geese_bag-cranes-band_tailed_pigeon-brant-seaducks      3657
+## 10 GA       20201216 cranes-band_tailed_pigeon-brant-seaducks                3596
+## # ... with 19 more rows
 ```
 
-An important intermediate step is to `validate` the data. This function can be run on the data after they are tidied. It looks across download states and download dates to make sure that uniform numbers were not reported across bags. If a uniformity is detected, the errors are returned in a tibble with a warning. If there are no uniformities, a positive message is returned.
+An important intermediate step is to `validate` the data. This function should be run after `tidy` to assess the data in two dimensions, using `type = "vertical"` to check for repetition vertically within a column (e.g. all values in the geese_bag column are 4) or `type = "horizontal"` to identify repetition horizontally across records (e.g. for one or more hunters, values across their bag and species columns are 9). If a uniformity is detected vertically or horizontally, a tibble containing the offending columns or rows are returned with a warning. If there are no uniformities, a positive message is returned.
 
-Repeated values returned from the `validate` function can be looked at more closely using `investigate` (see Stage 3: [investigate](#investigate)).
+Issues returned from the `validate` function can be looked at more closely using `investigate` (see Stage 3: [investigate](#investigate)).
 
 ### proof
 
