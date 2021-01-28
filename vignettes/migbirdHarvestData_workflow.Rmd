@@ -1,7 +1,8 @@
 ---
 title: "The migbirdHarvestData Workflow"
 package: migbirdHarvestData
-output: rmarkdown::html_vignette
+output:
+  rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{The migbirdHarvestData Workflow}
   %\VignetteEngine{knitr::rmarkdown}
@@ -168,15 +169,14 @@ The year of the Harvest Information Program must be supplied as a parameter. Thi
 
 ### errorPlot_fields
 
-The `errorPlot_fields` function can be run on all states, provinces, and/or territories in the data...
+The `errorPlot_fields` function can be run on all states...
 
 
 ```r
 errorPlot_fields(DL1202_proofed, loc = "all")
 ```
 
-![plot of chunk errorfieldsplotall](figure/errorfieldsplotall-1.png)
-
+<img src="figure/errorfieldsplotall-1.png" title="Figure 1. Plot of all location's errors by field name." alt="Figure 1. Plot of all location's errors by field name." width="500" style="display: block; margin: auto;" />
 ... or it can be limited to just one.
 
 
@@ -184,7 +184,7 @@ errorPlot_fields(DL1202_proofed, loc = "all")
 errorPlot_fields(DL1202_proofed, loc = "SC")
 ```
 
-![plot of chunk errorfieldsplotsc](figure/errorfieldsplotsc-1.png)
+<img src="figure/errorfieldsplotsc-1.png" title="Figure 2. Plot of all South Carolina's errors by field name." alt="Figure 2. Plot of all South Carolina's errors by field name." width="500" style="display: block; margin: auto;" />
 
 The year in which the HIP data were collected can also be specified in `errorPlot_fields` to visualize the proportion of "errors" created by youth hunters and Canadian zip codes, since these values fall outside the expected parameters of the `proof` function. It is encouraged to use `specify` when error counts are high to increase transparency by revealing which errors are attributable to a specific cause. This feature should also help maintain confidence in the integrity of the data.
 
@@ -193,7 +193,7 @@ The year in which the HIP data were collected can also be specified in `errorPlo
 errorPlot_fields(DL1202_proofed, specify = 2020)
 ```
 
-![plot of chunk errorfieldsplotyouth](figure/errorfieldsplotyouth-1.png)
+<img src="figure/errorfieldsplotyouth-1.png" title="Figure 3. Plot of all location's errors by field name, with stacked colors to indicate if there are youth hunters or Canadian zip codes in the data, two common causes of error." alt="Figure 3. Plot of all location's errors by field name, with stacked colors to indicate if there are youth hunters or Canadian zip codes in the data, two common causes of error." width="500" style="display: block; margin: auto;" />
 
 Lastly, for season total data, the plot can be faceted using either dl_cycle or dl_date. In addition, it is possible to add any other ggplot2 arguments to the plot.
 
@@ -212,14 +212,14 @@ The `errorPlot_states` function can plot errors as either proportions or counts 
 errorPlot_states(DL1202_proofed, type = "proportion")
 ```
 
-![plot of chunk errorstatesprop](figure/errorstatesprop-1.png)
+<img src="figure/errorstatesprop-1.png" title="Figure 4. Plot of proportion of error by state." alt="Figure 4. Plot of proportion of error by state." width="500" style="display: block; margin: auto;" />
 
 
 ```r
 errorPlot_states(DL1202_proofed, type = "count")
 ```
 
-![plot of chunk errorstatescount](figure/errorstatescount-1.png)
+<img src="figure/errorstatescount-1.png" title="Figure 5. Plot of counts of error by state." alt="Figure 5. Plot of counts of error by state." width="500" style="display: block; margin: auto;" />
 
 ### findDuplicates
 
@@ -234,7 +234,7 @@ findDuplicates(DL1202_proofed)
 ## There are 607 hunters with duplicates; 1230 total duplicated records.
 ```
 
-![plot of chunk findDuplicates](figure/findDuplicates-1.png)
+<img src="figure/findDuplicates-1.png" title="Figure 6. Plot of types of duplicates." alt="Figure 6. Plot of types of duplicates." width="500" style="display: block; margin: auto;" />
 
 ```
 ## # A tibble: 156 x 2
@@ -262,7 +262,7 @@ The `outOfStateHunters` function allows us to visualize how many hunters report 
 outOfStateHunters(DL1202_proofed, type = "count")
 ```
 
-![plot of chunk outofstatect](figure/outofstatect-1.png)
+<img src="figure/outofstatect-1.png" title="Figure 7. Plot of counts of out-of-state hunters." alt="Figure 7. Plot of counts of out-of-state hunters." width="500" style="display: block; margin: auto;" />
 
 ```
 ## # A tibble: 30 x 2
@@ -286,7 +286,7 @@ outOfStateHunters(DL1202_proofed, type = "count")
 outOfStateHunters(DL1202_proofed, type = "proportion")
 ```
 
-![plot of chunk outofstatepr](figure/outofstatepr-1.png)
+<img src="figure/outofstatepr-1.png" title="Figure 8. Plot of proportions of out-of-state hunters." alt="Figure 8. Plot of proportions of out-of-state hunters." width="500" style="display: block; margin: auto;" />
 
 ```
 ## # A tibble: 30 x 3
@@ -314,7 +314,7 @@ The `youthHunters` function returns a table and plot of the number of hunters wi
 youthHunters(DL1202_proofed, year = 2020)
 ```
 
-![plot of chunk youth](figure/youth-1.png)
+<img src="figure/youth-1.png" title="Figure 9. Plot of proportions of youth hunters." alt="Figure 9. Plot of proportions of youth hunters." width="500" style="display: block; margin: auto;" />
 
 ```
 ## # A tibble: 3 x 4
@@ -614,7 +614,7 @@ All functions in <b>Stage 2</b> and <b>Stage 3</b> will run on the corrected tib
 
 ### writeReport
 
-The `writeReport` function can be used to automatically generate an R markdown document with figures, tables, and summary statistics. This can be done at the end of a download cycle (using `type = "dl_report"`) or the entire HIP season (with `type = "season_report"`). You should expect `writeReport` to run for ~1 minute for a download cycle, or ~30 minutes for a total season (containing approximately 4 million records). Writing a total season report is a memory intensive process, so for this option, we recommend increasing your memory allocated to R (shown below).
+The `writeReport` function can be used to automatically generate an R markdown document with figures, tables, and summary statistics. This can be done at the end of a download cycle (using `type = "dl_report"`) or the entire HIP season (with `type = "season_report"`). You should expect this function to run for ~1 minute for a download cycle, or ~30 minutes for a total season (containing approximately 4 million records). Writing a total season report is a memory intensive process, so for this option, we recommend increasing your memory allocated to R.
 
 
 ```r

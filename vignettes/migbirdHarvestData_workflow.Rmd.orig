@@ -1,7 +1,8 @@
 ---
 title: "The migbirdHarvestData Workflow"
 package: migbirdHarvestData
-output: rmarkdown::html_vignette
+output:
+  rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{The migbirdHarvestData Workflow}
   %\VignetteEngine{knitr::rmarkdown}
@@ -113,21 +114,20 @@ The year of the Harvest Information Program must be supplied as a parameter. Thi
 
 ### errorPlot_fields
 
-The `errorPlot_fields` function can be run on all states, provinces, and/or territories in the data...
+The `errorPlot_fields` function can be run on all states...
 
-```{r errorfieldsplotall, fig.width = 6, fig.height = 4}
+```{r errorfieldsplotall, fig.cap = "Figure 1. Plot of all location's errors by field name.", fig.width = 6, fig.height = 3.6, dpi = 300, out.width = 500, fig.align = "center"}
 errorPlot_fields(DL1202_proofed, loc = "all")
 ```
-
 ... or it can be limited to just one.
 
-```{r errorfieldsplotsc, fig.width = 6, fig.height = 4}
+```{r errorfieldsplotsc, fig.cap = "Figure 2. Plot of all South Carolina's errors by field name.", fig.width = 6, fig.height = 3.6, dpi = 300, out.width = 500, fig.align = "center"}
 errorPlot_fields(DL1202_proofed, loc = "SC")
 ```
 
 The year in which the HIP data were collected can also be specified in `errorPlot_fields` to visualize the proportion of "errors" created by youth hunters and Canadian zip codes, since these values fall outside the expected parameters of the `proof` function. It is encouraged to use `specify` when error counts are high to increase transparency by revealing which errors are attributable to a specific cause. This feature should also help maintain confidence in the integrity of the data.
 
-```{r errorfieldsplotyouth, fig.width = 6, fig.height = 4}
+```{r errorfieldsplotyouth, fig.cap = "Figure 3. Plot of all location's errors by field name, with stacked colors to indicate if there are youth hunters or Canadian zip codes in the data, two common causes of error.", fig.width = 6, fig.height = 3.6, dpi = 300, out.width = 500, fig.align = "center"}
 errorPlot_fields(DL1202_proofed, specify = 2020)
 ```
 
@@ -142,11 +142,11 @@ errorPlot_fields(DL1202_proofed, specify = 2020) + facet_wrap(~dl_cycle)
 
 The `errorPlot_states` function can plot errors as either proportions or counts by state.
 
-```{r errorstatesprop, fig.width = 6}
+```{r errorstatesprop, fig.cap = "Figure 4. Plot of proportion of error by state.", fig.width = 6, fig.height = 3.5, dpi = 300, out.width = 500, fig.align = "center"}
 errorPlot_states(DL1202_proofed, type = "proportion")
 ```
 
-```{r errorstatescount, fig.width = 6, fig.height = 3.5}
+```{r errorstatescount, fig.cap = "Figure 5. Plot of counts of error by state.", fig.width = 6, fig.height = 3.5, dpi = 300, out.width = 500, fig.align = "center"}
 errorPlot_states(DL1202_proofed, type = "count")
 ```
 
@@ -154,7 +154,7 @@ errorPlot_states(DL1202_proofed, type = "count")
 
 The `findDuplicates` function finds hunters that have more than one record in the download data. Hunters are grouped by first name, last name, city, state, and birth date. If the same hunter has 2 or more records, the fields that are not identical are counted and summarized in a tibble and plot.
 
-```{r findDuplicates, fig.width = 6}
+```{r findDuplicates, fig.cap = "Figure 6. Plot of types of duplicates.", fig.width = 6, fig.height = 3.5, dpi = 300, out.width = 500, fig.align = "center"}
 findDuplicates(DL1202_proofed)
 ```
 
@@ -162,11 +162,11 @@ findDuplicates(DL1202_proofed)
 
 The `outOfStateHunters` function allows us to visualize how many hunters report harvests from a location that does not match the state, province, or territory of their address. This function can plot errors as either proportions or counts by state.
 
-```{r outofstatect, fig.width = 6, fig.height = 3.5}
+```{r outofstatect, fig.cap = "Figure 7. Plot of counts of out-of-state hunters.", fig.width = 6, fig.height = 3.5, dpi = 300, out.width = 500, fig.align = "center"}
 outOfStateHunters(DL1202_proofed, type = "count")
 ```
 
-```{r outofstatepr, fig.width = 6, fig.height = 3.5}
+```{r outofstatepr, fig.cap = "Figure 8. Plot of proportions of out-of-state hunters.", fig.width = 6, fig.height = 3.5, dpi = 300, out.width = 500, fig.align = "center"}
 outOfStateHunters(DL1202_proofed, type = "proportion")
 ```
 
@@ -174,7 +174,7 @@ outOfStateHunters(DL1202_proofed, type = "proportion")
 
 The `youthHunters` function returns a table and plot of the number of hunters with birth dates < 16 years from the year of HIP data collection. These data are interesting to explore because hunters younger than 16 years of age are not required to have a migratory bird hunting license in the United States.
 
-```{r youth, fig.width = 6}
+```{r youth, fig.cap = "Figure 9. Plot of proportions of youth hunters.", fig.width = 6, fig.height = 3.5, dpi = 300, out.width = 500, fig.align = "center"}
 youthHunters(DL1202_proofed, year = 2020)
 ```
 
@@ -339,7 +339,7 @@ All functions in <b>Stage 2</b> and <b>Stage 3</b> will run on the corrected tib
 
 ### writeReport
 
-The `writeReport` function can be used to automatically generate an R markdown document with figures, tables, and summary statistics. This can be done at the end of a download cycle (using `type = "dl_report"`) or the entire HIP season (with `type = "season_report"`). You should expect `writeReport` to run for ~1 minute for a download cycle, or ~30 minutes for a total season (containing approximately 4 million records). Writing a total season report is a memory intensive process, so for this option, we recommend increasing your memory allocated to R (shown below).
+The `writeReport` function can be used to automatically generate an R markdown document with figures, tables, and summary statistics. This can be done at the end of a download cycle (using `type = "dl_report"`) or the entire HIP season (with `type = "season_report"`). You should expect this function to run for ~1 minute for a download cycle, or ~30 minutes for a total season (containing approximately 4 million records). Writing a total season report is a memory intensive process, so for this option, we recommend increasing your memory allocated to R.
 
 ```{r, writerpt, eval = FALSE}
 
