@@ -42,7 +42,8 @@ vignette: >
 The migbirdHarvestData package provides an easy-to-use automated workflow for the U.S. Fish and Wildlife Service to wrangle, tidy, and visualize Harvest Information Program data.
 
 The package can be installed using:
-```{r, install, message = FALSE, eval = FALSE}
+
+```r
 library(devtools)
 install_github("USFWS/migbirdHarvestData")
 ```
@@ -54,10 +55,21 @@ install_github("USFWS/migbirdHarvestData")
 
 The first step is to import .txt files containing harvest data. To do this, we attempt to use the `compile` function.
 
-```{r, compile}
-library(migbirdHarvestData)
 
+```r
+library(migbirdHarvestData)
+```
+
+```
+## Error in library(migbirdHarvestData): there is no package called 'migbirdHarvestData'
+```
+
+```r
 DL1202 <- compile(path = "C:/HIP/DL_1202")
+```
+
+```
+## Error in compile(path = "C:/HIP/DL_1202"): could not find function "compile"
 ```
 
 The error message above tells us that `compile` did not work because the files contained in the directory are not all encoded as UTF-8. We are provided a tibble of paths to .txt files that threw the error with additional information about their non-UTF-8 encodings. In this example, Latin-1 (ISO-8859-1) and Latin-2 (ISO-8859-2) character sets (which include letters with accents such as ê and á) were the reason the files in the directory were not compatible with the function.
@@ -68,16 +80,26 @@ To remedy the situation, we use a different function, `compile_to_utf8`.
 
 Encoding issues are a nuisance, but `compile_to_utf8` will identify and convert non-UTF-8 text files before importing from them into R from the supplied directory. Please note that this function will overwrite existing files but no changes to the data will occur.
 
-```{r, compileutf}
+
+```r
 DL1202_utf8 <- compile_to_utf8(path = "C:/HIP/DL_1202")
+```
+
+```
+## Error in compile_to_utf8(path = "C:/HIP/DL_1202"): could not find function "compile_to_utf8"
 ```
 
 ### tidy
 
 After data are imported, we `tidy`:
 
-```{r, tidy}
+
+```r
 DL1202_tidied <- tidy(DL1202_utf8)
+```
+
+```
+## Error in tidy(DL1202_utf8): could not find function "tidy"
 ```
 
 This function renames columns and does simple mutations, such as:
@@ -89,8 +111,13 @@ This function renames columns and does simple mutations, such as:
 
 ### validate
 
-```{r, validate}
+
+```r
 validate(DL1202_tidied)
+```
+
+```
+## Error in validate(DL1202_tidied): could not find function "validate"
 ```
 
 An important intermediate step is to `validate` the data. This function can be run on the data after they are tidied. It looks across download states and download dates to make sure that uniform numbers were not reported across bags. If a uniformity is detected, the errors are returned in a tibble with a warning. If there are no uniformities, a positive message is returned. 
@@ -101,8 +128,13 @@ Repeated values returned from the `validate` function can be looked at more clos
 
 After data are tidied, we `proof`:
 
-```{r, proof}
+
+```r
 DL1202_proofed <- proof(DL1202_tidied, year = 2020)
+```
+
+```
+## Error in proof(DL1202_tidied, year = 2020): could not find function "proof"
 ```
 
 Data that are considered irregular are flagged in a new column called "errors". No actual corrections take place in this step; all data remain identical except for the new "errors" column. For each field, values are compared to standard expected formats and if they do not conform, the field name is pasted as a string in the "errors" column. Each row can have from zero errors (NA) to all column names listed. Multiple flags are hyphen delimited. 
@@ -115,25 +147,41 @@ The year of the Harvest Information Program must be supplied as a parameter. Thi
 
 The `errorPlot_fields` function can be run on all states, provinces, and/or territories in the data...
 
-```{r errorfieldsplotall, fig.width = 6, fig.height = 4}
+
+```r
 errorPlot_fields(DL1202_proofed, loc = "all")
+```
+
+```
+## Error in errorPlot_fields(DL1202_proofed, loc = "all"): could not find function "errorPlot_fields"
 ```
 
 ... or it can be limited to just one.
 
-```{r errorfieldsplotsc, fig.width = 6, fig.height = 4}
+
+```r
 errorPlot_fields(DL1202_proofed, loc = "SC")
+```
+
+```
+## Error in errorPlot_fields(DL1202_proofed, loc = "SC"): could not find function "errorPlot_fields"
 ```
 
 The year in which the HIP data were collected can also be specified in `errorPlot_fields` to visualize the proportion of "errors" created by youth hunters and Canadian zip codes, since these values fall outside the expected parameters of the `proof` function. It is encouraged to use `specify` when error counts are high to increase transparency by revealing which errors are attributable to a specific cause. This feature should also help maintain confidence in the integrity of the data.
 
-```{r errorfieldsplotyouth, fig.width = 6, fig.height = 4}
+
+```r
 errorPlot_fields(DL1202_proofed, specify = 2020)
+```
+
+```
+## Error in errorPlot_fields(DL1202_proofed, specify = 2020): could not find function "errorPlot_fields"
 ```
 
 Lastly, for season total data, the plot can be faceted using either dl_cycle or dl_date. In addition, it is possible to add any other ggplot2 arguments to the plot.
 
-```{r errorfieldsfacet, eval = FALSE}
+
+```r
 errorPlot_fields(DL1202_proofed, specify = 2020) + facet_wrap(~dl_cycle)
 ```
 
@@ -142,40 +190,70 @@ errorPlot_fields(DL1202_proofed, specify = 2020) + facet_wrap(~dl_cycle)
 
 The `errorPlot_states` function can plot errors as either proportions or counts by state. 
 
-```{r errorstatesprop, fig.width = 6}
+
+```r
 errorPlot_states(DL1202_proofed, type = "proportion")
 ```
 
-```{r errorstatescount, fig.width = 6, fig.height = 3.5}
+```
+## Error in errorPlot_states(DL1202_proofed, type = "proportion"): could not find function "errorPlot_states"
+```
+
+
+```r
 errorPlot_states(DL1202_proofed, type = "count")
+```
+
+```
+## Error in errorPlot_states(DL1202_proofed, type = "count"): could not find function "errorPlot_states"
 ```
 
 ### findDuplicates
 
 The `findDuplicates` function finds hunters that have more than one record in the download data. Hunters are grouped by first name, last name, city, state, and birth date. If the same hunter has 2 or more records, the fields that are not identical are counted and summarized in a tibble and plot.
 
-```{r findDuplicates, fig.width = 6}
+
+```r
 findDuplicates(DL1202_proofed)
+```
+
+```
+## Error in findDuplicates(DL1202_proofed): could not find function "findDuplicates"
 ```
 
 ### outOfStateHunters
 
 The `outOfStateHunters` function allows us to visualize how many hunters report harvests from a location that does not match the state, province, or territory of their address. This function can plot errors as either proportions or counts by state. 
 
-```{r outofstatect, fig.width = 6, fig.height = 3.5}
+
+```r
 outOfStateHunters(DL1202_proofed, type = "count")
 ```
 
-```{r outofstatepr, fig.width = 6, fig.height = 3.5}
+```
+## Error in outOfStateHunters(DL1202_proofed, type = "count"): could not find function "outOfStateHunters"
+```
+
+
+```r
 outOfStateHunters(DL1202_proofed, type = "proportion")
+```
+
+```
+## Error in outOfStateHunters(DL1202_proofed, type = "proportion"): could not find function "outOfStateHunters"
 ```
 
 ### youthHunters
 
 The `youthHunters` function returns a table and plot of the number of hunters with birth dates < 16 years from the year of HIP data collection. These data are interesting to explore because hunters younger than 16 years of age are not required to have a migratory bird hunting license in the United States. 
 
-```{r youth, fig.width = 6}
+
+```r
 youthHunters(DL1202_proofed, year = 2020)
+```
+
+```
+## Error in youthHunters(DL1202_proofed, year = 2020): could not find function "youthHunters"
 ```
 
 ### errorPlot_dl
@@ -191,60 +269,105 @@ This function should not be used unless you want to visualize an entire season o
 
 Did the `validate` function return repeated values? Are some of those values a high number that are uniform and need to be looked at more closely? The `investigate` function allows you to see what value was repeated for a species. Parameters required are download state, download date, and species, which are all provided in the output of [validate](#validate).
 
-```{r investigate}
+
+```r
 investigate(DL1202_tidied, loc = "TX", date = "20201216", species = "cranes")
+```
+
+```
+## Error in investigate(DL1202_tidied, loc = "TX", date = "20201216", species = "cranes"): could not find function "investigate"
 ```
 
 ### errorTable
 
 The `errorTable` function is a flexible way to obtain error data as a tibble, which can be assessed as needed or exported to create records of download cycle errors. The basic function reports errors by both location and field.
 
-```{r errortable1}
+
+```r
 errorTable(DL1202_proofed)
+```
+
+```
+## Error in errorTable(DL1202_proofed): could not find function "errorTable"
 ```
 
 Errors can be reported by only location by turning off the `field` parameter.
 
-```{r errortable2}
+
+```r
 errorTable(DL1202_proofed, field = "none")
+```
+
+```
+## Error in errorTable(DL1202_proofed, field = "none"): could not find function "errorTable"
 ```
 
 Errors can be reported by only field by turning off the `loc` parameter.
 
-```{r errortable3}
+
+```r
 errorTable(DL1202_proofed, loc = "none")
+```
+
+```
+## Error in errorTable(DL1202_proofed, loc = "none"): could not find function "errorTable"
 ```
 
 Location can be specified.
 
-```{r errortable4}
+
+```r
 errorTable(DL1202_proofed, loc = "CA")
+```
+
+```
+## Error in errorTable(DL1202_proofed, loc = "CA"): could not find function "errorTable"
 ```
 
 Field can be specified.
 
-```{r errortable5}
+
+```r
 errorTable(DL1202_proofed, field = "suffix")
+```
+
+```
+## Error in errorTable(DL1202_proofed, field = "suffix"): could not find function "errorTable"
 ```
 
 Total errors for a location can be pulled.
 
-```{r errortable6}
+
+```r
 errorTable(DL1202_proofed, loc = "CA", field = "none")
+```
+
+```
+## Error in errorTable(DL1202_proofed, loc = "CA", field = "none"): could not find function "errorTable"
 ```
 
 Total errors for a field in a particular location can be pulled.
 
-```{r errortable7}
+
+```r
 errorTable(DL1202_proofed, loc = "CA", field = "zip")
+```
+
+```
+## Error in errorTable(DL1202_proofed, loc = "CA", field = "zip"): could not find function "errorTable"
 ```
 
 ### pullErrors
 
 The `pullErrors` function can be used to view all of the actual values that were flagged as errors in a particular field. In this example, we find that the "dove_bag" field contains entries of "4" and "9", when the only values permissible are 0, 1, 2, 3, and 5.
 
-```{r pullerrors}
+
+```r
 pullErrors(DL1202_proofed, error = "dove_bag")
+```
+
+```
+## Error in pullErrors(DL1202_proofed, error = "dove_bag"): could not find function "pullErrors"
 ```
 
 ### redFlags
@@ -252,15 +375,25 @@ pullErrors(DL1202_proofed, error = "dove_bag")
 <b>By state.</b>
 States with an unacceptable level of error can be pulled into a tibble. The tibble contains information pertaining to state, the count of errors from that state, the number of correct records from that state, the proportion of error per state, and a "flag" column that prints the threshold used. Any threshold can be supplied; in this example, we see which states had more than 3% error.
 
-```{r redflags1}
+
+```r
 redFlags(DL1202_proofed, type = "state", threshold = 0.03)
+```
+
+```
+## Error in redFlags(DL1202_proofed, type = "state", threshold = 0.03): could not find function "redFlags"
 ```
 
 <b>By field.</b>
 The same can be done for data fields. In this example, we see which fields had more than 1% error.
 
-```{r redflags2}
+
+```r
 redFlags(DL1202_proofed, type = "field", threshold = 0.01)
+```
+
+```
+## Error in redFlags(DL1202_proofed, type = "field", threshold = 0.01): could not find function "redFlags"
 ```
 
 ## Stage 4: Correct and Compare
@@ -269,8 +402,13 @@ redFlags(DL1202_proofed, type = "field", threshold = 0.01)
 
 After the download data are proofed, the next step is to fix the data to the best of our ability. Data can be corrected by running the `correct` function on the proofed tibble.
 
-```{r correct}
+
+```r
 DL1202_corrected <- correct(DL1202_proofed, year = 2020)
+```
+
+```
+## Error in correct(DL1202_proofed, year = 2020): could not find function "correct"
 ```
 
 The following changes are made by the `correct` function:
@@ -341,8 +479,8 @@ All functions in <b>Stage 2</b> and <b>Stage 3</b> will run on the corrected tib
 
 The `writeReport` function can be used to automatically generate an R markdown document with figures, tables, and summary statistics. This can be done at the end of a download cycle (using `type = "dl_report"`) or the entire HIP season (with `type = "season_report"`). Since this is a memory intensive process, it is recommended to increase your memory allocated to R. You should expect the document writing script to run for ~30 minutes.
 
-```{r, writerpt, eval = FALSE}
 
+```r
 # Windows only
 memory.limit(size = 55000)
 
@@ -352,7 +490,6 @@ writeReport(
   yr = 2019, 
   dir = "H:/r_projects/hip_data/script", 
   file = "gadget")
-
 ```
 
 ## Troubleshooting

@@ -1,0 +1,379 @@
+---
+title: "The migbirdHarvestData Workflow"
+package: migbirdHarvestData
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{The migbirdHarvestData Workflow}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+## Table of Contents
+
+- [Introduction](#introduction)
+- [Stage 1: Import Data](#stage-1-import-data)
+    - [compile](#compile)
+    - [compile_to_utf8](#compile_to_utf8)
+    - [tidy](#tidy)
+    - [validate](#validate)
+    - [proof](#proof)
+- [Stage 2: Visualize Data](#stage-2-visualize-data)
+    - [errorPlot_fields](#errorplot_fields)
+    - [errorPlot_states](#errorplot_states)
+    - [findDuplicates](#findduplicates)
+    - [outOfStateHunters](#outofstatehunters)
+    - [youthHunters](#youthhunters)
+    - [errorPlot_dl](#errorplot_dl)
+- [Stage 3: Explore Errors](#stage-3-explore-errors)
+    - [investigate](#investigate)
+    - [errorTable](#errortable)
+    - [pullErrors](#pullerrors)
+    - [redFlags](#redflags)
+- [Stage 4: Correct and Compare](#stage-4-correct-and-compare)
+    - [correct](#correct)
+- [Stage 5: Write Reports](#stage-5-write-reports)
+    - [writeReport](#writereport)
+- [Troubleshooting](#troubleshooting)
+    - [Memory Issues](#memory-issues)
+    - [Other](#other)
+
+## Introduction
+
+The migbirdHarvestData package provides an easy-to-use automated workflow for the U.S. Fish and Wildlife Service to wrangle, tidy, and visualize Harvest Information Program data.
+
+The package can be installed using:
+```{r, install, message = FALSE, eval = FALSE}
+library(devtools)
+install_github("USFWS/migbirdHarvestData")
+```
+
+
+## Stage 1: Import Data
+
+### compile
+
+The first step is to import .txt files containing harvest data. To do this, we attempt to use the `compile` function.
+
+```{r, compile}
+library(migbirdHarvestData)
+
+DL1202 <- compile(path = "C:/HIP/DL_1202")
+```
+
+The error message above tells us that `compile` did not work because the files contained in the directory are not all encoded as UTF-8. We are provided a tibble of paths to .txt files that threw the error with additional information about their non-UTF-8 encodings. In this example, Latin-1 (ISO-8859-1) and Latin-2 (ISO-8859-2) character sets (which include letters with accents such as ê and á) were the reason the files in the directory were not compatible with the function.
+
+To remedy the situation, we use a different function, `compile_to_utf8`.
+
+### compile_to_utf8
+
+Encoding issues are a nuisance, but `compile_to_utf8` will identify and convert non-UTF-8 text files before importing from them into R from the supplied directory. Please note that this function will overwrite existing files but no changes to the data will occur.
+
+```{r, compileutf}
+DL1202_utf8 <- compile_to_utf8(path = "C:/HIP/DL_1202")
+```
+
+### tidy
+
+After data are imported, we `tidy`:
+
+```{r, tidy}
+DL1202_tidied <- tidy(DL1202_utf8)
+```
+
+This function renames columns and does simple mutations, such as:
+
+* Converts names to uppercase
+* Moves suffixes from first or last name columns to the appropriate suffix column
+* Removes punctuation from middle initial column
+* Removes ending hyphen from zip codes with only 5 digits
+
+### validate
+
+```{r, validate}
+validate(DL1202_tidied)
+```
+
+An important intermediate step is to `validate` the data. This function can be run on the data after they are tidied. It looks across download states and download dates to make sure that uniform numbers were not reported across bags. If a uniformity is detected, the errors are returned in a tibble with a warning. If there are no uniformities, a positive message is returned. 
+
+Repeated values returned from the `validate` function can be looked at more closely using `investigate` (see Stage 3: [investigate](#investigate)).
+
+### proof
+
+After data are tidied, we `proof`:
+
+```{r, proof}
+DL1202_proofed <- proof(DL1202_tidied, year = 2020)
+```
+
+Data that are considered irregular are flagged in a new column called "errors". No actual corrections take place in this step; all data remain identical except for the new "errors" column. For each field, values are compared to standard expected formats and if they do not conform, the field name is pasted as a string in the "errors" column. Each row can have from zero errors (NA) to all column names listed. Multiple flags are hyphen delimited. 
+
+The year of the Harvest Information Program must be supplied as a parameter. This aids in checking dates when licenses were issued, as one example.
+
+## Stage 2: Visualize Data
+
+### errorPlot_fields
+
+The `errorPlot_fields` function can be run on all states, provinces, and/or territories in the data...
+
+```{r errorfieldsplotall, fig.width = 6, fig.height = 4}
+errorPlot_fields(DL1202_proofed, loc = "all")
+```
+
+... or it can be limited to just one.
+
+```{r errorfieldsplotsc, fig.width = 6, fig.height = 4}
+errorPlot_fields(DL1202_proofed, loc = "SC")
+```
+
+The year in which the HIP data were collected can also be specified in `errorPlot_fields` to visualize the proportion of "errors" created by youth hunters and Canadian zip codes, since these values fall outside the expected parameters of the `proof` function. It is encouraged to use `specify` when error counts are high to increase transparency by revealing which errors are attributable to a specific cause. This feature should also help maintain confidence in the integrity of the data.
+
+```{r errorfieldsplotyouth, fig.width = 6, fig.height = 4}
+errorPlot_fields(DL1202_proofed, specify = 2020)
+```
+
+Lastly, for season total data, the plot can be faceted using either dl_cycle or dl_date. In addition, it is possible to add any other ggplot2 arguments to the plot.
+
+```{r errorfieldsfacet, eval = FALSE}
+errorPlot_fields(DL1202_proofed, specify = 2020) + facet_wrap(~dl_cycle)
+```
+
+
+### errorPlot_states
+
+The `errorPlot_states` function can plot errors as either proportions or counts by state. 
+
+```{r errorstatesprop, fig.width = 6}
+errorPlot_states(DL1202_proofed, type = "proportion")
+```
+
+```{r errorstatescount, fig.width = 6, fig.height = 3.5}
+errorPlot_states(DL1202_proofed, type = "count")
+```
+
+### findDuplicates
+
+The `findDuplicates` function finds hunters that have more than one record in the download data. Hunters are grouped by first name, last name, city, state, and birth date. If the same hunter has 2 or more records, the fields that are not identical are counted and summarized in a tibble and plot.
+
+```{r findDuplicates, fig.width = 6}
+findDuplicates(DL1202_proofed)
+```
+
+### outOfStateHunters
+
+The `outOfStateHunters` function allows us to visualize how many hunters report harvests from a location that does not match the state, province, or territory of their address. This function can plot errors as either proportions or counts by state. 
+
+```{r outofstatect, fig.width = 6, fig.height = 3.5}
+outOfStateHunters(DL1202_proofed, type = "count")
+```
+
+```{r outofstatepr, fig.width = 6, fig.height = 3.5}
+outOfStateHunters(DL1202_proofed, type = "proportion")
+```
+
+### youthHunters
+
+The `youthHunters` function returns a table and plot of the number of hunters with birth dates < 16 years from the year of HIP data collection. These data are interesting to explore because hunters younger than 16 years of age are not required to have a migratory bird hunting license in the United States. 
+
+```{r youth, fig.width = 6}
+youthHunters(DL1202_proofed, year = 2020)
+```
+
+### errorPlot_dl
+
+This function should not be used unless you want to visualize an entire season of data, rather than a single download cycle. The `errorPlot_dl` function plots total errors per download cycle across the year. Location may be specified to see a particular state over time. 
+
+`errorPlot(DL1202_proofed, loc = "MI")`
+
+
+## Stage 3: Explore Errors
+
+### investigate
+
+Did the `validate` function return repeated values? Are some of those values a high number that are uniform and need to be looked at more closely? The `investigate` function allows you to see what value was repeated for a species. Parameters required are download state, download date, and species, which are all provided in the output of [validate](#validate).
+
+```{r investigate}
+investigate(DL1202_tidied, loc = "TX", date = "20201216", species = "cranes")
+```
+
+### errorTable
+
+The `errorTable` function is a flexible way to obtain error data as a tibble, which can be assessed as needed or exported to create records of download cycle errors. The basic function reports errors by both location and field.
+
+```{r errortable1}
+errorTable(DL1202_proofed)
+```
+
+Errors can be reported by only location by turning off the `field` parameter.
+
+```{r errortable2}
+errorTable(DL1202_proofed, field = "none")
+```
+
+Errors can be reported by only field by turning off the `loc` parameter.
+
+```{r errortable3}
+errorTable(DL1202_proofed, loc = "none")
+```
+
+Location can be specified.
+
+```{r errortable4}
+errorTable(DL1202_proofed, loc = "CA")
+```
+
+Field can be specified.
+
+```{r errortable5}
+errorTable(DL1202_proofed, field = "suffix")
+```
+
+Total errors for a location can be pulled.
+
+```{r errortable6}
+errorTable(DL1202_proofed, loc = "CA", field = "none")
+```
+
+Total errors for a field in a particular location can be pulled.
+
+```{r errortable7}
+errorTable(DL1202_proofed, loc = "CA", field = "zip")
+```
+
+### pullErrors
+
+The `pullErrors` function can be used to view all of the actual values that were flagged as errors in a particular field. In this example, we find that the "dove_bag" field contains entries of "4" and "9", when the only values permissible are 0, 1, 2, 3, and 5.
+
+```{r pullerrors}
+pullErrors(DL1202_proofed, error = "dove_bag")
+```
+
+### redFlags
+
+<b>By state.</b>
+States with an unacceptable level of error can be pulled into a tibble. The tibble contains information pertaining to state, the count of errors from that state, the number of correct records from that state, the proportion of error per state, and a "flag" column that prints the threshold used. Any threshold can be supplied; in this example, we see which states had more than 3% error.
+
+```{r redflags1}
+redFlags(DL1202_proofed, type = "state", threshold = 0.03)
+```
+
+<b>By field.</b>
+The same can be done for data fields. In this example, we see which fields had more than 1% error.
+
+```{r redflags2}
+redFlags(DL1202_proofed, type = "field", threshold = 0.01)
+```
+
+## Stage 4: Correct and Compare
+
+### correct
+
+After the download data are proofed, the next step is to fix the data to the best of our ability. Data can be corrected by running the `correct` function on the proofed tibble.
+
+```{r correct}
+DL1202_corrected <- correct(DL1202_proofed, year = 2020)
+```
+
+The following changes are made by the `correct` function:
+
+* *Title* is changed to NA if it does not equal 1 or 2
+* *First name* is not changed, but remains flagged as an error if it breaks a following rule:
+    * Not > 1 letter
+    * Contains a first initial and middle name
+    * Contains a first name and middle initial
+    * Contains non-alpha characters other than space or hyphen
+    * No full names (detected with 2+ spaces)
+    * Is not "BLANK", "INAUDIBLE", "TEST", "USER", or "RESIDENT"
+* *Middle initial* is not changed, but remains flagged if it is not exactly 1 letter
+* *Last name* is not changed, but remains flagged as an error if it breaks a following rule:
+    * Not > 1 letter
+    * Contains a non-alpha character other than space, period, hyphen, or apostrophe
+    * No full names (Detected with 2+ spaces)
+    * Is not "INAUDIBLE"
+* *Suffix* is changed to NA if it is not equal to:
+    * A value between I and XX in Roman numerals
+    * An ordinal number between 1ST and 20TH
+    * ESQ
+* *Address* is not changed, but remains flagged if it contains a |, tab, or non-UTF8 character
+* *City* is not changed, but remains flagged if it contains any non-alpha character
+* *State* is not changed, but remains flagged if it is not contained in the following list of abbreviations for US and Canada states, provinces, and territories:
+    * AL, AK, AZ, AR, CA, CO, CT, DE, DC, FL, GA, HI, ID, IL, IN, IA, KS, KY, LA, ME, MD, MA, MI, MN, MS, MO, MT, NE, NV, NH, NJ, NM, NY, NC, ND, OH, OK, OR, PA, RI, SC, SD, TN, TX, UT, VT, VA, WA, WV, WI, WY, AS, GU, MP, PR, VI, UM, FM, MH, PW, AA, AE, AP, CM, CZ, NB, PI, TT, ON, QC, NS, NB, MB, BC, PE, SK, AB, NL
+* *Zip* is corrected by:
+    * Inserting a hyphen into continuous 9-digit zip codes
+    * Replacing a central space with a hyphen
+    * Deleting trailing -0000 and -____
+    * Checking corrected zip codes against a master list of USA postal codes; if the hunter's address doesn't have a zip that should be in their state, it's flagged
+    * Foreign zip codes are flagged
+    * Zip codes that do not match a 5-digit or 9-digit hyphenated format are flagged
+* *Birth date* is not changed, but remains flagged if the birth year was > 100 or < 16 years ago
+* *Issue date* is not changed, but remains flagged if it is not equal to or +/- 1 year from the HIP data collection year
+* *Hunt migratory birds* is not changed, and remains flagged if it is not equal to 1 or 2
+* *Bag limits*
+    * State numbers that do not meet expected parameters are compared to a master list by state and species, then corrected to the standard FWS format
+    * Any parameter that can't be converted is changed to NA
+* *Registration year* is not changed, but remains flagged if it is not equal to or +/- 1 year from the HIP data collection year
+* *Email* is corrected by:
+    * Removing spaces, commas, and/or forward slash symbols
+    * Changing to lowercase
+    * Replacing multiple @ symbols with a single @
+    * Adding periods and three-letter endings to common domains, including:
+        * gmail -> gmail.com
+        * yahoo -> yahoo.com
+        * aol -> aol.com
+        * comcast -> comcast.net
+        * verizon -> verizon.net
+        * cox -> cox.net
+        * outlook -> outlook.com
+        * hotmail -> hotmail.com
+    * Replace .ccom with .com
+    * Add missing periods before net, com, edu, and gov
+    * Change email to NA if:
+        * There is no @ symbol in the email string
+        * If the email is invalid (i.e. none<!-- breaklink -->@none, noemail, n/a)
+    * Any email that wasn't corrected and doesn't fit the standardized email regex remains flagged
+
+The year of the Harvest Information Program must be supplied as a parameter. Since the "errors" column is re-created using `correct`, supplying the year is necessary for the same reasons it is required by `proof`. 
+
+All functions in <b>Stage 2</b> and <b>Stage 3</b> will run on the corrected tibble, DL1202_corrected, just as they worked on the example tibble DL1202_proofed. Errors can be compared between the proofed stage and corrected stage to get a better idea of which errors were serious (i.e., difficult to correct automatically) and determine how serious errors can be prevented in the future.
+
+## Stage 5: Write Reports
+
+### writeReport
+
+The `writeReport` function can be used to automatically generate an R markdown document with figures, tables, and summary statistics. This can be done at the end of a download cycle (using `type = "dl_report"`) or the entire HIP season (with `type = "season_report"`). Since this is a memory intensive process, it is recommended to increase your memory allocated to R. You should expect the document writing script to run for ~30 minutes.
+
+```{r, writerpt, eval = FALSE}
+
+# Windows only
+memory.limit(size = 55000)
+
+writeReport(
+  path = "C:/HIP/all_2019", 
+  type = "season_report", 
+  yr = 2019, 
+  dir = "H:/r_projects/hip_data/script", 
+  file = "gadget")
+
+```
+
+## Troubleshooting
+
+### Memory Issues
+
+Some of these functions require a lot of memory to run. To help your R process these data, especially when working with the large season totals, you can do a few things:
+
+1. Remove objects from the environment. If you have already run `compile`, `tidy`, and `proof`, you may no longer need your original dataframe or your tidied dataframe, since most error checking functions work from the proofed or corrected versions of the data. To remove an unneeded object like the tidied dataframe, run `rm(DL1202_tidied)`.
+
+2. Check your memory using `memory.limit()`
+
+3. Increase your memory, e.g. `memory.limit(size = 55000)`
+
+### Other
+
+<b>Issue Reporting</b>
+
+If you find a bug in the package, it's advised to [create an issue](https://github.com/USFWS/migbirdHarvestData/issues) at the package's GitHub repo, https://github.com/USFWS/migbirdHarvestData.
+
+<b>Questions?</b> 
+
+Contact Abby Walter, abby_walter@fws.gov
+
