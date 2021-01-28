@@ -26,7 +26,7 @@ validate <-
       group_by(dl_state, dl_date) %>%
       suppressMessages(summarize(across(contains("bag"), ~n_distinct(.)))) %>%
       mutate(
-        # Create uniformity so the next step has something to paste with
+        # Create uniformity col so the next step has something to paste with
         uniformity = NA,
         # Paste col name into "uniformity" if it has only one value per dl_state
         # and dl_date (the grouping values)
@@ -34,52 +34,52 @@ validate <-
           ifelse(
             as.numeric(length(unique(ducks_bag))) == 1,
             paste0(uniformity, "-ducks_bag"),
-            NA),
+            uniformity),
         uniformity =
           ifelse(
             as.numeric(length(unique(geese_bag))) == 1,
             paste0(uniformity, "-geese_bag"),
-            NA),
+            uniformity),
         uniformity =
           ifelse(
             as.numeric(length(unique(dove_bag))) == 1,
             paste0(uniformity, "-dove_bag"),
-            NA),
+            uniformity),
         uniformity =
           ifelse(
             as.numeric(length(unique(woodcock_bag))) == 1,
             paste0(uniformity, "-woodcock_bag"),
-            NA),
+            uniformity),
         uniformity =
           ifelse(
             as.numeric(length(unique(coots_snipe))) == 1,
             paste0(uniformity, "-coots_snipe"),
-            NA),
+            uniformity),
         uniformity =
           ifelse(
             as.numeric(length(unique(rails_gallinules))) == 1,
             paste0(uniformity, "-rails_gallinules"),
-            NA),
+            uniformity),
         uniformity =
           ifelse(
             as.numeric(length(unique(cranes))) == 1,
             paste0(uniformity, "-cranes"),
-            NA),
+            uniformity),
         uniformity =
           ifelse(
             as.numeric(length(unique(band_tailed_pigeon))) == 1,
             paste0(uniformity, "-band_tailed_pigeon"),
-            NA),
+            uniformity),
         uniformity =
           ifelse(
             as.numeric(length(unique(brant))) == 1,
             paste0(uniformity, "-brant"),
-            NA),
+            uniformity),
         uniformity =
           ifelse(
             as.numeric(length(unique(seaducks))) == 1,
             paste0(uniformity, "-seaducks"),
-            NA),
+            uniformity),
         # Remove unnecessary leading NA- strings from the first step
         uniformity = str_remove(uniformity, "NA\\-")) %>%
       filter(!is.na(uniformity)) %>%
