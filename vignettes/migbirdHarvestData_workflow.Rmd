@@ -58,18 +58,22 @@ The first step is to import .txt files containing harvest data. To do this, we a
 
 ```r
 library(migbirdHarvestData)
-```
 
-```
-## Error in library(migbirdHarvestData): there is no package called 'migbirdHarvestData'
-```
-
-```r
 DL1202 <- compile(path = "C:/HIP/DL_1202")
 ```
 
 ```
-## Error in compile(path = "C:/HIP/DL_1202"): could not find function "compile"
+## # A tibble: 4 x 3
+##   filepath                      encoding   confidence
+##   <chr>                         <chr>           <dbl>
+## 1 C:/HIP/DL_1202/MO20201216.txt ISO-8859-1      0.27 
+## 2 C:/HIP/DL_1202/NE20201209.txt ISO-8859-1      0.290
+## 3 C:/HIP/DL_1202/NE20201209.txt ISO-8859-2      0.22 
+## 4 C:/HIP/DL_1202/SC20201202.txt ISO-8859-1      0.28
+```
+
+```
+## Attention: Directory contains file(s) with non-UTF-8 encoding.
 ```
 
 The error message above tells us that `compile` did not work because the files contained in the directory are not all encoded as UTF-8. We are provided a tibble of paths to .txt files that threw the error with additional information about their non-UTF-8 encodings. In this example, Latin-1 (ISO-8859-1) and Latin-2 (ISO-8859-2) character sets (which include letters with accents such as ê and á) were the reason the files in the directory were not compatible with the function.
@@ -86,7 +90,17 @@ DL1202_utf8 <- compile_to_utf8(path = "C:/HIP/DL_1202")
 ```
 
 ```
-## Error in compile_to_utf8(path = "C:/HIP/DL_1202"): could not find function "compile_to_utf8"
+## # A tibble: 4 x 3
+##   filepath                      encoding   confidence
+##   <chr>                         <chr>           <dbl>
+## 1 C:/HIP/DL_1202/MO20201216.txt ISO-8859-1      0.27 
+## 2 C:/HIP/DL_1202/NE20201209.txt ISO-8859-1      0.290
+## 3 C:/HIP/DL_1202/NE20201209.txt ISO-8859-2      0.22 
+## 4 C:/HIP/DL_1202/SC20201202.txt ISO-8859-1      0.28
+```
+
+```
+## Attention: File(s) with non-UTF-8 encoding will be re-written.
 ```
 
 ### tidy
@@ -96,10 +110,6 @@ After data are imported, we `tidy`:
 
 ```r
 DL1202_tidied <- tidy(DL1202_utf8)
-```
-
-```
-## Error in tidy(DL1202_utf8): could not find function "tidy"
 ```
 
 This function renames columns and does simple mutations, such as:
@@ -117,10 +127,27 @@ validate(DL1202_tidied)
 ```
 
 ```
-## Error in validate(DL1202_tidied): could not find function "validate"
+## Attention: Uniform value detected within one or more fields, please review.
 ```
 
-An important intermediate step is to `validate` the data. This function can be run on the data after they are tidied. It looks across download states and download dates to make sure that uniform numbers were not reported across bags. If a uniformity is detected, the errors are returned in a tibble with a warning. If there are no uniformities, a positive message is returned. 
+```
+## # A tibble: 21 x 4
+##    dl_state dl_date  uniformity                               n_uniform
+##    <chr>    <chr>    <chr>                                        <int>
+##  1 TX       20201216 cranes-band_tailed_pigeon-brant-seaducks     15803
+##  2 MS       20201215 cranes-band_tailed_pigeon-brant-seaducks      8929
+##  3 SC       20201202 band_tailed_pigeon-brant-seaducks             7838
+##  4 AL       20201216 cranes-band_tailed_pigeon-brant-seaducks      7073
+##  5 AR       20201216 cranes-band_tailed_pigeon-brant-seaducks      6569
+##  6 OK       20201216 cranes-band_tailed_pigeon-brant-seaducks      4450
+##  7 FL       20201216 cranes-band_tailed_pigeon-brant-seaducks      3657
+##  8 GA       20201216 cranes-band_tailed_pigeon-brant-seaducks      3596
+##  9 LA       20201216 cranes-band_tailed_pigeon-brant-seaducks      3252
+## 10 IA       20201216 seaducks                                      3236
+## # ... with 11 more rows
+```
+
+An important intermediate step is to `validate` the data. This function can be run on the data after they are tidied. It looks across download states and download dates to make sure that uniform numbers were not reported across bags. If a uniformity is detected, the errors are returned in a tibble with a warning. If there are no uniformities, a positive message is returned.
 
 Repeated values returned from the `validate` function can be looked at more closely using `investigate` (see Stage 3: [investigate](#investigate)).
 
@@ -133,11 +160,7 @@ After data are tidied, we `proof`:
 DL1202_proofed <- proof(DL1202_tidied, year = 2020)
 ```
 
-```
-## Error in proof(DL1202_tidied, year = 2020): could not find function "proof"
-```
-
-Data that are considered irregular are flagged in a new column called "errors". No actual corrections take place in this step; all data remain identical except for the new "errors" column. For each field, values are compared to standard expected formats and if they do not conform, the field name is pasted as a string in the "errors" column. Each row can have from zero errors (NA) to all column names listed. Multiple flags are hyphen delimited. 
+Data that are considered irregular are flagged in a new column called "errors". No actual corrections take place in this step; all data remain identical except for the new "errors" column. For each field, values are compared to standard expected formats and if they do not conform, the field name is pasted as a string in the "errors" column. Each row can have from zero errors (NA) to all column names listed. Multiple flags are hyphen delimited.
 
 The year of the Harvest Information Program must be supplied as a parameter. This aids in checking dates when licenses were issued, as one example.
 
@@ -152,9 +175,7 @@ The `errorPlot_fields` function can be run on all states, provinces, and/or terr
 errorPlot_fields(DL1202_proofed, loc = "all")
 ```
 
-```
-## Error in errorPlot_fields(DL1202_proofed, loc = "all"): could not find function "errorPlot_fields"
-```
+![plot of chunk errorfieldsplotall](figure/errorfieldsplotall-1.png)
 
 ... or it can be limited to just one.
 
@@ -163,9 +184,7 @@ errorPlot_fields(DL1202_proofed, loc = "all")
 errorPlot_fields(DL1202_proofed, loc = "SC")
 ```
 
-```
-## Error in errorPlot_fields(DL1202_proofed, loc = "SC"): could not find function "errorPlot_fields"
-```
+![plot of chunk errorfieldsplotsc](figure/errorfieldsplotsc-1.png)
 
 The year in which the HIP data were collected can also be specified in `errorPlot_fields` to visualize the proportion of "errors" created by youth hunters and Canadian zip codes, since these values fall outside the expected parameters of the `proof` function. It is encouraged to use `specify` when error counts are high to increase transparency by revealing which errors are attributable to a specific cause. This feature should also help maintain confidence in the integrity of the data.
 
@@ -174,9 +193,7 @@ The year in which the HIP data were collected can also be specified in `errorPlo
 errorPlot_fields(DL1202_proofed, specify = 2020)
 ```
 
-```
-## Error in errorPlot_fields(DL1202_proofed, specify = 2020): could not find function "errorPlot_fields"
-```
+![plot of chunk errorfieldsplotyouth](figure/errorfieldsplotyouth-1.png)
 
 Lastly, for season total data, the plot can be faceted using either dl_cycle or dl_date. In addition, it is possible to add any other ggplot2 arguments to the plot.
 
@@ -188,25 +205,21 @@ errorPlot_fields(DL1202_proofed, specify = 2020) + facet_wrap(~dl_cycle)
 
 ### errorPlot_states
 
-The `errorPlot_states` function can plot errors as either proportions or counts by state. 
+The `errorPlot_states` function can plot errors as either proportions or counts by state.
 
 
 ```r
 errorPlot_states(DL1202_proofed, type = "proportion")
 ```
 
-```
-## Error in errorPlot_states(DL1202_proofed, type = "proportion"): could not find function "errorPlot_states"
-```
+![plot of chunk errorstatesprop](figure/errorstatesprop-1.png)
 
 
 ```r
 errorPlot_states(DL1202_proofed, type = "count")
 ```
 
-```
-## Error in errorPlot_states(DL1202_proofed, type = "count"): could not find function "errorPlot_states"
-```
+![plot of chunk errorstatescount](figure/errorstatescount-1.png)
 
 ### findDuplicates
 
@@ -218,20 +231,54 @@ findDuplicates(DL1202_proofed)
 ```
 
 ```
-## Error in findDuplicates(DL1202_proofed): could not find function "findDuplicates"
+## There are 607 hunters with duplicates; 1230 total duplicated records.
+```
+
+![plot of chunk findDuplicates](figure/findDuplicates-1.png)
+
+```
+## # A tibble: 156 x 2
+##    dupl                                count
+##    <chr>                               <int>
+##  1 address                                 4
+##  2 address-dl_state                        5
+##  3 address-email                           1
+##  4 address-email-dl_state                  4
+##  5 address-email-dl_state-dl_date          2
+##  6 address-issue_date                      1
+##  7 address-issue_date-dl_state            12
+##  8 address-issue_date-dl_state-dl_date     2
+##  9 address-issue_date-email                1
+## 10 address-issue_date-email-dl_state       9
+## # ... with 146 more rows
 ```
 
 ### outOfStateHunters
 
-The `outOfStateHunters` function allows us to visualize how many hunters report harvests from a location that does not match the state, province, or territory of their address. This function can plot errors as either proportions or counts by state. 
+The `outOfStateHunters` function allows us to visualize how many hunters report harvests from a location that does not match the state, province, or territory of their address. This function can plot errors as either proportions or counts by state.
 
 
 ```r
 outOfStateHunters(DL1202_proofed, type = "count")
 ```
 
+![plot of chunk outofstatect](figure/outofstatect-1.png)
+
 ```
-## Error in outOfStateHunters(DL1202_proofed, type = "count"): could not find function "outOfStateHunters"
+## # A tibble: 30 x 2
+##    dl_state out_of_state
+##    <chr>           <int>
+##  1 AK                 43
+##  2 AL               1031
+##  3 AR               4245
+##  4 CA                234
+##  5 CO                165
+##  6 CT                 11
+##  7 FL                331
+##  8 GA                428
+##  9 IA                169
+## 10 ID                405
+## # ... with 20 more rows
 ```
 
 
@@ -239,26 +286,48 @@ outOfStateHunters(DL1202_proofed, type = "count")
 outOfStateHunters(DL1202_proofed, type = "proportion")
 ```
 
+![plot of chunk outofstatepr](figure/outofstatepr-1.png)
+
 ```
-## Error in outOfStateHunters(DL1202_proofed, type = "proportion"): could not find function "outOfStateHunters"
+## # A tibble: 30 x 3
+##    dl_state n_total outofstate_prop
+##    <chr>      <int>           <dbl>
+##  1 AK           106            0.41
+##  2 AL          7073            0.15
+##  3 AR          6569            0.65
+##  4 CA          3998            0.06
+##  5 CO          1749            0.09
+##  6 CT           114            0.1 
+##  7 FL          3657            0.09
+##  8 GA          3596            0.12
+##  9 IA          3236            0.05
+## 10 ID          1883            0.22
+## # ... with 20 more rows
 ```
 
 ### youthHunters
 
-The `youthHunters` function returns a table and plot of the number of hunters with birth dates < 16 years from the year of HIP data collection. These data are interesting to explore because hunters younger than 16 years of age are not required to have a migratory bird hunting license in the United States. 
+The `youthHunters` function returns a table and plot of the number of hunters with birth dates < 16 years from the year of HIP data collection. These data are interesting to explore because hunters younger than 16 years of age are not required to have a migratory bird hunting license in the United States.
 
 
 ```r
 youthHunters(DL1202_proofed, year = 2020)
 ```
 
+![plot of chunk youth](figure/youth-1.png)
+
 ```
-## Error in youthHunters(DL1202_proofed, year = 2020): could not find function "youthHunters"
+## # A tibble: 3 x 4
+##   dl_state registered_youth total_registered youth_proportion
+##   <chr>               <int>            <int>            <dbl>
+## 1 MO                      1             4047         0.000247
+## 2 ND                    117              175         0.669   
+## 3 NE                      1              549         0.00182
 ```
 
 ### errorPlot_dl
 
-This function should not be used unless you want to visualize an entire season of data, rather than a single download cycle. The `errorPlot_dl` function plots total errors per download cycle across the year. Location may be specified to see a particular state over time. 
+This function should not be used unless you want to visualize an entire season of data, rather than a single download cycle. The `errorPlot_dl` function plots total errors per download cycle across the year. Location may be specified to see a particular state over time.
 
 `errorPlot(DL1202_proofed, loc = "MI")`
 
@@ -275,7 +344,10 @@ investigate(DL1202_tidied, loc = "TX", date = "20201216", species = "cranes")
 ```
 
 ```
-## Error in investigate(DL1202_tidied, loc = "TX", date = "20201216", species = "cranes"): could not find function "investigate"
+## # A tibble: 1 x 1
+##   cranes
+##   <chr> 
+## 1 0
 ```
 
 ### errorTable
@@ -288,7 +360,20 @@ errorTable(DL1202_proofed)
 ```
 
 ```
-## Error in errorTable(DL1202_proofed): could not find function "errorTable"
+## # A tibble: 134 x 3
+##    dl_state error      error_count
+##    <chr>    <chr>            <dbl>
+##  1 AK       birth_date           2
+##  2 AK       zip                 32
+##  3 AL       birth_date         193
+##  4 AL       city                 1
+##  5 AL       firstname            7
+##  6 AL       lastname             1
+##  7 AL       suffix               7
+##  8 AL       zip                 25
+##  9 AR       birth_date         176
+## 10 AR       email                1
+## # ... with 124 more rows
 ```
 
 Errors can be reported by only location by turning off the `field` parameter.
@@ -299,7 +384,20 @@ errorTable(DL1202_proofed, field = "none")
 ```
 
 ```
-## Error in errorTable(DL1202_proofed, field = "none"): could not find function "errorTable"
+## # A tibble: 30 x 2
+##    dl_state error_count
+##    <chr>          <dbl>
+##  1 AK                34
+##  2 AL               234
+##  3 AR               725
+##  4 CA               464
+##  5 CO               193
+##  6 CT               120
+##  7 FL                53
+##  8 GA                57
+##  9 IA              3221
+## 10 ID               163
+## # ... with 20 more rows
 ```
 
 Errors can be reported by only field by turning off the `loc` parameter.
@@ -310,7 +408,28 @@ errorTable(DL1202_proofed, loc = "none")
 ```
 
 ```
-## Error in errorTable(DL1202_proofed, loc = "none"): could not find function "errorTable"
+## # A tibble: 19 x 2
+##    error              error_count
+##    <chr>                    <dbl>
+##  1 band_tailed_pigeon           2
+##  2 birth_date                5646
+##  3 city                         3
+##  4 coots_snipe                 60
+##  5 cranes                      49
+##  6 dove_bag                   113
+##  7 ducks_bag                 3113
+##  8 email                     5496
+##  9 firstname                  111
+## 10 geese_bag                   38
+## 11 hunt_mig_birds              20
+## 12 lastname                    10
+## 13 rails_gallinules            48
+## 14 registration_yr              4
+## 15 seaducks                     1
+## 16 state                        6
+## 17 suffix                     269
+## 18 woodcock_bag                 4
+## 19 zip                       2132
 ```
 
 Location can be specified.
@@ -321,7 +440,12 @@ errorTable(DL1202_proofed, loc = "CA")
 ```
 
 ```
-## Error in errorTable(DL1202_proofed, loc = "CA"): could not find function "errorTable"
+## # A tibble: 3 x 3
+##   dl_state error      error_count
+##   <chr>    <chr>            <dbl>
+## 1 CA       birth_date         410
+## 2 CA       dove_bag            53
+## 3 CA       firstname            1
 ```
 
 Field can be specified.
@@ -332,7 +456,10 @@ errorTable(DL1202_proofed, field = "suffix")
 ```
 
 ```
-## Error in errorTable(DL1202_proofed, field = "suffix"): could not find function "errorTable"
+## # A tibble: 1 x 2
+##   error  error_count
+##   <chr>        <dbl>
+## 1 suffix         269
 ```
 
 Total errors for a location can be pulled.
@@ -343,7 +470,10 @@ errorTable(DL1202_proofed, loc = "CA", field = "none")
 ```
 
 ```
-## Error in errorTable(DL1202_proofed, loc = "CA", field = "none"): could not find function "errorTable"
+## # A tibble: 1 x 2
+##   dl_state total_errors
+##   <chr>           <dbl>
+## 1 CA                464
 ```
 
 Total errors for a field in a particular location can be pulled.
@@ -354,7 +484,8 @@ errorTable(DL1202_proofed, loc = "CA", field = "zip")
 ```
 
 ```
-## Error in errorTable(DL1202_proofed, loc = "CA", field = "zip"): could not find function "errorTable"
+## # A tibble: 0 x 3
+## # ... with 3 variables: dl_state <chr>, error <chr>, error_count <dbl>
 ```
 
 ### pullErrors
@@ -367,7 +498,7 @@ pullErrors(DL1202_proofed, error = "dove_bag")
 ```
 
 ```
-## Error in pullErrors(DL1202_proofed, error = "dove_bag"): could not find function "pullErrors"
+## [1] "4" "9"
 ```
 
 ### redFlags
@@ -381,7 +512,11 @@ redFlags(DL1202_proofed, type = "state", threshold = 0.03)
 ```
 
 ```
-## Error in redFlags(DL1202_proofed, type = "state", threshold = 0.03): could not find function "redFlags"
+## # A tibble: 2 x 5
+##   dl_state count_errors count_correct proportion flag        
+##   <chr>           <int>         <int>      <dbl> <chr>       
+## 1 CT                120          2730     0.0421 error > 0.03
+## 2 IA               3221         77679     0.0398 error > 0.03
 ```
 
 <b>By field.</b>
@@ -393,7 +528,13 @@ redFlags(DL1202_proofed, type = "field", threshold = 0.01)
 ```
 
 ```
-## Error in redFlags(DL1202_proofed, type = "field", threshold = 0.01): could not find function "redFlags"
+## # A tibble: 4 x 5
+##   errors     count_errors count_correct proportion flag        
+##   <chr>             <int>         <int>      <dbl> <chr>       
+## 1 birth_date         5646         87525     0.0606 error > 0.01
+## 2 email              5496         87675     0.0590 error > 0.01
+## 3 ducks_bag          3113         90058     0.0334 error > 0.01
+## 4 zip                2132         91039     0.0229 error > 0.01
 ```
 
 ## Stage 4: Correct and Compare
@@ -405,10 +546,6 @@ After the download data are proofed, the next step is to fix the data to the bes
 
 ```r
 DL1202_corrected <- correct(DL1202_proofed, year = 2020)
-```
-
-```
-## Error in correct(DL1202_proofed, year = 2020): could not find function "correct"
 ```
 
 The following changes are made by the `correct` function:
@@ -469,7 +606,7 @@ The following changes are made by the `correct` function:
         * If the email is invalid (i.e. none<!-- breaklink -->@none, noemail, n/a)
     * Any email that wasn't corrected and doesn't fit the standardized email regex remains flagged
 
-The year of the Harvest Information Program must be supplied as a parameter. Since the "errors" column is re-created using `correct`, supplying the year is necessary for the same reasons it is required by `proof`. 
+The year of the Harvest Information Program must be supplied as a parameter. Since the "errors" column is re-created using `correct`, supplying the year is necessary for the same reasons it is required by `proof`.
 
 All functions in <b>Stage 2</b> and <b>Stage 3</b> will run on the corrected tibble, DL1202_corrected, just as they worked on the example tibble DL1202_proofed. Errors can be compared between the proofed stage and corrected stage to get a better idea of which errors were serious (i.e., difficult to correct automatically) and determine how serious errors can be prevented in the future.
 
@@ -477,7 +614,7 @@ All functions in <b>Stage 2</b> and <b>Stage 3</b> will run on the corrected tib
 
 ### writeReport
 
-The `writeReport` function can be used to automatically generate an R markdown document with figures, tables, and summary statistics. This can be done at the end of a download cycle (using `type = "dl_report"`) or the entire HIP season (with `type = "season_report"`). Since this is a memory intensive process, it is recommended to increase your memory allocated to R. You should expect the document writing script to run for ~30 minutes.
+The `writeReport` function can be used to automatically generate an R markdown document with figures, tables, and summary statistics. This can be done at the end of a download cycle (using `type = "dl_report"`) or the entire HIP season (with `type = "season_report"`). You should expect `writeReport` to run for ~1 minute for a download cycle, or ~30 minutes for a total season (containing approximately 4 million records). Writing a total season report is a memory intensive process, so for this option, we recommend increasing your memory allocated to R (shown below).
 
 
 ```r
@@ -485,10 +622,10 @@ The `writeReport` function can be used to automatically generate an R markdown d
 memory.limit(size = 55000)
 
 writeReport(
-  path = "C:/HIP/all_2019", 
-  type = "season_report", 
-  yr = 2019, 
-  dir = "H:/r_projects/hip_data/script", 
+  path = "C:/HIP/all_2019",
+  type = "season_report",
+  yr = 2019,
+  dir = "H:/r_projects/hip_data/script",
   file = "gadget")
 ```
 
@@ -510,7 +647,7 @@ Some of these functions require a lot of memory to run. To help your R process t
 
 If you find a bug in the package, it's advised to [create an issue](https://github.com/USFWS/migbirdHarvestData/issues) at the package's GitHub repo, https://github.com/USFWS/migbirdHarvestData.
 
-<b>Questions?</b> 
+<b>Questions?</b>
 
 Contact Abby Walter, abby_walter@fws.gov
 

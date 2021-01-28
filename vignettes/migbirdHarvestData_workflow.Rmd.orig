@@ -93,7 +93,7 @@ This function renames columns and does simple mutations, such as:
 validate(DL1202_tidied)
 ```
 
-An important intermediate step is to `validate` the data. This function can be run on the data after they are tidied. It looks across download states and download dates to make sure that uniform numbers were not reported across bags. If a uniformity is detected, the errors are returned in a tibble with a warning. If there are no uniformities, a positive message is returned. 
+An important intermediate step is to `validate` the data. This function can be run on the data after they are tidied. It looks across download states and download dates to make sure that uniform numbers were not reported across bags. If a uniformity is detected, the errors are returned in a tibble with a warning. If there are no uniformities, a positive message is returned.
 
 Repeated values returned from the `validate` function can be looked at more closely using `investigate` (see Stage 3: [investigate](#investigate)).
 
@@ -105,7 +105,7 @@ After data are tidied, we `proof`:
 DL1202_proofed <- proof(DL1202_tidied, year = 2020)
 ```
 
-Data that are considered irregular are flagged in a new column called "errors". No actual corrections take place in this step; all data remain identical except for the new "errors" column. For each field, values are compared to standard expected formats and if they do not conform, the field name is pasted as a string in the "errors" column. Each row can have from zero errors (NA) to all column names listed. Multiple flags are hyphen delimited. 
+Data that are considered irregular are flagged in a new column called "errors". No actual corrections take place in this step; all data remain identical except for the new "errors" column. For each field, values are compared to standard expected formats and if they do not conform, the field name is pasted as a string in the "errors" column. Each row can have from zero errors (NA) to all column names listed. Multiple flags are hyphen delimited.
 
 The year of the Harvest Information Program must be supplied as a parameter. This aids in checking dates when licenses were issued, as one example.
 
@@ -140,7 +140,7 @@ errorPlot_fields(DL1202_proofed, specify = 2020) + facet_wrap(~dl_cycle)
 
 ### errorPlot_states
 
-The `errorPlot_states` function can plot errors as either proportions or counts by state. 
+The `errorPlot_states` function can plot errors as either proportions or counts by state.
 
 ```{r errorstatesprop, fig.width = 6}
 errorPlot_states(DL1202_proofed, type = "proportion")
@@ -160,7 +160,7 @@ findDuplicates(DL1202_proofed)
 
 ### outOfStateHunters
 
-The `outOfStateHunters` function allows us to visualize how many hunters report harvests from a location that does not match the state, province, or territory of their address. This function can plot errors as either proportions or counts by state. 
+The `outOfStateHunters` function allows us to visualize how many hunters report harvests from a location that does not match the state, province, or territory of their address. This function can plot errors as either proportions or counts by state.
 
 ```{r outofstatect, fig.width = 6, fig.height = 3.5}
 outOfStateHunters(DL1202_proofed, type = "count")
@@ -172,7 +172,7 @@ outOfStateHunters(DL1202_proofed, type = "proportion")
 
 ### youthHunters
 
-The `youthHunters` function returns a table and plot of the number of hunters with birth dates < 16 years from the year of HIP data collection. These data are interesting to explore because hunters younger than 16 years of age are not required to have a migratory bird hunting license in the United States. 
+The `youthHunters` function returns a table and plot of the number of hunters with birth dates < 16 years from the year of HIP data collection. These data are interesting to explore because hunters younger than 16 years of age are not required to have a migratory bird hunting license in the United States.
 
 ```{r youth, fig.width = 6}
 youthHunters(DL1202_proofed, year = 2020)
@@ -180,7 +180,7 @@ youthHunters(DL1202_proofed, year = 2020)
 
 ### errorPlot_dl
 
-This function should not be used unless you want to visualize an entire season of data, rather than a single download cycle. The `errorPlot_dl` function plots total errors per download cycle across the year. Location may be specified to see a particular state over time. 
+This function should not be used unless you want to visualize an entire season of data, rather than a single download cycle. The `errorPlot_dl` function plots total errors per download cycle across the year. Location may be specified to see a particular state over time.
 
 `errorPlot(DL1202_proofed, loc = "MI")`
 
@@ -331,7 +331,7 @@ The following changes are made by the `correct` function:
         * If the email is invalid (i.e. none<!-- breaklink -->@none, noemail, n/a)
     * Any email that wasn't corrected and doesn't fit the standardized email regex remains flagged
 
-The year of the Harvest Information Program must be supplied as a parameter. Since the "errors" column is re-created using `correct`, supplying the year is necessary for the same reasons it is required by `proof`. 
+The year of the Harvest Information Program must be supplied as a parameter. Since the "errors" column is re-created using `correct`, supplying the year is necessary for the same reasons it is required by `proof`.
 
 All functions in <b>Stage 2</b> and <b>Stage 3</b> will run on the corrected tibble, DL1202_corrected, just as they worked on the example tibble DL1202_proofed. Errors can be compared between the proofed stage and corrected stage to get a better idea of which errors were serious (i.e., difficult to correct automatically) and determine how serious errors can be prevented in the future.
 
@@ -339,7 +339,7 @@ All functions in <b>Stage 2</b> and <b>Stage 3</b> will run on the corrected tib
 
 ### writeReport
 
-The `writeReport` function can be used to automatically generate an R markdown document with figures, tables, and summary statistics. This can be done at the end of a download cycle (using `type = "dl_report"`) or the entire HIP season (with `type = "season_report"`). Since this is a memory intensive process, it is recommended to increase your memory allocated to R. You should expect the document writing script to run for ~30 minutes.
+The `writeReport` function can be used to automatically generate an R markdown document with figures, tables, and summary statistics. This can be done at the end of a download cycle (using `type = "dl_report"`) or the entire HIP season (with `type = "season_report"`). You should expect `writeReport` to run for ~1 minute for a download cycle, or ~30 minutes for a total season (containing approximately 4 million records). Writing a total season report is a memory intensive process, so for this option, we recommend increasing your memory allocated to R (shown below).
 
 ```{r, writerpt, eval = FALSE}
 
@@ -347,10 +347,10 @@ The `writeReport` function can be used to automatically generate an R markdown d
 memory.limit(size = 55000)
 
 writeReport(
-  path = "C:/HIP/all_2019", 
-  type = "season_report", 
-  yr = 2019, 
-  dir = "H:/r_projects/hip_data/script", 
+  path = "C:/HIP/all_2019",
+  type = "season_report",
+  yr = 2019,
+  dir = "H:/r_projects/hip_data/script",
   file = "gadget")
 
 ```
@@ -373,7 +373,7 @@ Some of these functions require a lot of memory to run. To help your R process t
 
 If you find a bug in the package, it's advised to [create an issue](https://github.com/USFWS/migbirdHarvestData/issues) at the package's GitHub repo, https://github.com/USFWS/migbirdHarvestData.
 
-<b>Questions?</b> 
+<b>Questions?</b>
 
 Contact Abby Walter, abby_walter@fws.gov
 
