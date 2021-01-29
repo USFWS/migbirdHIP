@@ -72,67 +72,67 @@ findDuplicates <-
         # (can't be done with case_when)
         dupl =
           ifelse(
-            length(unique(title)) > 1,
+            n_distinct(title) > 1,
             paste(dupl, "title", sep = "-"),
             dupl),
         dupl =
           ifelse(
-            length(unique(middle)) > 1,
+            n_distinct(middle) > 1,
             paste(dupl, "middle", sep = "-"),
             dupl),
         dupl =
           ifelse(
-            length(unique(suffix)) > 1,
+            n_distinct(suffix) > 1,
             paste(dupl, "suffix", sep = "-"),
             dupl),
         dupl =
           ifelse(
-            length(unique(address)) > 1,
+            n_distinct(address) > 1,
             paste(dupl, "address", sep = "-"),
             dupl),
         dupl =
           ifelse(
-            length(unique(zip)) > 1,
+            n_distinct(zip) > 1,
             paste(dupl, "zip", sep = "-"),
             dupl),
         dupl =
           ifelse(
-            length(unique(birth_date)) > 1,
+            n_distinct(birth_date) > 1,
             paste(dupl, "birth_date", sep = "-"),
             dupl),
         dupl =
           ifelse(
-            length(unique(issue_date)) > 1,
+            n_distinct(issue_date) > 1,
             paste(dupl, "issue_date", sep = "-"),
             dupl),
         dupl =
           ifelse(
-            length(unique(hunt_mig_birds)) > 1,
+            n_distinct(hunt_mig_birds) > 1,
             paste(dupl, "hunt_mig_birds", sep = "-"),
             dupl),
         dupl =
           ifelse(
-            length(unique(registration_yr)) > 1,
+            n_distinct(registration_yr) > 1,
             paste(dupl, "registration_yr", sep = "-"),
             dupl),
         dupl =
           ifelse(
-            length(unique(email)) > 1,
+            n_distinct(email) > 1,
             paste(dupl, "email", sep = "-"),
             dupl),
         dupl =
           ifelse(
-            length(unique(dl_state)) > 1,
+            n_distinct(dl_state) > 1,
             paste(dupl, "dl_state", sep = "-"),
             dupl),
         dupl =
           ifelse(
-            length(unique(dl_date)) > 1,
+            n_distinct(dl_date) > 1,
             paste(dupl, "dl_date", sep = "-"),
             dupl),
         dupl =
           ifelse(
-            length(unique(dl_cycle)) > 1,
+            n_distinct(dl_cycle) > 1,
             paste(dupl, "dl_cycle", sep = "-"),
             dupl),
         dupl = ifelse(str_detect(dupl, "^$"), "bag", dupl),

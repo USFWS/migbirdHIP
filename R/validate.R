@@ -40,7 +40,7 @@ validate <-
         ungroup() %>%
         group_by(dl_state, dl_date, dl_rows) %>%
         # Count the number of unique values in each species column
-        summarize(across(ducks_bag:seaducks, ~length(unique(.x))), .groups = "keep") %>%
+        summarize(across(ducks_bag:seaducks, ~n_distinct(.x)), .groups = "keep") %>%
         pivot_longer(
           cols = !contains("dl"),
           names_to = "species_grp",
@@ -72,27 +72,7 @@ validate <-
       # Horizontal validation
 
       validated_x <-
-        x %>%
-        select(
-          dl_state,
-          dl_date,
-          matches("bag|coots|rails|cranes|pigeon|brant|seaducks")) %>%
-        group_by(dl_state, dl_date) %>%
-        suppressMessages(summarize(across(contains("bag"), ~n_distinct(.)))) %>%
-        mutate(
-          # Create horizontal uniformity col so the next step has something to paste
-          # with
-          h_uniformity = NA,
-
-          # Remove unnecessary leading NA- strings from the first step
-          h_uniformity = str_remove(h_uniformity, "NA\\-")) %>%
-        filter(!is.na(h_uniformity)) %>%
-        select(dl_state, dl_date, h_uniformity) %>%
-        # How many values are uniform within each group?
-        mutate(n_uniform = n()) %>%
-        ungroup() %>%
-        distinct() %>%
-        arrange(desc(n_uniform))
+        x
 
       if(nrow(validated_x) != 0) {
 
