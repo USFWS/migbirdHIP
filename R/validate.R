@@ -40,7 +40,7 @@ validate <-
         ungroup() %>%
         group_by(dl_state, dl_date, dl_rows) %>%
         # Count the number of unique values in each species column
-        summarize(across(ducks_bag:seaducks, ~n_distinct(.x)), .groups = "keep") %>%
+        summarize(across(ducks_bag:seaducks, ~length(unique(.x))), .groups = "keep") %>%
         pivot_longer(
           cols = !contains("dl"),
           names_to = "species_grp",
