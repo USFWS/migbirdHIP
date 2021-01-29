@@ -27,77 +27,30 @@ validate <-
 
       validated_x <-
         x %>%
+        # Subset the data
         select(
           dl_state,
           dl_date,
           matches("bag|coots|rails|cranes|pigeon|brant|seaducks")) %>%
         group_by(dl_state, dl_date) %>%
-        suppressMessages(summarize(across(contains("bag"), ~n_distinct(.)))) %>%
-        mutate(
-          # Create vertical uniformity col so the next step has something to paste
-          # with
-          v_uniformity = NA,
-          # Paste col name into "uniformity" if it has only one value per dl_state
-          # and dl_date (the grouping values)
-          v_uniformity =
-            ifelse(
-              as.numeric(length(unique(ducks_bag))) == 1,
-              paste0(v_uniformity, "-ducks_bag"),
-              v_uniformity),
-          v_uniformity =
-            ifelse(
-              as.numeric(length(unique(geese_bag))) == 1,
-              paste0(v_uniformity, "-geese_bag"),
-              v_uniformity),
-          v_uniformity =
-            ifelse(
-              as.numeric(length(unique(dove_bag))) == 1,
-              paste0(v_uniformity, "-dove_bag"),
-              v_uniformity),
-          v_uniformity =
-            ifelse(
-              as.numeric(length(unique(woodcock_bag))) == 1,
-              paste0(v_uniformity, "-woodcock_bag"),
-              v_uniformity),
-          v_uniformity =
-            ifelse(
-              as.numeric(length(unique(coots_snipe))) == 1,
-              paste0(v_uniformity, "-coots_snipe"),
-              v_uniformity),
-          v_uniformity =
-            ifelse(
-              as.numeric(length(unique(rails_gallinules))) == 1,
-              paste0(v_uniformity, "-rails_gallinules"),
-              v_uniformity),
-          v_uniformity =
-            ifelse(
-              as.numeric(length(unique(cranes))) == 1,
-              paste0(v_uniformity, "-cranes"),
-              v_uniformity),
-          v_uniformity =
-            ifelse(
-              as.numeric(length(unique(band_tailed_pigeon))) == 1,
-              paste0(v_uniformity, "-band_tailed_pigeon"),
-              v_uniformity),
-          v_uniformity =
-            ifelse(
-              as.numeric(length(unique(brant))) == 1,
-              paste0(v_uniformity, "-brant"),
-              v_uniformity),
-          v_uniformity =
-            ifelse(
-              as.numeric(length(unique(seaducks))) == 1,
-              paste0(v_uniformity, "-seaducks"),
-              v_uniformity),
-          # Remove unnecessary leading NA- strings from the first step
-          v_uniformity = str_remove(v_uniformity, "NA\\-")) %>%
-        filter(!is.na(v_uniformity)) %>%
-        select(dl_state, dl_date, v_uniformity) %>%
-        # How many values are uniform within each group?
-        mutate(n_uniform = n()) %>%
+        # Add number of rows per group
+        mutate(dl_rows = n()) %>%
+        # Move dl_rows to 3rd col position
+        relocate(dl_rows, .after = dl_date) %>%
         ungroup() %>%
-        distinct() %>%
-        arrange(desc(n_uniform))
+        group_by(dl_state, dl_date, dl_rows) %>%
+        # Count the number of unique values in each species column
+        summarize(across(ducks_bag:seaducks, ~length(unique(.x))), .groups = "keep") %>%
+        pivot_longer(
+          cols = !contains("dl"),
+          names_to = "species_grp",
+          values_to = "v_uniformity") %>%
+        ungroup() %>%
+        # Keep only the uniform spp groups
+        filter(v_uniformity == 1) %>%
+        # Report count of times uniform values are repeated
+        mutate(v_uniform = dl_rows) %>%
+        select(-c("dl_rows", "v_uniformity"))
 
       if(nrow(validated_x) != 0) {
 

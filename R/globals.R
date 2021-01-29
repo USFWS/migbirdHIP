@@ -61,6 +61,7 @@ utils::globalVariables(
     "count_errors",
     "dl_date",
     "dl_state",
+    "dl_rows",
     "dupl",
     "duplicate",
     "duplicate_type",
