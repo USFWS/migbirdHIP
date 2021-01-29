@@ -71,7 +71,7 @@ validate <-
 
       # Horizontal validation
 
-      h_start <-
+      validated_h <-
         x %>%
         select(dl_state,
                dl_date,
@@ -81,16 +81,13 @@ validate <-
         unite(h_string,!contains("dl"), sep = "-") %>%
         ungroup() %>%
         # Convert string to vector
-        mutate(h_string = str_split(h_string, "-"))
-
-      validated_h <-
-        map_dfr(
-          1:nrow(h_start),
-          function(i){
-            slice(h_start, i) %>%
-              mutate(h_validate = length(unique(h_start$h_string[[i]])))
-          }) %>%
-        select(-h_string) %>%
+        mutate(
+          h_string = str_split(h_string, "-"),
+          rowkey = row_number()) %>%
+        group_by(rowkey) %>%
+        mutate(h_validate = length(unique(h_test$h_string[[rowkey]]))) %>%
+        ungroup() %>%
+        select(-c("h_string", "rowkey")) %>%
         mutate(h_uniform = ifelse(h_validate == "1", "uniform", "non-uniform")) %>%
         select(-h_validate) %>%
         filter(h_uniform == "uniform") %>%
