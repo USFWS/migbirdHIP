@@ -71,19 +71,23 @@ validate <-
 
       # Horizontal validation
 
-      validated_h <-
+      h_test <-
         x %>%
-        select(dl_state,
-               dl_date,
-               matches("bag|coots|rails|cranes|pigeon|brant|seaducks")) %>%
+        select(
+          dl_state,
+          dl_date,
+          matches("bag|coots|rails|cranes|pigeon|brant|seaducks")) %>%
         group_by(dl_state, dl_date) %>%
         # Paste all of the species group values together
-        unite(h_string,!contains("dl"), sep = "-") %>%
+        unite(h_string, !contains("dl"), sep = "-") %>%
         ungroup() %>%
         # Convert string to vector
         mutate(
           h_string = str_split(h_string, "-"),
-          rowkey = row_number()) %>%
+          rowkey = row_number())
+
+      validated_h <-
+        h_test %>%
         group_by(rowkey) %>%
         mutate(h_validate = length(unique(h_test$h_string[[rowkey]]))) %>%
         ungroup() %>%

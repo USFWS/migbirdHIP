@@ -82,4 +82,9 @@ utils::globalVariables(
     "h_uniformity",
     "n_uniform",
     "n_total",
-    "outofstate_prop"))
+    "outofstate_prop",
+    "h_string",
+    "rowkey",
+    "h_test",
+    "h_validate",
+    "h_uniform"))
