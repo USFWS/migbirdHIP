@@ -25,7 +25,7 @@ validate <-
 
       # Vertical validation
 
-      validated_x <-
+      validated_v <-
         x %>%
         # Subset the data
         select(
@@ -52,7 +52,7 @@ validate <-
         mutate(v_uniform = dl_rows) %>%
         select(-c("dl_rows", "v_uniformity"))
 
-      if(nrow(validated_x) != 0) {
+      if(nrow(validated_v) != 0) {
 
         message(
           paste0(
@@ -60,7 +60,7 @@ validate <-
             "please review.")
         )
 
-        return(validated_x)
+        return(validated_v)
 
       }
       else{
@@ -71,10 +71,34 @@ validate <-
 
       # Horizontal validation
 
-      validated_x <-
-        x
+      h_start <-
+        x %>%
+        select(dl_state,
+               dl_date,
+               matches("bag|coots|rails|cranes|pigeon|brant|seaducks")) %>%
+        group_by(dl_state, dl_date) %>%
+        # Paste all of the species group values together
+        unite(h_string,!contains("dl"), sep = "-") %>%
+        ungroup() %>%
+        # Convert string to vector
+        mutate(h_string = str_split(h_string, "-"))
 
-      if(nrow(validated_x) != 0) {
+      validated_h <-
+        map_dfr(
+          1:nrow(h_start),
+          function(i){
+            slice(h_start, i) %>%
+              mutate(h_validate = length(unique(h_start$h_string[[i]])))
+          }) %>%
+        select(-h_string) %>%
+        mutate(h_uniform = ifelse(h_validate == "1", "uniform", "non-uniform")) %>%
+        select(-h_validate) %>%
+        filter(h_uniform == "uniform") %>%
+        group_by(dl_state, dl_date) %>%
+        summarize(h_uniform = n(), .groups = "keep") %>%
+        ungroup()
+
+      if(nrow(validated_h) != 0) {
 
         message(
           paste0(
@@ -82,7 +106,7 @@ validate <-
             "please review.")
         )
 
-        return(validated_x)
+        return(validated_h)
 
       }
       else{
