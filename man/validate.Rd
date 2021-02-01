@@ -4,7 +4,7 @@
 \alias{validate}
 \title{Validate data}
 \usage{
-validate(x, type)
+validate(x, type, period = NA)
 }
 \arguments{
 \item{x}{The object created after tidying data with \code{\link{tidy}}}
@@ -13,6 +13,12 @@ validate(x, type)
 \itemize{
 \item vertical - Checks for repetition vertically in species and/or bag fields, grouped by dl_state and dl_date
 \item horizontal - Checks for repetition horizontally, across each record
+}}
+
+\item{period}{Time period in which to group the data. The function uses dl_date automatically, but either of the following may be supplied:
+\itemize{
+\item dl_date - Date the HIP data were downloaded
+\item dl_cycle - Download cycle that the HIP data belong to
 }}
 }
 \description{
