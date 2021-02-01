@@ -122,35 +122,80 @@ This function renames columns and does simple mutations, such as:
 
 ### validate
 
+The next intermediate step is to `validate` the data. This function should be run after `tidy` to assess the data for repeated values in two dimensions, both vertically and horizontally.
+
+<b>Vertically.</b> The vertical check searches within each column for repetition. Any species group column with a uniform value in all rows will be detected. States that do not have a hunting season for one or more species groups (e.g. seaducks) will not be returned using this function for reporting all zero values.
+
+The two time period options to assess vertical repetition are `period = "dl_date"` (used automatically)...
+
 
 ```r
 validate(DL1202_tidied, type = "vertical")
 ```
 
 ```
-## Attention: Uniform value detected within one or more fields, please review.
+## # A tibble: 112 x 4
+##    dl_state dl_date  species_grp        v_uniform
+##    <chr>    <chr>    <chr>                  <int>
+##  1 AK       20201215 dove_bag                 106
+##  2 AK       20201215 woodcock_bag             106
+##  3 AK       20201215 rails_gallinules         106
+##  4 AK       20201215 band_tailed_pigeon       106
+##  5 AL       20201216 cranes                  7073
+##  6 AL       20201216 band_tailed_pigeon      7073
+##  7 AL       20201216 brant                   7073
+##  8 AL       20201216 seaducks                7073
+##  9 AR       20201216 cranes                  6569
+## 10 AR       20201216 band_tailed_pigeon      6569
+## # ... with 102 more rows
+```
+
+... and `period = "dl_cycle"`.
+
+
+```r
+validate(DL1202_tidied, type = "vertical", period = "dl_cycle")
 ```
 
 ```
-## # A tibble: 29 x 4
-##    dl_state dl_date  v_uniformity                                       n_uniform
-##    <chr>    <chr>    <chr>                                                  <int>
-##  1 TX       20201216 cranes-band_tailed_pigeon-brant-seaducks               15803
-##  2 MS       20201215 cranes-band_tailed_pigeon-brant-seaducks                8929
-##  3 SC       20201202 band_tailed_pigeon-brant-seaducks                       7838
-##  4 AL       20201216 cranes-band_tailed_pigeon-brant-seaducks                7073
-##  5 AR       20201216 cranes-band_tailed_pigeon-brant-seaducks                6569
-##  6 MD       20201215 cranes-band_tailed_pigeon                               4650
-##  7 OK       20201216 cranes-band_tailed_pigeon-brant-seaducks                4450
-##  8 CA       20201216 woodcock_bag-cranes                                     3998
-##  9 FL       20201216 geese_bag-cranes-band_tailed_pigeon-brant-seaducks      3657
-## 10 GA       20201216 cranes-band_tailed_pigeon-brant-seaducks                3596
-## # ... with 19 more rows
+## # A tibble: 112 x 4
+##    dl_state dl_cycle species_grp        v_uniform
+##    <chr>    <chr>    <chr>                  <int>
+##  1 AK       _1202    dove_bag                 106
+##  2 AK       _1202    woodcock_bag             106
+##  3 AK       _1202    rails_gallinules         106
+##  4 AK       _1202    band_tailed_pigeon       106
+##  5 AL       _1202    cranes                  7073
+##  6 AL       _1202    band_tailed_pigeon      7073
+##  7 AL       _1202    brant                   7073
+##  8 AL       _1202    seaducks                7073
+##  9 AR       _1202    cranes                  6569
+## 10 AR       _1202    band_tailed_pigeon      6569
+## # ... with 102 more rows
 ```
 
-An important intermediate step is to `validate` the data. This function should be run after `tidy` to assess the data in two dimensions, using `type = "vertical"` to check for repetition vertically within a column (e.g. all values in the geese_bag column are 4) or `type = "horizontal"` to identify repetition horizontally across records (e.g. for one or more hunters, values across their bag and species columns are 9). If a uniformity is detected vertically or horizontally, a tibble containing the offending columns or rows are returned with a warning. If there are no uniformities, a positive message is returned.
+<b>Horizontally.</b> The horizontal check for repetition looks across records. This function will return results if one or more rows have the same value in each species group column.
 
-Issues returned from the `validate` function can be looked at more closely using `investigate` (see Stage 3: [investigate](#investigate)).
+
+```r
+validate(DL1202_tidied, type = "horizontal")
+```
+
+```
+## # A tibble: 6 x 3
+##   dl_state dl_date  h_uniform
+##   <chr>    <chr>        <int>
+## 1 AR       20201216      3090
+## 2 CT       20201216        72
+## 3 LA       20201216      1530
+## 4 NE       20201209       291
+## 5 NY       20201216       538
+## 6 <NA>     <NA>           441
+```
+
+If there are no uniformities, a positive message will be returned.
+
+Tibbles of vertical repetition returned from this function can be looked at more closely using `investigate` (see Stage 3: [investigate](#investigate)).
 
 ### proof
 
@@ -337,11 +382,11 @@ This function should not be used unless you want to visualize an entire season o
 
 ### investigate
 
-Did the `validate` function return repeated values? Are some of those values a high number that are uniform and need to be looked at more closely? The `investigate` function allows you to see what value was repeated for a species. Parameters required are download state, download date, and species, which are all provided in the output of [validate](#validate).
+Did the `validate` function return repeated values? Are some of those values a high number that are uniform and need to be looked at more closely? The `investigate` function allows you to see what value was vertically repeated for a species. Parameters required are download state, type of download time period, value of the download date or download cycle, and species, which are all provided in the output of [validate](#validate).
 
 
 ```r
-investigate(DL1202_tidied, loc = "TX", date = "20201216", species = "cranes")
+investigate(DL1202_tidied, loc = "TX", period_type = "dl_date", period = "20201216", species = "cranes")
 ```
 
 ```
