@@ -4,14 +4,19 @@
 \alias{investigate}
 \title{Investigate data}
 \usage{
-investigate(x, loc, date, species)
+investigate(x, loc, period_type, period, species)
 }
 \arguments{
 \item{x}{The object created after tidying data with \code{\link{tidy}}}
 
 \item{loc}{The download state in question}
 
-\item{date}{The download date in question}
+\item{period_type}{The type of time period that will be given. You may choose one of two types:
+\itemize{
+\item dl_date
+\item dl_cycle}}
+
+\item{period}{Value of the time period in question}
 
 \item{species}{The bird group in question. One of the bird groups from the following list may be supplied:
 \itemize{
