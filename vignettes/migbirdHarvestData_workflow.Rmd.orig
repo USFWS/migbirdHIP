@@ -13,8 +13,7 @@ vignette: >
 
 - [Introduction](#introduction)
 - [Stage 1: Import Data](#stage-1-import-data)
-    - [compile](#compile)
-    - [compile_to_utf8](#compile_to_utf8)
+    - [read_hip](#read_hip)
     - [tidy](#tidy)
     - [validate](#validate)
     - [proof](#proof)
@@ -51,26 +50,14 @@ install_github("USFWS/migbirdHarvestData")
 
 ## Stage 1: Import Data
 
-### compile
+### read_hip
 
-The first step is to import .txt files containing harvest data. To do this, we attempt to use the `compile` function.
+The first step is to import .txt files containing HIP data. To do this, we use the `read_hip` function.
 
-```{r, compile}
+```{r, readhip}
 library(migbirdHarvestData)
 
-DL1202 <- compile(path = "C:/HIP/DL_1202")
-```
-
-The error message above tells us that `compile` did not work because the files contained in the directory are not all encoded as UTF-8. We are provided a tibble of paths to .txt files that threw the error with additional information about their non-UTF-8 encodings. In this example, Latin-1 (ISO-8859-1) and Latin-2 (ISO-8859-2) character sets (which include letters with accents such as ê and á) were the reason the files in the directory were not compatible with the function.
-
-To remedy the situation, we use a different function, `compile_to_utf8`.
-
-### compile_to_utf8
-
-Encoding issues are a nuisance, but `compile_to_utf8` will identify and convert non-UTF-8 text files before importing from them into R from the supplied directory. Please note that this function will overwrite existing files but no changes to the data will occur.
-
-```{r, compileutf}
-DL1202_utf8 <- compile_to_utf8(path = "C:/HIP/DL_1202")
+DL1202 <- read_hip("C:/HIP/DL_1202")
 ```
 
 ### tidy
@@ -78,7 +65,7 @@ DL1202_utf8 <- compile_to_utf8(path = "C:/HIP/DL_1202")
 After data are imported, we `tidy`:
 
 ```{r, tidy}
-DL1202_tidied <- tidy(DL1202_utf8)
+DL1202_tidied <- tidy(DL1202)
 ```
 
 This function renames columns and does simple mutations, such as:
@@ -140,8 +127,8 @@ errorPlot_fields(DL1202_proofed, loc = "all")
 
 ... or it can be limited to just one.
 
-```{r errorfieldsplotsc, fig.cap = "Figure 2. Plot of all South Carolina's errors by field name.", fig.width = 6, fig.height = 3.6, dpi = 300, out.width = 500, fig.align = "center"}
-errorPlot_fields(DL1202_proofed, loc = "SC")
+```{r errorfieldsplotsc, fig.cap = "Figure 2. Plot of all North Carolina's errors by field name.", fig.width = 6, fig.height = 3.6, dpi = 300, out.width = 500, fig.align = "center"}
+errorPlot_fields(DL1202_proofed, loc = "NC")
 ```
 
 The year in which the HIP data were collected can also be specified in `errorPlot_fields` to visualize the proportion of "errors" created by youth hunters and Canadian zip codes, since these values fall outside the expected parameters of the `proof` function. It is encouraged to use `specify` when error counts are high to increase transparency by revealing which errors are attributable to a specific cause. This feature should also help maintain confidence in the integrity of the data.
@@ -380,7 +367,7 @@ writeReport(
 
 Some of these functions require a lot of memory to run. To help your R process these data, especially when working with the large season totals, you can do a few things:
 
-1. Remove objects from the environment. If you have already run `compile`, `tidy`, and `proof`, you may no longer need your original dataframe or your tidied dataframe, since most error checking functions work from the proofed or corrected versions of the data. To remove an unneeded object like the tidied dataframe, run `rm(DL1202_tidied)`.
+1. Remove objects from the environment. If you have already run `read_hip`, `tidy`, and `proof`, you may no longer need your original dataframe or your tidied dataframe, since most error checking functions work from the proofed or corrected versions of the data. To remove an unneeded object like the tidied dataframe, run `rm(DL1202_tidied)`.
 
 2. Check your memory using `memory.limit()`
 

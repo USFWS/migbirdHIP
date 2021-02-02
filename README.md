@@ -18,7 +18,7 @@ Program](https://www.fws.gov/harvestsurvey) data.
 
 Tasks that can be accomplished with this package include:
 
-  - `compile` and `compile_to_utf8` import data
+  - `read_hip` imports data
   - `tidy` renames field names
   - `validate` checks for table-wide repetition
   - `proof` checks values for errors
