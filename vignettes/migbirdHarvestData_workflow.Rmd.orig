@@ -34,7 +34,8 @@ vignette: >
 - [Stage 5: Write Reports](#stage-5-write-reports)
     - [writeReport](#writereport)
 - [Troubleshooting](#troubleshooting)
-    - [Memory Issues](#memory-issues)
+    - [Common read_hip warnings](#common-read_hip-warnings)
+    - [Memory problems](#memory-problems)
     - [Other](#other)
 
 ## Introduction
@@ -54,11 +55,13 @@ install_github("USFWS/migbirdHarvestData")
 
 The first step is to import .txt files containing HIP data. To do this, we use the `read_hip` function.
 
-```{r, readhip}
+```{r, readhip, warning = FALSE}
 library(migbirdHarvestData)
 
 DL1202 <- read_hip("C:/HIP/DL_1202")
 ```
+
+Did you get a warning or three? Read an explanation of common `read_hip` warnings, [below](#common-read_hip-warnings).
 
 ### tidy
 
@@ -345,7 +348,7 @@ All functions in <b>Stage 2</b> and <b>Stage 3</b> will run on the corrected tib
 
 ### writeReport
 
-The `writeReport` function can be used to automatically generate an R markdown document with figures, tables, and summary statistics. This can be done at the end of a download cycle (using `type = "dl_report"`) or the entire HIP season (with `type = "season_report"`). You should expect this function to run for ~1 minute for a download cycle, or ~30 minutes for a total season (containing approximately 4 million records). Writing a total season report is a memory intensive process, so for this option, we recommend increasing your memory allocated to R.
+The `writeReport` function can be used to automatically generate an R markdown document with figures, tables, and summary statistics. This can be done at the end of a download cycle (using `type = "dl_report"`) or the entire HIP season (with `type = "season_report"`). You should expect this function to run for ~1 minute for a download cycle, or ~30 minutes for a total season (containing approximately 4 million records). Writing a total season report is a memory intensive process, so for this option, we recommend [increasing your memory](#memory-problems) allocated to R.
 
 ```{r, writerpt, eval = FALSE}
 
@@ -363,7 +366,23 @@ writeReport(
 
 ## Troubleshooting
 
-### Memory Issues
+### Common read_hip warnings
+
+Sometimes `read_hip` will throw one or more warnings. Warnings are usually benign, but for clarity I provide examples and explanations of common warnings below. If the warning or error you receive after reading HIP data isn't described here and seems like a real problem, please [report an issue](#other).
+
+<b>Example 1.</b> This parsing failure occurs when a .txt file is missing the last two columns in the fixed-width file (registration_yr and email). For the offending file(s), these columns are filled with NA in the output tibble. No action must be taken.
+
+```{r echo = FALSE, fig.cap = "Example 1. Common warning that results after running read_hip with missing columns in fixed-width text files.", out.width = "60%", dpi = 300, fig.align = "center"}
+knitr::include_graphics("image/parsing_failure_1.png")
+```
+
+<b>Example 2.</b> Another version of a parsing failure occurs when a file is missing the last column in last row of the fixed-width file. This value is set to NA in the output tibble. No action must be taken.
+
+```{r echo = FALSE, fig.cap = "Example 2. Common warning that results after running read_hip with a missing column in one row of a fixed-width text file.", out.width = "60%", dpi = 300, fig.align = "center"}
+knitr::include_graphics("image/parsing_failure_2.png")
+```
+
+### Memory problems
 
 Some of these functions require a lot of memory to run. To help your R process these data, especially when working with the large season totals, you can do a few things:
 
@@ -375,7 +394,7 @@ Some of these functions require a lot of memory to run. To help your R process t
 
 ### Other
 
-<b>Issue Reporting</b>
+<b>Issue reporting</b>
 
 If you find a bug in the package, it's advised to [create an issue](https://github.com/USFWS/migbirdHarvestData/issues) at the package's GitHub repo, https://github.com/USFWS/migbirdHarvestData.
 
