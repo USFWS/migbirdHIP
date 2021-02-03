@@ -16,6 +16,7 @@ vignette: >
     - [read_hip](#read_hip)
     - [tidy](#tidy)
     - [validate](#validate)
+    - [strataCheck](#stratacheck)
     - [proof](#proof)
 - [Stage 2: Visualize Data](#stage-2-visualize-data)
     - [errorPlot_fields](#errorplot_fields)
@@ -106,9 +107,17 @@ If there are no uniformities, a positive message will be returned.
 
 Tibbles of vertical repetition returned from this function can be looked at more closely using `investigate` (see Stage 3: [investigate](#investigate)).
 
+### strataCheck
+
+The last intermediate step we do to make sure all of the data are in order is run `strataCheck`. This function searches to find values in species group columns that are not typical or expected by the FWS. If a value outside of the normal strata is given, the output tibble will create a line with the state and species, unusual stratum, and column called "normal_strata" that are the values we would expect. If a value for a species group is given in the HIP data that doesn't match anything in our records, the species reported in the output will have NA values in the "normal_strata" column. These species are not hunted in the reported states.
+
+```{r, stratacheck}
+strataCheck(DL1202_tidied)
+```
+
 ### proof
 
-After data are tidied, we `proof`:
+After data are tidied and checked for any important issues that would require manual attention, we `proof`:
 
 ```{r, proof}
 DL1202_proofed <- proof(DL1202_tidied, year = 2020)

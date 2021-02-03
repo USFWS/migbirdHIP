@@ -21,6 +21,7 @@ Tasks that can be accomplished with this package include:
   - `read_hip` imports data
   - `tidy` renames field names
   - `validate` checks for table-wide repetition
+  - `strataCheck` doesn’t overlook new strata
   - `proof` checks values for errors
   - `correct` systematically fixes erroneous values
   - Error visualization with `errorPlot_dl`, `errorPlot_fields`, and
