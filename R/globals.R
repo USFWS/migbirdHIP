@@ -87,4 +87,6 @@ utils::globalVariables(
     "rowkey",
     "h_test",
     "h_validate",
-    "h_uniform"))
+    "h_uniform",
+    "dl_states",
+    "normal_strata"))
