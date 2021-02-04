@@ -100,16 +100,17 @@ read_hip <-
     # String of states in the data
     dl_states_in_data <-
       pulled_data %>%
-      select(dl_states) %>%
+      select(dl_state) %>%
       distinct() %>%
       pull()
 
     # If there is a dl_state not found in the list of 49 continental US states,
     # return a message reporting the problem
     if(FALSE %in% (dl_states_in_data %in% acceptable_49_dl_states) == TRUE){
-      warning(
-        paste0("One or more dl_state values do not belong in the list of",
+      message(
+        paste0("One or more dl_state values do not belong in the list of ",
                "expected 49 continental US states."))
+      return(pulled_data)
     }else{
       return(pulled_data)
       }
