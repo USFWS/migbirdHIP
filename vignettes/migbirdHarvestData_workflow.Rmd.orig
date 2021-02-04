@@ -32,8 +32,9 @@ vignette: >
     - [redFlags](#redflags)
 - [Stage 4: Correct and Compare](#stage-4-correct-and-compare)
     - [correct](#correct)
-- [Stage 5: Write Reports](#stage-5-write-reports)
+- [Stage 5: Write and Sample](#stage-5-write-and-sample)
     - [writeReport](#writereport)
+    - [hunterSample](#huntersample)
 - [Troubleshooting](#troubleshooting)
     - [Common read_hip warnings](#common-read_hip-warnings)
     - [Memory problems](#memory-problems)
@@ -353,7 +354,7 @@ The year of the Harvest Information Program must be supplied as a parameter. Sin
 
 All functions in <b>Stage 2</b> and <b>Stage 3</b> will run on the corrected tibble, DL1202_corrected, just as they worked on the example tibble DL1202_proofed. Errors can be compared between the proofed stage and corrected stage to get a better idea of which errors were serious (i.e., difficult to correct automatically) and determine how serious errors can be prevented in the future.
 
-## Stage 5: Write Reports
+## Stage 5: Write and Sample
 
 ### writeReport
 
@@ -370,6 +371,16 @@ writeReport(
   yr = 2019,
   dir = "H:/r_projects/hip_data/script",
   file = "gadget")
+
+```
+
+### hunterSample
+
+After correcting the data, the `hunterSample` function subsets hunters without any errors in their records, ensuring each hunter has a valid mailing address, email address, registration year, and issue date. The function can be run with or without the "random" parameter. If the "random" parameter is used, the specified number of records will be randomly sampled from the corrected data (a non-reproducible event). Without specifying "random", all valid hunters in the data will be returned.
+
+```{r, huntersample, eval = FALSE}
+
+hunterSample(DL1202_corrected, random = 100)
 
 ```
 

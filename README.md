@@ -31,6 +31,7 @@ Tasks that can be accomplished with this package include:
   - Detailed error reporting with `errorTable`, `pullErrors`, and
     `redFlags`
   - Automated report writing with `writeReport`
+  - Random sampling with `hunterSample`
 
 ## Installation
 
