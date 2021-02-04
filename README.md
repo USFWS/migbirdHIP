@@ -24,6 +24,7 @@ Tasks that can be accomplished with this package include:
   - `strataCheck` doesn’t overlook new strata
   - `proof` checks values for errors
   - `correct` systematically fixes erroneous values
+  - `manualFix` lets the user fix any remaining unsatisfactory values
   - Error visualization with `errorPlot_dl`, `errorPlot_fields`, and
     `errorPlot_states`
   - Exploration of specific errors with `findDuplicates`,
