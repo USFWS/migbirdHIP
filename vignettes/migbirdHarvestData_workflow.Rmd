@@ -63,7 +63,7 @@ The first step is to import .txt files containing HIP data. To do this, we use t
 ```r
 library(migbirdHarvestData)
 
-DL1202 <- read_hip("C:/HIP/DL_1202")
+DL1202 <- read_hip("C:/HIP/DL1202")
 ```
 
 Did you get a warning or three? Read an explanation of common `read_hip` warnings, [below](#common-read_hip-warnings).
@@ -88,7 +88,7 @@ This function renames columns and does simple mutations, such as:
 
 The next intermediate step is to `validate` the data. This function should be run after `tidy` to assess the data for repeated values in two dimensions, both vertically and horizontally.
 
-<b>Vertically.</b> The vertical check searches within each column for repetition. Any species group column with a uniform value in all rows will be detected. States that do not have a hunting season for one or more species groups (e.g. seaducks) will not be returned using this function for reporting all zero values.
+<b>Vertically.</b> The vertical check searches within each column for repetition. Any species group column with a uniform value in all rows will be detected. *Coming soon:* States that do not have a hunting season for one or more species groups (e.g. seaducks) will not be returned using this function for reporting all zero values.
 
 The two time period options to assess vertical repetition are `period = "dl_date"` (used automatically)...
 
@@ -125,16 +125,16 @@ validate(DL1202_tidied, type = "vertical", period = "dl_cycle")
 ## # A tibble: 112 x 4
 ##    dl_state dl_cycle species_grp        v_uniform
 ##    <chr>    <chr>    <chr>                  <int>
-##  1 AK       _1202    dove_bag                 106
-##  2 AK       _1202    woodcock_bag             106
-##  3 AK       _1202    rails_gallinules         106
-##  4 AK       _1202    band_tailed_pigeon       106
-##  5 AL       _1202    cranes                  7073
-##  6 AL       _1202    band_tailed_pigeon      7073
-##  7 AL       _1202    brant                   7073
-##  8 AL       _1202    seaducks                7073
-##  9 AR       _1202    cranes                  6569
-## 10 AR       _1202    band_tailed_pigeon      6569
+##  1 AK       1202     dove_bag                 106
+##  2 AK       1202     woodcock_bag             106
+##  3 AK       1202     rails_gallinules         106
+##  4 AK       1202     band_tailed_pigeon       106
+##  5 AL       1202     cranes                  7073
+##  6 AL       1202     band_tailed_pigeon      7073
+##  7 AL       1202     brant                   7073
+##  8 AL       1202     seaducks                7073
+##  9 AR       1202     cranes                  6569
+## 10 AR       1202     band_tailed_pigeon      6569
 ## # ... with 102 more rows
 ```
 
@@ -163,7 +163,9 @@ Tibbles of vertical repetition returned from this function can be looked at more
 
 ### strataCheck
 
-The last intermediate step we do to make sure all of the data are in order is run `strataCheck`. This function searches to find values in species group columns that are not typical or expected by the FWS. If a value outside of the normal strata is given, the output tibble will create a line with the state and species, unusual stratum, and column called "normal_strata" that are the values we would expect. If a value for a species group is given in the HIP data that doesn't match anything in our records, the species reported in the output will have NA values in the "normal_strata" column. These species are not hunted in the reported states.
+Running `strataCheck` is the last step we must do to ensure the data are in order. This function searches for values in species group columns that are not typical or expected by the FWS. If a value outside of the normal strata is given, the output tibble will create a row for it. The row will contain the state, species, unusual stratum value, and a column called "normal_strata" with the typical values we would expect.
+
+If a value for a species group is given in the HIP data that doesn't match anything in our records, the species reported in the output will have NA values in the "normal_strata" column. These species are not hunted in the reported states.
 
 
 ```r
@@ -231,12 +233,21 @@ errorPlot_fields(DL1202_proofed, specify = 2020)
 
 <img src="figure/errorfieldsplotyouth-1.png" title="Figure 3. Plot of all location's errors by field name, with stacked colors to indicate if there are youth hunters or Canadian zip codes in the data, two common causes of error." alt="Figure 3. Plot of all location's errors by field name, with stacked colors to indicate if there are youth hunters or Canadian zip codes in the data, two common causes of error." width="500" style="display: block; margin: auto;" />
 
-Lastly, for season total data, the plot can be faceted using either dl_cycle or dl_date. In addition, it is possible to add any other ggplot2 arguments to the plot.
+It is possible to add any `ggplot2` components to these plots. For season total data specifically, the plot can be facet_wrapped using either dl_cycle or dl_date. The example below demonstrates how this package's functions can interact with the tidyverse and shows an example of an `errorPlot_fields` facet_wrap (using a subset of 4 download cycles)
 
 
 ```r
-errorPlot_fields(DL1202_proofed, specify = 2020) + facet_wrap(~dl_cycle)
+errorPlot_fields(
+  hipdata2020 %>%
+    filter(str_detect(dl_cycle, "0800|0901|0902|1001")),
+  specify = 2020) +
+  theme(
+    axis.text.x = element_text(angle = 90, vjust = 0, hjust = 1),
+    legend.position = "bottom") +
+  facet_wrap(~dl_cycle, ncol = 2)
 ```
+
+<img src="image/errorPlot_fields_facet.png" title="errorfieldsfacet example output" alt="errorfieldsfacet example output" width="100%" style="display: block; margin: auto;" />
 
 
 ### errorPlot_states
@@ -291,7 +302,7 @@ findDuplicates(DL1202_proofed)
 
 ### outOfStateHunters
 
-The `outOfStateHunters` function allows us to visualize how many hunters report harvests from a location that does not match the state, province, or territory of their address. This function can plot errors as either proportions or counts by state.
+The `outOfStateHunters` function allows us to visualize how many hunters reported harvests from a dl_state that does not match the state, province, or territory of their address. This function can plot errors as either proportions or counts by state.
 
 
 ```r
@@ -363,10 +374,14 @@ youthHunters(DL1202_proofed, year = 2020)
 
 ### errorPlot_dl
 
-This function should not be used unless you want to visualize an entire season of data, rather than a single download cycle. The `errorPlot_dl` function plots total errors per download cycle across the year. Location may be specified to see a particular state over time.
+This function should not be used unless you want to visualize an entire season of data. The `errorPlot_dl` function plots total errors per download cycle across the year. Location may be specified to see a particular state over time.
 
-`errorPlot(DL1202_proofed, loc = "MI")`
 
+```r
+errorPlot_dl(hipdata2020, loc = "MI")
+```
+
+<img src="image/errorPlot_dl.png" title="errorPlot_dl example output" alt="errorPlot_dl example output" width="70%" style="display: block; margin: auto;" />
 
 ## Stage 3: Explore Errors
 
@@ -516,12 +531,14 @@ Total errors for a field in a particular location can be pulled.
 
 
 ```r
-errorTable(DL1202_proofed, loc = "CA", field = "zip")
+errorTable(DL1202_proofed, loc = "CA", field = "dove_bag")
 ```
 
 ```
-## # A tibble: 0 x 3
-## # ... with 3 variables: dl_state <chr>, error <chr>, error_count <dbl>
+## # A tibble: 1 x 3
+##   dl_state error    error_count
+##   <chr>    <chr>          <dbl>
+## 1 CA       dove_bag          53
 ```
 
 ### pullErrors
@@ -644,11 +661,11 @@ The following changes are made by the `correct` function:
 
 The year of the Harvest Information Program must be supplied as a parameter. Since the "errors" column is re-created using `correct`, supplying the year is necessary for the same reasons it is required by `proof`.
 
-All functions in [Stage 2](#stage-2-visualize-data) and [Stage 3](#stage-3-explore-errors) will run on the corrected tibble, `DL1202_corrected`, just as they worked on the example tibble `DL1202_proofed`. Errors can be compared between the proofed stage and corrected stage to get a better idea of which errors were serious (i.e., difficult to correct automatically) and determine how serious errors can be prevented in the future.
+All functions in [Stage 2](#stage-2-visualize-data) and [Stage 3](#stage-3-explore-errors) will run on the corrected tibble, `DL1202_corrected`, just as they worked on the example tibble `DL1202_proofed`. Errors can be compared between the proofed stage and corrected stage to get a better idea of which errors were serious (i.e. difficult to correct automatically) and determine how serious errors can be prevented in the future.
 
 ### manualFix
 
-The automated `correct` function cannot always catch and fix every error. This `manualFix` function is able to pinpoint values that you want fixed and replace an inaccurate value with a correct one. It is not recommended that this function only be used after correcting the data; it's best used on a case-by-case basis. In the instance of frame shifts, for example, it would be wise to use after `tidy`. Or if problems are only identified after `proof`, you can run `manualFix` on the tidied data and re-run `proof`. This function is highly flexible and recommended to be used as needed.
+The automated `correct` function cannot always catch and fix every error. To finish the job, `manualFix` function replaces specified inaccurate values with the values you want. It is not recommended that this function only be used after correcting the data; it's best used on a case-by-case basis. In the instance of frame shifts, for example, it would be wise to use after `tidy`. Or if problems are only identified after `proof`, you can run `manualFix` on the tidied data and re-run `proof`. This function is highly flexible and recommended to be used as needed.
 
 
 ```r
