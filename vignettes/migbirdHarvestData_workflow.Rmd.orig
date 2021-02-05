@@ -32,6 +32,7 @@ vignette: >
     - [redFlags](#redflags)
 - [Stage 4: Correct and Compare](#stage-4-correct-and-compare)
     - [correct](#correct)
+    - [manualFix](#manualfix)
 - [Stage 5: Write and Sample](#stage-5-write-and-sample)
     - [writeReport](#writereport)
     - [hunterSample](#huntersample)
@@ -57,7 +58,7 @@ install_github("USFWS/migbirdHarvestData")
 
 The first step is to import .txt files containing HIP data. To do this, we use the `read_hip` function.
 
-```{r, readhip, warning = FALSE}
+```{r, readhip, message = FALSE, warning = FALSE}
 library(migbirdHarvestData)
 
 DL1202 <- read_hip("C:/HIP/DL_1202")
@@ -352,7 +353,15 @@ The following changes are made by the `correct` function:
 
 The year of the Harvest Information Program must be supplied as a parameter. Since the "errors" column is re-created using `correct`, supplying the year is necessary for the same reasons it is required by `proof`.
 
-All functions in <b>Stage 2</b> and <b>Stage 3</b> will run on the corrected tibble, DL1202_corrected, just as they worked on the example tibble DL1202_proofed. Errors can be compared between the proofed stage and corrected stage to get a better idea of which errors were serious (i.e., difficult to correct automatically) and determine how serious errors can be prevented in the future.
+All functions in [Stage 2](#stage-2-visualize-data) and [Stage 3](#stage-3-explore-errors) will run on the corrected tibble, `DL1202_corrected`, just as they worked on the example tibble `DL1202_proofed`. Errors can be compared between the proofed stage and corrected stage to get a better idea of which errors were serious (i.e., difficult to correct automatically) and determine how serious errors can be prevented in the future.
+
+### manualFix
+
+The automated `correct` function cannot always catch and fix every error. This `manualFix` function is able to pinpoint values that you want fixed and replace an inaccurate value with a correct one. It is not recommended that this function only be used after correcting the data; it's best used on a case-by-case basis. In the instance of frame shifts, for example, it would be wise to use after `tidy`. Or if problems are only identified after `proof`, you can run `manualFix` on the tidied data and re-run `proof`. This function is highly flexible and recommended to be used as needed.
+
+```{r manualfix, eval = FALSE}
+manualFix(DL1202_corrected, field = "state", error_value = "GS", correct_value = "GA")
+```
 
 ## Stage 5: Write and Sample
 
