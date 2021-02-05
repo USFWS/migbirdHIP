@@ -19,9 +19,9 @@ Program](https://www.fws.gov/harvestsurvey) data.
 Tasks that can be accomplished with this package include:
 
   - `read_hip` imports data
-  - `tidy` renames field names
+  - `tidy` does basic reorganization tasks
   - `validate` checks for table-wide repetition
-  - `strataCheck` doesn’t overlook new strata
+  - `strataCheck` identifies any new strata
   - `proof` checks values for errors
   - `correct` systematically fixes erroneous values
   - `manualFix` lets the user fix any remaining unsatisfactory values
