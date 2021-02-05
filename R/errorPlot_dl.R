@@ -25,17 +25,25 @@
 errorPlot_dl <-
   function(x, loc = "all"){
 
-    # Plot errors by download cycle
+    # Plot for all states
+
     dl_plot <-
+      # Suppress warning: "Expected 25 pieces. Missing pieces filled with `NA`
+      # in ... rows". We start by splitting errors for plotting purposes; if
+      # there are less than the full amount of errors in a row, the warning
+      # happens.
       suppressWarnings(
         if(loc == "all") {
           x %>%
             select(errors, dl_cycle) %>%
+            # Pull errors apart, delimited by hyphens
             separate(errors, into = as.character(c(1:25)), sep = "-") %>%
+            # Transform errors into a single column
             pivot_longer(1:25, names_to = "name") %>%
             select(-name) %>%
             filter(!is.na(value)) %>%
             select(-value) %>%
+            # Plot
             ggplot() +
             geom_bar(aes(x = dl_cycle), stat = "count") +
             geom_text(
@@ -54,14 +62,21 @@ errorPlot_dl <-
               axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
         }
         else{
+
+          # Plot for specified state
+
           x %>%
+            # Keep data only for specified state
             filter(state == loc) %>%
             select(errors, dl_cycle) %>%
+            # Pull errors apart, delimited by hyphens
             separate(errors, into = as.character(c(1:25)), sep = "-") %>%
+            # Transform errors into a single column
             pivot_longer(1:25, names_to = "name") %>%
             select(-name) %>%
             filter(!is.na(value)) %>%
             select(-value) %>%
+            # Plot
             ggplot() +
             geom_bar(aes(x = dl_cycle), stat = "count") +
             geom_text(

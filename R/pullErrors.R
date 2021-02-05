@@ -2,8 +2,12 @@
 #'
 #' Pull and view errors that have been flagged for a particular field. This function allows you to easily see what the \code{\link{proof}} function has determined to be unacceptable data.
 #'
-#' @import dplyr
-#' @import stringr
+#' @importFrom dplyr %>%
+#' @importFrom dplyr filter
+#' @importFrom dplyr select
+#' @importFrom dplyr distinct
+#' @importFrom dplyr pull
+#' @importFrom stringr str_detect
 #'
 #' @param x A proofed data table created by \code{\link{proof}}
 #' @param error Field that should be pulled. One of the fields from the following list may be supplied:
@@ -26,8 +30,10 @@ pullErrors <-
       distinct() %>%
       pull()
 
-    if(is_empty(pulled_error)) message("Success! All values are correct.")
-
-    else(return(pulled_error))
-
+    if(is_empty(pulled_error)){
+      message("Success! All values are correct.")
+      }
+    else{
+      return(pulled_error)
+      }
   }

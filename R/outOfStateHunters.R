@@ -25,17 +25,22 @@
 outOfStateHunters <-
   function(x, type){
 
-    if(type == "count"){
-
-      out_of_staters <-
-        suppressWarnings(suppressMessages(
+    # Tibble of hunters from out-of-state
+    out_of_staters <-
+      suppressWarnings(
+        suppressMessages(
           x %>%
             select(state, dl_state) %>%
             filter(state != dl_state) %>%
             group_by(dl_state) %>%
             summarize(out_of_state = n()) %>%
             ungroup()
-        ))
+        )
+      )
+
+    if(type == "count"){
+
+      # Out of state hunter count plot
 
       oos_plot <-
         out_of_staters %>%
@@ -68,31 +73,27 @@ outOfStateHunters <-
 
     else if(type == "proportion"){
 
-      out_of_staters <-
-        suppressWarnings(suppressMessages(
-          x %>%
-            select(state, dl_state) %>%
-            filter(state != dl_state) %>%
-            group_by(dl_state) %>%
-            summarize(out_of_state = n()) %>%
-            ungroup()
-        ))
+      # Proportion calculation
 
       oos_proportion <-
-        suppressWarnings(suppressMessages(
-          x %>%
-            select(dl_state) %>%
-            group_by(dl_state) %>%
-            summarize(n_total = n()) %>%
-            ungroup() %>%
-            left_join(out_of_staters, by = "dl_state") %>%
-            mutate(
-              outofstate_prop = out_of_state/n_total,
-              outofstate_prop = round(outofstate_prop, digits = 2)
-            ) %>%
-            select(-out_of_state) %>%
-            filter(!is.na(outofstate_prop))
-        ))
+        suppressWarnings(
+          suppressMessages(
+            x %>%
+              select(dl_state) %>%
+              group_by(dl_state) %>%
+              summarize(n_total = n()) %>%
+              ungroup() %>%
+              left_join(out_of_staters, by = "dl_state") %>%
+              mutate(
+                outofstate_prop = out_of_state/n_total,
+                outofstate_prop = round(outofstate_prop, digits = 2)
+              ) %>%
+              select(-out_of_state) %>%
+              filter(!is.na(outofstate_prop))
+            )
+          )
+
+      # Out of state hunter proportion plot
 
       oos_plot <-
         oos_proportion %>%

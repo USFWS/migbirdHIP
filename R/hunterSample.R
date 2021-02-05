@@ -19,6 +19,8 @@ hunterSample <-
 
     if(is.na(random)){
 
+      # Total sample
+
       sample_x <-
         x %>%
         # No errors in the record
@@ -36,6 +38,8 @@ hunterSample <-
 
     }
     else{
+
+      # Random sample
 
       random_sample <-
         x %>%

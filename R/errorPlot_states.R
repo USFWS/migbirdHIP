@@ -22,29 +22,40 @@
 
 errorPlot_states <-
   function(x, type) {
-
     if(type == "proportion") {
 
-      # Plot proportion of errors by state
+      # Proportion plot
+
       state_plot <-
+        # Suppress warning: "Expected 25 pieces. Missing pieces filled with `NA`
+        # in ... rows". We start by splitting errors for plotting purposes; if
+        # there are less than the full amount of errors in a row, the warning
+        # happens.
         suppressWarnings(
+          # Suppress message from summarize:
+          # "`summarise()` ungrouping output (override with `.groups` argument)"
           suppressMessages(
             x %>%
               select(errors, dl_state) %>%
-              mutate(temp_key = row_number()) %>%
+              # Pull errors apart, delimited by hyphens
               separate(errors, into = as.character(c(1:25)), sep = "-") %>%
+              # Transform errors into a single column
               pivot_longer(1:25, names_to = "name") %>%
               select(-name) %>%
               rename(errors = value) %>%
               filter(!is.na(dl_state)) %>%
               group_by(dl_state) %>%
+              # Count number of correct and incorrect values
               summarize(
                 count_errors = sum(!is.na(errors)),
                 count_correct = sum(is.na(errors))) %>%
               ungroup() %>%
+              # Calculate the proportion
               mutate(
                 proportion = count_errors / (count_errors + count_correct)) %>%
+              # Keep only the states with more than 100 errors
               filter(count_errors > 100) %>%
+              # Plot
               ggplot() +
               geom_bar(aes(
                 y = proportion,
@@ -72,24 +83,34 @@ errorPlot_states <-
     }
 
     else if(type == "count"){
-      # Plot count of errors by state
+
+      # Counts plot
+
       state_plot <-
+        # Suppress warning: "Expected 25 pieces. Missing pieces filled with `NA`
+        # in ... rows". We start by splitting errors for plotting purposes; if
+        # there are less than the full amount of errors in a row, the warning
+        # happens.
         suppressWarnings(
+          # Suppress message from summarize:
+          # "`summarise()` ungrouping output (override with `.groups` argument)"
           suppressMessages(
             x %>%
               select(errors, dl_state) %>%
-              mutate(temp_key = row_number()) %>%
+              # Pull errors apart, delimited by hyphens
               separate(errors, into = as.character(c(1:25)), sep = "-") %>%
+              # Transform errors into a single column
               pivot_longer(1:25, names_to = "name") %>%
               select(-name) %>%
               rename(errors = value) %>%
               filter(!is.na(dl_state)) %>%
               group_by(dl_state) %>%
-              summarize(
-                count_errors = sum(!is.na(errors)),
-                count_correct = sum(is.na(errors))) %>%
+              # Count number of incorrect values
+              summarize(count_errors = sum(!is.na(errors))) %>%
               ungroup() %>%
+              # Keep only the states with more than 100 errors
               filter(count_errors > 100) %>%
+              # Plot
               ggplot() +
               geom_bar(aes(
                 y = count_errors,

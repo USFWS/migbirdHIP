@@ -22,22 +22,33 @@
 
 redFlags <-
   function(x, type, threshold = 0){
-
     if(type == "state"){
+
+      # State red flags
+
+      # Suppress warning: "Expected 25 pieces. Missing pieces filled with `NA`
+      # in ... rows". We start by splitting errors for plotting purposes; if
+      # there are less than the full amount of errors in a row, the warning
+      # happens.
       suppressWarnings(
+        # Suppress message from summarize: "`summarise()` regrouping output by
+        # 'dl_state' (override with `.groups` argument)
         suppressMessages(
           x %>%
             select(errors, dl_state) %>%
-            mutate(temp_key = row_number()) %>%
+            # Pull errors apart, delimited by hyphens
             separate(errors, into = as.character(c(1:25)), sep = "-") %>%
+            # Transform errors into a single column
             pivot_longer(1:25, names_to = "name") %>%
             select(-name) %>%
             rename(errors = value) %>%
             group_by(dl_state) %>%
+            # Count correct and incorrect values
             summarize(
               count_errors = sum(!is.na(errors)),
               count_correct = sum(is.na(errors))) %>%
             ungroup() %>%
+            # Calculate proportion
             mutate(
               proportion = count_errors / (count_errors + count_correct)) %>%
             mutate(
@@ -46,20 +57,33 @@ redFlags <-
                   proportion > threshold,
                   paste0("error > ", threshold),
                   NA)) %>%
+            # Filter out errors that didn't exceed the threshold
             filter(!is.na(flag)) %>%
             arrange(desc(proportion))
         )
       )
     }
     else if(type == "field"){
+
+      # Field red flags
+
+      # Suppress warning: "Expected 25 pieces. Missing pieces filled with `NA`
+      # in ... rows". We start by splitting errors for plotting purposes; if
+      # there are less than the full amount of errors in a row, the warning
+      # happens.
       suppressWarnings(
+        # Suppress message from summarize: "`summarise()` regrouping output by
+        # 'dl_state' (override with `.groups` argument)
         suppressMessages(
           x %>%
             select(errors) %>%
+            # Pull errors apart, delimited by hyphens
             separate_rows(errors, sep = "-") %>%
             group_by(errors) %>%
+            # Count the errors by field
             summarize(count_errors = sum(!is.na(errors))) %>%
             ungroup() %>%
+            # Calculate number correct and proportion of error
             mutate(
               count_correct = nrow(x) - count_errors,
               proportion = count_errors / nrow(x)) %>%
@@ -70,6 +94,7 @@ redFlags <-
                   paste0("error > ", threshold),
                   NA)
             ) %>%
+            # Filter out errors that didn't exceed the threshold
             filter(!is.na(flag)) %>%
             arrange(desc(proportion))
         )

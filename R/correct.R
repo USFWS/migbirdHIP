@@ -131,7 +131,9 @@ correct <-
             TRUE ~ email
           )
       ) %>%
-      # Hunt migratory birds correction
+      # Species group bag corrections...
+      # Use internal data from hip_bags_ref to join correct FWS strata,
+      # replacing the variable state strata
       # Bag correction: ducks
       left_join(
         hip_bags_ref %>%

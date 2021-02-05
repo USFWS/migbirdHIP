@@ -26,14 +26,22 @@
 errorPlot_fields <-
   function(x, loc = "all", specify = NA){
 
-    # Plot errors by field name
     fields_plot <-
+      # Suppress warning: "Expected 25 pieces. Missing pieces filled with `NA`
+      # in ... rows". We start by splitting errors for plotting purposes; if
+      # there are less than the full amount of errors in a row, the warning
+      # happens.
       suppressWarnings(
         if(!is.na(specify)){
           if(loc == "all"){
+
+            # All states with special legend colors
+
             x %>%
               select(errors, birth_date, zip, dl_date, dl_cycle) %>%
+              # Pull errors apart, delimited by hyphens
               separate(errors, into = as.character(c(1:25)), sep = "-") %>%
+              # Transform errors into a single column
               pivot_longer(1:25, names_to = "name") %>%
               select(-name) %>%
               filter(!is.na(value)) %>%
@@ -53,6 +61,7 @@ errorPlot_fields <-
                       "^[A-Za-z]\\d[A-Za-z][ -]?\\d[A-Za-z]\\d$") ~
                       "Canada Zip",
                     TRUE ~ NA_character_)) %>%
+              # Plot
               ggplot() +
               geom_bar(aes(x = errors, fill = specifics), stat = "count") +
               geom_text(
@@ -72,10 +81,16 @@ errorPlot_fields <-
                 axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
           }
           else{
+
+            # Specific state with special legend colors
+
             x %>%
+              # Keep data only for specified state
               filter(state == loc) %>%
               select(errors, birth_date, zip, dl_date, dl_cycle) %>%
+              # Pull errors apart, delimited by hyphens
               separate(errors, into = as.character(c(1:25)), sep = "-") %>%
+              # Transform errors into a single column
               pivot_longer(1:25, names_to = "name") %>%
               select(-name) %>%
               filter(!is.na(value)) %>%
@@ -95,6 +110,7 @@ errorPlot_fields <-
                       "^[A-Za-z]\\d[A-Za-z][ -]?\\d[A-Za-z]\\d$") ~
                       "Canada Zip",
                     TRUE ~ NA_character_)) %>%
+              # Plot
               ggplot() +
               geom_bar(aes(x = errors, fill = specifics), stat = "count") +
               geom_text(
@@ -116,13 +132,19 @@ errorPlot_fields <-
         }
         else{
           if(loc == "all"){
+
+            # All states without special legend colors
+
             x %>%
               select(errors, dl_date, dl_cycle) %>%
+              # Pull errors apart, delimited by hyphens
               separate(errors, into = as.character(c(1:25)), sep = "-") %>%
+              # Transform errors into a single column
               pivot_longer(1:25, names_to = "name") %>%
               select(-name) %>%
               filter(!is.na(value)) %>%
               rename(errors = value) %>%
+              # Plot
               ggplot() +
               geom_bar(aes(x = errors), stat = "count") +
               geom_text(
@@ -141,14 +163,21 @@ errorPlot_fields <-
                 axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
           }
           else{
+
+            # Specific state without special legend colors
+
             x %>%
+              # Keep data only for specified state
               filter(state == loc) %>%
               select(errors, dl_date, dl_cycle) %>%
+              # Pull errors apart, delimited by hyphens
               separate(errors, into = as.character(c(1:25)), sep = "-") %>%
+              # Transform errors into a single column
               pivot_longer(1:25, names_to = "name") %>%
               select(-name) %>%
               filter(!is.na(value)) %>%
               rename(errors = value) %>%
+              # Plot
               ggplot() +
               geom_bar(aes(x = errors), stat = "count") +
               geom_text(

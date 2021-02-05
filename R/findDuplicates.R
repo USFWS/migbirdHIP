@@ -18,17 +18,18 @@
 findDuplicates <-
   function(x){
 
-    # Group by name and address
-
     duplicates <-
       x %>%
+      # Create a row key
       mutate(hunter_key = paste0("hunter_", row_number())) %>%
+      # Group by hunter information; name, city, state, birthday
       group_by(
         firstname,
         lastname,
         city,
         state,
         birth_date) %>%
+      # Identify duplicates
       mutate(
         duplicate =
           ifelse(
@@ -36,7 +37,9 @@ findDuplicates <-
             "duplicate",
             "1")) %>%
       ungroup() %>%
+      # Filter out non-duplicate records
       filter(duplicate == "duplicate") %>%
+      # Sort tibble
       arrange(
         firstname,
         lastname,
@@ -44,10 +47,12 @@ findDuplicates <-
         state,
         birth_date)
 
+    # Total number of records that are a duplicate
     duplicate_total <-
       duplicates %>%
       nrow()
 
+    # Number of hunters that are duplicated
     duplicate_individuals <-
       duplicates %>%
       select(
@@ -59,6 +64,8 @@ findDuplicates <-
       distinct() %>%
       nrow()
 
+    # Determine which fields are different between the duplicates so we can try
+    # to figure out why hunters are in the data more than once
     dupl_tibble <-
       duplicates %>%
       select(-c("hunter_key", "duplicate")) %>%

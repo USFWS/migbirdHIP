@@ -2,10 +2,10 @@
 #'
 #' After checking the data with \code{\link{validate}}, look into reported repeated values to determine if they are worrisome.
 #'
-#' @import dplyr
-#' @import tidyr
-#' @import stringr
-#' @import tibble
+#' @importFrom dplyr %>%
+#' @importFrom dplyr select
+#' @importFrom dplyr filter
+#' @importFrom dplyr distinct
 #'
 #' @param x The object created after tidying data with \code{\link{tidy}}
 #' @param loc The download state in question
@@ -25,6 +25,8 @@
 
 investigate <-
   function(x, loc, period_type, period, species){
+
+    # Pull requested value
 
     investigated_x <-
       x %>%
