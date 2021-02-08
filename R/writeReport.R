@@ -22,18 +22,22 @@
 writeReport <-
   function(path, type, yr, dir, file){
 
+    # Create Rmd
     render(
       input =
+        # Use the specified template
         system.file(
           "templates",
           paste0(type, ".Rmd"),
           package = "migbirdHarvestData"),
+      # Include the specified parameters so the functions can run
       params =
         list(
           comp_path = path,
           year = yr),
       output_file = file,
       output_dir = dir,
+      # Don't show lengthy knitting status text in console
       quiet = TRUE)
 
   }
