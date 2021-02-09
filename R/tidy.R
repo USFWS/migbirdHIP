@@ -58,7 +58,7 @@ tidy <-
           firstname = str_to_upper(firstname),
           lastname = str_to_upper(lastname),
           # Extract suffixes from lastname to suffix col
-          # We cannot go above III in Roman numerals or 9TH in ordinal numbering
+          # We cannot go above VII in Roman numerals or 9TH in ordinal numbering
           # because of the 3 char column limit
           suffix =
             case_when(
@@ -66,10 +66,18 @@ tidy <-
                 str_extract(lastname, "(?<=\\s)JR"),
               str_detect(lastname, "(?<=\\s)SR") ~
                 str_extract(lastname, "(?<=\\s)SR"),
-              str_detect(lastname, "(?<=\\s)III") ~
-                str_extract(lastname, "(?<=\\s)III"),
               str_detect(lastname, "(?<=\\s)II") ~
                 str_extract(lastname, "(?<=\\s)II"),
+              str_detect(lastname, "(?<=\\s)III") ~
+                str_extract(lastname, "(?<=\\s)III"),
+              str_detect(lastname, "(?<=\\s)IV") ~
+                str_extract(lastname, "(?<=\\s)IV"),
+              str_detect(lastname, "(?<=\\s)V") ~
+                str_extract(lastname, "(?<=\\s)V"),
+              str_detect(lastname, "(?<=\\s)VI") ~
+                str_extract(lastname, "(?<=\\s)VI"),
+              str_detect(lastname, "(?<=\\s)VII") ~
+                str_extract(lastname, "(?<=\\s)VII"),
               str_detect(lastname, "(?<=\\s)2ND") ~
                 str_extract(lastname, "(?<=\\s)2ND"),
               str_detect(lastname, "(?<=\\s)3RD") ~
@@ -159,16 +167,26 @@ tidy <-
             # Delete lase name periods if they were used for a JR or SR suffix
             str_remove_all(lastname, "\\s\\.$"),
           # Extract suffixes from firstname to suffix col
+          # We cannot go above VII in Roman numerals or 9TH in ordinal numbering
+          # because of the 3 char column limit
           suffix =
             case_when(
               str_detect(firstname, "(?<=\\s)JR") ~
                 str_extract(firstname, "(?<=\\s)JR"),
               str_detect(firstname, "(?<=\\s)SR") ~
                 str_extract(firstname, "(?<=\\s)SR"),
-              str_detect(firstname, "(?<=\\s)III") ~
-                str_extract(firstname, "(?<=\\s)III"),
               str_detect(firstname, "(?<=\\s)II") ~
                 str_extract(firstname, "(?<=\\s)II"),
+              str_detect(firstname, "(?<=\\s)III") ~
+                str_extract(firstname, "(?<=\\s)III"),
+              str_detect(firstname, "(?<=\\s)IV") ~
+                str_extract(firstname, "(?<=\\s)IV"),
+              str_detect(firstname, "(?<=\\s)V") ~
+                str_extract(firstname, "(?<=\\s)V"),
+              str_detect(firstname, "(?<=\\s)VI") ~
+                str_extract(firstname, "(?<=\\s)VI"),
+              str_detect(firstname, "(?<=\\s)VII") ~
+                str_extract(firstname, "(?<=\\s)VII"),
               str_detect(firstname, "(?<=\\s)2ND") ~
                 str_extract(firstname, "(?<=\\s)2ND"),
               str_detect(firstname, "(?<=\\s)3RD") ~

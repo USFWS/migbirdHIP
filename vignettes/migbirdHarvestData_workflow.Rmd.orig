@@ -329,8 +329,8 @@ The following changes are made by the `correct` function:
     * Is not "INAUDIBLE"
 * *Suffix* is changed to NA if it is not equal to:
     * JR or SR
-    * A value equal to II or III
-    * An ordinal value between 2ND and 9TH
+    * A value from II to VII in Roman numerals
+    * An value from 2ND to 9TH
 * *Address* is not changed, but remains flagged if it contains a |, tab, or non-UTF8 character
 * *City* is not changed, but remains flagged if it contains any non-alpha character
 * *State* is not changed, but remains flagged if it is not contained in the following list of abbreviations for US and Canada states, provinces, and territories:

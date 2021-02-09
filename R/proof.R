@@ -83,7 +83,7 @@ proof <-
           filter(
             str_detect(
               suffix,
-              "[^JR|I|II|III|IV|V|VI|VII|VIII|IX|X|XI|XII|XIII|XIV|XV|XVI|XVII|XVIII|XIX|XX|ESQ|1ST|2ND|3RD|4TH|5TH|6TH|7TH|8TH|9TH|10TH|12TH|13TH|14TH|15TH|16TH|17TH|18TH|19TH|20TH]")) %>%
+              "[^JR|SR|II|III|IV|V|VI|VII|2ND|3RD|4TH|5TH|6TH|7TH|8TH|9TH]")) %>%
           mutate(error = "suffix"),
         # Address does not contain |, tab or non-UTF8 characters
         # Any further address verification isn't really possible
