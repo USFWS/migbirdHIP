@@ -22,13 +22,14 @@ findDuplicates <-
       x %>%
       # Create a row key
       mutate(hunter_key = paste0("hunter_", row_number())) %>%
-      # Group by hunter information; name, city, state, birthday
+      # Group by registrant information; name, city, state, birthday, dl_state
       group_by(
         firstname,
         lastname,
         city,
         state,
-        birth_date) %>%
+        birth_date,
+        dl_state) %>%
       # Identify duplicates
       mutate(
         duplicate =
@@ -45,14 +46,15 @@ findDuplicates <-
         lastname,
         city,
         state,
-        birth_date)
+        birth_date,
+        dl_state)
 
     # Total number of records that are a duplicate
     duplicate_total <-
       duplicates %>%
       nrow()
 
-    # Number of hunters that are duplicated
+    # Number of registrations that are duplicated
     duplicate_individuals <-
       duplicates %>%
       select(
@@ -60,7 +62,8 @@ findDuplicates <-
         lastname,
         city,
         state,
-        birth_date) %>%
+        birth_date,
+        dl_state) %>%
       distinct() %>%
       nrow()
 
@@ -69,7 +72,7 @@ findDuplicates <-
     dupl_tibble <-
       duplicates %>%
       select(-c("hunter_key", "duplicate")) %>%
-      group_by(firstname, lastname, city, state, birth_date) %>%
+      group_by(firstname, lastname, city, state, birth_date, dl_state) %>%
       mutate(
         # Hunter key per individual (not per row)
         hunter_key = cur_group_id(),
@@ -129,11 +132,6 @@ findDuplicates <-
             dupl),
         dupl =
           ifelse(
-            length(unique(dl_state)) > 1,
-            paste(dupl, "dl_state", sep = "-"),
-            dupl),
-        dupl =
-          ifelse(
             length(unique(dl_date)) > 1,
             paste(dupl, "dl_date", sep = "-"),
             dupl),
@@ -188,7 +186,7 @@ findDuplicates <-
     message(
       paste(
         "There are", duplicate_individuals,
-        "hunters with duplicates;", duplicate_total,
+        "registrations with duplicates;", duplicate_total,
         "total duplicated records.", sep = " ")
     )
 
