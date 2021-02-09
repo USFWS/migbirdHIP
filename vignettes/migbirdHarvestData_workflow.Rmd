@@ -618,9 +618,9 @@ The following changes are made by the `correct` function:
     * No full names (Detected with 2+ spaces)
     * Is not "INAUDIBLE"
 * *Suffix* is changed to NA if it is not equal to:
-    * A value between I and XX in Roman numerals
-    * An ordinal number between 1ST and 20TH
-    * ESQ
+    * JR or SR
+    * A value equal to II or III
+    * An ordinal value between 2ND and 9TH
 * *Address* is not changed, but remains flagged if it contains a |, tab, or non-UTF8 character
 * *City* is not changed, but remains flagged if it contains any non-alpha character
 * *State* is not changed, but remains flagged if it is not contained in the following list of abbreviations for US and Canada states, provinces, and territories:
@@ -635,7 +635,7 @@ The following changes are made by the `correct` function:
 * *Birth date* is not changed, but remains flagged if the birth year was > 100 or < 16 years ago
 * *Issue date* is not changed, but remains flagged if it is not equal to or +/- 1 year from the HIP data collection year
 * *Hunt migratory birds* is not changed, and remains flagged if it is not equal to 1 or 2
-* *Bag limits*
+* *Bag values*
     * State numbers that do not meet expected parameters are compared to a master list by state and species, then corrected to the standard FWS format
     * Any parameter that can't be converted is changed to NA
 * *Registration year* is not changed, but remains flagged if it is not equal to or +/- 1 year from the HIP data collection year

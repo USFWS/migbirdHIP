@@ -58,52 +58,18 @@ tidy <-
           firstname = str_to_upper(firstname),
           lastname = str_to_upper(lastname),
           # Extract suffixes from lastname to suffix col
+          # We cannot go above III in Roman numerals or 9TH in ordinal numbering
+          # because of the 3 char column limit
           suffix =
             case_when(
               str_detect(lastname, "(?<=\\s)JR") ~
                 str_extract(lastname, "(?<=\\s)JR"),
               str_detect(lastname, "(?<=\\s)SR") ~
                 str_extract(lastname, "(?<=\\s)SR"),
-              str_detect(lastname, "(?<=\\s)XX") ~
-                str_extract(lastname, "(?<=\\s)XX"),
-              str_detect(lastname, "(?<=\\s)XIX") ~
-                str_extract(lastname, "(?<=\\s)XIX"),
-              str_detect(lastname, "(?<=\\s)XVIII") ~
-                str_extract(lastname, "(?<=\\s)XVIII"),
-              str_detect(lastname, "(?<=\\s)XVII") ~
-                str_extract(lastname, "(?<=\\s)XVII"),
-              str_detect(lastname, "(?<=\\s)XVI") ~
-                str_extract(lastname, "(?<=\\s)XVI"),
-              str_detect(lastname, "(?<=\\s)XV") ~
-                str_extract(lastname, "(?<=\\s)XV"),
-              str_detect(lastname, "(?<=\\s)XIV") ~
-                str_extract(lastname, "(?<=\\s)XIV"),
-              str_detect(lastname, "(?<=\\s)XIII") ~
-                str_extract(lastname, "(?<=\\s)XIII"),
-              str_detect(lastname, "(?<=\\s)XII") ~
-                str_extract(lastname, "(?<=\\s)XII"),
-              str_detect(lastname, "(?<=\\s)XI") ~
-                str_extract(lastname, "(?<=\\s)XI"),
-              str_detect(lastname, "(?<=\\s)X") ~
-                str_extract(lastname, "(?<=\\s)X"),
-              str_detect(lastname, "(?<=\\s)IX") ~
-                str_extract(lastname, "(?<=\\s)IX"),
-              str_detect(lastname, "(?<=\\s)VIII") ~
-                str_extract(lastname, "(?<=\\s)VIII"),
-              str_detect(lastname, "(?<=\\s)VII") ~
-                str_extract(lastname, "(?<=\\s)VII"),
-              str_detect(lastname, "(?<=\\s)VI") ~
-                str_extract(lastname, "(?<=\\s)VI"),
-              str_detect(lastname, "(?<=\\s)V") ~
-                str_extract(lastname, "(?<=\\s)V"),
-              str_detect(lastname, "(?<=\\s)IV") ~
-                str_extract(lastname, "(?<=\\s)IV"),
               str_detect(lastname, "(?<=\\s)III") ~
                 str_extract(lastname, "(?<=\\s)III"),
               str_detect(lastname, "(?<=\\s)II") ~
                 str_extract(lastname, "(?<=\\s)II"),
-              str_detect(lastname, "(?<=\\s)1ST") ~
-                str_extract(lastname, "(?<=\\s)1ST"),
               str_detect(lastname, "(?<=\\s)2ND") ~
                 str_extract(lastname, "(?<=\\s)2ND"),
               str_detect(lastname, "(?<=\\s)3RD") ~
@@ -120,8 +86,6 @@ tidy <-
                 str_extract(lastname, "(?<=\\s)8TH"),
               str_detect(lastname, "(?<=\\s)9TH") ~
                 str_extract(lastname, "(?<=\\s)9TH"),
-              str_detect(lastname, "(?<=\\s)ESQ") ~
-                str_extract(lastname, "(?<=\\s)ESQ"),
               TRUE ~ suffix),
           # Delete suffixes from lastname col
           lastname =
@@ -201,46 +165,10 @@ tidy <-
                 str_extract(firstname, "(?<=\\s)JR"),
               str_detect(firstname, "(?<=\\s)SR") ~
                 str_extract(firstname, "(?<=\\s)SR"),
-              str_detect(firstname, "(?<=\\s)XX") ~
-                str_extract(firstname, "(?<=\\s)XX"),
-              str_detect(firstname, "(?<=\\s)XIX") ~
-                str_extract(firstname, "(?<=\\s)XIX"),
-              str_detect(firstname, "(?<=\\s)XVIII") ~
-                str_extract(firstname, "(?<=\\s)XVIII"),
-              str_detect(firstname, "(?<=\\s)XVII") ~
-                str_extract(firstname, "(?<=\\s)XVII"),
-              str_detect(firstname, "(?<=\\s)XVI") ~
-                str_extract(firstname, "(?<=\\s)XVI"),
-              str_detect(firstname, "(?<=\\s)XV") ~
-                str_extract(firstname, "(?<=\\s)XV"),
-              str_detect(firstname, "(?<=\\s)XIV") ~
-                str_extract(firstname, "(?<=\\s)XIV"),
-              str_detect(firstname, "(?<=\\s)XIII") ~
-                str_extract(firstname, "(?<=\\s)XIII"),
-              str_detect(firstname, "(?<=\\s)XII") ~
-                str_extract(firstname, "(?<=\\s)XII"),
-              str_detect(firstname, "(?<=\\s)XI") ~
-                str_extract(firstname, "(?<=\\s)XI"),
-              str_detect(firstname, "(?<=\\s)X") ~
-                str_extract(firstname, "(?<=\\s)X"),
-              str_detect(firstname, "(?<=\\s)IX") ~
-                str_extract(firstname, "(?<=\\s)IX"),
-              str_detect(firstname, "(?<=\\s)VIII") ~
-                str_extract(firstname, "(?<=\\s)VIII"),
-              str_detect(firstname, "(?<=\\s)VII") ~
-                str_extract(firstname, "(?<=\\s)VII"),
-              str_detect(firstname, "(?<=\\s)VI") ~
-                str_extract(firstname, "(?<=\\s)VI"),
-              str_detect(firstname, "(?<=\\s)V") ~
-                str_extract(firstname, "(?<=\\s)V"),
-              str_detect(firstname, "(?<=\\s)IV") ~
-                str_extract(firstname, "(?<=\\s)IV"),
               str_detect(firstname, "(?<=\\s)III") ~
                 str_extract(firstname, "(?<=\\s)III"),
               str_detect(firstname, "(?<=\\s)II") ~
                 str_extract(firstname, "(?<=\\s)II"),
-              str_detect(firstname, "(?<=\\s)1ST") ~
-                str_extract(firstname, "(?<=\\s)1ST"),
               str_detect(firstname, "(?<=\\s)2ND") ~
                 str_extract(firstname, "(?<=\\s)2ND"),
               str_detect(firstname, "(?<=\\s)3RD") ~
@@ -257,8 +185,6 @@ tidy <-
                 str_extract(firstname, "(?<=\\s)8TH"),
               str_detect(firstname, "(?<=\\s)9TH") ~
                 str_extract(firstname, "(?<=\\s)9TH"),
-              str_detect(firstname, "(?<=\\s)ESQ") ~
-                str_extract(firstname, "(?<=\\s)ESQ"),
               TRUE ~ suffix)) %>%
         # Add another mutate because can't pipe '.'
         mutate(
