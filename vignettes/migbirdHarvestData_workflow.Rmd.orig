@@ -51,6 +51,11 @@ library(devtools)
 install_github("USFWS/migbirdHarvestData")
 ```
 
+The flowchart below is a handy visual guide to the order in which functions are used.
+
+```{r flowchart_svg, echo = FALSE, fig.cap = "Overview of migbirdHarvestData functions in a flowchart format.", out.width = "100%", dev = "svg", fig.align = "center"}
+knitr::include_graphics("image/migbirdHarvestData_flowchart.svg")
+```
 
 ## Stage 1: Import Data
 
