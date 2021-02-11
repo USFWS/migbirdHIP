@@ -255,21 +255,14 @@ errorPlot_fields(
 
 ### errorPlot_states
 
-The `errorPlot_states` function can plot errors as either proportions or counts by state.
+The `errorPlot_states` function plots states above a specified proportion of error. Bar labels are error counts.
 
 
 ```r
-errorPlot_states(DL1202_proofed, type = "proportion")
+errorPlot_states(DL1202_proofed, threshold = .01)
 ```
 
-<img src="figure/errorstatesprop-1.png" title="Figure 4. Plot of proportion of error by state." alt="Figure 4. Plot of proportion of error by state." width="500" style="display: block; margin: auto;" />
-
-
-```r
-errorPlot_states(DL1202_proofed, type = "count")
-```
-
-<img src="figure/errorstatescount-1.png" title="Figure 5. Plot of counts of error by state." alt="Figure 5. Plot of counts of error by state." width="500" style="display: block; margin: auto;" />
+<img src="figure/errorplotstates-1.png" title="Figure 4. Plot of proportion of error by state." alt="Figure 4. Plot of proportion of error by state." width="500" style="display: block; margin: auto;" />
 
 ### findDuplicates
 
@@ -281,26 +274,33 @@ findDuplicates(DL1202_proofed)
 ```
 
 ```
-## There are 607 hunters with duplicates; 1230 total duplicated records.
+## There are 72 registrations with duplicates; 144 total duplicated records.
 ```
 
 <img src="figure/findDuplicates-1.png" title="Figure 6. Plot of types of duplicates." alt="Figure 6. Plot of types of duplicates." width="500" style="display: block; margin: auto;" />
 
 ```
-## # A tibble: 156 x 2
-##    dupl                                count
-##    <chr>                               <int>
-##  1 address                                 4
-##  2 address-dl_state                        5
-##  3 address-email                           1
-##  4 address-email-dl_state                  4
-##  5 address-email-dl_state-dl_date          2
-##  6 address-issue_date                      1
-##  7 address-issue_date-dl_state            12
-##  8 address-issue_date-dl_state-dl_date     2
-##  9 address-issue_date-email                1
-## 10 address-issue_date-email-dl_state       9
-## # ... with 146 more rows
+## # A tibble: 18 x 2
+##    dupl                     count
+##    <chr>                    <int>
+##  1 address                      4
+##  2 address-email                1
+##  3 address-issue_date           1
+##  4 address-issue_date-email     1
+##  5 bag                         14
+##  6 email                        4
+##  7 issue_date                  33
+##  8 issue_date-email             1
+##  9 middle-address               1
+## 10 middle-address-email         2
+## 11 middle-issue_date            2
+## 12 middle-issue_date-email      1
+## 13 middle-zip-email             1
+## 14 registration_yr              2
+## 15 suffix                       1
+## 16 suffix-address-email         1
+## 17 suffix-issue_date            1
+## 18 zip                          1
 ```
 
 ### outOfStateHunters
@@ -414,7 +414,7 @@ errorTable(DL1202_proofed)
 ```
 
 ```
-## # A tibble: 134 x 3
+## # A tibble: 135 x 3
 ##    dl_state error      error_count
 ##    <chr>    <chr>            <dbl>
 ##  1 AK       birth_date           2
@@ -423,11 +423,11 @@ errorTable(DL1202_proofed)
 ##  4 AL       city                 1
 ##  5 AL       firstname            7
 ##  6 AL       lastname             1
-##  7 AL       suffix               7
+##  7 AL       suffix              10
 ##  8 AL       zip                 25
 ##  9 AR       birth_date         176
 ## 10 AR       email                1
-## # ... with 124 more rows
+## # ... with 125 more rows
 ```
 
 Errors can be reported by only location by turning off the `field` parameter.
@@ -442,8 +442,8 @@ errorTable(DL1202_proofed, field = "none")
 ##    dl_state error_count
 ##    <chr>          <dbl>
 ##  1 AK                34
-##  2 AL               234
-##  3 AR               725
+##  2 AL               237
+##  3 AR               730
 ##  4 CA               464
 ##  5 CO               193
 ##  6 CT               120
@@ -481,7 +481,7 @@ errorTable(DL1202_proofed, loc = "none")
 ## 14 registration_yr              4
 ## 15 seaducks                     1
 ## 16 state                        6
-## 17 suffix                     269
+## 17 suffix                     292
 ## 18 woodcock_bag                 4
 ## 19 zip                       2132
 ```
@@ -513,7 +513,7 @@ errorTable(DL1202_proofed, field = "suffix")
 ## # A tibble: 1 x 2
 ##   error  error_count
 ##   <chr>        <dbl>
-## 1 suffix         269
+## 1 suffix         292
 ```
 
 Total errors for a location can be pulled.

@@ -178,14 +178,10 @@ knitr::include_graphics("image/errorPlot_fields_facet.png")
 
 ### errorPlot_states
 
-The `errorPlot_states` function can plot errors as either proportions or counts by state.
+The `errorPlot_states` function plots states above a specified proportion of error. Bar labels are error counts.
 
-```{r errorstatesprop, fig.cap = "Figure 4. Plot of proportion of error by state.", fig.width = 6, fig.height = 3.5, dpi = 300, out.width = 500, fig.align = "center"}
-errorPlot_states(DL1202_proofed, type = "proportion")
-```
-
-```{r errorstatescount, fig.cap = "Figure 5. Plot of counts of error by state.", fig.width = 6, fig.height = 3.5, dpi = 300, out.width = 500, fig.align = "center"}
-errorPlot_states(DL1202_proofed, type = "count")
+```{r errorplotstates, fig.cap = "Figure 4. Plot of proportion of error by state.", fig.width = 6, fig.height = 4, dpi = 300, out.width = 500, fig.align = "center"}
+errorPlot_states(DL1202_proofed, threshold = .01)
 ```
 
 ### findDuplicates

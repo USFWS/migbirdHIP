@@ -4,16 +4,12 @@
 \alias{errorPlot_states}
 \title{Plot errors by state}
 \usage{
-errorPlot_states(x, type)
+errorPlot_states(x, threshold)
 }
 \arguments{
 \item{x}{A proofed data table created by \code{\link{proof}}}
 
-\item{type}{Type of plot to create. Acceptable values include:
-\itemize{
-\item proportion - Number of errors divided by the number of records per state
-\item count - Count of total errors per state
-}}
+\item{threshold}{Decimal value above which error proportions should be plotted}
 }
 \description{
 Create a bar plot of errors by state, either by count or proportion.

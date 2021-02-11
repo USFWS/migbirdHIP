@@ -9,11 +9,7 @@
 #' @import ggplot2
 #'
 #' @param x A proofed data table created by \code{\link{proof}}
-#' @param type Type of plot to create. Acceptable values include:
-#'  \itemize{
-#'  \item proportion - Number of errors divided by the number of records per state
-#'  \item count - Count of total errors per state
-#'  }
+#' @param threshold Decimal value above which error proportions should be plotted
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHarvestData}
@@ -21,122 +17,71 @@
 #' @export
 
 errorPlot_states <-
-  function(x, type) {
-    if(type == "proportion") {
+  function(x, threshold) {
 
-      # Proportion plot
+    # Proportion plot
 
-      state_plot <-
-        # Suppress warning: "Expected 25 pieces. Missing pieces filled with `NA`
-        # in ... rows". We start by splitting errors for plotting purposes; if
-        # there are less than the full amount of errors in a row, the warning
-        # happens.
-        suppressWarnings(
-          # Suppress message from summarize:
-          # "`summarise()` ungrouping output (override with `.groups` argument)"
-          suppressMessages(
-            x %>%
-              select(errors, dl_state) %>%
-              # Pull errors apart, delimited by hyphens
-              separate(errors, into = as.character(c(1:25)), sep = "-") %>%
-              # Transform errors into a single column
-              pivot_longer(1:25, names_to = "name") %>%
-              select(-name) %>%
-              rename(errors = value) %>%
-              filter(!is.na(dl_state)) %>%
-              group_by(dl_state) %>%
-              # Count number of correct and incorrect values
-              summarize(
-                count_errors = sum(!is.na(errors)),
-                count_correct = sum(is.na(errors))) %>%
-              ungroup() %>%
-              # Calculate the proportion
-              mutate(
-                proportion = count_errors / (count_errors + count_correct)) %>%
-              # Keep only the states with more than 100 errors
-              filter(count_errors > 100) %>%
-              # Plot
-              ggplot() +
-              geom_bar(aes(
+    state_plot <-
+      # Suppress warning: "Expected 25 pieces. Missing pieces filled with `NA`
+      # in ... rows". We start by splitting errors for plotting purposes; if
+      # there are less than the full amount of errors in a row, the warning
+      # happens.
+      suppressWarnings(
+        # Suppress message from summarize:
+        # "`summarise()` ungrouping output (override with `.groups` argument)"
+        suppressMessages(
+          x %>%
+            select(errors, dl_state) %>%
+            # Pull errors apart, delimited by hyphens
+            separate(errors, into = as.character(c(1:25)), sep = "-") %>%
+            # Transform errors into a single column
+            pivot_longer(1:25, names_to = "name") %>%
+            select(-name) %>%
+            rename(errors = value) %>%
+            filter(!is.na(dl_state)) %>%
+            group_by(dl_state) %>%
+            # Count number of correct and incorrect values
+            summarize(
+              count_errors = sum(!is.na(errors)),
+              count_correct = sum(is.na(errors))) %>%
+            ungroup() %>%
+            # Calculate the proportion
+            mutate(
+              proportion = count_errors / (count_errors + count_correct)) %>%
+            # Keep only the states with more than specified error percentage
+            filter(proportion >= threshold) %>%
+            # Plot
+            ggplot() +
+            geom_bar(aes(
+              y = proportion,
+              x = reorder(dl_state, proportion)),
+              stat = "identity") +
+            geom_text(
+              aes(
                 y = proportion,
-                x = reorder(dl_state, proportion)),
-                stat = "identity") +
-              geom_text(
-                aes(
-                  y = proportion,
-                  x = reorder(dl_state, proportion),
-                  label = round(proportion, digits = 2),
-                  angle = 90),
-                vjust = 0.2,
-                hjust = -0.2) +
-              labs(
-                x = "State",
-                y = "Incorrect Fields (proportion)",
-                title = "Proportion of errors in states with > 100 incorrect records") +
-              scale_y_continuous(expand = expansion(mult = c(-0, 0.2))) +
-              theme_classic() +
-              theme(
-                axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
-          )
+                x = reorder(dl_state, proportion),
+                label =
+                  paste0(
+                    "n = ",
+                    as.character(count_errors)),
+                angle = 90),
+              vjust = 0.2,
+              hjust = -0.2) +
+            labs(
+              x = "State",
+              y = "Errors (proportion)",
+              title =
+                paste0(
+                  "Proportion of errors by state (> ",
+                  as.character(threshold),
+                  ")")) +
+            scale_y_continuous(expand = expansion(mult = c(-0, 0.3))) +
+            theme_classic() +
+            theme(
+              axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
         )
-      return(state_plot)
-    }
+      )
 
-    else if(type == "count"){
-
-      # Counts plot
-
-      state_plot <-
-        # Suppress warning: "Expected 25 pieces. Missing pieces filled with `NA`
-        # in ... rows". We start by splitting errors for plotting purposes; if
-        # there are less than the full amount of errors in a row, the warning
-        # happens.
-        suppressWarnings(
-          # Suppress message from summarize:
-          # "`summarise()` ungrouping output (override with `.groups` argument)"
-          suppressMessages(
-            x %>%
-              select(errors, dl_state) %>%
-              # Pull errors apart, delimited by hyphens
-              separate(errors, into = as.character(c(1:25)), sep = "-") %>%
-              # Transform errors into a single column
-              pivot_longer(1:25, names_to = "name") %>%
-              select(-name) %>%
-              rename(errors = value) %>%
-              filter(!is.na(dl_state)) %>%
-              group_by(dl_state) %>%
-              # Count number of incorrect values
-              summarize(count_errors = sum(!is.na(errors))) %>%
-              ungroup() %>%
-              # Keep only the states with more than 100 errors
-              filter(count_errors > 100) %>%
-              # Plot
-              ggplot() +
-              geom_bar(aes(
-                y = count_errors,
-                x = reorder(dl_state, count_errors)),
-                stat = "identity") +
-              geom_text(
-                aes(
-                  y = count_errors,
-                  x = reorder(dl_state, count_errors),
-                  label = count_errors,
-                  angle = 90),
-                vjust = 0.2,
-                hjust = -0.2) +
-              labs(
-                x = "State",
-                y = "Incorrect Fields (count)",
-                title = "Count of errors in states with > 100 incorrect records") +
-              scale_y_continuous(expand = expansion(mult = c(-0, 0.2))) +
-              theme_classic() +
-              theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
-          )
-        )
-      return(state_plot)
-    }
-    else{
-      message("Error: Invalid plot type supplied.")
-    }
+    return(state_plot)
 
   }
