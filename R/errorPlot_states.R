@@ -60,10 +60,7 @@ errorPlot_states <-
               aes(
                 y = proportion,
                 x = reorder(dl_state, proportion),
-                label =
-                  paste0(
-                    "n = ",
-                    as.character(count_errors)),
+                label = count_errors,
                 angle = 90),
               vjust = 0.2,
               hjust = -0.2) +
