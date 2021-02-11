@@ -194,14 +194,10 @@ findDuplicates(DL1202_proofed)
 
 ### outOfStateHunters
 
-The `outOfStateHunters` function allows us to visualize how many hunters reported harvests from a dl_state that does not match the state, province, or territory of their address. This function can plot errors as either proportions or counts by state.
+The `outOfStateHunters` function allows us to visualize how many hunters registered in a download state that does not match the state, province, or territory of their address. This function plots proportion of out-of-staters with counts as bar labels in addition to returning a tibble of counts and proportions by state.
 
-```{r outofstatect, fig.cap = "Figure 7. Plot of counts of out-of-state hunters.", fig.width = 6, fig.height = 3.5, dpi = 300, out.width = 500, fig.align = "center"}
-outOfStateHunters(DL1202_proofed, type = "count")
-```
-
-```{r outofstatepr, fig.cap = "Figure 8. Plot of proportions of out-of-state hunters.", fig.width = 6, fig.height = 3.5, dpi = 300, out.width = 500, fig.align = "center"}
-outOfStateHunters(DL1202_proofed, type = "proportion")
+```{r outofstate, fig.cap = "Figure 8. Plot of proportions of out-of-state hunters.", fig.width = 6, fig.height = 4, dpi = 300, out.width = 500, fig.align = "center"}
+outOfStateHunters(DL1202_proofed)
 ```
 
 ### youthHunters
