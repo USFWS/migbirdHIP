@@ -194,7 +194,7 @@ findDuplicates(DL1202_proofed)
 
 ### outOfStateHunters
 
-The `outOfStateHunters` function allows us to visualize how many hunters registered in a download state that does not match the state, province, or territory of their address. This function plots proportion of out-of-staters with counts as bar labels in addition to returning a tibble of counts and proportions by state.
+The `outOfStateHunters` function plots and tabulates how many hunters registered in a download state that does not match the state, province, or territory of their address. This function plots proportion of out-of-staters with counts as bar labels. The tibble contains counts and proportions by state.
 
 ```{r outofstate, fig.cap = "Figure 8. Plot of proportions of out-of-state hunters.", fig.width = 6, fig.height = 4, dpi = 300, out.width = 500, fig.align = "center"}
 outOfStateHunters(DL1202_proofed)

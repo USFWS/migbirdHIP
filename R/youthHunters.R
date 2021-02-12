@@ -1,6 +1,6 @@
 #' Youth hunters
 #'
-#' Create a tibble and plot of youth hunters (hunters born < 16 years ago).
+#' Create a tibble and plot of youth hunters (hunters born < 16 years ago). Bar labels are counts.
 #'
 #' @import dplyr
 #' @import tidyr
@@ -62,7 +62,7 @@ youthHunters <-
         aes(
           y = youth_proportion,
           x = reorder(dl_state, youth_proportion),
-          label = youth_proportion,
+          label = registered_youth,
           angle = 90),
         vjust = 0.2,
         hjust = -0.2) +
