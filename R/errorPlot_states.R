@@ -69,7 +69,7 @@ errorPlot_states <-
               y = "Errors (proportion)",
               title =
                 paste0(
-                  "Proportion of errors by state (> ",
+                  "Error proportion by state (> ",
                   as.character(threshold),
                   ")")) +
             scale_y_continuous(expand = expansion(mult = c(-0, 0.3))) +
