@@ -66,6 +66,8 @@ tidy <-
                 str_extract(lastname, "(?<=\\s)JR"),
               str_detect(lastname, "(?<=\\s)SR") ~
                 str_extract(lastname, "(?<=\\s)SR"),
+              str_detect(lastname, "(?<=\\s)I$") ~
+                str_extract(lastname, "(?<=\\s)I"),
               str_detect(lastname, "(?<=\\s)II") ~
                 str_extract(lastname, "(?<=\\s)II"),
               str_detect(lastname, "(?<=\\s)III") ~
@@ -78,6 +80,8 @@ tidy <-
                 str_extract(lastname, "(?<=\\s)VI"),
               str_detect(lastname, "(?<=\\s)VII") ~
                 str_extract(lastname, "(?<=\\s)VII"),
+              str_detect(lastname, "(?<=\\s)1ST") ~
+                str_extract(lastname, "(?<=\\s)1ST"),
               str_detect(lastname, "(?<=\\s)2ND") ~
                 str_extract(lastname, "(?<=\\s)2ND"),
               str_detect(lastname, "(?<=\\s)3RD") ~
@@ -140,6 +144,8 @@ tidy <-
                 str_remove_all(lastname, "(?<=\\s)III"),
               str_detect(lastname, "(?<=\\s)II") ~
                 str_remove_all(lastname, "(?<=\\s)II"),
+              str_detect(lastname, "(?<=\\s)I$") ~
+                str_remove_all(lastname, "(?<=\\s)I"),
               str_detect(lastname, "(?<=\\s)1ST") ~
                 str_remove_all(lastname, "(?<=\\s)1ST"),
               str_detect(lastname, "(?<=\\s)2ND") ~
@@ -175,6 +181,8 @@ tidy <-
                 str_extract(firstname, "(?<=\\s)JR"),
               str_detect(firstname, "(?<=\\s)SR") ~
                 str_extract(firstname, "(?<=\\s)SR"),
+              str_detect(firstname, "(?<=\\s)I$") ~
+                str_extract(firstname, "(?<=\\s)I"),
               str_detect(firstname, "(?<=\\s)II") ~
                 str_extract(firstname, "(?<=\\s)II"),
               str_detect(firstname, "(?<=\\s)III") ~
@@ -187,6 +195,8 @@ tidy <-
                 str_extract(firstname, "(?<=\\s)VI"),
               str_detect(firstname, "(?<=\\s)VII") ~
                 str_extract(firstname, "(?<=\\s)VII"),
+              str_detect(firstname, "(?<=\\s)1ST") ~
+                str_extract(firstname, "(?<=\\s)1ST"),
               str_detect(firstname, "(?<=\\s)2ND") ~
                 str_extract(firstname, "(?<=\\s)2ND"),
               str_detect(firstname, "(?<=\\s)3RD") ~
@@ -257,6 +267,8 @@ tidy <-
                 str_remove_all(firstname, "(?<=\\s)III"),
               str_detect(firstname, "(?<=\\s)II") ~
                 str_remove_all(firstname, "(?<=\\s)II"),
+              str_detect(firstname, "(?<=\\s)I$") ~
+                str_remove_all(firstname, "(?<=\\s)I"),
               str_detect(firstname, "(?<=\\s)1ST") ~
                 str_remove_all(firstname, "(?<=\\s)1ST"),
               str_detect(firstname, "(?<=\\s)2ND") ~
