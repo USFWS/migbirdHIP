@@ -21,22 +21,20 @@ correct <-
     corrected_x <-
       x %>%
       mutate(
+        # Change NAs in errors col to "none" so that str_detect functions work
+        errors =
+          ifelse(is.na(errors), "none", errors),
         # Title correction
         title =
-          case_when(
-            # If errors value is NA, leave title the way it is
-            is.na(errors) ~ title,
-            # Set to NA if title is flagged
-            str_detect(errors, "title") ~ NA_character_,
-            TRUE ~ NA_character_),
+          # Set to NA if title is flagged
+          ifelse(str_detect(errors, "title"), NA, title),
         # Suffix correction
         suffix =
-          case_when(
-            # If errors value is NA, leave suffix the way it is
-            is.na(errors) ~ suffix,
-            # Set to NA if suffix is flagged
-            str_detect(errors, "suffix") ~ NA_character_,
-            TRUE ~ NA_character_),
+          # Set to NA if suffix is flagged
+          ifelse(str_detect(errors, "suffix"), NA, suffix),
+        # Change "none"s back to NAs in errors col
+        errors =
+          ifelse(errors == "none", NA, errors),
         # Zip code correction
         zip =
           # Insert a hyphen in continuous 9 digit zip codes
