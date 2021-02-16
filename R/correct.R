@@ -28,7 +28,7 @@ correct <-
             is.na(errors) ~ title,
             # Set to NA if title is flagged
             str_detect(errors, "title") ~ NA_character_,
-            TRUE ~ 3),
+            TRUE ~ NA_character_),
         # Suffix correction
         suffix =
           case_when(
@@ -36,7 +36,7 @@ correct <-
             is.na(errors) ~ suffix,
             # Set to NA if suffix is flagged
             str_detect(errors, "suffix") ~ NA_character_,
-            TRUE ~ 99),
+            TRUE ~ NA_character_),
         # Zip code correction
         zip =
           # Insert a hyphen in continuous 9 digit zip codes
