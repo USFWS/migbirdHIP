@@ -390,7 +390,7 @@ errorTable(DL1202_proofed)
 ```
 
 ```
-## # A tibble: 135 x 3
+## # A tibble: 134 x 3
 ##    dl_state error      error_count
 ##    <chr>    <chr>            <dbl>
 ##  1 AK       birth_date           2
@@ -403,7 +403,7 @@ errorTable(DL1202_proofed)
 ##  8 AL       zip                 25
 ##  9 AR       birth_date         176
 ## 10 AR       email                1
-## # ... with 125 more rows
+## # ... with 124 more rows
 ```
 
 Errors can be reported by only location by turning off the `field` parameter.
@@ -419,7 +419,7 @@ errorTable(DL1202_proofed, field = "none")
 ##    <chr>          <dbl>
 ##  1 AK                34
 ##  2 AL               237
-##  3 AR               730
+##  3 AR               726
 ##  4 CA               464
 ##  5 CO               193
 ##  6 CT               120
@@ -457,7 +457,7 @@ errorTable(DL1202_proofed, loc = "none")
 ## 14 registration_yr              4
 ## 15 seaducks                     1
 ## 16 state                        6
-## 17 suffix                     292
+## 17 suffix                     283
 ## 18 woodcock_bag                 4
 ## 19 zip                       2132
 ```
@@ -489,7 +489,7 @@ errorTable(DL1202_proofed, field = "suffix")
 ## # A tibble: 1 x 2
 ##   error  error_count
 ##   <chr>        <dbl>
-## 1 suffix         292
+## 1 suffix         283
 ```
 
 Total errors for a location can be pulled.
@@ -598,8 +598,8 @@ The following changes are made by the `correct` function:
     * Is not "INAUDIBLE"
 * *Suffix* is changed to NA if it is not equal to:
     * JR or SR
-    * A value from II to VII in Roman numerals
-    * An value from 2ND to 9TH
+    * A value from I to VII in Roman numerals
+    * An value from 1ST to 9TH
 * *Address* is not changed, but remains flagged if it contains a |, tab, or non-UTF8 character
 * *City* is not changed, but remains flagged if it contains any non-alpha character
 * *State* is not changed, but remains flagged if it is not contained in the following list of abbreviations for US and Canada states, provinces, and territories:
@@ -615,8 +615,8 @@ The following changes are made by the `correct` function:
 * *Issue date* is not changed, but remains flagged if it is not equal to or +/- 1 year from the HIP data collection year
 * *Hunt migratory birds* is not changed, and remains flagged if it is not equal to 1 or 2
 * *Bag values*
-    * State numbers that do not meet expected parameters are compared to a master list by state and species, then corrected to the standard FWS format
-    * Any parameter that can't be converted is changed to NA
+    * State strata that do not meet expected values are compared to a master list and corrected to standard FWS strata
+    * Any stratum that can't be converted is changed to NA
 * *Registration year* is not changed, but remains flagged if it is not equal to or +/- 1 year from the HIP data collection year
 * *Email* is corrected by:
     * Removing spaces, commas, and/or forward slash symbols

@@ -23,12 +23,20 @@ correct <-
       mutate(
         # Title correction
         title =
-          # Set to NA if title is flagged
-          ifelse(str_detect(errors, "title"), NA, title),
+          case_when(
+            # If errors value is NA, leave title the way it is
+            is.na(errors) ~ title,
+            # Set to NA if title is flagged
+            str_detect(errors, "title") ~ NA_character_,
+            TRUE ~ 3),
         # Suffix correction
         suffix =
-          # Set to NA if suffix is flagged
-          ifelse(str_detect(errors, "suffix"), NA, suffix),
+          case_when(
+            # If errors value is NA, leave suffix the way it is
+            is.na(errors) ~ suffix,
+            # Set to NA if suffix is flagged
+            str_detect(errors, "suffix") ~ NA_character_,
+            TRUE ~ 99),
         # Zip code correction
         zip =
           # Insert a hyphen in continuous 9 digit zip codes
