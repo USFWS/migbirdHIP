@@ -44,7 +44,7 @@ errorPlot_fields <-
               special =
                 ifelse(
                   birth_year > specify - 16,
-                  "youth",
+                  "Youth Hunter",
                   NA)) %>%
             select(errors, special) %>%
             # Pull errors apart, delimited by hyphens
@@ -64,7 +64,7 @@ errorPlot_fields <-
             ungroup() %>%
             filter(errors != "birth_date") %>%
             bind_rows(
-              t1 %>%
+              table_1 %>%
                 group_by(errors, special) %>%
                 summarize(count_errors = sum(!is.na(errors))) %>%
                 ungroup() %>%
@@ -102,7 +102,7 @@ errorPlot_fields <-
             scale_y_continuous(expand = expansion(mult = c(-0, 0.25))) +
             theme_classic() +
             theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1)) +
-            scale_fill_discrete(labels = "youth", breaks = "youth")
+            scale_fill_discrete(labels = "Youth Hunter", breaks = "Youth Hunter")
 
           return(fields_plot)
           }
@@ -119,7 +119,7 @@ errorPlot_fields <-
               special =
                 ifelse(
                   birth_year > specify - 16,
-                  "youth",
+                  "Youth Hunter",
                   NA)) %>%
             select(errors, special) %>%
             # Pull errors apart, delimited by hyphens
@@ -139,7 +139,7 @@ errorPlot_fields <-
             ungroup() %>%
             filter(errors != "birth_date") %>%
             bind_rows(
-              t1 %>%
+              table_1 %>%
                 group_by(errors, special) %>%
                 summarize(count_errors = sum(!is.na(errors))) %>%
                 ungroup() %>%
@@ -177,7 +177,7 @@ errorPlot_fields <-
             scale_y_continuous(expand = expansion(mult = c(-0, 0.25))) +
             theme_classic() +
             theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1)) +
-            scale_fill_discrete(labels = "youth", breaks = "youth")
+            scale_fill_discrete(labels = "Youth Hunter", breaks = "Youth Hunter")
 
           return(fields_plot)
           }
@@ -251,7 +251,7 @@ errorPlot_fields <-
               labs(
                 x = "Field",
                 y = "Error proportion",
-                title = "Error proportion per field") +
+                title = paste0("Error proportion per field in ", loc)) +
               scale_y_continuous(expand = expansion(mult = c(-0, 0.25))) +
               theme_classic() +
               theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))

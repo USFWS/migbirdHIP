@@ -89,4 +89,6 @@ utils::globalVariables(
     "h_validate",
     "h_uniform",
     "dl_states",
-    "normal_strata"))
+    "normal_strata",
+    "birth_year",
+    "special"))

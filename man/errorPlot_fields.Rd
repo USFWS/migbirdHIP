@@ -17,10 +17,10 @@ errorPlot_fields(x, loc = "all", specify = NA)
 \item AL, AK, AZ, AR, CA, CO, CT, DE, DC, FL, GA, HI, ID, IL, IN, IA, KS, KY, LA, ME, MD, MA, MI, MN, MS, MO, MT, NE, NV, NH, NJ, NM, NY, NC, ND, OH, OK, OR, PA, RI, SC, SD, TN, TX, UT, VT, VA, WA, WV, WI, WY, AS, GU, MP, PR, VI, UM, FM, MH, PW, AA, AE, AP, CM, CZ, NB, PI, TT, ON, QC, NS, NB, MB, BC, PE, SK, AB, NL}
 }}
 
-\item{specify}{The year in which the Harvest Information Program data were collected must be supplied to activate this feature. This parameter breaks down errors \emph{birth_date} and \emph{zip} into color-coded categories to display youth hunters (< 16 years of age) and foreign zip codes.}
+\item{specify}{The year in which the Harvest Information Program data were collected must be supplied to activate this feature. This parameter breaks down \emph{birth_date} errors into color-coded categories to display youth hunters (< 16 years of age) and "regular errors" in which the birth date is simply incorrect.}
 }
 \description{
-Create a bar plot of errors per field, either by all states in the data set or a specific state, province, or territory.
+Create a bar plot of proportion of error per field. The plot defaults to all 49 states, but location can be specified.
 }
 \references{
 \url{https://github.com/USFWS/migbirdHarvestData}

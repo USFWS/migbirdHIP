@@ -250,7 +250,6 @@ errorPlot_fields(
   facet_wrap(~dl_cycle, ncol = 2)
 ```
 
-<img src="image/errorPlot_fields_facet.png" title="errorfieldsfacet example output" alt="errorfieldsfacet example output" width="100%" style="display: block; margin: auto;" />
 
 
 ### errorPlot_states

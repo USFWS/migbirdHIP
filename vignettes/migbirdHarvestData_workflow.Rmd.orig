@@ -171,9 +171,6 @@ errorPlot_fields(
   facet_wrap(~dl_cycle, ncol = 2)
 ```
 
-```{r errorfieldsfacet_example, echo = FALSE, fig.cap = "errorfieldsfacet example output", out.width = "100%", fig.align = "center"}
-knitr::include_graphics("image/errorPlot_fields_facet.png")
-```
 
 
 ### errorPlot_states
