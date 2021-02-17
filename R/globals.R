@@ -91,4 +91,5 @@ utils::globalVariables(
     "dl_states",
     "normal_strata",
     "birth_year",
-    "special"))
+    "special",
+    "total"))

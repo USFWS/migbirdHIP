@@ -41,25 +41,27 @@ errorPlot_dl <-
             # Transform errors into a single column
             pivot_longer(1:25, names_to = "name") %>%
             select(-name) %>%
-            filter(!is.na(value)) %>%
-            select(-value) %>%
+            group_by(dl_cycle) %>%
+            summarize(
+              errors = sum(!is.na(value)),
+              total = n(),
+              .groups = "keep") %>%
+            ungroup() %>%
+            mutate(proportion = errors/total) %>%
             # Plot
             ggplot() +
-            geom_bar(aes(x = dl_cycle), stat = "count") +
+            geom_bar(aes(x = dl_cycle, y = proportion), stat = "identity") +
             geom_text(
-              stat = "count",
-              aes(x = dl_cycle, label = stat(count), angle = 90),
-              vjust = 0.2,
-              hjust = -0.2
-            ) +
+              stat = "identity",
+              aes(x = dl_cycle, y = proportion, label = errors, angle = 90),
+              vjust = 0.2, hjust = -0.2) +
             labs(
               x = "Download Cycle",
-              y = "Error Count",
+              y = "Error Proportion",
               title = "Errors per download cycle") +
             scale_y_continuous(expand = expansion(mult = c(-0, 0.25))) +
             theme_classic() +
-            theme(
-              axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
+            theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
         }
         else{
 
@@ -74,25 +76,27 @@ errorPlot_dl <-
             # Transform errors into a single column
             pivot_longer(1:25, names_to = "name") %>%
             select(-name) %>%
-            filter(!is.na(value)) %>%
-            select(-value) %>%
+            group_by(dl_cycle) %>%
+            summarize(
+              errors = sum(!is.na(value)),
+              total = n(),
+              .groups = "keep") %>%
+            ungroup() %>%
+            mutate(proportion = errors/total) %>%
             # Plot
             ggplot() +
-            geom_bar(aes(x = dl_cycle), stat = "count") +
+            geom_bar(aes(x = dl_cycle, y = proportion), stat = "identity") +
             geom_text(
-              stat = "count",
-              aes(x = dl_cycle, label = stat(count), angle = 90),
-              vjust = 0.2,
-              hjust = -0.2
-            ) +
+              stat = "identity",
+              aes(x = dl_cycle, y = proportion, label = errors, angle = 90),
+              vjust = 0.2, hjust = -0.2) +
             labs(
-              x = "Download",
-              y = "Error Count",
-              title = paste0("Errors per download cycle", " in ", loc)) +
+              x = "Download Cycle",
+              y = "Error Proportion",
+              title = paste0("Errors per download cycle in ", loc)) +
             scale_y_continuous(expand = expansion(mult = c(-0, 0.25))) +
             theme_classic() +
-            theme(
-              axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
+            theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
         }
       )
 
