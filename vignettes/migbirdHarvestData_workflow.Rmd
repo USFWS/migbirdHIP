@@ -217,6 +217,10 @@ errorPlot_fields(DL1202_proofed, loc = "all")
 errorPlot_fields(DL1202_proofed, loc = "NC")
 ```
 
+```
+## Error: Aesthetics must be either length 1 or the same as the data (1): x, y and label
+```
+
 <img src="figure/errorfieldsplotsc-1.png" title="Figure 2. Plot of all North Carolina's errors by field name." alt="Figure 2. Plot of all North Carolina's errors by field name." width="500" style="display: block; margin: auto;" />
 
 The year in which the HIP data were collected can also be specified in `errorPlot_fields` to visualize the proportion of "errors" created by youth hunters, since these values fall outside the expected parameters of the `proof` function. It is encouraged to use `specify` when error counts are high to increase transparency by revealing which errors are attributable to a specific cause. This feature should also help maintain confidence in the integrity of the data.

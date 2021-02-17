@@ -226,7 +226,7 @@ errorPlot_fields <-
 
             fields_plot <-
               x %>%
-              filter(state == loc) %>%
+              filter(dl_state == loc) %>%
               select(errors) %>%
               # Pull errors apart, delimited by hyphens
               separate(errors, into = as.character(c(1:25)), sep = "-") %>%
