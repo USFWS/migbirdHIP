@@ -51,13 +51,13 @@ validate <-
           pivot_longer(
             cols = !contains("dl"),
             names_to = "species_grp",
-            values_to = "v_uniformity") %>%
+            values_to = "v_rep") %>%
           ungroup() %>%
           # Keep only the uniform spp groups
-          filter(v_uniformity == 1) %>%
+          filter(v_rep == 1) %>%
           # Report count of times uniform values are repeated
-          mutate(v_uniform = dl_rows) %>%
-          select(-c("dl_rows", "v_uniformity"))
+          mutate(v_repeated = dl_rows) %>%
+          select(-c("dl_rows", "v_rep"))
       }
 
       # With time period specification: dl_date or dl_cycle
@@ -81,13 +81,13 @@ validate <-
           pivot_longer(
             cols = !contains("dl"),
             names_to = "species_grp",
-            values_to = "v_uniformity") %>%
+            values_to = "v_rep") %>%
           ungroup() %>%
           # Keep only the uniform spp groups
-          filter(v_uniformity == 1) %>%
+          filter(v_rep == 1) %>%
           # Report count of times uniform values are repeated
-          mutate(v_uniform = dl_rows) %>%
-          select(-c("dl_rows", "v_uniformity"))
+          mutate(v_repeated = dl_rows) %>%
+          select(-c("dl_rows", "v_rep"))
       }
 
       # Return for uniformity detected
@@ -125,11 +125,11 @@ validate <-
         mutate(h_validate = length(unique(h_test$h_string[[rowkey]]))) %>%
         ungroup() %>%
         select(-c("h_string", "rowkey")) %>%
-        mutate(h_uniform = ifelse(h_validate == "1", "uniform", "non-uniform")) %>%
+        mutate(h_rep = ifelse(h_validate == "1", "rep", "not-rep")) %>%
         select(-h_validate) %>%
-        filter(h_uniform == "uniform") %>%
+        filter(h_rep == "uniform") %>%
         group_by(dl_state, dl_date) %>%
-        summarize(h_uniform = n(), .groups = "keep") %>%
+        summarize(h_rep = n(), .groups = "keep") %>%
         ungroup()
 
       # Return for uniformity detected

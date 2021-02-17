@@ -78,8 +78,6 @@ utils::globalVariables(
     "specifics",
     "zipPrefix",
     "dl_cycle",
-    "v_uniformity",
-    "h_uniformity",
     "n_uniform",
     "n_total",
     "outofstate_prop",
@@ -87,9 +85,10 @@ utils::globalVariables(
     "rowkey",
     "h_test",
     "h_validate",
-    "h_uniform",
     "dl_states",
     "normal_strata",
     "birth_year",
     "special",
-    "total"))
+    "total",
+    "v_rep",
+    "h_rep"))

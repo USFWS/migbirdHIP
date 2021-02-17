@@ -91,7 +91,7 @@ This function renames columns and does simple mutations, such as:
 
 The next intermediate step is to `validate` the data. This function should be run after `tidy` to assess the data for repeated values in two dimensions, both vertically and horizontally.
 
-<b>Vertically.</b> The vertical check searches within each column for repetition. Any species group column with a uniform value in all rows will be detected. *Coming soon:* States that do not have a hunting season for one or more species groups (e.g. seaducks) will not be returned using this function for reporting all zero values.
+<b>Vertically.</b> The vertical check searches within each column for repetition. Any species group column with the same value in all rows will be detected. *Coming soon:* States that do not have a hunting season for one or more species groups (e.g. seaducks) will not be returned using this function for reporting all zero values.
 
 The two time period options to assess vertical repetition are `period = "dl_date"` (used automatically)...
 
@@ -102,18 +102,18 @@ validate(DL1202_tidied, type = "vertical")
 
 ```
 ## # A tibble: 112 x 4
-##    dl_state dl_date  species_grp        v_uniform
-##    <chr>    <chr>    <chr>                  <int>
-##  1 AK       20201215 dove_bag                 106
-##  2 AK       20201215 woodcock_bag             106
-##  3 AK       20201215 rails_gallinules         106
-##  4 AK       20201215 band_tailed_pigeon       106
-##  5 AL       20201216 cranes                  7073
-##  6 AL       20201216 band_tailed_pigeon      7073
-##  7 AL       20201216 brant                   7073
-##  8 AL       20201216 seaducks                7073
-##  9 AR       20201216 cranes                  6569
-## 10 AR       20201216 band_tailed_pigeon      6569
+##    dl_state dl_date  species_grp        v_repeated
+##    <chr>    <chr>    <chr>                   <int>
+##  1 AK       20201215 dove_bag                  106
+##  2 AK       20201215 woodcock_bag              106
+##  3 AK       20201215 rails_gallinules          106
+##  4 AK       20201215 band_tailed_pigeon        106
+##  5 AL       20201216 cranes                   7073
+##  6 AL       20201216 band_tailed_pigeon       7073
+##  7 AL       20201216 brant                    7073
+##  8 AL       20201216 seaducks                 7073
+##  9 AR       20201216 cranes                   6569
+## 10 AR       20201216 band_tailed_pigeon       6569
 ## # ... with 102 more rows
 ```
 
@@ -126,18 +126,18 @@ validate(DL1202_tidied, type = "vertical", period = "dl_cycle")
 
 ```
 ## # A tibble: 112 x 4
-##    dl_state dl_cycle species_grp        v_uniform
-##    <chr>    <chr>    <chr>                  <int>
-##  1 AK       1202     dove_bag                 106
-##  2 AK       1202     woodcock_bag             106
-##  3 AK       1202     rails_gallinules         106
-##  4 AK       1202     band_tailed_pigeon       106
-##  5 AL       1202     cranes                  7073
-##  6 AL       1202     band_tailed_pigeon      7073
-##  7 AL       1202     brant                   7073
-##  8 AL       1202     seaducks                7073
-##  9 AR       1202     cranes                  6569
-## 10 AR       1202     band_tailed_pigeon      6569
+##    dl_state dl_cycle species_grp        v_repeated
+##    <chr>    <chr>    <chr>                   <int>
+##  1 AK       1202     dove_bag                  106
+##  2 AK       1202     woodcock_bag              106
+##  3 AK       1202     rails_gallinules          106
+##  4 AK       1202     band_tailed_pigeon        106
+##  5 AL       1202     cranes                   7073
+##  6 AL       1202     band_tailed_pigeon       7073
+##  7 AL       1202     brant                    7073
+##  8 AL       1202     seaducks                 7073
+##  9 AR       1202     cranes                   6569
+## 10 AR       1202     band_tailed_pigeon       6569
 ## # ... with 102 more rows
 ```
 
@@ -149,18 +149,10 @@ validate(DL1202_tidied, type = "horizontal")
 ```
 
 ```
-## # A tibble: 6 x 3
-##   dl_state dl_date  h_uniform
-##   <chr>    <chr>        <int>
-## 1 AR       20201216      3090
-## 2 CT       20201216        72
-## 3 LA       20201216      1530
-## 4 NE       20201209       291
-## 5 NY       20201216       538
-## 6 <NA>     <NA>           441
+## Data are good to go! No horizontal repetition detected.
 ```
 
-If there are no uniformities, a positive message will be returned.
+If there are no repetitions, a positive message will be returned.
 
 Tibbles of vertical repetition returned from this function can be looked at more closely using `investigate` (see Stage 3: [investigate](#investigate)).
 
