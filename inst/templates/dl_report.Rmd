@@ -20,7 +20,7 @@ library(tidyverse)
 
 ```{r import, include = FALSE}
 
-dl_data <- compile_to_utf8(params$comp_path)
+dl_data <- read_hip(params$comp_path)
 
 tidied_data <- tidy(dl_data)
 
@@ -63,13 +63,13 @@ errorPlot_fields(corrected_data, specify = params$year)
 **Before correction**
 
 ```{r erps, echo = FALSE}
-errorPlot_states(proofed_data, type = "proportion")
+errorPlot_states(proofed_data)
 ```
 
 **After correction**
 
 ```{r erps_c, echo = FALSE}
-errorPlot_states(corrected_data, type = "proportion")
+errorPlot_states(corrected_data)
 ```
 
 ## Duplicates
@@ -81,7 +81,7 @@ findDuplicates(proofed_data)
 ## Out-of-state hunters
 
 ```{r oosh_c, echo = FALSE}
-outOfStateHunters(corrected_data, type = "proportion")
+outOfStateHunters(corrected_data)
 ```
 
 ## Youth hunters
