@@ -2,14 +2,14 @@
 % Please edit documentation in R/errorPlot_fields.R
 \name{errorPlot_fields}
 \alias{errorPlot_fields}
-\title{Plot errors by field}
+\title{Plot HIP errors by field}
 \usage{
 errorPlot_fields(x, loc = "all", specify = NA)
 }
 \arguments{
 \item{x}{A proofed data table created by \code{\link{proof}}}
 
-\item{loc}{Which location the error data should be plotted for. Acceptable values include:
+\item{loc}{The location that errors should be plotted for. Acceptable values include:
 \itemize{
 \item all - All states, provinces, and/or territories that exist in the data
 \item A specific state, province, or territory represented by one of the following abbreviations:
@@ -17,7 +17,7 @@ errorPlot_fields(x, loc = "all", specify = NA)
 \item AL, AK, AZ, AR, CA, CO, CT, DE, DC, FL, GA, HI, ID, IL, IN, IA, KS, KY, LA, ME, MD, MA, MI, MN, MS, MO, MT, NE, NV, NH, NJ, NM, NY, NC, ND, OH, OK, OR, PA, RI, SC, SD, TN, TX, UT, VT, VA, WA, WV, WI, WY, AS, GU, MP, PR, VI, UM, FM, MH, PW, AA, AE, AP, CM, CZ, NB, PI, TT, ON, QC, NS, NB, MB, BC, PE, SK, AB, NL}
 }}
 
-\item{specify}{The year in which the Harvest Information Program data were collected must be supplied to activate this feature. This parameter breaks down \emph{birth_date} errors into color-coded categories to display youth hunters (< 16 years of age) and "regular errors" in which the birth date is simply incorrect.}
+\item{specify}{Optional. The year in which the HIP data were collected must be supplied to activate this feature. This parameter breaks down \emph{birth_date} errors into color-coded categories to display youth hunters (< 16 years of age) and non-youth hunters that have another issue causing an error in \emph{birth_date}.}
 }
 \description{
 Create a bar plot of proportion of error per field. The plot defaults to all 49 states, but location can be specified.
