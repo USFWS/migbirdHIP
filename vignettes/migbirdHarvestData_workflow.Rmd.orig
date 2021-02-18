@@ -175,10 +175,10 @@ errorPlot_fields(
 
 ### errorPlot_states
 
-The `errorPlot_states` function plots states above a specified proportion of error. Bar labels are error counts.
+The `errorPlot_states` function plots error proportions per state. You may optionally set a threshold value to only view states above a certain proportion of error. Bar labels are error counts.
 
 ```{r errorplotstates, fig.cap = "Figure 4. Plot of proportion of error by state.", fig.width = 6, fig.height = 4, dpi = 300, out.width = 500, fig.align = "center"}
-errorPlot_states(DL1202_proofed, threshold = .01)
+errorPlot_states(DL1202_proofed)
 ```
 
 ### findDuplicates
