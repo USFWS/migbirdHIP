@@ -369,10 +369,10 @@ investigate(DL1202_tidied, loc = "TX", period_type = "dl_date", period = "202012
 ```
 
 ```
-## # A tibble: 1 x 1
-##   cranes
-##   <chr> 
-## 1 0
+## # A tibble: 1 x 2
+##   cranes source_file   
+##   <chr>  <chr>         
+## 1 0      TX20201216.txt
 ```
 
 ### errorTable

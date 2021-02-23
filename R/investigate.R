@@ -30,9 +30,9 @@ investigate <-
 
     investigated_x <-
       x %>%
-      select(dl_state, {{period_type}}, ducks_bag:seaducks) %>%
+      select(dl_state, {{period_type}}, ducks_bag:seaducks, source_file) %>%
       filter(dl_state == loc & !!sym(period_type) == period) %>%
-      select(quo_name(species)) %>%
+      select(quo_name(species), source_file) %>%
       distinct()
 
     if(nrow(investigated_x) == 0) {
