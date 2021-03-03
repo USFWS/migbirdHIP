@@ -15,21 +15,21 @@ vignette: >
 - [Stage 1: Import Data](#stage-1-import-data)
     - [read_hip](#read_hip)
     - [tidy](#tidy)
-    - [validate](#validate)
     - [strataCheck](#stratacheck)
-    - [proof](#proof)
-- [Stage 2: Visualize Data](#stage-2-visualize-data)
-    - [errorPlot_fields](#errorplot_fields)
-    - [errorPlot_states](#errorplot_states)
-    - [findDuplicates](#findduplicates)
-    - [outOfStateHunters](#outofstatehunters)
-    - [youthHunters](#youthhunters)
-    - [errorPlot_dl](#errorplot_dl)
-- [Stage 3: Explore Errors](#stage-3-explore-errors)
+    - [validate](#validate)
     - [investigate](#investigate)
+- [Stage 2: Explore Errors](#stage-2-explore-errors)
+    - [proof](#proof)
     - [errorTable](#errortable)
     - [pullErrors](#pullerrors)
     - [redFlags](#redflags)
+- [Stage 3: Visualize Data](#stage-3-visualize-data)
+    - [findDuplicates](#findduplicates)
+    - [errorPlot_fields](#errorplot_fields)
+    - [errorPlot_states](#errorplot_states)
+    - [outOfStateHunters](#outofstatehunters)
+    - [youthHunters](#youthhunters)
+    - [errorPlot_dl](#errorplot_dl)
 - [Stage 4: Correct and Compare](#stage-4-correct-and-compare)
     - [correct](#correct)
     - [manualFix](#manualfix)
@@ -86,6 +86,16 @@ This function renames columns and does simple mutations, such as:
 * Removes punctuation from middle initial column
 * Removes ending hyphen from zip codes with only 5 digits
 
+### strataCheck
+
+Running `strataCheck` ensures species "bag" values are in order. This function searches for values in species group columns that are not typical or expected by the FWS. If a value outside of the normal range is detected, an output tibble is created. Each row in the output contains the state, species, unusual stratum value, and a list of the normal values we would expect.
+
+If a value for a species group is given in the HIP data that doesn't match anything in our records, the species reported in the output will have NA values in the "normal_strata" column. These species are not hunted in the reported states.
+
+```{r, stratacheck}
+strataCheck(DL1202_tidied)
+```
+
 ### validate
 
 The next intermediate step is to `validate` the data. This function should be run after `tidy` to assess the data for repeated values in two dimensions, both vertically and horizontally.
@@ -112,17 +122,17 @@ validate(DL1202_tidied, type = "horizontal")
 
 If there are no repetitions, a positive message will be returned.
 
-Tibbles of vertical repetition returned from this function can be looked at more closely using `investigate` (see Stage 3: [investigate](#investigate)).
+Tibbles of vertical repetition returned from this function can be looked at more closely using `investigate`.
 
-### strataCheck
+### investigate
 
-Running `strataCheck` is the last step we must do to ensure the data are in order. This function searches for values in species group columns that are not typical or expected by the FWS. If a value outside of the normal strata is given, the output tibble will create a row for it. The row will contain the state, species, unusual stratum value, and a column called "normal_strata" with the typical values we would expect.
+Did the `validate` function return repeated values? Are some of those values a high number that are uniform and need to be looked at more closely? The `investigate` function allows you to see what value was vertically repeated for a species. Parameters required are download state, type of download time period, value of the download date or download cycle, and species, which are all provided in the output of `validate`.
 
-If a value for a species group is given in the HIP data that doesn't match anything in our records, the species reported in the output will have NA values in the "normal_strata" column. These species are not hunted in the reported states.
-
-```{r, stratacheck}
-strataCheck(DL1202_tidied)
+```{r investigate}
+investigate(DL1202_tidied, loc = "TX", period_type = "dl_date", period = "20201216", species = "cranes")
 ```
+
+## Stage 2: Explore Errors
 
 ### proof
 
@@ -135,97 +145,6 @@ DL1202_proofed <- proof(DL1202_tidied, year = 2020)
 Data that are considered irregular are flagged in a new column called "errors". No actual corrections take place in this step; all data remain identical except for the new "errors" column. For each field, values are compared to standard expected formats and if they do not conform, the field name is pasted as a string in the "errors" column. Each row can have from zero errors (NA) to all column names listed. Multiple flags are hyphen delimited.
 
 The year of the Harvest Information Program must be supplied as a parameter. This aids in checking dates when licenses were issued, as one example.
-
-## Stage 2: Visualize Data
-
-### errorPlot_fields
-
-The `errorPlot_fields` function can be run on all states...
-
-```{r errorfieldsplotall, fig.cap = "Figure 1. Plot of all location's errors by field name.", fig.width = 6, fig.height = 3.6, dpi = 300, out.width = 500, fig.align = "center"}
-errorPlot_fields(DL1202_proofed, loc = "all")
-```
-
-... or it can be limited to just one.
-
-```{r errorfieldsplotsc, fig.cap = "Figure 2. Plot of all North Carolina's errors by field name.", fig.width = 6, fig.height = 3.6, dpi = 300, out.width = 500, fig.align = "center"}
-errorPlot_fields(DL1202_proofed, loc = "NC")
-```
-
-The year in which the HIP data were collected can also be specified in `errorPlot_fields` to visualize the proportion of "errors" created by youth hunters, since these values fall outside the expected parameters of the `proof` function. It is encouraged to use `specify` when error counts are high to increase transparency by revealing which errors are attributable to a specific cause. This feature should also help maintain confidence in the integrity of the data.
-
-```{r errorfieldsplotyouth, fig.cap = "Figure 3. Plot of all location's errors by field name, with stacked colors to indicate if there are youth hunters or Canadian zip codes in the data, two common causes of error.", fig.width = 6, fig.height = 3.6, dpi = 300, out.width = 500, fig.align = "center"}
-errorPlot_fields(DL1202_proofed, specify = 2020)
-```
-
-It is possible to add any `ggplot2` components to these plots. For season total data specifically, the plot can be facet_wrapped using either dl_cycle or dl_date. The example below demonstrates how this package's functions can interact with the tidyverse and shows an example of an `errorPlot_fields` facet_wrap (using a subset of 4 download cycles)
-
-```{r errorfieldsfacet, eval = FALSE}
-errorPlot_fields(
-  hipdata2020 %>%
-    filter(str_detect(dl_cycle, "0800|0901|0902|1001")),
-  specify = 2020) +
-  theme(
-    axis.text.x = element_text(angle = 90, vjust = 0, hjust = 1),
-    legend.position = "bottom") +
-  facet_wrap(~dl_cycle, ncol = 2)
-```
-
-
-
-### errorPlot_states
-
-The `errorPlot_states` function plots error proportions per state. You may optionally set a threshold value to only view states above a certain proportion of error. Bar labels are error counts.
-
-```{r errorplotstates, fig.cap = "Figure 4. Plot of proportion of error by state.", fig.width = 6, fig.height = 4, dpi = 300, out.width = 500, fig.align = "center"}
-errorPlot_states(DL1202_proofed)
-```
-
-### findDuplicates
-
-The `findDuplicates` function finds registrants that have more than one record. Registrations are grouped by first name, last name, city, state, birth date, and download state. If the same registrant has 2 or more records, the fields that are not identical are counted and summarized in a tibble and plot.
-
-```{r findDuplicates, fig.cap = "Figure 6. Plot of types of duplicates.", fig.width = 6, fig.height = 3.5, dpi = 300, out.width = 500, fig.align = "center"}
-findDuplicates(DL1202_proofed)
-```
-
-### outOfStateHunters
-
-The `outOfStateHunters` function plots and tabulates how many hunters registered in a download state that does not match the state, province, or territory of their address. This function plots proportion of out-of-staters with counts as bar labels. The tibble contains counts and proportions by state.
-
-```{r outofstate, fig.cap = "Figure 8. Plot of proportions of out-of-state hunters.", fig.width = 6, fig.height = 4, dpi = 300, out.width = 500, fig.align = "center"}
-outOfStateHunters(DL1202_proofed)
-```
-
-### youthHunters
-
-The `youthHunters` function returns a table and plot of the number of hunters with birth dates < 16 years from the year of HIP data collection. These data are interesting to explore because hunters younger than 16 years of age are not required to have a migratory bird hunting license in the United States.
-
-```{r youth, fig.cap = "Figure 9. Plot of proportions of youth hunters.", fig.width = 6, fig.height = 3.5, dpi = 300, out.width = 500, fig.align = "center"}
-youthHunters(DL1202_proofed, year = 2020)
-```
-
-### errorPlot_dl
-
-This function should not be used unless you want to visualize an entire season of data. The `errorPlot_dl` function plots proportion of error per download cycle across the year. Location may be specified to see a particular state over time.
-
-```{r errorPlot_dl, eval = FALSE}
-errorPlot_dl(hipdata2020, loc = "MI")
-```
-
-```{r errorplotdl_example, echo = FALSE, fig.cap = "errorPlot_dl example output", out.width = "70%", fig.align = "center"}
-knitr::include_graphics("image/errorPlot_dl.png")
-```
-
-## Stage 3: Explore Errors
-
-### investigate
-
-Did the `validate` function return repeated values? Are some of those values a high number that are uniform and need to be looked at more closely? The `investigate` function allows you to see what value was vertically repeated for a species. Parameters required are download state, type of download time period, value of the download date or download cycle, and species, which are all provided in the output of [validate](#validate).
-
-```{r investigate}
-investigate(DL1202_tidied, loc = "TX", period_type = "dl_date", period = "20201216", species = "cranes")
-```
 
 ### errorTable
 
@@ -294,6 +213,86 @@ The same can be done for data fields. In this example, we see which fields had m
 ```{r redflags2}
 redFlags(DL1202_proofed, type = "field", threshold = 0.01)
 ```
+
+## Stage 3: Visualize Data
+
+### findDuplicates
+
+The `findDuplicates` function finds registrants that have more than one record. Registrations are grouped by first name, last name, city, state, birth date, and download state. If the same registrant has 2 or more records, the fields that are not identical are counted and summarized in a tibble and plot.
+
+```{r findDuplicates, fig.cap = "Figure 1. Plot of types of duplicates.", fig.width = 6, fig.height = 3.5, dpi = 300, out.width = 500, fig.align = "center"}
+findDuplicates(DL1202_proofed)
+```
+
+### errorPlot_fields
+
+The `errorPlot_fields` function can be run on all states...
+
+```{r errorfieldsplotall, fig.cap = "Figure 2. Plot of all location's errors by field name.", fig.width = 6, fig.height = 3.6, dpi = 300, out.width = 500, fig.align = "center"}
+errorPlot_fields(DL1202_proofed, loc = "all")
+```
+
+... or it can be limited to just one.
+
+```{r errorfieldsplotsc, fig.cap = "Figure 3. Plot of all North Carolina's errors by field name.", fig.width = 6, fig.height = 3.6, dpi = 300, out.width = 500, fig.align = "center"}
+errorPlot_fields(DL1202_proofed, loc = "NC")
+```
+
+The year in which the HIP data were collected can also be specified in `errorPlot_fields` to visualize the proportion of "errors" created by youth hunters, since these values fall outside the expected parameters of the `proof` function. It is encouraged to use `specify` when error counts are high to increase transparency by revealing which errors are attributable to a specific cause. This feature should also help maintain confidence in the integrity of the data.
+
+```{r errorfieldsplotyouth, fig.cap = "Figure 4. Plot of all location's errors by field name, with stacked colors to indicate if there are youth hunters or Canadian zip codes in the data, two common causes of error.", fig.width = 6, fig.height = 3.6, dpi = 300, out.width = 500, fig.align = "center"}
+errorPlot_fields(DL1202_proofed, specify = 2020)
+```
+
+It is possible to add any `ggplot2` components to these plots. For season total data specifically, the plot can be facet_wrapped using either dl_cycle or dl_date. The example below demonstrates how this package's functions can interact with the tidyverse and shows an example of an `errorPlot_fields` facet_wrap (using a subset of 4 download cycles)
+
+```{r errorfieldsfacet, eval = FALSE}
+errorPlot_fields(
+  hipdata2020 %>%
+    filter(str_detect(dl_cycle, "0800|0901|0902|1001")),
+  specify = 2020) +
+  theme(
+    axis.text.x = element_text(angle = 90, vjust = 0, hjust = 1),
+    legend.position = "bottom") +
+  facet_wrap(~dl_cycle, ncol = 2)
+```
+
+### errorPlot_states
+
+The `errorPlot_states` function plots error proportions per state. You may optionally set a threshold value to only view states above a certain proportion of error. Bar labels are error counts.
+
+```{r errorplotstates, fig.cap = "Figure 5. Plot of proportion of error by state.", fig.width = 6, fig.height = 4, dpi = 300, out.width = 500, fig.align = "center"}
+errorPlot_states(DL1202_proofed)
+```
+
+### outOfStateHunters
+
+The `outOfStateHunters` function plots and tabulates how many hunters registered in a download state that does not match the state, province, or territory of their address. This function plots proportion of out-of-staters with counts as bar labels. The tibble contains counts and proportions by state.
+
+```{r outofstate, fig.cap = "Figure 6. Plot of proportions of out-of-state hunters.", fig.width = 6, fig.height = 4, dpi = 300, out.width = 500, fig.align = "center"}
+outOfStateHunters(DL1202_proofed)
+```
+
+### youthHunters
+
+The `youthHunters` function returns a table and plot of the number of hunters with birth dates < 16 years from the year of HIP data collection. These data are interesting to explore because hunters younger than 16 years of age are not required to have a migratory bird hunting license in the United States.
+
+```{r youth, fig.cap = "Figure 7. Plot of proportions of youth hunters.", fig.width = 6, fig.height = 3.5, dpi = 300, out.width = 500, fig.align = "center"}
+youthHunters(DL1202_proofed, year = 2020)
+```
+
+### errorPlot_dl
+
+This function should not be used unless you want to visualize an entire season of data. The `errorPlot_dl` function plots proportion of error per download cycle across the year. Location may be specified to see a particular state over time.
+
+```{r errorPlot_dl, eval = FALSE}
+errorPlot_dl(hipdata2020, loc = "MI")
+```
+
+```{r errorplotdl_example, echo = FALSE, fig.cap = "errorPlot_dl example output", out.width = "70%", fig.align = "center"}
+knitr::include_graphics("image/errorPlot_dl.png")
+```
+
 
 ## Stage 4: Correct and Compare
 
