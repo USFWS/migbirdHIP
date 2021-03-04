@@ -125,15 +125,15 @@ validate <-
         mutate(h_validate = length(unique(h_test$h_string[[rowkey]]))) %>%
         ungroup() %>%
         select(-c("h_string", "rowkey")) %>%
-        mutate(h_rep = ifelse(h_validate == "1", "rep", "not-rep")) %>%
+        mutate(h_rep = ifelse(h_validate == "1", "rep", "notrep")) %>%
         select(-h_validate) %>%
-        filter(h_rep == "uniform") %>%
+        filter(h_rep == "rep") %>%
         group_by(dl_state, dl_date) %>%
         summarize(h_rep = n(), .groups = "keep") %>%
         ungroup()
 
       # Return for uniformity detected
-      if(nrow(validated_h) != 0) {
+      if(nrow(validated_h) > 0) {
         return(validated_h)
       }
       # Return for no uniformities
