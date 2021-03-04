@@ -49,7 +49,9 @@ install_github("USFWS/migbirdHarvestData", build_vignettes = TRUE)
 
 ## Vignette
 
-`vignette(topic = "migbirdHarvestData_workflow", package = "migbirdHarvestData")`
+```r
+vignette(topic = "migbirdHarvestData_workflow", package = "migbirdHarvestData")
+```
 
 ## Function Flow
 
