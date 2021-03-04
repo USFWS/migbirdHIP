@@ -12,6 +12,8 @@ vignette: >
 ## Table of Contents
 
 - [Introduction](#introduction)
+    - [Installation](#installation)
+    - [Functions overview](#functions-overview)
 - [Stage 1: Import Data](#stage-1-import-data)
     - [read_hip](#read_hip)
     - [tidy](#tidy)
@@ -43,16 +45,22 @@ vignette: >
 
 ## Introduction
 
-The migbirdHarvestData package provides an easy-to-use automated workflow for the U.S. Fish and Wildlife Service to wrangle, tidy, and visualize Harvest Information Program data.
+The *migbirdHarvestData* package was created for the U.S. Fish and Wildlife Service (USFWS) to wrangle, tidy, and visualize Harvest Information Program (HIP) data.
 
-The package can be installed using:
+HIP data have been used since 1999 to make important management decisions for migratory game birds in the United States. Raw hunting activity data are processed in this package. To read more about HIP, visit: [https://www.fws.gov/harvestsurvey/](https://www.fws.gov/harvestsurvey/)
+
+### Installation
+
+The package can be installed from the USFWS GitHub repository using:
 
 ```r
 library(devtools)
 install_github("USFWS/migbirdHarvestData")
 ```
 
-The flowchart below is a handy visual guide to the order in which functions are used.
+### Functions overview
+
+The flowchart below is a visual guide to the order in which functions are used. Some functions are only used situationally and some issues with the data cannot be solved using a function at all. The general process of handling HIP data is demonstrated here; every function in the *migbirdHarvestData* package is included except for [hunterSample](#huntersample).
 
 <img src="image/migbirdHarvestData_flowchart.svg" title="Overview of migbirdHarvestData functions in a flowchart format." alt="Overview of migbirdHarvestData functions in a flowchart format." width="100%" style="display: block; margin: auto;" />
 
@@ -679,11 +687,15 @@ hunterSample(DL1202_corrected, random = 100)
 
 Sometimes `read_hip` will throw one or more warnings. Warnings are usually benign, but for clarity I provide examples and explanations of common warnings below. If the warning or error you receive after reading HIP data isn't described here and seems like a real problem, please [report an issue](#other).
 
-<b>Example 1.</b> This parsing failure occurs when a .txt file is missing the last two columns in the fixed-width file (registration_yr and email). For the offending file(s), these columns are filled with NA in the output tibble. No action must be taken.
+#### Example 1
+
+This parsing failure occurs when a .txt file is missing the last two columns in the fixed-width file (registration_yr and email). For the offending file(s), these columns are filled with NA in the output tibble. No action must be taken.
 
 <img src="image/parsing_failure_1.png" title="Example 1. Common warning that results after running read_hip with missing columns in fixed-width text files." alt="Example 1. Common warning that results after running read_hip with missing columns in fixed-width text files." width="60%" style="display: block; margin: auto;" />
 
-<b>Example 2.</b> Another version of a parsing failure occurs when a file is missing the last column in last row of the fixed-width file. This value is set to NA in the output tibble. No action must be taken.
+#### Example 2
+
+Another version of a parsing failure occurs when a file is missing the last column in last row of the fixed-width file. This value is set to NA in the output tibble. No action must be taken.
 
 <img src="image/parsing_failure_2.png" title="Example 2. Common warning that results after running read_hip with a missing column in one row of a fixed-width text file." alt="Example 2. Common warning that results after running read_hip with a missing column in one row of a fixed-width text file." width="60%" style="display: block; margin: auto;" />
 
