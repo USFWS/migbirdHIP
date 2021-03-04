@@ -42,12 +42,14 @@ library(devtools)
 install_github("USFWS/migbirdHarvestData", build_vignettes = TRUE)
 ```
 
-#### Vignette
+## Vignette
 
-Once the migbirdHarvestData package is installed, you can find a
-detailed how-to guide in *The migbirdHarvestData Workflow* vignette by
-running: `vignette(topic = "migbirdHarvestData_workflow", package =
+`vignette(topic = "migbirdHarvestData_workflow", package =
 "migbirdHarvestData")`
+
+## Function Flow
+
+<img src="vignettes/image/migbirdHarvestData_flowchart.svg" title="Overview of migbirdHarvestData functions in a flowchart format." alt="Overview of migbirdHarvestData functions in a flowchart format." width="100%" style="display: block; margin: auto;" />
 
 ## USFWS Disclaimer
 
