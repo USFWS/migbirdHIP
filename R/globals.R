@@ -91,4 +91,7 @@ utils::globalVariables(
     "special",
     "total",
     "v_rep",
-    "h_rep"))
+    "h_rep",
+    "h_first",
+    "h_total",
+    "prop_repeat"))

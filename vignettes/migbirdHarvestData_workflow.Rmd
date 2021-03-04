@@ -108,18 +108,18 @@ strataCheck(DL1202_tidied)
 
 ```
 ## # A tibble: 285 x 4
-##    dl_state spp                state_strata normal_strata   
-##    <chr>    <chr>              <chr>        <chr>           
-##  1 OR       dove_bag           0            1, 2, 3, 5      
-##  2 OR       ducks_bag          0            1, 2, 3, 4      
-##  3 OR       geese_bag          0            1, 2, 3, 4      
-##  4 OR       band_tailed_pigeon 0            1, 2            
-##  5 OR       brant              0            1, 2            
-##  6 OR       seaducks           0            1, 2            
-##  7 MO       dove_bag           9            0, 1, 2, 3, 5   
-##  8 NE       dove_bag           9            0, 1, 2, 3, 5   
-##  9 MO       woodcock_bag       9            0, 1, 2, 3, 4, 5
-## 10 NE       woodcock_bag       6            0, 1, 2, 3, 4, 5
+##    dl_state spp        state_strata normal_strata 
+##    <chr>    <chr>      <chr>        <chr>         
+##  1 OR       dove_bag   0            1, 2, 3, 5    
+##  2 OR       ducks_bag  0            1, 2, 3, 4    
+##  3 OR       geese_bag  0            1, 2, 3, 4    
+##  4 OR       band_tail~ 0            1, 2          
+##  5 OR       brant      0            1, 2          
+##  6 OR       seaducks   0            1, 2          
+##  7 MO       dove_bag   9            0, 1, 2, 3, 5 
+##  8 NE       dove_bag   9            0, 1, 2, 3, 5 
+##  9 MO       woodcock_~ 9            0, 1, 2, 3, 4~
+## 10 NE       woodcock_~ 6            0, 1, 2, 3, 4~
 ## # ... with 275 more rows
 ```
 
@@ -185,7 +185,15 @@ validate(DL1202_tidied, type = "horizontal")
 ```
 
 ```
-## Data are good to go! No horizontal repetition detected.
+## # A tibble: 6 x 5
+##   source_file    h_value h_rep h_total prop_repeat
+##   <chr>          <chr>   <int>   <int>       <dbl>
+## 1 wi20201216.txt 1         441     546       0.808
+## 2 CT20201216.txt 1          72     114       0.632
+## 3 NY20201216.txt 1         538     955       0.563
+## 4 NE20201209.txt 1         291     549       0.530
+## 5 LA20201216.txt 1        1530    3252       0.470
+## 6 AR20201216.txt 1        3090    6569       0.470
 ```
 
 If there are no repetitions, a positive message will be returned.
@@ -388,10 +396,11 @@ redFlags(DL1202_proofed, type = "state", threshold = 0.03)
 
 ```
 ## # A tibble: 2 x 5
-##   dl_state count_errors count_correct proportion flag        
-##   <chr>           <int>         <int>      <dbl> <chr>       
-## 1 CT                120          2730     0.0421 error > 0.03
-## 2 IA               3221         77679     0.0398 error > 0.03
+##   dl_state count_errors count_correct proportion
+##   <chr>           <int>         <int>      <dbl>
+## 1 CT                120          2730     0.0421
+## 2 IA               3221         77679     0.0398
+## # ... with 1 more variable: flag <chr>
 ```
 
 <b>By field.</b>
@@ -404,12 +413,13 @@ redFlags(DL1202_proofed, type = "field", threshold = 0.01)
 
 ```
 ## # A tibble: 4 x 5
-##   errors     count_errors count_correct proportion flag        
-##   <chr>             <int>         <int>      <dbl> <chr>       
-## 1 birth_date         5646         87525     0.0606 error > 0.01
-## 2 email              5496         87675     0.0590 error > 0.01
-## 3 ducks_bag          3113         90058     0.0334 error > 0.01
-## 4 zip                2132         91039     0.0229 error > 0.01
+##   errors count_errors count_correct proportion
+##   <chr>         <int>         <int>      <dbl>
+## 1 birth~         5646         87525     0.0606
+## 2 email          5496         87675     0.0590
+## 3 ducks~         3113         90058     0.0334
+## 4 zip            2132         91039     0.0229
+## # ... with 1 more variable: flag <chr>
 ```
 
 ## Stage 3: Visualize Data
@@ -552,11 +562,13 @@ youthHunters(DL1202_proofed, year = 2020)
 
 ```
 ## # A tibble: 3 x 4
-##   dl_state registered_youth total_registered youth_proportion
-##   <chr>               <int>            <int>            <dbl>
-## 1 MO                      1             4047         0.000247
-## 2 ND                    117              175         0.669   
-## 3 NE                      1              549         0.00182
+##   dl_state registered_youth total_registered
+##   <chr>               <int>            <int>
+## 1 MO                      1             4047
+## 2 ND                    117              175
+## 3 NE                      1              549
+## # ... with 1 more variable:
+## #   youth_proportion <dbl>
 ```
 
 ### errorPlot_dl

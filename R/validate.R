@@ -106,31 +106,52 @@ validate <-
 
       h_test <-
         x %>%
+        # Subset the data
         select(
-          dl_state,
-          dl_date,
+          source_file,
           matches("bag|coots|rails|cranes|pigeon|brant|seaducks")) %>%
-        group_by(dl_state, dl_date) %>%
+        group_by(source_file) %>%
         # Paste all of the species group values together
-        unite(h_string, !contains("dl"), sep = "-") %>%
+        unite(h_string, !contains("source"), sep = "-") %>%
         ungroup() %>%
-        # Convert string to vector
         mutate(
+          # Subset the first value from each horizontal bag string, useful later if
+          # the values are repeated
+          h_first = str_sub(h_string, 0, 1),
+          # Convert string to vector
           h_string = str_split(h_string, "-"),
+          # Create unique row key
           rowkey = row_number())
 
       validated_h <-
         h_test %>%
         group_by(rowkey) %>%
+        # Calculate the number of unique values used by each row
         mutate(h_validate = length(unique(h_test$h_string[[rowkey]]))) %>%
         ungroup() %>%
         select(-c("h_string", "rowkey")) %>%
-        mutate(h_rep = ifelse(h_validate == "1", "rep", "notrep")) %>%
-        select(-h_validate) %>%
-        filter(h_rep == "rep") %>%
-        group_by(dl_state, dl_date) %>%
+        # If only one value was used across the row, mark it as containing repeats
+        mutate(h_validate = ifelse(h_validate == "1", "rep", "not-rep")) %>%
+        # Calculate the total number of rows per file
+        group_by(source_file) %>%
+        mutate(h_total = n()) %>%
+        ungroup() %>%
+        # Keep only the rows that have repeats indicated
+        filter(h_validate == "rep") %>%
+        # Count the number of repeated rows per file
+        group_by(source_file, h_first, h_total) %>%
         summarize(h_rep = n(), .groups = "keep") %>%
-        ungroup()
+        ungroup() %>%
+        # Calculate the proportion of repeats per file
+        group_by(source_file) %>%
+        mutate(prop_repeat = h_rep/h_total) %>%
+        ungroup() %>%
+        relocate(h_rep, .before = h_total) %>%
+        # Rename h_first so it is more clear that the field indicates the repeated
+        # horizontal value
+        rename(h_value = h_first) %>%
+        # Sort with descending proportion of repeats
+        arrange(desc(prop_repeat))
 
       # Return for uniformity detected
       if(nrow(validated_h) > 0) {
