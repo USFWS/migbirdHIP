@@ -17,6 +17,7 @@ vignette: >
 - [Stage 1: Import Data](#stage-1-import-data)
     - [read_hip](#read_hip)
     - [tidy](#tidy)
+    - [findDuplicates](#findduplicates)
     - [strataCheck](#stratacheck)
     - [validate](#validate)
     - [investigate](#investigate)
@@ -26,7 +27,6 @@ vignette: >
     - [pullErrors](#pullerrors)
     - [redFlags](#redflags)
 - [Stage 3: Visualize Data](#stage-3-visualize-data)
-    - [findDuplicates](#findduplicates)
     - [errorPlot_fields](#errorplot_fields)
     - [errorPlot_states](#errorplot_states)
     - [outOfStateHunters](#outofstatehunters)
@@ -95,6 +95,45 @@ This function renames columns and does simple mutations, such as:
 * Removes punctuation from middle initial column
 * Removes ending hyphen from zip codes with only 5 digits
 
+### findDuplicates
+
+The `findDuplicates` function finds hunters that have more than one registration. Records are grouped by first name, last name, city, state, birth date, and download state. If the same hunter has 2 or more registrations, the fields that are not identical are counted and summarized in a tibble and plot.
+
+
+```r
+findDuplicates(DL1202_tidied)
+```
+
+```
+## There are 72 registrations with duplicates; 144 total duplicated records.
+```
+
+<img src="figure/findDuplicates-1.png" title="Figure 1. Plot of types of duplicates." alt="Figure 1. Plot of types of duplicates." width="500" style="display: block; margin: auto;" />
+
+```
+## # A tibble: 18 x 2
+##    dupl                     count
+##    <chr>                    <int>
+##  1 address                      4
+##  2 address-email                1
+##  3 address-issue_date           1
+##  4 address-issue_date-email     1
+##  5 bag                         14
+##  6 email                        4
+##  7 issue_date                  33
+##  8 issue_date-email             1
+##  9 middle-address               1
+## 10 middle-address-email         2
+## 11 middle-issue_date            2
+## 12 middle-issue_date-email      1
+## 13 middle-zip-email             1
+## 14 registration_yr              2
+## 15 suffix                       1
+## 16 suffix-address-email         1
+## 17 suffix-issue_date            1
+## 18 zip                          1
+```
+
 ### strataCheck
 
 Running `strataCheck` ensures species "bag" values are in order. This function searches for values in species group columns that are not typical or expected by the FWS. If a value outside of the normal range is detected, an output tibble is created. Each row in the output contains the state, species, unusual stratum value, and a list of the normal values we would expect.
@@ -108,24 +147,43 @@ strataCheck(DL1202_tidied)
 
 ```
 ## # A tibble: 285 x 4
-##    dl_state spp        state_strata normal_strata 
-##    <chr>    <chr>      <chr>        <chr>         
-##  1 OR       dove_bag   0            1, 2, 3, 5    
-##  2 OR       ducks_bag  0            1, 2, 3, 4    
-##  3 OR       geese_bag  0            1, 2, 3, 4    
-##  4 OR       band_tail~ 0            1, 2          
-##  5 OR       brant      0            1, 2          
-##  6 OR       seaducks   0            1, 2          
-##  7 MO       dove_bag   9            0, 1, 2, 3, 5 
-##  8 NE       dove_bag   9            0, 1, 2, 3, 5 
-##  9 MO       woodcock_~ 9            0, 1, 2, 3, 4~
-## 10 NE       woodcock_~ 6            0, 1, 2, 3, 4~
+##    dl_state spp                state_strata normal_strata   
+##    <chr>    <chr>              <chr>        <chr>           
+##  1 OR       dove_bag           0            1, 2, 3, 5      
+##  2 OR       ducks_bag          0            1, 2, 3, 4      
+##  3 OR       geese_bag          0            1, 2, 3, 4      
+##  4 OR       band_tailed_pigeon 0            1, 2            
+##  5 OR       brant              0            1, 2            
+##  6 OR       seaducks           0            1, 2            
+##  7 MO       dove_bag           9            0, 1, 2, 3, 5   
+##  8 NE       dove_bag           9            0, 1, 2, 3, 5   
+##  9 MO       woodcock_bag       9            0, 1, 2, 3, 4, 5
+## 10 NE       woodcock_bag       6            0, 1, 2, 3, 4, 5
 ## # ... with 275 more rows
 ```
 
 ### validate
 
-The next intermediate step is to `validate` the data. This function should be run after `tidy` to assess the data for repeated values in two dimensions, both vertically and horizontally.
+The `validate` function looks for repeated values in two dimensions, both horizontally and vertically.
+
+<b>Horizontally.</b> The horizontal check for repetition looks across records and finds any rows with same value in each species group column. Details in the output tibble include: the repeated value (h_value), number of records with repeats (h_rep), total number of records (h_total), and proportion of repeated values per file (prop_repeat).
+
+
+```r
+validate(DL1202_tidied, type = "horizontal")
+```
+
+```
+## # A tibble: 6 x 5
+##   source_file    h_value h_rep h_total prop_repeat
+##   <chr>          <chr>   <int>   <int>       <dbl>
+## 1 wi20201216.txt 1         441     546       0.808
+## 2 CT20201216.txt 1          72     114       0.632
+## 3 NY20201216.txt 1         538     955       0.563
+## 4 NE20201209.txt 1         291     549       0.530
+## 5 LA20201216.txt 1        1530    3252       0.470
+## 6 AR20201216.txt 1        3090    6569       0.470
+```
 
 <b>Vertically.</b> The vertical check searches within each column for repetition. Any species group column with the same value in all rows will be detected. *Coming soon:* States that do not have a hunting season for one or more species groups (e.g. seaducks) will not be returned using this function for reporting all zero values.
 
@@ -177,43 +235,29 @@ validate(DL1202_tidied, type = "vertical", period = "dl_cycle")
 ## # ... with 102 more rows
 ```
 
-<b>Horizontally.</b> The horizontal check for repetition looks across records. This function will return results if one or more rows have the same value in each species group column.
-
-
-```r
-validate(DL1202_tidied, type = "horizontal")
-```
-
-```
-## # A tibble: 6 x 5
-##   source_file    h_value h_rep h_total prop_repeat
-##   <chr>          <chr>   <int>   <int>       <dbl>
-## 1 wi20201216.txt 1         441     546       0.808
-## 2 CT20201216.txt 1          72     114       0.632
-## 3 NY20201216.txt 1         538     955       0.563
-## 4 NE20201209.txt 1         291     549       0.530
-## 5 LA20201216.txt 1        1530    3252       0.470
-## 6 AR20201216.txt 1        3090    6569       0.470
-```
+It is not possible to include as much detail in the vertical output as in the horizontal output without being specific about which state, species, and time scale you wish to assess. Vertical repetition returned in the output from this function can be looked at more closely using `investigate`.
 
 If there are no repetitions, a positive message will be returned.
 
-Tibbles of vertical repetition returned from this function can be looked at more closely using `investigate`.
-
 ### investigate
 
-Did the `validate` function return repeated values? Are some of those values a high number that are uniform and need to be looked at more closely? The `investigate` function allows you to see what value was vertically repeated for a species. Parameters required are download state, type of download time period, value of the download date or download cycle, and species, which are all provided in the output of `validate`.
+Did the vertical output from the `validate` function return repeated values? Are some of those values a high number that are repeated and need to be looked at more closely? The `investigate` function allows you to see what value was vertically repeated for a species. Parameters required are download state, type of download time period, value of the download date or download cycle, and species — all of this information is provided in the vertical `validate` output.
 
 
 ```r
-investigate(DL1202_tidied, loc = "TX", period_type = "dl_date", period = "20201216", species = "cranes")
+investigate(
+  DL1202_tidied,
+  loc = "AK",
+  period_type = "dl_date",
+  period = "20201215",
+  species = "dove_bag")
 ```
 
 ```
 ## # A tibble: 1 x 2
-##   cranes source_file   
-##   <chr>  <chr>         
-## 1 0      TX20201216.txt
+##   dove_bag source_file   
+##   <chr>    <chr>         
+## 1 0        AK20201215.txt
 ```
 
 ## Stage 2: Explore Errors
@@ -396,11 +440,10 @@ redFlags(DL1202_proofed, type = "state", threshold = 0.03)
 
 ```
 ## # A tibble: 2 x 5
-##   dl_state count_errors count_correct proportion
-##   <chr>           <int>         <int>      <dbl>
-## 1 CT                120          2730     0.0421
-## 2 IA               3221         77679     0.0398
-## # ... with 1 more variable: flag <chr>
+##   dl_state count_errors count_correct proportion flag        
+##   <chr>           <int>         <int>      <dbl> <chr>       
+## 1 CT                120          2730     0.0421 error > 0.03
+## 2 IA               3221         77679     0.0398 error > 0.03
 ```
 
 <b>By field.</b>
@@ -413,55 +456,15 @@ redFlags(DL1202_proofed, type = "field", threshold = 0.01)
 
 ```
 ## # A tibble: 4 x 5
-##   errors count_errors count_correct proportion
-##   <chr>         <int>         <int>      <dbl>
-## 1 birth~         5646         87525     0.0606
-## 2 email          5496         87675     0.0590
-## 3 ducks~         3113         90058     0.0334
-## 4 zip            2132         91039     0.0229
-## # ... with 1 more variable: flag <chr>
+##   errors     count_errors count_correct proportion flag        
+##   <chr>             <int>         <int>      <dbl> <chr>       
+## 1 birth_date         5646         87525     0.0606 error > 0.01
+## 2 email              5496         87675     0.0590 error > 0.01
+## 3 ducks_bag          3113         90058     0.0334 error > 0.01
+## 4 zip                2132         91039     0.0229 error > 0.01
 ```
 
 ## Stage 3: Visualize Data
-
-### findDuplicates
-
-The `findDuplicates` function finds registrants that have more than one record. Registrations are grouped by first name, last name, city, state, birth date, and download state. If the same registrant has 2 or more records, the fields that are not identical are counted and summarized in a tibble and plot.
-
-
-```r
-findDuplicates(DL1202_proofed)
-```
-
-```
-## There are 72 registrations with duplicates; 144 total duplicated records.
-```
-
-<img src="figure/findDuplicates-1.png" title="Figure 1. Plot of types of duplicates." alt="Figure 1. Plot of types of duplicates." width="500" style="display: block; margin: auto;" />
-
-```
-## # A tibble: 18 x 2
-##    dupl                     count
-##    <chr>                    <int>
-##  1 address                      4
-##  2 address-email                1
-##  3 address-issue_date           1
-##  4 address-issue_date-email     1
-##  5 bag                         14
-##  6 email                        4
-##  7 issue_date                  33
-##  8 issue_date-email             1
-##  9 middle-address               1
-## 10 middle-address-email         2
-## 11 middle-issue_date            2
-## 12 middle-issue_date-email      1
-## 13 middle-zip-email             1
-## 14 registration_yr              2
-## 15 suffix                       1
-## 16 suffix-address-email         1
-## 17 suffix-issue_date            1
-## 18 zip                          1
-```
 
 ### errorPlot_fields
 
@@ -478,11 +481,7 @@ errorPlot_fields(DL1202_proofed, loc = "all")
 
 
 ```r
-errorPlot_fields(DL1202_proofed, loc = "NC")
-```
-
-```
-## Error: Aesthetics must be either length 1 or the same as the data (1): x, y and label
+errorPlot_fields(DL1202_proofed, loc = "LA")
 ```
 
 <img src="figure/errorfieldsplotsc-1.png" title="Figure 3. Plot of all North Carolina's errors by field name." alt="Figure 3. Plot of all North Carolina's errors by field name." width="500" style="display: block; margin: auto;" />
@@ -562,13 +561,11 @@ youthHunters(DL1202_proofed, year = 2020)
 
 ```
 ## # A tibble: 3 x 4
-##   dl_state registered_youth total_registered
-##   <chr>               <int>            <int>
-## 1 MO                      1             4047
-## 2 ND                    117              175
-## 3 NE                      1              549
-## # ... with 1 more variable:
-## #   youth_proportion <dbl>
+##   dl_state registered_youth total_registered youth_proportion
+##   <chr>               <int>            <int>            <dbl>
+## 1 MO                      1             4047         0.000247
+## 2 ND                    117              175         0.669   
+## 3 NE                      1              549         0.00182
 ```
 
 ### errorPlot_dl
