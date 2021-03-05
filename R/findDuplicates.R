@@ -8,7 +8,7 @@
 #' @import tibble
 #' @import ggplot2
 #'
-#' @param x A proofed data table created by \code{\link{proof}}
+#' @param x A proofed data table created by \code{\link{tidy}}
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHarvestData}
