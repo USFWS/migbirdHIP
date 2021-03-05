@@ -99,11 +99,17 @@ This function renames columns and does simple mutations, such as:
 
 ### findDuplicates
 
-The `findDuplicates` function finds hunters that have more than one registration. Records are grouped by first name, last name, city, state, birth date, and download state. If the same hunter has 2 or more registrations, the fields that are not identical are counted and summarized in a tibble and plot.
+The `findDuplicates` function finds hunters that have more than one registration. Records are grouped by first name, last name, city, state, birth date, and download state to identify unique hunters. If the same hunter has 2 or more registrations, the fields that are not identical are counted and summarized in a tibble and plot.
 
 ```{r findDuplicates, fig.cap = "Figure 1. Plot of types of duplicates.", fig.width = 6, fig.height = 3.5, dpi = 300, out.width = 500, fig.align = "center"}
 findDuplicates(DL1202_tidied)
 ```
+
+### fixDuplicates
+
+States that require special permits to hunt migratory bird species (i.e. sea ducks and brant) sometimes send their permit information mixed in with HIP download data. These cases are a common cause of duplicate registrations and are problematic for future analyses if retained. The `fixDuplicates` function attempts to identify such cases and will consolidate hunters with multiple registrations (i.e. a HIP record and a permit record) into one row. The remainder of duplicates that cannot be resolved are deleted.
+
+Example coming soon.
 
 ### strataCheck
 
