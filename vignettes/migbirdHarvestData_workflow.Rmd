@@ -16,26 +16,27 @@ vignette: >
     - [Functions overview](#functions-overview)
 - [Stage 1: Import Data](#stage-1-import-data)
     - [read_hip](#read_hip)
+- [Stage 2: Clean Data](#stage-2-clean-data)
     - [tidy](#tidy)
     - [findDuplicates](#findduplicates)
     - [strataCheck](#stratacheck)
     - [validate](#validate)
     - [investigate](#investigate)
-- [Stage 2: Explore Errors](#stage-2-explore-errors)
+- [Stage 3: Explore Errors](#stage-3-explore-errors)
     - [proof](#proof)
     - [errorTable](#errortable)
     - [pullErrors](#pullerrors)
     - [redFlags](#redflags)
-- [Stage 3: Visualize Data](#stage-3-visualize-data)
+- [Stage 4: Visualize Data](#stage-4-visualize-data)
     - [errorPlot_fields](#errorplot_fields)
     - [errorPlot_states](#errorplot_states)
     - [outOfStateHunters](#outofstatehunters)
     - [youthHunters](#youthhunters)
     - [errorPlot_dl](#errorplot_dl)
-- [Stage 4: Correct and Compare](#stage-4-correct-and-compare)
+- [Stage 5: Correct Data](#stage-5-correct-data)
     - [correct](#correct)
     - [manualFix](#manualfix)
-- [Stage 5: Write and Sample](#stage-5-write-and-sample)
+- [Stage 6: Write and Sample](#stage-6-write-and-sample)
     - [writeReport](#writereport)
     - [hunterSample](#huntersample)
 - [Troubleshooting](#troubleshooting)
@@ -78,6 +79,8 @@ DL1202 <- read_hip("C:/HIP/DL1202")
 ```
 
 Did you get a warning or three? Read an explanation of common `read_hip` warnings, [below](#common-read_hip-warnings).
+
+## Stage 2: Clean Data
 
 ### tidy
 
@@ -260,7 +263,7 @@ investigate(
 ## 1 0        AK20201215.txt
 ```
 
-## Stage 2: Explore Errors
+## Stage 3: Explore Errors
 
 ### proof
 
@@ -464,7 +467,7 @@ redFlags(DL1202_proofed, type = "field", threshold = 0.01)
 ## 4 zip                2132         91039     0.0229 error > 0.01
 ```
 
-## Stage 3: Visualize Data
+## Stage 4: Visualize Data
 
 ### errorPlot_fields
 
@@ -580,7 +583,7 @@ errorPlot_dl(hipdata2020, loc = "MI")
 <img src="image/errorPlot_dl.png" title="errorPlot_dl example output" alt="errorPlot_dl example output" width="70%" style="display: block; margin: auto;" />
 
 
-## Stage 4: Correct and Compare
+## Stage 5: Correct Data
 
 ### correct
 
@@ -662,7 +665,7 @@ The automated `correct` function cannot always catch and fix every error. To fin
 manualFix(DL1202_corrected, field = "state", error_value = "GS", correct_value = "GA")
 ```
 
-## Stage 5: Write and Sample
+## Stage 6: Write and Sample
 
 ### writeReport
 
