@@ -308,7 +308,17 @@ tidy <-
               str_detect(zip, "\\-$"),
               str_remove(zip, "\\-"),
               zip
-            )) %>%
+            ),
+          # Do a little P.O. Box string cleaning
+          address =
+            case_when(
+              str_detect(address, "P.O.BOX ") ~
+                str_replace(address, "P.O.BOX ", "P.O. BOX "),
+              str_detect(address, "PO BOX ") ~
+                str_replace(address, "PO BOX ", "P.O. BOX "),
+              TRUE ~ address
+            )
+          ) %>%
         # Delete white space around strings
         mutate_all(str_trim) %>%
         # Convert N/A strings to NA
