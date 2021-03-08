@@ -77,6 +77,7 @@ findDuplicates <-
         # Hunter key per individual (not per row)
         hunter_key = cur_group_id(),
         # Find the reason for the duplicates
+        # We start with a blank string so the following code can paste in
         dupl = "",
         # Iterate over each field in order to paste the field names together
         # (can't be done with case_when)
