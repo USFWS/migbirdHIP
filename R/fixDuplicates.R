@@ -2,11 +2,21 @@
 #'
 #' Consolidate duplicate records that stem from HIP data and special permit information into one row. If other duplicates exist not due to this specific reason, delete the records from the data.
 #'
-#' @import dplyr
-#' @import tidyr
-#' @import stringr
-#' @import tibble
-#' @import ggplot2
+#' @importFrom dplyr %>%
+#' @importFrom dplyr group_by
+#' @importFrom dplyr mutate
+#' @importFrom dplyr mutate_at
+#' @importFrom dplyr ungroup
+#' @importFrom dplyr filter
+#' @importFrom dplyr arrange
+#' @importFrom dplyr bind_rows
+#' @importFrom dplyr across
+#' @importFrom dplyr vars
+#' @importFrom dplyr matches
+#' @importFrom dplyr lead
+#' @importFrom dplyr select
+#' @importFrom dplyr desc
+#' @importFrom stringr str_replace
 #'
 #' @param x A proofed data table created by \code{\link{tidy}}
 #'
@@ -75,14 +85,16 @@ fixDuplicates <-
     dup_1record <-
       state_dupes %>%
       group_by(duplicate) %>%
-      filter(n() == 1)
+      filter(n() == 1) %>%
+      ungroup()
 
     # Pull out the multi-duplicates... not sure what to do with these yet
     dup_3record <-
       state_dupes %>%
       group_by(duplicate) %>%
       filter(n() > 2) %>%
-      mutate(n_grp = n())
+      mutate(n_grp = n()) %>%
+      ungroup()
 
     # Work with the true duplicates (2 records per group)
     dup_2record <-
