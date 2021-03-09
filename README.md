@@ -20,6 +20,8 @@ Tasks that can be accomplished with this package include:
 
   - `read_hip` imports data
   - `tidy` does basic reorganization tasks
+  - `findDuplicates` identifies registrants with multiple records
+  - `fixDuplicates` consolidates duplicate records
   - `strataCheck` identifies any new strata
   - `validate` checks for table-wide repetition
   - `investigate` reports details on repeated values
@@ -28,8 +30,8 @@ Tasks that can be accomplished with this package include:
   - `manualFix` lets the user fix any remaining unsatisfactory values
   - Error visualization with `errorPlot_dl`, `errorPlot_fields`, and
     `errorPlot_states`
-  - Exploration of specific errors with `findDuplicates`,
-    `youthHunters`, and `outOfStateHunters`
+  - Exploration of specific errors with `youthHunters` and
+    `outOfStateHunters`
   - Detailed error reporting with `errorTable`, `pullErrors`, and
     `redFlags`
   - Automated report writing with `writeReport`
