@@ -94,4 +94,7 @@ utils::globalVariables(
     "h_rep",
     "h_first",
     "h_total",
-    "prop_repeat"))
+    "prop_repeat",
+    "sea_sum",
+    "land_sum",
+    "record_key"))

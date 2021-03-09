@@ -19,6 +19,7 @@ vignette: >
 - [Stage 2: Clean Data](#stage-2-clean-data)
     - [tidy](#tidy)
     - [findDuplicates](#findduplicates)
+    - [fixDuplicates](#fixduplicates)
     - [strataCheck](#stratacheck)
     - [validate](#validate)
     - [investigate](#investigate)
@@ -139,9 +140,12 @@ findDuplicates(DL1202_tidied)
 
 ### fixDuplicates
 
-States that require special permits to hunt migratory bird species (i.e. sea ducks and brant) sometimes send their permit information mixed in with HIP download data. These cases are a common cause of duplicate registrations and are problematic for future analyses if retained. The `fixDuplicates` function attempts to identify such cases and will consolidate hunters with multiple registrations (i.e. a HIP record and a permit record) into one row. The remainder of duplicates that cannot be resolved are deleted.
+States that require special permits to hunt migratory bird species (i.e. cranes, Band-tailed Pigeons, sea ducks and Brant) sometimes send their permit information mixed in with HIP download data. These cases are a common cause of duplicate registrations and are problematic for future analyses if retained. The `fixDuplicates` function attempts to identify such cases and will consolidate hunters with multiple records (i.e. a HIP record and a permit record in the same download state) into one row. The remainder of duplicates that cannot be resolved are deleted.
 
-Example coming soon.
+
+```r
+DL1202_fixed <- fixDuplicates(DL1202_tidied)
+```
 
 ### strataCheck
 
@@ -151,7 +155,7 @@ If a value for a species group is given in the HIP data that doesn't match anyth
 
 
 ```r
-strataCheck(DL1202_tidied)
+strataCheck(DL1202_fixed)
 ```
 
 ```
@@ -179,7 +183,7 @@ The `validate` function looks for repeated values in two dimensions, both horizo
 
 
 ```r
-validate(DL1202_tidied, type = "horizontal")
+validate(DL1202_fixed, type = "horizontal")
 ```
 
 ```
@@ -187,11 +191,11 @@ validate(DL1202_tidied, type = "horizontal")
 ##   source_file    h_value h_rep h_total prop_repeat
 ##   <chr>          <chr>   <int>   <int>       <dbl>
 ## 1 wi20201216.txt 1         441     546       0.808
-## 2 CT20201216.txt 1          72     114       0.632
+## 2 CT20201216.txt 1          68     110       0.618
 ## 3 NY20201216.txt 1         538     955       0.563
-## 4 NE20201209.txt 1         291     549       0.530
+## 4 NE20201209.txt 1         289     547       0.528
 ## 5 LA20201216.txt 1        1530    3252       0.470
-## 6 AR20201216.txt 1        3090    6569       0.470
+## 6 AR20201216.txt 1        3089    6567       0.470
 ```
 
 <b>Vertically.</b> The vertical check searches within each column for repetition. Any species group column with the same value in all rows will be detected. *Coming soon:* States that do not have a hunting season for one or more species groups (e.g. seaducks) will not be returned using this function for reporting all zero values.
@@ -200,7 +204,7 @@ The two time period options to assess vertical repetition are `period = "dl_date
 
 
 ```r
-validate(DL1202_tidied, type = "vertical")
+validate(DL1202_fixed, type = "vertical")
 ```
 
 ```
@@ -211,12 +215,12 @@ validate(DL1202_tidied, type = "vertical")
 ##  2 AK       20201215 woodcock_bag              106
 ##  3 AK       20201215 rails_gallinules          106
 ##  4 AK       20201215 band_tailed_pigeon        106
-##  5 AL       20201216 cranes                   7073
-##  6 AL       20201216 band_tailed_pigeon       7073
-##  7 AL       20201216 brant                    7073
-##  8 AL       20201216 seaducks                 7073
-##  9 AR       20201216 cranes                   6569
-## 10 AR       20201216 band_tailed_pigeon       6569
+##  5 AL       20201216 cranes                   7025
+##  6 AL       20201216 band_tailed_pigeon       7025
+##  7 AL       20201216 brant                    7025
+##  8 AL       20201216 seaducks                 7025
+##  9 AR       20201216 cranes                   6567
+## 10 AR       20201216 band_tailed_pigeon       6567
 ## # ... with 102 more rows
 ```
 
@@ -224,7 +228,7 @@ validate(DL1202_tidied, type = "vertical")
 
 
 ```r
-validate(DL1202_tidied, type = "vertical", period = "dl_cycle")
+validate(DL1202_fixed, type = "vertical", period = "dl_cycle")
 ```
 
 ```
@@ -235,12 +239,12 @@ validate(DL1202_tidied, type = "vertical", period = "dl_cycle")
 ##  2 AK       1202     woodcock_bag              106
 ##  3 AK       1202     rails_gallinules          106
 ##  4 AK       1202     band_tailed_pigeon        106
-##  5 AL       1202     cranes                   7073
-##  6 AL       1202     band_tailed_pigeon       7073
-##  7 AL       1202     brant                    7073
-##  8 AL       1202     seaducks                 7073
-##  9 AR       1202     cranes                   6569
-## 10 AR       1202     band_tailed_pigeon       6569
+##  5 AL       1202     cranes                   7025
+##  6 AL       1202     band_tailed_pigeon       7025
+##  7 AL       1202     brant                    7025
+##  8 AL       1202     seaducks                 7025
+##  9 AR       1202     cranes                   6567
+## 10 AR       1202     band_tailed_pigeon       6567
 ## # ... with 102 more rows
 ```
 
@@ -255,7 +259,7 @@ Did the vertical output from the `validate` function return repeated values? Are
 
 ```r
 investigate(
-  DL1202_tidied,
+  DL1202_fixed,
   loc = "AK",
   period_type = "dl_date",
   period = "20201215",
@@ -277,7 +281,7 @@ After data are tidied and checked for any important issues that would require ma
 
 
 ```r
-DL1202_proofed <- proof(DL1202_tidied, year = 2020)
+DL1202_proofed <- proof(DL1202_fixed, year = 2020)
 ```
 
 Data that are considered irregular are flagged in a new column called "errors". No actual corrections take place in this step; all data remain identical except for the new "errors" column. For each field, values are compared to standard expected formats and if they do not conform, the field name is pasted as a string in the "errors" column. Each row can have from zero errors (NA) to all column names listed. Multiple flags are hyphen delimited.
@@ -299,7 +303,7 @@ errorTable(DL1202_proofed)
 ##    <chr>    <chr>            <dbl>
 ##  1 AK       birth_date           2
 ##  2 AK       zip                 32
-##  3 AL       birth_date         193
+##  3 AL       birth_date         187
 ##  4 AL       city                 1
 ##  5 AL       firstname            7
 ##  6 AL       lastname             1
@@ -322,15 +326,15 @@ errorTable(DL1202_proofed, field = "none")
 ##    dl_state error_count
 ##    <chr>          <dbl>
 ##  1 AK                34
-##  2 AL               237
+##  2 AL               231
 ##  3 AR               726
 ##  4 CA               464
 ##  5 CO               193
-##  6 CT               120
+##  6 CT               116
 ##  7 FL                53
 ##  8 GA                57
 ##  9 IA              3221
-## 10 ID               163
+## 10 ID               161
 ## # ... with 20 more rows
 ```
 
@@ -346,13 +350,13 @@ errorTable(DL1202_proofed, loc = "none")
 ##    error              error_count
 ##    <chr>                    <dbl>
 ##  1 band_tailed_pigeon           2
-##  2 birth_date                5646
+##  2 birth_date                5634
 ##  3 city                         3
 ##  4 coots_snipe                 60
 ##  5 cranes                      49
 ##  6 dove_bag                   113
 ##  7 ducks_bag                 3113
-##  8 email                     5496
+##  8 email                     5489
 ##  9 firstname                  111
 ## 10 geese_bag                   38
 ## 11 hunt_mig_birds              20
@@ -451,8 +455,8 @@ redFlags(DL1202_proofed, type = "state", threshold = 0.03)
 ## # A tibble: 2 x 5
 ##   dl_state count_errors count_correct proportion flag        
 ##   <chr>           <int>         <int>      <dbl> <chr>       
-## 1 CT                120          2730     0.0421 error > 0.03
-## 2 IA               3221         77679     0.0398 error > 0.03
+## 1 CT                116          2634     0.0422 error > 0.03
+## 2 IA               3221         77629     0.0398 error > 0.03
 ```
 
 <b>By field.</b>
@@ -467,10 +471,10 @@ redFlags(DL1202_proofed, type = "field", threshold = 0.01)
 ## # A tibble: 4 x 5
 ##   errors     count_errors count_correct proportion flag        
 ##   <chr>             <int>         <int>      <dbl> <chr>       
-## 1 birth_date         5646         87525     0.0606 error > 0.01
-## 2 email              5496         87675     0.0590 error > 0.01
-## 3 ducks_bag          3113         90058     0.0334 error > 0.01
-## 4 zip                2132         91039     0.0229 error > 0.01
+## 1 birth_date         5634         87393     0.0606 error > 0.01
+## 2 email              5489         87538     0.0590 error > 0.01
+## 3 ducks_bag          3113         89914     0.0335 error > 0.01
+## 4 zip                2132         90895     0.0229 error > 0.01
 ```
 
 ## Stage 4: Visualize Data
@@ -545,15 +549,15 @@ outOfStateHunters(DL1202_proofed)
 ##    dl_state n_total outofstate_prop
 ##    <chr>      <int>           <dbl>
 ##  1 AK           106            0.41
-##  2 AL          7073            0.15
-##  3 AR          6569            0.65
+##  2 AL          7025            0.15
+##  3 AR          6567            0.65
 ##  4 CA          3998            0.06
-##  5 CO          1749            0.09
-##  6 CT           114            0.1 
-##  7 FL          3657            0.09
-##  8 GA          3596            0.12
-##  9 IA          3236            0.05
-## 10 ID          1883            0.22
+##  5 CO          1747            0.09
+##  6 CT           110            0.1 
+##  7 FL          3649            0.09
+##  8 GA          3584            0.12
+##  9 IA          3234            0.05
+## 10 ID          1865            0.22
 ## # ... with 20 more rows
 ```
 
@@ -574,7 +578,7 @@ youthHunters(DL1202_proofed, year = 2020)
 ##   <chr>               <int>            <int>            <dbl>
 ## 1 MO                      1             4047         0.000247
 ## 2 ND                    117              175         0.669   
-## 3 NE                      1              549         0.00182
+## 3 NE                      1              547         0.00183
 ```
 
 ### errorPlot_dl

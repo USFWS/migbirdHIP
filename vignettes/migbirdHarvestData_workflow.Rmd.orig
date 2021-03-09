@@ -19,6 +19,7 @@ vignette: >
 - [Stage 2: Clean Data](#stage-2-clean-data)
     - [tidy](#tidy)
     - [findDuplicates](#findduplicates)
+    - [fixDuplicates](#fixduplicates)
     - [strataCheck](#stratacheck)
     - [validate](#validate)
     - [investigate](#investigate)
@@ -107,9 +108,11 @@ findDuplicates(DL1202_tidied)
 
 ### fixDuplicates
 
-States that require special permits to hunt migratory bird species (i.e. sea ducks and brant) sometimes send their permit information mixed in with HIP download data. These cases are a common cause of duplicate registrations and are problematic for future analyses if retained. The `fixDuplicates` function attempts to identify such cases and will consolidate hunters with multiple registrations (i.e. a HIP record and a permit record) into one row. The remainder of duplicates that cannot be resolved are deleted.
+States that require special permits to hunt migratory bird species (i.e. cranes, Band-tailed Pigeons, sea ducks and Brant) sometimes send their permit information mixed in with HIP download data. These cases are a common cause of duplicate registrations and are problematic for future analyses if retained. The `fixDuplicates` function attempts to identify such cases and will consolidate hunters with multiple records (i.e. a HIP record and a permit record in the same download state) into one row. The remainder of duplicates that cannot be resolved are deleted.
 
-Example coming soon.
+```{r, fixduplicates}
+DL1202_fixed <- fixDuplicates(DL1202_tidied)
+```
 
 ### strataCheck
 
@@ -118,7 +121,7 @@ Running `strataCheck` ensures species "bag" values are in order. This function s
 If a value for a species group is given in the HIP data that doesn't match anything in our records, the species reported in the output will have NA values in the "normal_strata" column. These species are not hunted in the reported states.
 
 ```{r, stratacheck}
-strataCheck(DL1202_tidied)
+strataCheck(DL1202_fixed)
 ```
 
 ### validate
@@ -128,7 +131,7 @@ The `validate` function looks for repeated values in two dimensions, both horizo
 <b>Horizontally.</b> The horizontal check for repetition looks across records and finds any rows with same value in each species group column. Details in the output tibble include: the repeated value (h_value), number of records with repeats (h_rep), total number of records (h_total), and proportion of repeated values per file (prop_repeat).
 
 ```{r, validate_h}
-validate(DL1202_tidied, type = "horizontal")
+validate(DL1202_fixed, type = "horizontal")
 ```
 
 <b>Vertically.</b> The vertical check searches within each column for repetition. Any species group column with the same value in all rows will be detected. *Coming soon:* States that do not have a hunting season for one or more species groups (e.g. seaducks) will not be returned using this function for reporting all zero values.
@@ -136,13 +139,13 @@ validate(DL1202_tidied, type = "horizontal")
 The two time period options to assess vertical repetition are `period = "dl_date"` (used automatically)...
 
 ```{r, validate_v}
-validate(DL1202_tidied, type = "vertical")
+validate(DL1202_fixed, type = "vertical")
 ```
 
 ... and `period = "dl_cycle"`.
 
 ```{r, validate_v_time}
-validate(DL1202_tidied, type = "vertical", period = "dl_cycle")
+validate(DL1202_fixed, type = "vertical", period = "dl_cycle")
 ```
 
 It is not possible to include as much detail in the vertical output as in the horizontal output without being specific about which state, species, and time scale you wish to assess. Vertical repetition returned in the output from this function can be looked at more closely using `investigate`.
@@ -155,7 +158,7 @@ Did the vertical output from the `validate` function return repeated values? Are
 
 ```{r investigate}
 investigate(
-  DL1202_tidied,
+  DL1202_fixed,
   loc = "AK",
   period_type = "dl_date",
   period = "20201215",
@@ -169,7 +172,7 @@ investigate(
 After data are tidied and checked for any important issues that would require manual attention, we `proof`:
 
 ```{r, proof}
-DL1202_proofed <- proof(DL1202_tidied, year = 2020)
+DL1202_proofed <- proof(DL1202_fixed, year = 2020)
 ```
 
 Data that are considered irregular are flagged in a new column called "errors". No actual corrections take place in this step; all data remain identical except for the new "errors" column. For each field, values are compared to standard expected formats and if they do not conform, the field name is pasted as a string in the "errors" column. Each row can have from zero errors (NA) to all column names listed. Multiple flags are hyphen delimited.
