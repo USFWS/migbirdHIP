@@ -62,7 +62,7 @@ fixDuplicates <-
     state_dupes <-
       duplicates %>%
       # Filter the duplicates to those that occur in permit states
-      filter(str_detect(dl_state, "WA|OR|OK")) %>%
+      filter(str_detect(dl_state, "WA|OR|CO|SD")) %>%
       # Set "." to 0 in take fields and make them numeric
       mutate_at(
         vars(matches("bag|coots|rails|cranes|pigeon|brant|seaducks")),

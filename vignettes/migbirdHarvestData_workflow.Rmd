@@ -159,7 +159,7 @@ strataCheck(DL1202_fixed)
 ```
 
 ```
-## # A tibble: 285 x 4
+## # A tibble: 289 x 4
 ##    dl_state spp                state_strata normal_strata   
 ##    <chr>    <chr>              <chr>        <chr>           
 ##  1 OR       dove_bag           0            1, 2, 3, 5      
@@ -170,9 +170,9 @@ strataCheck(DL1202_fixed)
 ##  6 OR       seaducks           0            1, 2            
 ##  7 MO       dove_bag           9            0, 1, 2, 3, 5   
 ##  8 NE       dove_bag           9            0, 1, 2, 3, 5   
-##  9 MO       woodcock_bag       9            0, 1, 2, 3, 4, 5
-## 10 NE       woodcock_bag       6            0, 1, 2, 3, 4, 5
-## # ... with 275 more rows
+##  9 CO       band_tailed_pigeon 999999       0, 1, 2, 3, 4, 5
+## 10 MO       woodcock_bag       9            0, 1, 2, 3, 4, 5
+## # ... with 279 more rows
 ```
 
 ### validate
@@ -208,7 +208,7 @@ validate(DL1202_fixed, type = "vertical")
 ```
 
 ```
-## # A tibble: 112 x 4
+## # A tibble: 109 x 4
 ##    dl_state dl_date  species_grp        v_repeated
 ##    <chr>    <chr>    <chr>                   <int>
 ##  1 AK       20201215 dove_bag                  106
@@ -221,7 +221,7 @@ validate(DL1202_fixed, type = "vertical")
 ##  8 AL       20201216 seaducks                 7025
 ##  9 AR       20201216 cranes                   6567
 ## 10 AR       20201216 band_tailed_pigeon       6567
-## # ... with 102 more rows
+## # ... with 99 more rows
 ```
 
 ... and `period = "dl_cycle"`.
@@ -232,7 +232,7 @@ validate(DL1202_fixed, type = "vertical", period = "dl_cycle")
 ```
 
 ```
-## # A tibble: 112 x 4
+## # A tibble: 109 x 4
 ##    dl_state dl_cycle species_grp        v_repeated
 ##    <chr>    <chr>    <chr>                   <int>
 ##  1 AK       1202     dove_bag                  106
@@ -245,7 +245,7 @@ validate(DL1202_fixed, type = "vertical", period = "dl_cycle")
 ##  8 AL       1202     seaducks                 7025
 ##  9 AR       1202     cranes                   6567
 ## 10 AR       1202     band_tailed_pigeon       6567
-## # ... with 102 more rows
+## # ... with 99 more rows
 ```
 
 It is not possible to include as much detail in the vertical output as in the horizontal output without being specific about which state, species, and time scale you wish to assess. Vertical repetition returned in the output from this function can be looked at more closely using `investigate`.
@@ -298,7 +298,7 @@ errorTable(DL1202_proofed)
 ```
 
 ```
-## # A tibble: 134 x 3
+## # A tibble: 138 x 3
 ##    dl_state error      error_count
 ##    <chr>    <chr>            <dbl>
 ##  1 AK       birth_date           2
@@ -311,7 +311,7 @@ errorTable(DL1202_proofed)
 ##  8 AL       zip                 25
 ##  9 AR       birth_date         176
 ## 10 AR       email                1
-## # ... with 124 more rows
+## # ... with 128 more rows
 ```
 
 Errors can be reported by only location by turning off the `field` parameter.
@@ -329,7 +329,7 @@ errorTable(DL1202_proofed, field = "none")
 ##  2 AL               231
 ##  3 AR               726
 ##  4 CA               464
-##  5 CO               193
+##  5 CO               201
 ##  6 CT               116
 ##  7 FL                53
 ##  8 GA                57
@@ -346,28 +346,29 @@ errorTable(DL1202_proofed, loc = "none")
 ```
 
 ```
-## # A tibble: 19 x 2
+## # A tibble: 20 x 2
 ##    error              error_count
 ##    <chr>                    <dbl>
-##  1 band_tailed_pigeon           2
+##  1 band_tailed_pigeon           4
 ##  2 birth_date                5634
-##  3 city                         3
-##  4 coots_snipe                 60
-##  5 cranes                      49
-##  6 dove_bag                   113
-##  7 ducks_bag                 3113
-##  8 email                     5489
-##  9 firstname                  111
-## 10 geese_bag                   38
-## 11 hunt_mig_birds              20
-## 12 lastname                    10
-## 13 rails_gallinules            48
-## 14 registration_yr              4
-## 15 seaducks                     1
-## 16 state                        6
-## 17 suffix                     283
-## 18 woodcock_bag                 4
-## 19 zip                       2132
+##  3 brant                        2
+##  4 city                         3
+##  5 coots_snipe                 60
+##  6 cranes                      51
+##  7 dove_bag                   113
+##  8 ducks_bag                 3113
+##  9 email                     5489
+## 10 firstname                  111
+## 11 geese_bag                   38
+## 12 hunt_mig_birds              20
+## 13 lastname                    10
+## 14 rails_gallinules            48
+## 15 registration_yr              4
+## 16 seaducks                     3
+## 17 state                        6
+## 18 suffix                     283
+## 19 woodcock_bag                 4
+## 20 zip                       2132
 ```
 
 Location can be specified.
@@ -471,10 +472,10 @@ redFlags(DL1202_proofed, type = "field", threshold = 0.01)
 ## # A tibble: 4 x 5
 ##   errors     count_errors count_correct proportion flag        
 ##   <chr>             <int>         <int>      <dbl> <chr>       
-## 1 birth_date         5634         87393     0.0606 error > 0.01
-## 2 email              5489         87538     0.0590 error > 0.01
-## 3 ducks_bag          3113         89914     0.0335 error > 0.01
-## 4 zip                2132         90895     0.0229 error > 0.01
+## 1 birth_date         5634         87395     0.0606 error > 0.01
+## 2 email              5489         87540     0.0590 error > 0.01
+## 3 ducks_bag          3113         89916     0.0335 error > 0.01
+## 4 zip                2132         90897     0.0229 error > 0.01
 ```
 
 ## Stage 4: Visualize Data
@@ -552,7 +553,7 @@ outOfStateHunters(DL1202_proofed)
 ##  2 AL          7025            0.15
 ##  3 AR          6567            0.65
 ##  4 CA          3998            0.06
-##  5 CO          1747            0.09
+##  5 CO          1749            0.09
 ##  6 CT           110            0.1 
 ##  7 FL          3649            0.09
 ##  8 GA          3584            0.12
