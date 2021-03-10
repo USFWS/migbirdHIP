@@ -2,10 +2,20 @@
 #'
 #' After flagging errors in the data with \code{\link{proof}}, attempt corrections in all fields. Errors that cannot be programmatically corrected will be reported for manual correction.
 #'
-#' @import dplyr
-#' @import tidyr
-#' @import stringr
-#' @import tibble
+#' @importFrom dplyr %>%
+#' @importFrom dplyr mutate
+#' @importFrom dplyr case_when
+#' @importFrom dplyr left_join
+#' @importFrom dplyr filter
+#' @importFrom dplyr select
+#' @importFrom dplyr rename_at
+#' @importFrom dplyr vars
+#' @importFrom dplyr contains
+#' @importFrom stringr str_detect
+#' @importFrom stringr str_extract
+#' @importFrom stringr str_replace
+#' @importFrom stringr str_remove
+#' @importFrom stringr str_remove_all
 #'
 #' @param x The object created after error flagging data with \code{\link{proof}}
 #' @param year The year in which the Harvest Information Program data were collected
