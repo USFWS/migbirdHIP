@@ -2,11 +2,22 @@
 #'
 #' Create a plot of errors per download cycle, either by all states in the data set or a specific state, province, or territory.
 #'
-#' @import dplyr
-#' @import tidyr
-#' @import stringr
-#' @import tibble
-#' @import ggplot2
+#' @importFrom dplyr %>%
+#' @importFrom dplyr select
+#' @importFrom dplyr group_by
+#' @importFrom dplyr summarize
+#' @importFrom dplyr ungroup
+#' @importFrom dplyr mutate
+#' @importFrom dplyr filter
+#' @importFrom tidyr separate
+#' @importFrom tidyr pivot_longer
+#' @importFrom ggplot2 ggplot
+#' @importFrom ggplot2 geom_bar
+#' @importFrom ggplot2 geom_text
+#' @importFrom ggplot2 labs
+#' @importFrom ggplot2 scale_y_continuous
+#' @importFrom ggplot2 theme_classic
+#' @importFrom ggplot2 theme
 #'
 #' @param x A proofed data table created by \code{\link{proof}} or \code{\link{correct}}
 #' @param loc Which location the error data should be plotted for. Acceptable values include:
