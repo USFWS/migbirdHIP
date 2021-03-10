@@ -6,6 +6,7 @@
 #' @importFrom dplyr select
 #' @importFrom dplyr filter
 #' @importFrom dplyr distinct
+#' @importFrom dplyr quo_name
 #'
 #' @param x The object created after tidying data with \code{\link{tidy}}
 #' @param loc The download state in question

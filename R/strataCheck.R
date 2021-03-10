@@ -2,10 +2,18 @@
 #'
 #' After tidying the data with \code{\link{tidy}}, ensure there are no new strata that have been introduced by a state to the species groups.
 #'
-#' @import dplyr
-#' @import tidyr
-#' @import stringr
-#' @import tibble
+#' @importFrom dplyr %>%
+#' @importFrom dplyr select
+#' @importFrom dplyr distinct
+#' @importFrom dplyr filter
+#' @importFrom dplyr group_by
+#' @importFrom dplyr mutate
+#' @importFrom dplyr ungroup
+#' @importFrom dplyr left_join
+#' @importFrom dplyr rename
+#' @importFrom dplyr arrange
+#' @importFrom dplyr desc
+#' @importFrom tidyr pivot_longer
 #'
 #' @param x The object created after tidying data with \code{\link{tidy}}
 #'

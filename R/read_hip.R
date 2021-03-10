@@ -2,12 +2,25 @@
 #'
 #' Compile data from state-exported text files by providing a path to the download directory.
 #'
-#' @import dplyr
-#' @import tidyr
-#' @import stringr
-#' @import readr
-#' @import purrr
-#' @import tibble
+#' @importFrom dplyr as_tibble
+#' @importFrom dplyr transmute
+#' @importFrom dplyr mutate
+#' @importFrom dplyr filter
+#' @importFrom dplyr pull
+#' @importFrom dplyr group_by
+#' @importFrom dplyr n
+#' @importFrom dplyr ungroup
+#' @importFrom dplyr select
+#' @importFrom dplyr distinct
+#' @importFrom purrr map_dfr
+#' @importFrom purrr map_df
+#' @importFrom readr read_fwf
+#' @importFrom readr fwf_widths
+#' @importFrom readr guess_encoding
+#' @importFrom stringr str_detect
+#' @importFrom stringr str_replace
+#' @importFrom stringr str_extract
+#' @importFrom stringr str_remove
 #'
 #' @param path File path to the folder containing HIP .txt files
 #'

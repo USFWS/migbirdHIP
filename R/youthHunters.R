@@ -2,11 +2,20 @@
 #'
 #' Create a tibble and plot of youth hunters (hunters born < 16 years ago). Bar labels are counts.
 #'
-#' @import dplyr
-#' @import tidyr
-#' @import stringr
-#' @import tibble
-#' @import ggplot2
+#' @importFrom dplyr filter
+#' @importFrom dplyr left_join
+#' @importFrom stringr str_extract
+#' @importFrom ggplot2 ggplot
+#' @importFrom ggplot2 aes
+#' @importFrom ggplot2 geom_bar
+#' @importFrom ggplot2 geom_text
+#' @importFrom ggplot2 labs
+#' @importFrom ggplot2 scale_y_continuous
+#' @importFrom ggplot2 expansion
+#' @importFrom ggplot2 theme_classic
+#' @importFrom ggplot2 theme
+#' @importFrom ggplot2 element_text
+#' @importFrom stats reorder
 #'
 #' @param x A proofed data table created by \code{\link{proof}}
 #' @param year The year in which the Harvest Information Program data were collected

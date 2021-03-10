@@ -2,10 +2,23 @@
 #'
 #' After reading the data with \code{\link{compile}}, rename the column names and do preliminary cleaning of firstname, lastname, middle initial, and suffixes.
 #'
-#' @import dplyr
-#' @import tidyr
-#' @import stringr
-#' @import tibble
+#' @importFrom dplyr %>%
+#' @importFrom dplyr rename
+#' @importFrom dplyr group_by
+#' @importFrom dplyr mutate
+#' @importFrom dplyr cur_group_id
+#' @importFrom dplyr ungroup
+#' @importFrom dplyr case_when
+#' @importFrom dplyr row_number
+#' @importFrom dplyr mutate_all
+#' @importFrom dplyr na_if
+#' @importFrom stringr str_to_upper
+#' @importFrom stringr str_detect
+#' @importFrom stringr str_extract
+#' @importFrom stringr str_remove_all
+#' @importFrom stringr str_remove
+#' @importFrom stringr str_replace
+#' @importFrom stringr str_trim
 #'
 #' @param x The object created after reading in data with \code{\link{compile}}
 #'
@@ -33,7 +46,7 @@ tidy <-
           # Edited X11 to specific .data$X11 to avoid error:
           # "Found an obsolete/platform-specific call in: 'tidy'"
           # "Found the platform-specific device: 'X11'"
-          issue_date = .data$X11,
+          issue_date = x$X11,
           hunt_mig_birds = X12,
           ducks_bag = X13,
           geese_bag = X14,

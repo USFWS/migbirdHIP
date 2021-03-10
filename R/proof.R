@@ -2,10 +2,21 @@
 #'
 #' After tidying the data with \code{\link{tidy}}, compare each field to an expected range of values and flag non-conforming values in a new "errors" column.
 #'
-#' @import dplyr
-#' @import tidyr
-#' @import stringr
-#' @import tibble
+#' @importFrom dplyr %>%
+#' @importFrom dplyr mutate
+#' @importFrom dplyr row_number
+#' @importFrom dplyr bind_rows
+#' @importFrom dplyr filter
+#' @importFrom dplyr case_when
+#' @importFrom dplyr left_join
+#' @importFrom dplyr group_by
+#' @importFrom dplyr ungroup
+#' @importFrom dplyr select
+#' @importFrom dplyr distinct
+#' @importFrom stringr str_extract
+#' @importFrom stringr str_detect
+#' @importFrom stringr str_remove_all
+#' @importFrom dplyr as_tibble
 #'
 #' @param x The object created after tidying data with \code{\link{tidy}}
 #' @param year The year in which the Harvest Information Program data were collected

@@ -1,10 +1,11 @@
 #' Sample hunters
 #'
 #' After finalizing the data with \code{\link{correct}}, select a subset of hunters with valid registrations and addresses.
-#' @import dplyr
-#' @import tidyr
-#' @import stringr
-#' @import tibble
+#'
+#' @importFrom dplyr %>%
+#' @importFrom dplyr filter
+#' @importFrom dplyr select
+#' @importFrom dplyr slice_sample
 #'
 #' @param x The object created after finalizing data with \code{\link{correct}}
 #' @param random Optional ability to supply the sample size desired as an integer. The sample will be subset from the data at random and is not reproducible.

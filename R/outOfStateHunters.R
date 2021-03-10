@@ -2,12 +2,26 @@
 #'
 #' Create a tibble and plot of hunters who have registered outside of their home state.
 #'
-#' @import dplyr
-#' @import tidyr
-#' @import stringr
-#' @import tibble
-#' @import ggplot2
+#' @importFrom dplyr %>%
+#' @importFrom dplyr select
+#' @importFrom dplyr filter
+#' @importFrom dplyr group_by
+#' @importFrom dplyr summarize
+#' @importFrom dplyr n
+#' @importFrom dplyr ungroup
+#' @importFrom dplyr left_join
+#' @importFrom dplyr mutate
 #' @importFrom stats reorder
+#' @importFrom ggplot2 ggplot
+#' @importFrom ggplot2 aes
+#' @importFrom ggplot2 geom_bar
+#' @importFrom ggplot2 geom_text
+#' @importFrom ggplot2 labs
+#' @importFrom ggplot2 scale_y_continuous
+#' @importFrom ggplot2 expansion
+#' @importFrom ggplot2 theme_classic
+#' @importFrom ggplot2 theme
+#' @importFrom ggplot2 element_text
 #'
 #' @param x A proofed data table created by \code{\link{proof}}
 #'

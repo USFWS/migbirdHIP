@@ -2,11 +2,28 @@
 #'
 #' Create a bar plot of proportion of error per field. The plot defaults to all 49 states, but location can be specified.
 #'
-#' @import dplyr
-#' @import tidyr
-#' @import stringr
-#' @import tibble
-#' @import ggplot2
+#' @importFrom dplyr %>%
+#' @importFrom dplyr mutate
+#' @importFrom stringr str_extract
+#' @importFrom dplyr select
+#' @importFrom tidyr separate
+#' @importFrom tidyr pivot_longer
+#' @importFrom dplyr filter
+#' @importFrom dplyr group_by
+#' @importFrom dplyr summarize
+#' @importFrom dplyr ungroup
+#' @importFrom dplyr bind_rows
+#' @importFrom ggplot2 ggplot
+#' @importFrom ggplot2 aes
+#' @importFrom ggplot2 geom_bar
+#' @importFrom ggplot2 geom_text
+#' @importFrom ggplot2 labs
+#' @importFrom ggplot2 scale_y_continuous
+#' @importFrom ggplot2 theme_classic
+#' @importFrom ggplot2 theme
+#' @importFrom ggplot2 element_text
+#' @importFrom ggplot2 scale_fill_discrete
+#' @importFrom ggplot2 expansion
 #'
 #' @param x A proofed data table created by \code{\link{proof}}
 #' @param loc The location that errors should be plotted for. Acceptable values include:

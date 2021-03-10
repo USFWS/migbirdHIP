@@ -2,11 +2,32 @@
 #'
 #' Determine how many duplicate records are in the data. Plot and tabulate which fields are duplicates of individual hunters (i.e. data grouped by first name, last name, city, state, and birth date).
 #'
-#' @import dplyr
-#' @import tidyr
-#' @import stringr
-#' @import tibble
-#' @import ggplot2
+#' @importFrom dplyr %>%
+#' @importFrom dplyr mutate
+#' @importFrom dplyr row_number
+#' @importFrom dplyr group_by
+#' @importFrom dplyr n
+#' @importFrom dplyr ungroup
+#' @importFrom dplyr filter
+#' @importFrom dplyr arrange
+#' @importFrom dplyr select
+#' @importFrom dplyr distinct
+#' @importFrom dplyr cur_group_id
+#' @importFrom stringr str_detect
+#' @importFrom dplyr case_when
+#' @importFrom ggplot2 ggplot
+#' @importFrom ggplot2 aes
+#' @importFrom ggplot2 geom_bar
+#' @importFrom ggplot2 geom_text
+#' @importFrom ggplot2 labs
+#' @importFrom ggplot2 scale_y_continuous
+#' @importFrom ggplot2 expansion
+#' @importFrom ggplot2 theme_classic
+#' @importFrom ggplot2 theme
+#' @importFrom ggplot2 element_text
+#' @importFrom ggplot2 stat
+#' @importFrom dplyr count
+#' @importFrom dplyr summarize
 #'
 #' @param x A proofed data table created by \code{\link{tidy}}
 #'

@@ -2,8 +2,7 @@
 #'
 #' Create documentation with figures and tables that summarizes HIP download data at a download cycle or season total scale.
 #'
-#' @import rmarkdown
-#' @import stringr
+#' @importFrom rmarkdown render
 #'
 #' @param path File path to the folder containing HIP .txt files
 #' @param type Type of report. One of the following options may be supplied:

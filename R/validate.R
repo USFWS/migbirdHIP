@@ -2,10 +2,27 @@
 #'
 #' After tidying the data with \code{\link{tidy}}, check to make sure the data don't have any erroneously repeated values.
 #'
-#' @import dplyr
-#' @import tidyr
-#' @import stringr
-#' @import tibble
+#' @importFrom dplyr %>%
+#' @importFrom dplyr select
+#' @importFrom dplyr matches
+#' @importFrom dplyr group_by
+#' @importFrom dplyr mutate
+#' @importFrom dplyr n
+#' @importFrom dplyr relocate
+#' @importFrom dplyr ungroup
+#' @importFrom dplyr summarize
+#' @importFrom dplyr across
+#' @importFrom dplyr filter
+#' @importFrom dplyr sym
+#' @importFrom dplyr contains
+#' @importFrom dplyr row_number
+#' @importFrom dplyr rename
+#' @importFrom dplyr arrange
+#' @importFrom dplyr desc
+#' @importFrom tidyr unite
+#' @importFrom tidyr pivot_longer
+#' @importFrom stringr str_sub
+#' @importFrom stringr str_split
 #'
 #' @param x The object created after tidying data with \code{\link{tidy}}
 #' @param type Type of validation to perform. Acceptable values include:

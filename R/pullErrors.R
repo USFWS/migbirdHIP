@@ -8,6 +8,7 @@
 #' @importFrom dplyr distinct
 #' @importFrom dplyr pull
 #' @importFrom stringr str_detect
+#' @importFrom purrr is_empty
 #'
 #' @param x A proofed data table created by \code{\link{proof}}
 #' @param error Field that should be pulled. One of the fields from the following list may be supplied:

@@ -2,10 +2,18 @@
 #'
 #' Create a tibble of existing errors in the data, customizing the output with value specifications.
 #'
-#' @import dplyr
-#' @import tidyr
-#' @import stringr
-#' @import tibble
+#' @importFrom dplyr %>%
+#' @importFrom dplyr select
+#' @importFrom dplyr filter
+#' @importFrom dplyr mutate
+#' @importFrom dplyr row_number
+#' @importFrom tidyr separate
+#' @importFrom tidyr pivot_longer
+#' @importFrom dplyr rename
+#' @importFrom dplyr group_by
+#' @importFrom dplyr summarize
+#' @importFrom dplyr ungroup
+#' @importFrom stringr str_detect
 #'
 #' @param x A proofed data table created by \code{\link{proof}}
 #' @param loc Which location the error data should be tabulated by. Acceptable values include:

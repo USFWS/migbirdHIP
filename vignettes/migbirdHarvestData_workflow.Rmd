@@ -92,6 +92,11 @@ After data are imported, we `tidy`:
 DL1202_tidied <- tidy(DL1202)
 ```
 
+```
+## Error: Can't rename columns that don't exist.
+## [31mx[39m Columns `12/09/2020`, `12/06/2020`, `12/03/2020`, `12/12/2020`, `12/05/2020`, etc. don't exist.
+```
+
 This function renames columns and does simple mutations, such as:
 
 * Converts names to uppercase
@@ -140,7 +145,7 @@ findDuplicates(DL1202_tidied)
 
 ### fixDuplicates
 
-States that require special permits to hunt migratory bird species (i.e. cranes, Band-tailed Pigeons, sea ducks and Brant) sometimes send their permit information mixed in with HIP download data. These cases are a common cause of duplicate registrations and are problematic for future analyses if retained. The `fixDuplicates` function attempts to identify such cases and will consolidate hunters with multiple records (i.e. a HIP record and a permit record in the same download state) into one row. The remainder of duplicates that cannot be resolved are deleted.
+States that require special permits to hunt migratory bird species (i.e. cranes, Band-tailed Pigeons, sea ducks and Brant) sometimes send their permit information mixed in with HIP download data. These cases are a common cause of duplicate registrations and are problematic for future analyses if retained. The `fixDuplicates` function attempts to identify such cases and will consolidate hunters with multiple records (i.e. a HIP record and a permit record in the same download state) into one row. The remainder of duplicates that cannot be resolved are moved to a separate tibble.
 
 
 ```r

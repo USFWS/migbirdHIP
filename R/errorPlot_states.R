@@ -2,11 +2,26 @@
 #'
 #' Create a bar plot of errors by state, either by count or proportion.
 #'
-#' @import dplyr
-#' @import tidyr
-#' @import stringr
-#' @import tibble
-#' @import ggplot2
+#' @importFrom dplyr %>%
+#' @importFrom dplyr select
+#' @importFrom tidyr separate
+#' @importFrom tidyr pivot_longer
+#' @importFrom dplyr rename
+#' @importFrom dplyr filter
+#' @importFrom dplyr group_by
+#' @importFrom dplyr summarize
+#' @importFrom dplyr ungroup
+#' @importFrom dplyr mutate
+#' @importFrom ggplot2 ggplot
+#' @importFrom ggplot2 aes
+#' @importFrom ggplot2 geom_bar
+#' @importFrom ggplot2 geom_text
+#' @importFrom stats reorder
+#' @importFrom ggplot2 labs
+#' @importFrom ggplot2 scale_y_continuous
+#' @importFrom ggplot2 expansion
+#' @importFrom ggplot2 theme_classic
+#' @importFrom ggplot2 element_text
 #'
 #' @param x A proofed data table created by \code{\link{proof}}
 #' @param threshold Optional. A decimal value above which error proportions should be plotted.

@@ -2,10 +2,19 @@
 #'
 #' Create a tibble of error data by state or field. Data are reported using a threshold of proportion of error.
 #'
-#' @import dplyr
-#' @import tidyr
-#' @import stringr
-#' @import tibble
+#' @importFrom dplyr %>%
+#' @importFrom dplyr select
+#' @importFrom dplyr rename
+#' @importFrom dplyr group_by
+#' @importFrom dplyr summarize
+#' @importFrom dplyr ungroup
+#' @importFrom dplyr mutate
+#' @importFrom dplyr filter
+#' @importFrom dplyr arrange
+#' @importFrom dplyr desc
+#' @importFrom tidyr separate_rows
+#' @importFrom tidyr separate
+#' @importFrom tidyr pivot_longer
 #'
 #' @param x A proofed data table created by \code{\link{proof}}
 #' @param type Type of tibble to report. Acceptable values include:
