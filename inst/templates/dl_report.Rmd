@@ -24,11 +24,14 @@ dl_data <- read_hip(params$comp_path)
 
 tidied_data <- tidy(dl_data)
 
-proofed_data <- proof(tidied_data, year = params$year)
+findDuplicates(tidied_data)
 
-# Remove original and tidied data to improve memory use
+fixed_data <- fixDuplicates(tidied_data)
+
+proofed_data <- proof(fixed_data, year = params$year)
+
+# Remove original data to improve memory use
 rm(dl_data)
-rm(tidied_data)
 
 corrected_data <- correct(proofed_data, year = params$year)
 
@@ -43,6 +46,48 @@ This is a report of download cycle `r proofed_data %>% select(dl_cycle) %>% dist
 To get a general idea of what the data look like, first we visualize the errors as plots.
 
 ## Error plots
+
+### Duplicates
+
+**Before fixDuplicates**
+
+```{r b_fd, echo = FALSE}
+findDuplicates(tidied_data)
+```
+
+**After fixDuplicates**
+
+```{r a_fd, echo = FALSE}
+findDuplicates(fixed_data)
+```
+
+### Check strata
+
+```{r stratacheck, echo = FALSE}
+strataCheck(fixed_data)
+```
+
+### Repeated values
+
+**Horizontal**
+
+```{r h_validate, echo = FALSE}
+validate(fixed_data, type = "horizontal")
+```
+
+**Vertical**
+
+```{r v_validate, echo = FALSE}
+validate(fixed_data, type = "vertical")
+```
+
+```{r data_sweep, include = FALSE}
+
+# Remove tidied and fixed data to improve memory use
+rm(tidied_data)
+rm(fixed_data)
+
+```
 
 ### Errors by field
 
@@ -70,12 +115,6 @@ errorPlot_states(proofed_data)
 
 ```{r erps_c, echo = FALSE}
 errorPlot_states(corrected_data)
-```
-
-## Duplicates
-
-```{r fd, echo = FALSE}
-findDuplicates(proofed_data)
 ```
 
 ## Out-of-state hunters
