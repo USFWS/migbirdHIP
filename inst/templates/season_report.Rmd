@@ -24,14 +24,12 @@ season_data <- read_hip(params$comp_path)
 
 tidied_data <- tidy(season_data)
 
-findDuplicates(season_data)
+# Remove original data to improve memory use
+rm(season_data)
 
 fixed_data <- fixDuplicates(tidied_data)
 
 proofed_data <- proof(fixed_data, year = params$year)
-
-# Remove original data to improve memory use
-rm(season_data)
 
 corrected_data <- correct(proofed_data, year = params$year)
 

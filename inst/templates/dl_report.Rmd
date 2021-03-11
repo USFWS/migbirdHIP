@@ -24,14 +24,12 @@ dl_data <- read_hip(params$comp_path)
 
 tidied_data <- tidy(dl_data)
 
-findDuplicates(tidied_data)
+# Remove original data to improve memory use
+rm(dl_data)
 
 fixed_data <- fixDuplicates(tidied_data)
 
 proofed_data <- proof(fixed_data, year = params$year)
-
-# Remove original data to improve memory use
-rm(dl_data)
 
 corrected_data <- correct(proofed_data, year = params$year)
 

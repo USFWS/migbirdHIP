@@ -92,11 +92,6 @@ After data are imported, we `tidy`:
 DL1202_tidied <- tidy(DL1202)
 ```
 
-```
-## Error: Can't rename columns that don't exist.
-## [31mx[39m Columns `12/09/2020`, `12/06/2020`, `12/03/2020`, `12/12/2020`, `12/05/2020`, etc. don't exist.
-```
-
 This function renames columns and does simple mutations, such as:
 
 * Converts names to uppercase
@@ -475,12 +470,12 @@ redFlags(DL1202_proofed, type = "field", threshold = 0.01)
 
 ```
 ## # A tibble: 4 x 5
-##   errors     count_errors count_correct proportion flag        
-##   <chr>             <int>         <int>      <dbl> <chr>       
-## 1 birth_date         5634         87395     0.0606 error > 0.01
-## 2 email              5489         87540     0.0590 error > 0.01
-## 3 ducks_bag          3113         89916     0.0335 error > 0.01
-## 4 zip                2132         90897     0.0229 error > 0.01
+##   errors     count_errors count_correct proportion flag       
+##   <chr>             <int>         <int>      <dbl> <chr>      
+## 1 birth_date         5634         87395     0.0606 error > 0.~
+## 2 email              5489         87540     0.0590 error > 0.~
+## 3 ducks_bag          3113         89916     0.0335 error > 0.~
+## 4 zip                2132         90897     0.0229 error > 0.~
 ```
 
 ## Stage 4: Visualize Data

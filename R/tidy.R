@@ -19,6 +19,7 @@
 #' @importFrom stringr str_remove
 #' @importFrom stringr str_replace
 #' @importFrom stringr str_trim
+#' @importFrom rlang .data
 #'
 #' @param x The object created after reading in data with \code{\link{compile}}
 #'
@@ -46,7 +47,7 @@ tidy <-
           # Edited X11 to specific .data$X11 to avoid error:
           # "Found an obsolete/platform-specific call in: 'tidy'"
           # "Found the platform-specific device: 'X11'"
-          issue_date = x$X11,
+          issue_date = .data$X11,
           hunt_mig_birds = X12,
           ducks_bag = X13,
           geese_bag = X14,
