@@ -58,7 +58,7 @@ fixDuplicates <-
         birth_date,
         dl_state)
 
-    # Washington, Oregon, and Oklahoma permit duplicates
+    # Washington, Oregon, Colorado, and South Dakota permit duplicates
     state_dupes <-
       duplicates %>%
       # Filter the duplicates to those that occur in permit states

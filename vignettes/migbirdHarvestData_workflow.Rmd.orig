@@ -108,7 +108,10 @@ findDuplicates(DL1202_tidied)
 
 ### fixDuplicates
 
-States that require special permits to hunt migratory bird species (i.e. cranes, Band-tailed Pigeons, sea ducks and Brant) sometimes send their permit information mixed in with HIP download data. These cases are a common cause of duplicate registrations and are problematic for future analyses if retained. The `fixDuplicates` function attempts to identify such cases and will consolidate hunters with multiple records (i.e. a HIP record and a permit record in the same download state) into one row. The remainder of duplicates that cannot be resolved are moved to a separate tibble.
+States that require special permits to hunt migratory bird species (i.e. cranes, Band-tailed Pigeons, sea ducks and Brant) sometimes send permit information and HIP download data on separate lines. These cases are a common cause of duplicates (>1 row per hunter) and are problematic for future analyses if retained. The `fixDuplicates` function attempts to identify such cases and will consolidate hunters with multiple records (i.e. a HIP record and a permit record in the same download state) into one row. It consolidates duplicates with 2 rows by removing permit records with no take noted (i.e., all "0 values) and then replacing "0" values in the HIP records with non-zero values in duplicate permit records. This function also replaces any "." values with "0", a step that usually occurs in `correct`, but must be done here for it to work correctly.
+
+Duplicates with > 2 records usually can't be resolved with any certainty. For these records, the HIP row is retained and duplicates are set aside in a separate tibble.
+
 
 ```{r, fixduplicates}
 DL1202_fixed <- fixDuplicates(DL1202_tidied)
