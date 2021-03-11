@@ -37,43 +37,39 @@ corrected_data <- correct(proofed_data, year = params$year)
 
 # Introduction
 
-This is a report of download cycle `r proofed_data %>% select(dl_cycle) %>% distinct %>% pull`. This cycle, **`r nrow(proofed_data)`** records were submitted from **`r proofed_data %>% select(dl_state) %>% distinct %>% nrow()`** states.
+This is a report of download cycle `r proofed_data %>% select(dl_cycle) %>% distinct %>% pull`. This cycle, `r nrow(proofed_data)` records were submitted from `r proofed_data %>% select(dl_state) %>% distinct %>% nrow()` states.
 
-# Visualization of errors
+# Data Checking
 
-To get a general idea of what the data look like, first we visualize the errors as plots.
+## Duplicates
 
-## Error plots
-
-### Duplicates
-
-**Before fixDuplicates**
+### Before fixDuplicates
 
 ```{r b_fd, echo = FALSE}
 findDuplicates(tidied_data)
 ```
 
-**After fixDuplicates**
+### After fixDuplicates
 
 ```{r a_fd, echo = FALSE}
 findDuplicates(fixed_data)
 ```
 
-### Check strata
+## Strata
 
 ```{r stratacheck, echo = FALSE}
 strataCheck(fixed_data)
 ```
 
-### Repeated values
+## Repeated values
 
-**Horizontal**
+### Horizontal
 
 ```{r h_validate, echo = FALSE}
 validate(fixed_data, type = "horizontal")
 ```
 
-**Vertical**
+### Vertical
 
 ```{r v_validate, echo = FALSE}
 validate(fixed_data, type = "vertical")
@@ -87,29 +83,31 @@ rm(fixed_data)
 
 ```
 
-### Errors by field
+# Error Visualizations
 
-**Before correction**
+## By field
+
+### Before correction
 
 ```{r erpf, echo = FALSE}
 errorPlot_fields(proofed_data, specify = params$year)
 ```
 
-**After correction**
+### After correction
 
 ```{r erpf_c, echo = FALSE}
 errorPlot_fields(corrected_data, specify = params$year)
 ```
 
-### Errors by state
+## By state
 
-**Before correction**
+### Before correction
 
 ```{r erps, echo = FALSE}
 errorPlot_states(proofed_data)
 ```
 
-**After correction**
+### After correction
 
 ```{r erps_c, echo = FALSE}
 errorPlot_states(corrected_data)
@@ -127,13 +125,13 @@ outOfStateHunters(corrected_data)
 youthHunters(proofed_data, year = params$year)
 ```
 
-# Explore errors
+# Error Exploration
 
 Let's take a closer look at common errors and issues within this download's HIP data.
 
 ## High error counts
 
-**Q: What were the most common errors, and what values caused them?**
+Q: What were the most common errors, and what values caused them?
 
 Tibble of most common errors...
 
@@ -143,7 +141,7 @@ et <- errorTable(proofed_data, loc = "none") %>% arrange(desc(error_count))
 et
 ```
 
-Values associated with error in **`r et$error[1]`**
+Values associated with error in `r et$error[1]`
 
 ```{r pe_1, echo = FALSE}
 err1 <- pullErrors(proofed_data, error = et$error[1])
@@ -155,7 +153,7 @@ if(length(err1) > 20){
     }
 ```
 
-Values associated with error in **`r et$error[2]`**
+Values associated with error in `r et$error[2]`
 
 ```{r pe_2, echo = FALSE}
 err2 <- pullErrors(proofed_data, error = et$error[2])
@@ -167,7 +165,7 @@ if(length(err2) > 20){
     }
 ```
 
-Values associated with error in **`r et$error[3]`**
+Values associated with error in `r et$error[3]`
 
 ```{r pe_3, echo = FALSE}
 err3 <- pullErrors(proofed_data, error = et$error[3])
@@ -181,15 +179,15 @@ if(length(err3) > 20){
 
 ## High error proportions
 
-**Q: What states and fields had a proportion of error that exceeded an acceptable threshold?**
+Q: What states and fields had a proportion of error that exceeded an acceptable threshold?
 
-**States** with more than 1% error
+States with more than 1% error
 
 ```{r rfs, echo = FALSE}
 redFlags(proofed_data, type = "state", threshold = 0.1)
 ```
 
-**Fields** with more than 1% error
+Fields with more than 1% error
 
 ```{r rff, echo = FALSE}
 redFlags(proofed_data, type = "field", threshold = 0.1)
