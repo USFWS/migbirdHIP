@@ -108,13 +108,21 @@ findDuplicates(DL1202_tidied)
 
 ### fixDuplicates
 
-States that require special permits to hunt migratory bird species (i.e. cranes, Band-tailed Pigeons, sea ducks and Brant) sometimes send permit information and HIP download data on separate lines. These cases are a common cause of duplicates (>1 row per hunter) and are problematic for future analyses if retained. The `fixDuplicates` function attempts to identify such cases and will consolidate hunters with multiple records (i.e. a HIP record and a permit record in the same download state) into one row. It consolidates duplicates with 2 rows by removing permit records with no take noted (i.e., all "0 values) and then replacing "0" values in the HIP records with non-zero values in duplicate permit records. This function also replaces any "." values with "0", a step that usually occurs in `correct`, but must be done here for it to work correctly.
+States that require special permits to hunt migratory bird species (i.e. cranes, Band-tailed Pigeons, sea ducks and Brant) sometimes send permit information and HIP download data on separate lines. These cases are a common cause of duplicates (>1 row per hunter) and are problematic for future analyses if retained. The `fixDuplicates` function attempts to identify such cases and will consolidate hunters with multiple records (i.e. a HIP record and a permit record in the same download state) into one row. It consolidates duplicates with 2 rows two ways. First, `fixDuplicates` removes permit records with no take noted (i.e., all "0"" values). Then for remaining duplicates, the function replaces "0" values in HIP records with non-zero values in paired permit records.
 
-Duplicates with > 2 records usually can't be resolved with any certainty. For these records, the HIP row is retained and duplicates are set aside in a separate tibble.
+Duplicates with > 2 records usually can't be resolved with any certainty. For these records, the HIP row is retained and duplicates are set aside in a separate tibble. The `fixDuplicates` function returns a list in the output containing 1) "fixed_dl", which is the input table with duplicates removed, and 2) "unsolved_duplicates", which contains duplicates with > 2 records that cannot be resolved.
+
+Note: This function replaces "." values in species fields with "0" values for WA, OR, CO, and SD records. Usually, this step occurs in `correct`, but it must be done here for duplicate removal to work successfully.
 
 
 ```{r, fixduplicates}
-DL1202_fixed <- fixDuplicates(DL1202_tidied)
+DL1202_fDlist <- fixDuplicates(DL1202_tidied)
+
+DL1202_fixed <- DL1202_fDlist$fixed_duplicates
+DL1202_unsolved <- DL1202_fDlist$unsolved_duplicates
+
+# Remove the large list from global environment
+rm(DL1202_fDlist)
 ```
 
 ### strataCheck
