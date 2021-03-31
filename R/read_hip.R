@@ -23,34 +23,61 @@
 #' @importFrom stringr str_remove
 #'
 #' @param path File path to the folder containing HIP .txt files
+#' @param season If set as TRUE, selects only folders starting with "DL" in a a season's upper-level directory
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHarvestData}
 #'
 #' @export
 
+# Second version with
+# %>% filter(str_detect(value, "^DL"))
+# for directories w/ extra stuff that will mess up the reader
+
+
 read_hip <-
-  function(path) {
+  function(path, season = FALSE) {
 
     # Create a tibble of the HIP .txt files to be read from the provided
     # directory
     files <-
-      list.files(path, recursive = "TRUE")  %>%
-      as_tibble() %>%
-      transmute(filepath = as.character(value)) %>%
-      mutate(filepath = str_replace(filepath, "TXT", "txt")) %>%
-      # Keep only txt files
-      filter(str_detect(filepath, "(?<=\\.)txt$")) %>%
-      # Create new complete file paths
-      mutate(filepath = paste(path, filepath, sep = "/")) %>%
-      # Filter out blank files
-      mutate(
-        filepath =
-          ifelse(
-            file.size(filepath) == 0,
-            "blank",
-            filepath)) %>%
-      filter(filepath != "blank")
+      if(season == FALSE){
+        list.files(path, recursive = "TRUE")  %>%
+        as_tibble() %>%
+        transmute(filepath = as.character(value)) %>%
+        mutate(filepath = str_replace(filepath, "TXT", "txt")) %>%
+        # Keep only txt files
+        filter(str_detect(filepath, "(?<=\\.)txt$")) %>%
+        # Create new complete file paths
+        mutate(filepath = paste(path, filepath, sep = "/")) %>%
+        # Filter out blank files
+        mutate(
+          filepath =
+            ifelse(
+              file.size(filepath) == 0,
+              "blank",
+              filepath)) %>%
+        filter(filepath != "blank")}
+      else if(season == TRUE){
+        list.files(path, recursive = "TRUE")  %>%
+          as_tibble() %>%
+          # Disregard folders that do not begin with "DL"
+          filter(str_detect(value, "^DL")) %>%
+          transmute(filepath = as.character(value)) %>%
+          mutate(filepath = str_replace(filepath, "TXT", "txt")) %>%
+          # Keep only txt files
+          filter(str_detect(filepath, "(?<=\\.)txt$")) %>%
+          # Create new complete file paths
+          mutate(filepath = paste(path, filepath, sep = "/")) %>%
+          # Filter out blank files
+          mutate(
+            filepath =
+              ifelse(
+                file.size(filepath) == 0,
+                "blank",
+                filepath)) %>%
+          filter(filepath != "blank")
+      }
 
     # Check encodings of the files that will be read
     checked_encodings <-

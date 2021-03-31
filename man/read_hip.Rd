@@ -4,10 +4,12 @@
 \alias{read_hip}
 \title{Read in data}
 \usage{
-read_hip(path)
+read_hip(path, season = FALSE)
 }
 \arguments{
 \item{path}{File path to the folder containing HIP .txt files}
+
+\item{season}{If set as TRUE, selects only folders starting with "DL" in a a season's upper-level directory}
 }
 \description{
 Compile data from state-exported text files by providing a path to the download directory.
