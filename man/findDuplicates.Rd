@@ -7,7 +7,7 @@
 findDuplicates(x)
 }
 \arguments{
-\item{x}{A proofed data table created by \code{\link{tidy}}}
+\item{x}{A cleaned data table created by \code{\link{clean}}}
 }
 \description{
 Determine how many duplicate records are in the data. Plot and tabulate which fields are duplicates of individual hunters (i.e. data grouped by first name, last name, city, state, and birth date).

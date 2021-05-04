@@ -8,7 +8,7 @@
 #' @importFrom dplyr distinct
 #' @importFrom dplyr quo_name
 #'
-#' @param x The object created after tidying data with \code{\link{tidy}}
+#' @param x The object created after cleaning data with \code{\link{clean}}
 #' @param loc The download state in question
 #' @param period_type The type of time period that will be given. You may choose one of two types:
 #' \itemize{

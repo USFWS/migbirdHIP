@@ -1,6 +1,6 @@
 #' Check state strata
 #'
-#' After tidying the data with \code{\link{tidy}}, ensure there are no new strata that have been introduced by a state to the species groups.
+#' After cleaning the data with \code{\link{clean}}, ensure there are no new strata that have been introduced by a state to the species groups.
 #'
 #' @importFrom dplyr %>%
 #' @importFrom dplyr select
@@ -15,7 +15,7 @@
 #' @importFrom dplyr desc
 #' @importFrom tidyr pivot_longer
 #'
-#' @param x The object created after tidying data with \code{\link{tidy}}
+#' @param x The object created after cleaning data with \code{\link{clean}}
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHarvestData}

@@ -7,7 +7,7 @@
 validate(x, type, period = NA)
 }
 \arguments{
-\item{x}{The object created after tidying data with \code{\link{tidy}}}
+\item{x}{The object created after cleaning data with \code{\link{clean}}}
 
 \item{type}{Type of validation to perform. Acceptable values include:
 \itemize{
@@ -22,7 +22,7 @@ validate(x, type, period = NA)
 }}
 }
 \description{
-After tidying the data with \code{\link{tidy}}, check to make sure the data don't have any erroneously repeated values.
+After cleaning the data with \code{\link{clean}}, check to make sure the data don't have any erroneously repeated values.
 }
 \references{
 \url{https://github.com/USFWS/migbirdHarvestData}

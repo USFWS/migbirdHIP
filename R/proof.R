@@ -1,6 +1,6 @@
 #' Flag errors
 #'
-#' After tidying the data with \code{\link{tidy}}, compare each field to an expected range of values and flag non-conforming values in a new "errors" column.
+#' After cleaning the data with \code{\link{clean}}, compare each field to an expected range of values and flag non-conforming values in a new "errors" column.
 #'
 #' @importFrom dplyr %>%
 #' @importFrom dplyr mutate
@@ -18,7 +18,7 @@
 #' @importFrom stringr str_remove_all
 #' @importFrom dplyr as_tibble
 #'
-#' @param x The object created after tidying data with \code{\link{tidy}}
+#' @param x The object created after cleaning data with \code{\link{clean}}
 #' @param year The year in which the Harvest Information Program data were collected
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}

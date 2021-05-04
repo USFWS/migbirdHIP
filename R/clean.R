@@ -28,7 +28,7 @@
 #'
 #' @export
 
-tidy <-
+clean <-
   function(x){
 
     tidied_x <-

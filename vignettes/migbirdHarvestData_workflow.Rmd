@@ -17,7 +17,7 @@ vignette: >
 - [Stage 1: Import Data](#stage-1-import-data)
     - [read_hip](#read_hip)
 - [Stage 2: Clean Data](#stage-2-clean-data)
-    - [tidy](#tidy)
+    - [clean](#clean)
     - [findDuplicates](#findduplicates)
     - [fixDuplicates](#fixduplicates)
     - [strataCheck](#stratacheck)
@@ -83,13 +83,13 @@ Did you get a warning or three? Read an explanation of common `read_hip` warning
 
 ## Stage 2: Clean Data
 
-### tidy
+### clean
 
-After data are imported, we `tidy`:
+After data are imported, we `clean`:
 
 
 ```r
-DL1202_tidied <- tidy(DL1202)
+DL1202_clean <- clean(DL1202)
 ```
 
 This function renames columns and does simple mutations, such as:
@@ -105,7 +105,7 @@ The `findDuplicates` function finds hunters that have more than one registration
 
 
 ```r
-findDuplicates(DL1202_tidied)
+findDuplicates(DL1202_clean)
 ```
 
 ```
@@ -149,7 +149,7 @@ Note: This function replaces "." values in species fields with "0" values for WA
 
 
 ```r
-DL1202_fDlist <- fixDuplicates(DL1202_tidied)
+DL1202_fDlist <- fixDuplicates(DL1202_clean)
 
 DL1202_fixed <- DL1202_fDlist$fixed_duplicates
 DL1202_unsolved <- DL1202_fDlist$unsolved_duplicates
@@ -288,7 +288,7 @@ investigate(
 
 ### proof
 
-After data are tidied and checked for any important issues that would require manual attention, we `proof`:
+After data are cleaned and checked for any important issues that would require manual attention, we `proof`:
 
 
 ```r
@@ -679,7 +679,7 @@ All functions in [Stage 2](#stage-2-visualize-data) and [Stage 3](#stage-3-explo
 
 ### manualFix
 
-The automated `correct` function cannot always catch and fix every error. To finish the job, `manualFix` function replaces specified inaccurate values with the values you want. It is not recommended that this function only be used after correcting the data; it's best used on a case-by-case basis. In the instance of frame shifts, for example, it would be wise to use after `tidy`. Or if problems are only identified after `proof`, you can run `manualFix` on the tidied data and re-run `proof`. This function is highly flexible and recommended to be used as needed.
+The automated `correct` function cannot always catch and fix every error. To finish the job, `manualFix` function replaces specified inaccurate values with the values you want. It is not recommended that this function only be used after correcting the data; it's best used on a case-by-case basis. In the instance of frame shifts, for example, it would be wise to use after `clean`. Or if problems are only identified after `proof`, you can run `manualFix` on the cleaned data and re-run `proof`. This function is highly flexible and recommended to be used as needed.
 
 
 ```r
@@ -736,7 +736,7 @@ Another version of a parsing failure occurs when a file is missing the last colu
 
 Some of these functions require a lot of memory to run. To help your R process these data, especially when working with the large season totals, you can do a few things:
 
-1. Remove objects from the environment. If you have already run `read_hip`, `tidy`, and `proof`, you may no longer need your original dataframe or your tidied dataframe, since most error checking functions work from the proofed or corrected versions of the data. To remove an unneeded object like the tidied dataframe, run `rm(DL1202_tidied)`.
+1. Remove objects from the environment. If you have already run `read_hip`, `clean`, and `proof`, you may no longer need your original dataframe or your cleaned dataframe, since most error checking functions work from the proofed or corrected versions of the data. To remove an unneeded object like the cleaned dataframe, run `rm(DL1202_clean)`.
 
 2. Check your memory using `memory.limit()`
 

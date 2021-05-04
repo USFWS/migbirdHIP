@@ -22,12 +22,12 @@ library(tidyverse)
 
 season_data <- read_hip(params$comp_path)
 
-tidied_data <- tidy(season_data)
+cleaned_data <- clean(season_data)
 
 # Remove original data to improve memory use
 rm(season_data)
 
-fixed_data <- fixDuplicates(tidied_data)
+fixed_data <- fixDuplicates(cleaned_data)
 
 proofed_data <- proof(fixed_data, year = params$year)
 
@@ -46,7 +46,7 @@ This is a summary report of the `r params$year` Season of Harvest Information Pr
 ### Before fixDuplicates
 
 ```{r b_fd, echo = FALSE}
-findDuplicates(tidied_data)
+findDuplicates(cleaned_data)
 ```
 
 ### After fixDuplicates
@@ -77,8 +77,8 @@ validate(fixed_data, type = "vertical")
 
 ```{r data_sweep, include = FALSE}
 
-# Remove tidied and fixed data to improve memory use
-rm(tidied_data)
+# Remove cleaned and fixed data to improve memory use
+rm(cleaned_data)
 rm(fixed_data)
 
 ```

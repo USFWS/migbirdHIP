@@ -1,6 +1,6 @@
 #' Validate data
 #'
-#' After tidying the data with \code{\link{tidy}}, check to make sure the data don't have any erroneously repeated values.
+#' After cleaning the data with \code{\link{clean}}, check to make sure the data don't have any erroneously repeated values.
 #'
 #' @importFrom dplyr %>%
 #' @importFrom dplyr select
@@ -24,7 +24,7 @@
 #' @importFrom stringr str_sub
 #' @importFrom stringr str_split
 #'
-#' @param x The object created after tidying data with \code{\link{tidy}}
+#' @param x The object created after cleaning data with \code{\link{clean}}
 #' @param type Type of validation to perform. Acceptable values include:
 #'  \itemize{
 #'  \item vertical - Checks for repetition vertically in species and/or bag fields, grouped by dl_state and dl_date

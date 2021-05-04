@@ -7,7 +7,7 @@
 fixDuplicates(x)
 }
 \arguments{
-\item{x}{A proofed data table created by \code{\link{tidy}}}
+\item{x}{A cleaned data table created by \code{\link{clean}}}
 }
 \description{
 Consolidate duplicate records that stem from HIP data and special permit information into one row. If other duplicates exist not due to this specific reason, delete the records from the data.

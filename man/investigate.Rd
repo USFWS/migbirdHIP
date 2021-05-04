@@ -7,7 +7,7 @@
 investigate(x, loc, period_type, period, species)
 }
 \arguments{
-\item{x}{The object created after tidying data with \code{\link{tidy}}}
+\item{x}{The object created after cleaning data with \code{\link{clean}}}
 
 \item{loc}{The download state in question}
 

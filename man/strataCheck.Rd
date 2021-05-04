@@ -7,10 +7,10 @@
 strataCheck(x)
 }
 \arguments{
-\item{x}{The object created after tidying data with \code{\link{tidy}}}
+\item{x}{The object created after cleaning data with \code{\link{clean}}}
 }
 \description{
-After tidying the data with \code{\link{tidy}}, ensure there are no new strata that have been introduced by a state to the species groups.
+After cleaning the data with \code{\link{clean}}, ensure there are no new strata that have been introduced by a state to the species groups.
 }
 \references{
 \url{https://github.com/USFWS/migbirdHarvestData}

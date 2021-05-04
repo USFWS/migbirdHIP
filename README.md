@@ -19,7 +19,7 @@ Program](https://www.fws.gov/harvestsurvey) data.
 Tasks that can be accomplished with this package include:
 
   - `read_hip` imports data
-  - `tidy` does basic reorganization tasks
+  - `clean` does basic reorganization tasks
   - `findDuplicates` identifies registrants with multiple records
   - `fixDuplicates` consolidates duplicate records
   - `strataCheck` identifies any new strata
