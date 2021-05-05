@@ -179,7 +179,7 @@ if(length(err3) > 20){
 
 ## High error proportions
 
-Q: What states and fields had a proportion of error that exceeded an acceptable threshold?
+Q: What states and fields had a proportion of error that exceeded an acceptable threshold (before correction)?
 
 States with more than 1% error
 
