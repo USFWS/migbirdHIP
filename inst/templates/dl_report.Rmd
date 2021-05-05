@@ -28,8 +28,9 @@ cleaned_data <- clean(dl_data)
 rm(dl_data)
 
 fixed_data <- fixDuplicates(cleaned_data)
+fxd <- fixed_data$fixed_duplicates %>% as_tibble()
 
-proofed_data <- proof(fixed_data, year = params$year)
+proofed_data <- proof(fxd, year = params$year)
 
 corrected_data <- correct(proofed_data, year = params$year)
 
