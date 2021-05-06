@@ -29,6 +29,7 @@ rm(dl_data)
 
 fixed_data <- fixDuplicates(cleaned_data)
 fxd <- fixed_data$fixed_duplicates %>% as_tibble()
+rm(fixed_data)
 
 proofed_data <- proof(fxd, year = params$year)
 
@@ -53,13 +54,13 @@ findDuplicates(cleaned_data)
 ### After fixDuplicates
 
 ```{r a_fd, echo = FALSE}
-findDuplicates(fixed_data)
+findDuplicates(fxd)
 ```
 
 ## Strata
 
 ```{r stratacheck, echo = FALSE}
-strataCheck(fixed_data)
+strataCheck(fxd)
 ```
 
 ## Repeated values
@@ -67,20 +68,20 @@ strataCheck(fixed_data)
 ### Horizontal
 
 ```{r h_validate, echo = FALSE}
-validate(fixed_data, type = "horizontal")
+validate(fxd, type = "horizontal")
 ```
 
 ### Vertical
 
 ```{r v_validate, echo = FALSE}
-validate(fixed_data, type = "vertical")
+validate(fxd, type = "vertical")
 ```
 
 ```{r data_sweep, include = FALSE}
 
 # Remove cleaned and fixed data to improve memory use
 rm(cleaned_data)
-rm(fixed_data)
+rm(fxd)
 
 ```
 
