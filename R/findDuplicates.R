@@ -170,12 +170,6 @@ findDuplicates <-
       distinct()
 
     if(nrow(dupl_tibble) == 0){
-      dupl_summary <-
-        suppressMessages(
-          dupl_tibble %>%
-            group_by(dupl) %>%
-            summarize(count = n()) %>%
-            ungroup())
 
       message(
         paste(
@@ -184,7 +178,6 @@ findDuplicates <-
           "total duplicated records.", sep = " ")
       )
 
-      return(dupl_summary)
     }
 
     else{
