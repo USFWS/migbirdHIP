@@ -169,51 +169,72 @@ findDuplicates <-
       select(hunter_key, dupl) %>%
       distinct()
 
-    dupl_plot <-
-      dupl_tibble %>%
-      mutate(
-        dupl =
-          case_when(
-            str_detect(dupl, "[a-z|a-z\\_a-z|a-z|a-z\\_a-z\\_a-z|a-z\\_a-z]{1,}\\-[a-z|a-z\\_a-z]{1,}\\-[a-z|a-z\\_a-z]{1,}\\-[a-z|a-z\\_a-z]{1,}\\-[a-z|a-z\\_a-z]{1,}") ~ "5+ fields",
-            str_detect(dupl, "[a-z|a-z\\_a-z]{1,}\\-[a-z|a-z\\_a-z]{1,}\\-[a-z|a-z\\_a-z]{1,}\\-[a-z|a-z\\_a-z]{1,}") ~ "4 fields",
-            str_detect(dupl, "[a-z|a-z\\_a-z]{1,}\\-[a-z|a-z\\_a-z]{1,}\\-[a-z|a-z\\_a-z]{1,}") ~ "3 fields",
-            str_detect(dupl, "[a-z|a-z\\_a-z]{1,}\\-[a-z|a-z\\_a-z]{1,}") ~ "2 fields",
-            TRUE ~ dupl)
-      ) %>%
-      ggplot(aes(x = dupl)) +
-      geom_bar(stat = "count") +
-      geom_text(
-        aes(
-          x = dupl,
-          label = stat(count),
-          angle = 90),
-        stat = "count",
-        vjust = 0.2,
-        hjust = -0.2) +
-      labs(
-        x = "Inconsistent field(s) for duplicated hunters",
-        y = "Count",
-        title = "Types of duplicates") +
-      scale_y_continuous(expand = expansion(mult = c(-0, 0.2))) +
-      theme_classic() +
-      theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
+    if(nrow(dupl_tibble) == 0){
+      dupl_summary <-
+        suppressMessages(
+          dupl_tibble %>%
+            group_by(dupl) %>%
+            summarize(count = n()) %>%
+            ungroup())
 
-    dupl_summary <-
-      suppressMessages(
+      message(
+        paste(
+          "There are", duplicate_individuals,
+          "registrations with duplicates;", duplicate_total,
+          "total duplicated records.", sep = " ")
+      )
+
+      return(dupl_summary)
+    }
+
+    else{
+
+      dupl_plot <-
         dupl_tibble %>%
-          group_by(dupl) %>%
-          summarize(count = n()) %>%
-          ungroup())
+        mutate(
+          dupl =
+            case_when(
+              str_detect(dupl, "[a-z|a-z\\_a-z|a-z|a-z\\_a-z\\_a-z|a-z\\_a-z]{1,}\\-[a-z|a-z\\_a-z]{1,}\\-[a-z|a-z\\_a-z]{1,}\\-[a-z|a-z\\_a-z]{1,}\\-[a-z|a-z\\_a-z]{1,}") ~ "5+ fields",
+              str_detect(dupl, "[a-z|a-z\\_a-z]{1,}\\-[a-z|a-z\\_a-z]{1,}\\-[a-z|a-z\\_a-z]{1,}\\-[a-z|a-z\\_a-z]{1,}") ~ "4 fields",
+              str_detect(dupl, "[a-z|a-z\\_a-z]{1,}\\-[a-z|a-z\\_a-z]{1,}\\-[a-z|a-z\\_a-z]{1,}") ~ "3 fields",
+              str_detect(dupl, "[a-z|a-z\\_a-z]{1,}\\-[a-z|a-z\\_a-z]{1,}") ~ "2 fields",
+              TRUE ~ dupl)
+        ) %>%
+        ggplot(aes(x = dupl)) +
+        geom_bar(stat = "count") +
+        geom_text(
+          aes(
+            x = dupl,
+            label = stat(count),
+            angle = 90),
+          stat = "count",
+          vjust = 0.2,
+          hjust = -0.2) +
+        labs(
+          x = "Inconsistent field(s) for duplicated hunters",
+          y = "Count",
+          title = "Types of duplicates") +
+        scale_y_continuous(expand = expansion(mult = c(-0, 0.2))) +
+        theme_classic() +
+        theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
 
-    message(
-      paste(
-        "There are", duplicate_individuals,
-        "registrations with duplicates;", duplicate_total,
-        "total duplicated records.", sep = " ")
-    )
+      dupl_summary <-
+        suppressMessages(
+          dupl_tibble %>%
+            group_by(dupl) %>%
+            summarize(count = n()) %>%
+            ungroup())
 
-    print(dupl_plot)
+      message(
+        paste(
+          "There are", duplicate_individuals,
+          "registrations with duplicates;", duplicate_total,
+          "total duplicated records.", sep = " ")
+      )
 
-    return(dupl_summary)
+      print(dupl_plot)
+
+      return(dupl_summary)
+    }
 
   }
