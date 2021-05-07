@@ -702,7 +702,7 @@ writeReport(
   type = "season_report",
   yr = 2019,
   dir = "H:/r_projects/hip_data/script",
-  file = "gadget")
+  file = "season_report_2019")
 ```
 
 ### hunterSample

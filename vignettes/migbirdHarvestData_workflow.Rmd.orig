@@ -87,7 +87,7 @@ Did you get a warning or three? Read an explanation of common `read_hip` warning
 
 After data are imported, we `clean`:
 
-```{r, tidy}
+```{r, clean}
 DL1202_clean <- clean(DL1202)
 ```
 
@@ -426,7 +426,7 @@ writeReport(
   type = "season_report",
   yr = 2019,
   dir = "H:/r_projects/hip_data/script",
-  file = "gadget")
+  file = "season_report_2019")
 
 ```
 
