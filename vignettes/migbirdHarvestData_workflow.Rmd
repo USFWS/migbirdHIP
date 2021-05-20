@@ -190,7 +190,7 @@ strataCheck(DL1202_fixed)
 
 The `validate` function looks for repeated values in two dimensions, both horizontally and vertically.
 
-<b>Horizontally.</b> The horizontal check for repetition looks across records and finds any rows with same value in each species group column. Details in the output tibble include: the repeated value (h_value), number of records with repeats (h_rep), total number of records (h_total), and proportion of repeated values per file (prop_repeat).
+<b>Horizontally.</b> The horizontal check for repetition looks across records and finds any rows with same value in each species group column. Details in the output tibble include: the repeated value (h_value), number of records with repeats (h_rep), total number of records (h_total), and proportion of repeated values per file (prop_repeat). The default version of this function (`all = FALSE`) only checks ducks, geese, dove, and woodcock bags. If the parameter is set to `all = TRUE`, every species group will be checked.
 
 
 ```r
@@ -198,18 +198,23 @@ validate(DL1202_fixed, type = "horizontal")
 ```
 
 ```
-## # A tibble: 6 x 5
-##   source_file    h_value h_rep h_total prop_repeat
-##   <chr>          <chr>   <int>   <int>       <dbl>
-## 1 wi20201216.txt 1         441     546       0.808
-## 2 CT20201216.txt 1          68     110       0.618
-## 3 NY20201216.txt 1         538     955       0.563
-## 4 NE20201209.txt 1         289     547       0.528
-## 5 LA20201216.txt 1        1530    3252       0.470
-## 6 AR20201216.txt 1        3089    6567       0.470
+## # A tibble: 47 x 5
+##    source_file    h_value h_rep h_total prop_repeat
+##    <chr>          <chr>   <int>   <int>       <dbl>
+##  1 wi20201216.txt 1         465     546       0.852
+##  2 AL20201216.txt 1        5755    7025       0.819
+##  3 MI20201216.txt 1         340     416       0.817
+##  4 SC20201202.txt 1        6301    7824       0.805
+##  5 MS20201215.txt 1        6704    8919       0.752
+##  6 MO20201216.txt 1        2954    4047       0.730
+##  7 RI20201216.txt 1         101     155       0.652
+##  8 CT20201216.txt 1          69     110       0.627
+##  9 OH20201216.txt 1         629    1057       0.595
+## 10 MN20201216.txt 1         731    1277       0.572
+## # ... with 37 more rows
 ```
 
-<b>Vertically.</b> The vertical check searches within each column for repetition. Any species group column with the same value in all rows will be detected. *Coming soon:* States that do not have a hunting season for one or more species groups (e.g. seaducks) will not be returned using this function for reporting all zero values.
+<b>Vertically.</b> The vertical check searches within each column for repetition. Any species group column with the same value in all rows will be detected. *Coming soon:* States that do not have a hunting season for one or more species groups (e.g. seaducks) will not be returned using this function for reporting all zero values. The default version of this function (`all = FALSE`) only checks duck bags. If the parameter is set to `all = TRUE`, every species group will be checked.
 
 The two time period options to assess vertical repetition are `period = "dl_date"` (used automatically)...
 
@@ -219,20 +224,7 @@ validate(DL1202_fixed, type = "vertical")
 ```
 
 ```
-## # A tibble: 112 x 4
-##    dl_state dl_date  species_grp        v_repeated
-##    <chr>    <chr>    <chr>                   <int>
-##  1 AK       20201215 dove_bag                  106
-##  2 AK       20201215 woodcock_bag              106
-##  3 AK       20201215 rails_gallinules          106
-##  4 AK       20201215 band_tailed_pigeon        106
-##  5 AL       20201216 cranes                   7025
-##  6 AL       20201216 band_tailed_pigeon       7025
-##  7 AL       20201216 brant                    7025
-##  8 AL       20201216 seaducks                 7025
-##  9 AR       20201216 cranes                   6567
-## 10 AR       20201216 band_tailed_pigeon       6567
-## # ... with 102 more rows
+## Data are good to go! No vertical repetition detected.
 ```
 
 ... and `period = "dl_cycle"`.
@@ -243,20 +235,7 @@ validate(DL1202_fixed, type = "vertical", period = "dl_cycle")
 ```
 
 ```
-## # A tibble: 112 x 4
-##    dl_state dl_cycle species_grp        v_repeated
-##    <chr>    <chr>    <chr>                   <int>
-##  1 AK       1202     dove_bag                  106
-##  2 AK       1202     woodcock_bag              106
-##  3 AK       1202     rails_gallinules          106
-##  4 AK       1202     band_tailed_pigeon        106
-##  5 AL       1202     cranes                   7025
-##  6 AL       1202     band_tailed_pigeon       7025
-##  7 AL       1202     brant                    7025
-##  8 AL       1202     seaducks                 7025
-##  9 AR       1202     cranes                   6567
-## 10 AR       1202     band_tailed_pigeon       6567
-## # ... with 102 more rows
+## Data are good to go! No vertical repetition detected.
 ```
 
 It is not possible to include as much detail in the vertical output as in the horizontal output without being specific about which state, species, and time scale you wish to assess. Vertical repetition returned in the output from this function can be looked at more closely using `investigate`.

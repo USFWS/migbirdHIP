@@ -30,6 +30,7 @@
 #'  \item vertical - Checks for repetition vertically in species and/or bag fields, grouped by dl_state and dl_date
 #'  \item horizontal - Checks for repetition horizontally, across each record
 #'  }
+#' @param all Should all species groups be checked (TRUE)? If set to FALSE (default), then only ducks will be vertically checked and only ducks, geese, doves, and woodcock will be horizontally checked.
 #' @param period Time period in which to group the data. The function uses dl_date automatically, but either of the following may be supplied:
 #'  \itemize{
 #'  \item dl_date - Date the HIP data were downloaded
@@ -42,103 +43,188 @@
 #' @export
 
 validate <-
-  function(x, type, period = NA){
+  function(x, type, all = FALSE, period = NA){
     if(type == "vertical"){
 
       # Vertical validation
 
-      # Without time period specification
-      if(is.na(period)){
-        validated_v <-
-          x %>%
-          # Subset the data
-          select(
-            dl_state,
-            dl_date,
-            matches("bag|coots|rails|cranes|pigeon|brant|seaducks")) %>%
-          group_by(dl_state, dl_date) %>%
-          # Add number of rows per group
-          mutate(dl_rows = n()) %>%
-          # Move dl_rows to 3rd col position
-          relocate(dl_rows, .after = dl_date) %>%
-          ungroup() %>%
-          group_by(dl_state, dl_date, dl_rows) %>%
-          # Count the number of unique values in each species column
-          summarize(across(ducks_bag:seaducks, ~length(unique(.x))), .groups = "keep") %>%
-          pivot_longer(
-            cols = !contains("dl"),
-            names_to = "species_grp",
-            values_to = "v_rep") %>%
-          ungroup() %>%
-          # Keep only the uniform spp groups
-          filter(v_rep == 1) %>%
-          # Report count of times uniform values are repeated
-          mutate(v_repeated = dl_rows) %>%
-          select(-c("dl_rows", "v_rep"))
-      }
+        # Quick check (ducks only)
+        if(all == FALSE){
+          if(is.na(period)){
 
-      # With time period specification: dl_date or dl_cycle
-      else if(period == "dl_date" | period == "dl_cycle"){
-        validated_v <-
-          x %>%
-          # Subset the data
-          select(
-            dl_state,
-            {{period}},
-            matches("bag|coots|rails|cranes|pigeon|brant|seaducks")) %>%
-          group_by(dl_state, !!sym(period)) %>%
-          # Add number of rows per group
-          mutate(dl_rows = n()) %>%
-          # Move dl_rows to 3rd col position
-          relocate(dl_rows, .after = {{period}}) %>%
-          ungroup() %>%
-          group_by(dl_state, !!sym(period), dl_rows) %>%
-          # Count the number of unique values in each species column
-          summarize(across(ducks_bag:seaducks, ~length(unique(.x))), .groups = "keep") %>%
-          pivot_longer(
-            cols = !contains("dl"),
-            names_to = "species_grp",
-            values_to = "v_rep") %>%
-          ungroup() %>%
-          # Keep only the uniform spp groups
-          filter(v_rep == 1) %>%
-          # Report count of times uniform values are repeated
-          mutate(v_repeated = dl_rows) %>%
-          select(-c("dl_rows", "v_rep"))
-      }
+            validated_v <-
+              x %>%
+              # Subset the data
+              select(dl_state, dl_date, ducks_bag) %>%
+              group_by(dl_state, dl_date) %>%
+              # Add number of rows per group
+              mutate(dl_rows = n()) %>%
+              # Move dl_rows to 3rd col position
+              relocate(dl_rows, .after = dl_date) %>%
+              ungroup() %>%
+              group_by(dl_state, dl_date, dl_rows) %>%
+              # Count the number of unique values in each species column
+              summarize(ducks_bag = length(unique(ducks_bag)), .groups = "keep") %>%
+              pivot_longer(
+                cols = !contains("dl"),
+                names_to = "species_grp",
+                values_to = "v_rep") %>%
+              ungroup() %>%
+              # Keep only the uniform spp groups
+              filter(v_rep == 1) %>%
+              # Report count of times uniform values are repeated
+              mutate(v_repeated = dl_rows) %>%
+              select(-c("dl_rows", "v_rep"))
+          }
 
-      # Return for uniformity detected
-      if(nrow(validated_v) != 0) {
-       return(validated_v)
+          # With time period specification: dl_date or dl_cycle
+          else if(period == "dl_date" | period == "dl_cycle"){
+            validated_v <-
+              x %>%
+              # Subset the data
+              select(dl_state, {{period}}, ducks_bag) %>%
+              group_by(dl_state, !!sym(period)) %>%
+              # Add number of rows per group
+              mutate(dl_rows = n()) %>%
+              # Move dl_rows to 3rd col position
+              relocate(dl_rows, .after = {{period}}) %>%
+              ungroup() %>%
+              group_by(dl_state, !!sym(period), dl_rows) %>%
+              # Count the number of unique values in each species column
+              summarize(ducks_bag = length(unique(ducks_bag)), .groups = "keep") %>%
+              pivot_longer(
+                cols = !contains("dl"),
+                names_to = "species_grp",
+                values_to = "v_rep") %>%
+              ungroup() %>%
+              # Keep only the uniform spp groups
+              filter(v_rep == 1) %>%
+              # Report count of times uniform values are repeated
+              mutate(v_repeated = dl_rows) %>%
+              select(-c("dl_rows", "v_rep"))
+          }
+        }
+
+        # Thorough check (all species)
+        else{
+
+          # Without time period specification
+          if(is.na(period)){
+
+            validated_v <-
+              x %>%
+              # Subset the data
+              select(
+                dl_state,
+                dl_date,
+                matches("bag|coots|rails|cranes|pigeon|brant|seaducks")) %>%
+              group_by(dl_state, dl_date) %>%
+              # Add number of rows per group
+              mutate(dl_rows = n()) %>%
+              # Move dl_rows to 3rd col position
+              relocate(dl_rows, .after = dl_date) %>%
+              ungroup() %>%
+              group_by(dl_state, dl_date, dl_rows) %>%
+              # Count the number of unique values in each species column
+              summarize(across(ducks_bag:seaducks, ~length(unique(.x))), .groups = "keep") %>%
+              pivot_longer(
+                cols = !contains("dl"),
+                names_to = "species_grp",
+                values_to = "v_rep") %>%
+              ungroup() %>%
+              # Keep only the uniform spp groups
+              filter(v_rep == 1) %>%
+              # Report count of times uniform values are repeated
+              mutate(v_repeated = dl_rows) %>%
+              select(-c("dl_rows", "v_rep"))
+          }
+
+          # With time period specification: dl_date or dl_cycle
+          else if(period == "dl_date" | period == "dl_cycle"){
+            validated_v <-
+              x %>%
+              # Subset the data
+              select(
+                dl_state,
+                {{period}},
+                matches("bag|coots|rails|cranes|pigeon|brant|seaducks")) %>%
+              group_by(dl_state, !!sym(period)) %>%
+              # Add number of rows per group
+              mutate(dl_rows = n()) %>%
+              # Move dl_rows to 3rd col position
+              relocate(dl_rows, .after = {{period}}) %>%
+              ungroup() %>%
+              group_by(dl_state, !!sym(period), dl_rows) %>%
+              # Count the number of unique values in each species column
+              summarize(across(ducks_bag:seaducks, ~length(unique(.x))), .groups = "keep") %>%
+              pivot_longer(
+                cols = !contains("dl"),
+                names_to = "species_grp",
+                values_to = "v_rep") %>%
+              ungroup() %>%
+              # Keep only the uniform spp groups
+              filter(v_rep == 1) %>%
+              # Report count of times uniform values are repeated
+              mutate(v_repeated = dl_rows) %>%
+              select(-c("dl_rows", "v_rep"))
+          }
+        }
+
+        # Return for uniformity detected
+        if(nrow(validated_v) != 0) {
+         return(validated_v)
+        }
+        # Return for no uniformities
+        else{
+          message("Data are good to go! No vertical repetition detected.")
+        }
       }
-      # Return for no uniformities
-      else{
-        message("Data are good to go! No vertical repetition detected.")
-      }
-    }
 
     else if(type == "horizontal"){
 
       # Horizontal validation
 
-      h_test <-
-        x %>%
-        # Subset the data
-        select(
-          source_file,
-          matches("bag|coots|rails|cranes|pigeon|brant|seaducks")) %>%
-        group_by(source_file) %>%
-        # Paste all of the species group values together
-        unite(h_string, !contains("source"), sep = "-") %>%
-        ungroup() %>%
-        mutate(
-          # Subset the first value from each horizontal bag string, useful later if
-          # the values are repeated
-          h_first = str_sub(h_string, 0, 1),
-          # Convert string to vector
-          h_string = str_split(h_string, "-"),
-          # Create unique row key
-          rowkey = row_number())
+      # Quick check (duck, goose, dove, and woodcock check only)
+      if(all == FALSE){
+        h_test <-
+          x %>%
+          # Subset the data
+          select(source_file, ducks_bag, geese_bag, dove_bag, woodcock_bag) %>%
+          group_by(source_file) %>%
+          # Paste all of the species group values together
+          unite(h_string, !contains("source"), sep = "-") %>%
+          ungroup() %>%
+          mutate(
+            # Subset the first value from each horizontal bag string, useful later if
+            # the values are repeated
+            h_first = str_sub(h_string, 0, 1),
+            # Convert string to vector
+            h_string = str_split(h_string, "-"),
+            # Create unique row key
+            rowkey = row_number())
+      }
+
+      # Thorough check (all spp)
+      else{
+        h_test <-
+          x %>%
+          # Subset the data
+          select(
+            source_file,
+            matches("bag|coots|rails|cranes|pigeon|brant|seaducks")) %>%
+          group_by(source_file) %>%
+          # Paste all of the species group values together
+          unite(h_string, !contains("source"), sep = "-") %>%
+          ungroup() %>%
+          mutate(
+            # Subset the first value from each horizontal bag string, useful later if
+            # the values are repeated
+            h_first = str_sub(h_string, 0, 1),
+            # Convert string to vector
+            h_string = str_split(h_string, "-"),
+            # Create unique row key
+            rowkey = row_number())
+      }
 
       validated_h <-
         h_test %>%
