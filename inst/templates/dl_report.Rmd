@@ -16,6 +16,7 @@ params:
 
 ```{r libs, include = FALSE}
 library(tidyverse)
+library(DT)
 ```
 
 ```{r import, include = FALSE}
@@ -68,13 +69,13 @@ strataCheck(fxd)
 ### Horizontal
 
 ```{r h_validate, echo = FALSE}
-validate(fxd, type = "horizontal")
+DT::datatable(validate(fxd, type = "horizontal"))
 ```
 
 ### Vertical
 
 ```{r v_validate, echo = FALSE}
-validate(fxd, type = "vertical")
+DT::datatable(validate(fxd, type = "vertical"))
 ```
 
 ```{r data_sweep, include = FALSE}

@@ -11,7 +11,8 @@ Imports:
     tibble,
     ggplot2,
     lifecycle,
-    rmarkdown
+    rmarkdown,
+    DT
 Suggests:
     knitr
 VignetteBuilder: knitr
