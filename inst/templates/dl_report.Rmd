@@ -115,18 +115,6 @@ errorPlot_states(proofed_data)
 errorPlot_states(corrected_data)
 ```
 
-## Out-of-state hunters
-
-```{r oosh_c, echo = FALSE}
-outOfStateHunters(corrected_data)
-```
-
-## Youth hunters
-
-```{r yh, echo = FALSE}
-youthHunters(proofed_data, year = params$year)
-```
-
 # Error Exploration
 
 Let's take a closer look at common errors and issues within this download's HIP data.
