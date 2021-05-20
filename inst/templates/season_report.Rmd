@@ -145,54 +145,6 @@ youthHunters(proofed_data, year = params$year)
 
 Let's take a closer look at common errors and issues within this season's HIP data.
 
-## High error counts
-
-Q: What were the most common errors, and what values caused them?
-
-Tibble of most common errors...
-
-```{r et, echo = FALSE}
-et <- errorTable(proofed_data, loc = "none") %>% arrange(desc(error_count))
-
-et
-```
-
-Values associated with error in `r et$error[1]`
-
-```{r pe_1, echo = FALSE}
-err1 <- pullErrors(proofed_data, error = et$error[1])
-
-if(length(err1) > 20){
-  err1[1:20]
-  } else {
-  err1
-    }
-```
-
-Values associated with error in `r et$error[2]`
-
-```{r pe_2, echo = FALSE}
-err2 <- pullErrors(proofed_data, error = et$error[2])
-
-if(length(err2) > 20){
-  err2[1:20]
-  } else {
-  err2
-    }
-```
-
-Values associated with error in `r et$error[3]`
-
-```{r pe_3, echo = FALSE}
-err3 <- pullErrors(proofed_data, error = et$error[3])
-
-if(length(err3) > 20){
-  err3[1:20]
-  } else {
-  err3
-    } 
-```
-
 ## High error proportions
 
 Q: What states and fields had a proportion of error that exceeded an acceptable threshold (before correction)?
