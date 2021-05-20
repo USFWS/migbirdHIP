@@ -4,7 +4,7 @@
 \alias{read_hip}
 \title{Read in data}
 \usage{
-read_hip(path, season = FALSE)
+read_hip(path, state = NA, season = FALSE)
 }
 \arguments{
 \item{path}{File path to the folder containing HIP .txt files}

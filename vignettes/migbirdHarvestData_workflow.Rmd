@@ -70,7 +70,7 @@ The flowchart below is a visual guide to the order in which functions are used. 
 
 ### read_hip
 
-The first step is to import .txt files containing HIP data. To do this, we use the `read_hip` function.
+The first step is to import .txt files containing HIP data. To do this, we use the `read_hip` function. This function allows data to be read in for just a specific state or for an entire season (parameters "state" and "season", respectively). We will use the default settings to read in all of the states from download 1202.
 
 
 ```r
