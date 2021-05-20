@@ -1,6 +1,12 @@
 #' Fix duplicates
 #'
-#' Consolidate duplicate records that stem from HIP data and special permit information into one row. If other duplicates exist not due to this specific reason, delete the records from the data.
+#' Consolidate duplicate records that stem from HIP data and special permit
+#' information being stored in separate rows. If other duplicates exist not due
+#' to this specific reason, move the records to a separate table. Records in the
+#' consolidated table will indicate they are combined HIP/Permit records (value
+#' "hip-permit") in a new column labeled "record_type". All other original
+#' non-duplicated records will be indicated in the "record_type" field as being
+#' HIP only (value "hip").
 #'
 #' @importFrom dplyr %>%
 #' @importFrom dplyr group_by
@@ -94,9 +100,12 @@ fixDuplicates <-
       group_by(duplicate) %>%
       filter(n() > 2) %>%
       mutate(n_grp = n()) %>%
-      ungroup()
+      ungroup() %>%
+      mutate(record_type = "unsolved") %>%
+      # Unselect the sum cols, which we no longer need
+      select(-c("special_sum", "other_sum"))
 
-    # Work with the true duplicates (2 records per group)
+    # Work with the true HIP/Permit duplicates (2 records per group)
     dup_2record <-
       state_dupes %>%
       # Make sure duplicates still have 2 per group after the previous
@@ -156,20 +165,26 @@ fixDuplicates <-
     # Remove duplicates and add in the consolidated records
     fixed_x <-
       x %>%
+      # Add a field indicating these are original records
+      mutate(record_type = "hip") %>%
       filter(!record_key %in% duplicates$record_key) %>%
       # Bind in recovered 1-record "duplicates"
       bind_rows(
         dup_1record %>%
           mutate_at(
             vars(matches("bag|coots|rails|cranes|pigeon|brant|seaducks")),
-            as.character)
-      ) %>%
+            as.character) %>%
+          mutate(record_type = "hip")) %>%
       # Bind in fixed 2-record duplicates
       bind_rows(
         dup_2record %>%
           mutate_at(
             vars(matches("bag|coots|rails|cranes|pigeon|brant|seaducks")),
-            as.character))
+            as.character) %>%
+          # Add a field indicating these are consolidated records now
+          mutate(record_type = "hip-permit")) %>%
+      # Unselect the sum cols, which we no longer need
+      select(-c("special_sum", "other_sum"))
 
     # Return a list:
     # 1. the de-duplicated data

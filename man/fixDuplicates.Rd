@@ -10,7 +10,13 @@ fixDuplicates(x)
 \item{x}{A cleaned data table created by \code{\link{clean}}}
 }
 \description{
-Consolidate duplicate records that stem from HIP data and special permit information into one row. If other duplicates exist not due to this specific reason, delete the records from the data.
+Consolidate duplicate records that stem from HIP data and special permit
+information being stored in separate rows. If other duplicates exist not due
+to this specific reason, move the records to a separate table. Records in the
+consolidated table will indicate they are combined HIP/Permit records (value
+"hip-permit") in a new column labeled "record_type". All other original
+non-duplicated records will be indicated in the "record_type" field as being
+HIP only (value "hip").
 }
 \references{
 \url{https://github.com/USFWS/migbirdHarvestData}
