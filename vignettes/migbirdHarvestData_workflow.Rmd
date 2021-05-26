@@ -14,32 +14,31 @@ vignette: >
 - [Introduction](#introduction)
     - [Installation](#installation)
     - [Functions overview](#functions-overview)
-- [Stage 1: Import Data](#stage-1-import-data)
+- [Part A: Data Import and Cleaning](#part-a-data-import-and-cleaning)
     - [read_hip](#read_hip)
-- [Stage 2: Clean Data](#stage-2-clean-data)
     - [clean](#clean)
     - [findDuplicates](#findduplicates)
     - [fixDuplicates](#fixduplicates)
     - [strataCheck](#stratacheck)
     - [validate](#validate)
     - [investigate](#investigate)
-- [Stage 3: Explore Errors](#stage-3-explore-errors)
+- [Part B: Data Proofing and Correction](#part-b-data-proofing-and-correction)
     - [proof](#proof)
-    - [errorTable](#errortable)
-    - [pullErrors](#pullerrors)
-    - [redFlags](#redflags)
-- [Stage 4: Visualize Data](#stage-4-visualize-data)
-    - [errorPlot_fields](#errorplot_fields)
-    - [errorPlot_states](#errorplot_states)
-    - [outOfStateHunters](#outofstatehunters)
-    - [youthHunters](#youthhunters)
-    - [errorPlot_dl](#errorplot_dl)
-- [Stage 5: Correct Data](#stage-5-correct-data)
     - [correct](#correct)
+    - [pullErrors](#pullerrors)
     - [manualFix](#manualfix)
-- [Stage 6: Write and Sample](#stage-6-write-and-sample)
     - [writeReport](#writereport)
-    - [hunterSample](#huntersample)
+- [Part C: Data Visualization and Tabulation](#part-c-data-visualization-and-tabulation)
+    - Visualization
+        - [outOfStateHunters](#outofstatehunters)
+        - [youthHunters](#youthhunters)
+        - [errorPlot_fields](#errorplot_fields)
+        - [errorPlot_states](#errorplot_states)
+        - [errorPlot_dl](#errorplot_dl)
+    - Tabulation
+        - [errorTable](#errortable)
+        - [redFlags](#redflags)
+        - [hunterSample](#huntersample)
 - [Troubleshooting](#troubleshooting)
     - [Common read_hip warnings](#common-read_hip-warnings)
     - [Memory problems](#memory-problems)
@@ -66,7 +65,7 @@ The flowchart below is a visual guide to the order in which functions are used. 
 
 <img src="image/migbirdHarvestData_flowchart.svg" title="Overview of migbirdHarvestData functions in a flowchart format." alt="Overview of migbirdHarvestData functions in a flowchart format." width="100%" style="display: block; margin: auto;" />
 
-## Stage 1: Import Data
+## Part A: Data Import and Cleaning
 
 ### read_hip
 
@@ -80,8 +79,6 @@ DL1202 <- read_hip("C:/HIP/DL1202")
 ```
 
 Did you get a warning or three? Read an explanation of common `read_hip` warnings, [below](#common-read_hip-warnings).
-
-## Stage 2: Clean Data
 
 ### clean
 
@@ -263,7 +260,7 @@ investigate(
 ## 1 0        AK20201215.txt
 ```
 
-## Stage 3: Explore Errors
+## Part B: Data Proofing and Correction
 
 ### proof
 
@@ -277,6 +274,231 @@ DL1202_proofed <- proof(DL1202_fixed, year = 2020)
 Data that are considered irregular are flagged in a new column called "errors". No actual corrections take place in this step; all data remain identical except for the new "errors" column. For each field, values are compared to standard expected formats and if they do not conform, the field name is pasted as a string in the "errors" column. Each row can have from zero errors (NA) to all column names listed. Multiple flags are hyphen delimited.
 
 The year of the Harvest Information Program must be supplied as a parameter. This aids in checking dates when licenses were issued, as one example.
+
+### correct
+
+After the download data are proofed, the next step is to fix the data to the best of our ability. Data can be corrected by running the `correct` function on the proofed tibble.
+
+
+```r
+DL1202_corrected <- correct(DL1202_proofed, year = 2020)
+```
+
+The following changes are made by the `correct` function:
+
+* *Title* is changed to NA if it does not equal 1 or 2
+* *First name* is not changed, but remains flagged as an error if it breaks a following rule:
+    * Not > 1 letter
+    * Contains a first initial and middle name
+    * Contains a first name and middle initial
+    * Contains non-alpha characters other than space or hyphen
+    * No full names (detected with 2+ spaces)
+    * Is not "BLANK", "INAUDIBLE", "TEST", "USER", or "RESIDENT"
+* *Middle initial* is not changed, but remains flagged if it is not exactly 1 letter
+* *Last name* is not changed, but remains flagged as an error if it breaks a following rule:
+    * Not > 1 letter
+    * Contains a non-alpha character other than space, period, hyphen, or apostrophe
+    * No full names (Detected with 2+ spaces)
+    * Is not "INAUDIBLE"
+* *Suffix* is changed to NA if it is not equal to:
+    * JR or SR
+    * A value from I to VII in Roman numerals
+    * An value from 1ST to 9TH
+* *Address* is not changed, but remains flagged if it contains a |, tab, or non-UTF8 character
+* *City* is not changed, but remains flagged if it contains any non-alpha character
+* *State* is not changed, but remains flagged if it is not contained in the following list of abbreviations for US and Canada states, provinces, and territories:
+    * AL, AK, AZ, AR, CA, CO, CT, DE, DC, FL, GA, HI, ID, IL, IN, IA, KS, KY, LA, ME, MD, MA, MI, MN, MS, MO, MT, NE, NV, NH, NJ, NM, NY, NC, ND, OH, OK, OR, PA, RI, SC, SD, TN, TX, UT, VT, VA, WA, WV, WI, WY, AS, GU, MP, PR, VI, UM, FM, MH, PW, AA, AE, AP, CM, CZ, NB, PI, TT, ON, QC, NS, NB, MB, BC, PE, SK, AB, NL
+* *Zip* is corrected by:
+    * Inserting a hyphen into continuous 9-digit zip codes
+    * Replacing a central space with a hyphen
+    * Deleting trailing -0000 and -____
+    * Checking corrected zip codes against a master list of USA postal codes; if the hunter's address doesn't have a zip that should be in their state, it's flagged
+    * Foreign zip codes are flagged
+    * Zip codes that do not match a 5-digit or 9-digit hyphenated format are flagged
+* *Birth date* is not changed, but remains flagged if the birth year was > 100 or < 16 years ago
+* *Issue date* is not changed, but remains flagged if it is not equal to or +/- 1 year from the HIP data collection year
+* *Hunt migratory birds* is not changed, and remains flagged if it is not equal to 1 or 2
+* *Bag values*
+    * State strata that do not meet expected values are compared to a master list and corrected to standard FWS strata
+    * Any stratum that can't be converted is changed to NA
+* *Registration year* is not changed, but remains flagged if it is not equal to or +/- 1 year from the HIP data collection year
+* *Email* is corrected by:
+    * Removing spaces, commas, and/or forward slash symbols
+    * Changing to lowercase
+    * Replacing multiple @ symbols with a single @
+    * Adding periods and three-letter endings to common domains, including:
+        * gmail -> gmail.com
+        * yahoo -> yahoo.com
+        * aol -> aol.com
+        * comcast -> comcast.net
+        * verizon -> verizon.net
+        * cox -> cox.net
+        * outlook -> outlook.com
+        * hotmail -> hotmail.com
+    * Replace .ccom with .com
+    * Add missing periods before net, com, edu, and gov
+    * Change email to NA if:
+        * There is no @ symbol in the email string
+        * If the email is invalid (i.e. none<!-- breaklink -->@none, noemail, n/a)
+    * Any email that wasn't corrected and doesn't fit the standardized email regex remains flagged
+
+The year of the Harvest Information Program must be supplied as a parameter. Since the "errors" column is re-created using `correct`, supplying the year is necessary for the same reasons it is required by `proof`.
+
+All functions in [Part C](#part-c-data-visualization-and-tabulation) will run on the corrected tibble, `DL1202_corrected`, just as they worked on the example tibble `DL1202_proofed`. Errors can be compared between the proofed stage and corrected stage to get a better idea of which errors were serious (i.e. difficult to correct automatically) and determine how serious errors can be prevented in the future.
+
+### pullErrors
+
+The `pullErrors` function can be used to view all of the actual values that were flagged as errors in a particular field. In this example, we find that the "dove_bag" field contains entries of "4" and "9", when the only values permissible are 0, 1, 2, 3, and 5.
+
+
+```r
+pullErrors(DL1202_proofed, error = "dove_bag")
+```
+
+```
+## [1] "4" "9"
+```
+
+### manualFix
+
+The automated `correct` function cannot always catch and fix every error. To finish the job, `manualFix` function replaces specified inaccurate values with the values you want. It is not recommended that this function only be used after correcting the data; it's best used on a case-by-case basis. In the instance of frame shifts, for example, it would be wise to use after `clean`. Or if problems are only identified after `proof`, you can run `manualFix` on the cleaned data and re-run `proof`. This function is highly flexible and recommended to be used as needed.
+
+
+```r
+manualFix(DL1202_corrected, field = "state", error_value = "GS", correct_value = "GA")
+```
+
+### writeReport
+
+The `writeReport` function can be used to automatically generate an R markdown document with figures, tables, and summary statistics. This can be done at the end of a download cycle (using `type = "dl_report"`) or the entire HIP season (with `type = "season_report"`). You should expect this function to run for ~1 minute for a download cycle, or ~30 minutes for a total season (containing approximately 4 million records). Writing a total season report is a memory intensive process, so for this option, we recommend [increasing your memory](#memory-problems) allocated to R.
+
+
+```r
+# Windows only
+memory.limit(size = 55000)
+
+writeReport(
+  path = "C:/HIP/all_2019",
+  type = "season_report",
+  yr = 2019,
+  dir = "H:/r_projects/hip_data/script",
+  file = "season_report_2019")
+```
+
+## Part C: Data Visualization and Tabulation
+
+### outOfStateHunters
+
+The `outOfStateHunters` function plots and tabulates how many hunters registered in a download state that does not match the state, province, or territory of their address. This function plots proportion of out-of-staters with counts as bar labels. The tibble contains counts and proportions by state.
+
+
+```r
+outOfStateHunters(DL1202_proofed)
+```
+
+<img src="figure/outofstate-1.png" title="Figure 6. Plot of proportions of out-of-state hunters." alt="Figure 6. Plot of proportions of out-of-state hunters." width="500" style="display: block; margin: auto;" />
+
+```
+## # A tibble: 30 x 3
+##    dl_state n_total outofstate_prop
+##    <chr>      <int>           <dbl>
+##  1 AK           106            0.41
+##  2 AL          7025            0.15
+##  3 AR          6567            0.65
+##  4 CA          3998            0.06
+##  5 CO          1747            0.09
+##  6 CT           110            0.1 
+##  7 FL          3649            0.09
+##  8 GA          3584            0.12
+##  9 IA          3234            0.05
+## 10 ID          1865            0.22
+## # ... with 20 more rows
+```
+
+### youthHunters
+
+The `youthHunters` function returns a table and plot of the number of hunters with birth dates < 16 years from the year of HIP data collection. These data are interesting to explore because hunters younger than 16 years of age are not required to have a migratory bird hunting license in the United States.
+
+
+```r
+youthHunters(DL1202_proofed, year = 2020)
+```
+
+<img src="figure/youth-1.png" title="Figure 7. Plot of proportions of youth hunters." alt="Figure 7. Plot of proportions of youth hunters." width="500" style="display: block; margin: auto;" />
+
+```
+## # A tibble: 3 x 4
+##   dl_state registered_youth total_registered youth_proportion
+##   <chr>               <int>            <int>            <dbl>
+## 1 MO                      1             4047         0.000247
+## 2 ND                    117              175         0.669   
+## 3 NE                      1              547         0.00183
+```
+
+### errorPlot_fields
+
+The `errorPlot_fields` function can be run on all states...
+
+
+```r
+errorPlot_fields(DL1202_proofed, loc = "all")
+```
+
+<img src="figure/errorfieldsplotall-1.png" title="Figure 2. Plot of all location's errors by field name." alt="Figure 2. Plot of all location's errors by field name." width="500" style="display: block; margin: auto;" />
+
+... or it can be limited to just one.
+
+
+```r
+errorPlot_fields(DL1202_proofed, loc = "LA")
+```
+
+<img src="figure/errorfieldsplotsc-1.png" title="Figure 3. Plot of all North Carolina's errors by field name." alt="Figure 3. Plot of all North Carolina's errors by field name." width="500" style="display: block; margin: auto;" />
+
+The year in which the HIP data were collected can also be specified in `errorPlot_fields` to visualize the proportion of "errors" created by youth hunters, since these values fall outside the expected parameters of the `proof` function. It is encouraged to use `specify` when error counts are high to increase transparency by revealing which errors are attributable to a specific cause. This feature should also help maintain confidence in the integrity of the data.
+
+
+```r
+errorPlot_fields(DL1202_proofed, specify = 2020)
+```
+
+<img src="figure/errorfieldsplotyouth-1.png" title="Figure 4. Plot of all location's errors by field name, with stacked colors to indicate if there are youth hunters or Canadian zip codes in the data, two common causes of error." alt="Figure 4. Plot of all location's errors by field name, with stacked colors to indicate if there are youth hunters or Canadian zip codes in the data, two common causes of error." width="500" style="display: block; margin: auto;" />
+
+It is possible to add any `ggplot2` components to these plots. For season total data specifically, the plot can be facet_wrapped using either dl_cycle or dl_date. The example below demonstrates how this package's functions can interact with the tidyverse and shows an example of an `errorPlot_fields` facet_wrap (using a subset of 4 download cycles)
+
+
+```r
+errorPlot_fields(
+  hipdata2020 %>%
+    filter(str_detect(dl_cycle, "0800|0901|0902|1001")),
+  specify = 2020) +
+  theme(
+    axis.text.x = element_text(angle = 90, vjust = 0, hjust = 1),
+    legend.position = "bottom") +
+  facet_wrap(~dl_cycle, ncol = 2)
+```
+
+### errorPlot_states
+
+The `errorPlot_states` function plots error proportions per state. You may optionally set a threshold value to only view states above a certain proportion of error. Bar labels are error counts.
+
+
+```r
+errorPlot_states(DL1202_proofed)
+```
+
+<img src="figure/errorplotstates-1.png" title="Figure 5. Plot of proportion of error by state." alt="Figure 5. Plot of proportion of error by state." width="500" style="display: block; margin: auto;" />
+
+### errorPlot_dl
+
+This function should not be used unless you want to visualize an entire season of data. The `errorPlot_dl` function plots proportion of error per download cycle across the year. Location may be specified to see a particular state over time.
+
+
+```r
+errorPlot_dl(hipdata2020, loc = "MI")
+```
+
+<img src="image/errorPlot_dl.png" title="errorPlot_dl example output" alt="errorPlot_dl example output" width="70%" style="display: block; margin: auto;" />
 
 ### errorTable
 
@@ -418,19 +640,6 @@ errorTable(DL1202_proofed, loc = "CA", field = "dove_bag")
 ## 1 CA       dove_bag          53
 ```
 
-### pullErrors
-
-The `pullErrors` function can be used to view all of the actual values that were flagged as errors in a particular field. In this example, we find that the "dove_bag" field contains entries of "4" and "9", when the only values permissible are 0, 1, 2, 3, and 5.
-
-
-```r
-pullErrors(DL1202_proofed, error = "dove_bag")
-```
-
-```
-## [1] "4" "9"
-```
-
 ### redFlags
 
 <b>By state.</b>
@@ -465,223 +674,6 @@ redFlags(DL1202_proofed, type = "field", threshold = 0.01)
 ## 2 email              5489         87538     0.0590 error > 0.01
 ## 3 ducks_bag          3113         89914     0.0335 error > 0.01
 ## 4 zip                2132         90895     0.0229 error > 0.01
-```
-
-## Stage 4: Visualize Data
-
-### errorPlot_fields
-
-The `errorPlot_fields` function can be run on all states...
-
-
-```r
-errorPlot_fields(DL1202_proofed, loc = "all")
-```
-
-<img src="figure/errorfieldsplotall-1.png" title="Figure 2. Plot of all location's errors by field name." alt="Figure 2. Plot of all location's errors by field name." width="500" style="display: block; margin: auto;" />
-
-... or it can be limited to just one.
-
-
-```r
-errorPlot_fields(DL1202_proofed, loc = "LA")
-```
-
-<img src="figure/errorfieldsplotsc-1.png" title="Figure 3. Plot of all North Carolina's errors by field name." alt="Figure 3. Plot of all North Carolina's errors by field name." width="500" style="display: block; margin: auto;" />
-
-The year in which the HIP data were collected can also be specified in `errorPlot_fields` to visualize the proportion of "errors" created by youth hunters, since these values fall outside the expected parameters of the `proof` function. It is encouraged to use `specify` when error counts are high to increase transparency by revealing which errors are attributable to a specific cause. This feature should also help maintain confidence in the integrity of the data.
-
-
-```r
-errorPlot_fields(DL1202_proofed, specify = 2020)
-```
-
-<img src="figure/errorfieldsplotyouth-1.png" title="Figure 4. Plot of all location's errors by field name, with stacked colors to indicate if there are youth hunters or Canadian zip codes in the data, two common causes of error." alt="Figure 4. Plot of all location's errors by field name, with stacked colors to indicate if there are youth hunters or Canadian zip codes in the data, two common causes of error." width="500" style="display: block; margin: auto;" />
-
-It is possible to add any `ggplot2` components to these plots. For season total data specifically, the plot can be facet_wrapped using either dl_cycle or dl_date. The example below demonstrates how this package's functions can interact with the tidyverse and shows an example of an `errorPlot_fields` facet_wrap (using a subset of 4 download cycles)
-
-
-```r
-errorPlot_fields(
-  hipdata2020 %>%
-    filter(str_detect(dl_cycle, "0800|0901|0902|1001")),
-  specify = 2020) +
-  theme(
-    axis.text.x = element_text(angle = 90, vjust = 0, hjust = 1),
-    legend.position = "bottom") +
-  facet_wrap(~dl_cycle, ncol = 2)
-```
-
-### errorPlot_states
-
-The `errorPlot_states` function plots error proportions per state. You may optionally set a threshold value to only view states above a certain proportion of error. Bar labels are error counts.
-
-
-```r
-errorPlot_states(DL1202_proofed)
-```
-
-<img src="figure/errorplotstates-1.png" title="Figure 5. Plot of proportion of error by state." alt="Figure 5. Plot of proportion of error by state." width="500" style="display: block; margin: auto;" />
-
-### outOfStateHunters
-
-The `outOfStateHunters` function plots and tabulates how many hunters registered in a download state that does not match the state, province, or territory of their address. This function plots proportion of out-of-staters with counts as bar labels. The tibble contains counts and proportions by state.
-
-
-```r
-outOfStateHunters(DL1202_proofed)
-```
-
-<img src="figure/outofstate-1.png" title="Figure 6. Plot of proportions of out-of-state hunters." alt="Figure 6. Plot of proportions of out-of-state hunters." width="500" style="display: block; margin: auto;" />
-
-```
-## # A tibble: 30 x 3
-##    dl_state n_total outofstate_prop
-##    <chr>      <int>           <dbl>
-##  1 AK           106            0.41
-##  2 AL          7025            0.15
-##  3 AR          6567            0.65
-##  4 CA          3998            0.06
-##  5 CO          1747            0.09
-##  6 CT           110            0.1 
-##  7 FL          3649            0.09
-##  8 GA          3584            0.12
-##  9 IA          3234            0.05
-## 10 ID          1865            0.22
-## # ... with 20 more rows
-```
-
-### youthHunters
-
-The `youthHunters` function returns a table and plot of the number of hunters with birth dates < 16 years from the year of HIP data collection. These data are interesting to explore because hunters younger than 16 years of age are not required to have a migratory bird hunting license in the United States.
-
-
-```r
-youthHunters(DL1202_proofed, year = 2020)
-```
-
-<img src="figure/youth-1.png" title="Figure 7. Plot of proportions of youth hunters." alt="Figure 7. Plot of proportions of youth hunters." width="500" style="display: block; margin: auto;" />
-
-```
-## # A tibble: 3 x 4
-##   dl_state registered_youth total_registered youth_proportion
-##   <chr>               <int>            <int>            <dbl>
-## 1 MO                      1             4047         0.000247
-## 2 ND                    117              175         0.669   
-## 3 NE                      1              547         0.00183
-```
-
-### errorPlot_dl
-
-This function should not be used unless you want to visualize an entire season of data. The `errorPlot_dl` function plots proportion of error per download cycle across the year. Location may be specified to see a particular state over time.
-
-
-```r
-errorPlot_dl(hipdata2020, loc = "MI")
-```
-
-<img src="image/errorPlot_dl.png" title="errorPlot_dl example output" alt="errorPlot_dl example output" width="70%" style="display: block; margin: auto;" />
-
-
-## Stage 5: Correct Data
-
-### correct
-
-After the download data are proofed, the next step is to fix the data to the best of our ability. Data can be corrected by running the `correct` function on the proofed tibble.
-
-
-```r
-DL1202_corrected <- correct(DL1202_proofed, year = 2020)
-```
-
-The following changes are made by the `correct` function:
-
-* *Title* is changed to NA if it does not equal 1 or 2
-* *First name* is not changed, but remains flagged as an error if it breaks a following rule:
-    * Not > 1 letter
-    * Contains a first initial and middle name
-    * Contains a first name and middle initial
-    * Contains non-alpha characters other than space or hyphen
-    * No full names (detected with 2+ spaces)
-    * Is not "BLANK", "INAUDIBLE", "TEST", "USER", or "RESIDENT"
-* *Middle initial* is not changed, but remains flagged if it is not exactly 1 letter
-* *Last name* is not changed, but remains flagged as an error if it breaks a following rule:
-    * Not > 1 letter
-    * Contains a non-alpha character other than space, period, hyphen, or apostrophe
-    * No full names (Detected with 2+ spaces)
-    * Is not "INAUDIBLE"
-* *Suffix* is changed to NA if it is not equal to:
-    * JR or SR
-    * A value from I to VII in Roman numerals
-    * An value from 1ST to 9TH
-* *Address* is not changed, but remains flagged if it contains a |, tab, or non-UTF8 character
-* *City* is not changed, but remains flagged if it contains any non-alpha character
-* *State* is not changed, but remains flagged if it is not contained in the following list of abbreviations for US and Canada states, provinces, and territories:
-    * AL, AK, AZ, AR, CA, CO, CT, DE, DC, FL, GA, HI, ID, IL, IN, IA, KS, KY, LA, ME, MD, MA, MI, MN, MS, MO, MT, NE, NV, NH, NJ, NM, NY, NC, ND, OH, OK, OR, PA, RI, SC, SD, TN, TX, UT, VT, VA, WA, WV, WI, WY, AS, GU, MP, PR, VI, UM, FM, MH, PW, AA, AE, AP, CM, CZ, NB, PI, TT, ON, QC, NS, NB, MB, BC, PE, SK, AB, NL
-* *Zip* is corrected by:
-    * Inserting a hyphen into continuous 9-digit zip codes
-    * Replacing a central space with a hyphen
-    * Deleting trailing -0000 and -____
-    * Checking corrected zip codes against a master list of USA postal codes; if the hunter's address doesn't have a zip that should be in their state, it's flagged
-    * Foreign zip codes are flagged
-    * Zip codes that do not match a 5-digit or 9-digit hyphenated format are flagged
-* *Birth date* is not changed, but remains flagged if the birth year was > 100 or < 16 years ago
-* *Issue date* is not changed, but remains flagged if it is not equal to or +/- 1 year from the HIP data collection year
-* *Hunt migratory birds* is not changed, and remains flagged if it is not equal to 1 or 2
-* *Bag values*
-    * State strata that do not meet expected values are compared to a master list and corrected to standard FWS strata
-    * Any stratum that can't be converted is changed to NA
-* *Registration year* is not changed, but remains flagged if it is not equal to or +/- 1 year from the HIP data collection year
-* *Email* is corrected by:
-    * Removing spaces, commas, and/or forward slash symbols
-    * Changing to lowercase
-    * Replacing multiple @ symbols with a single @
-    * Adding periods and three-letter endings to common domains, including:
-        * gmail -> gmail.com
-        * yahoo -> yahoo.com
-        * aol -> aol.com
-        * comcast -> comcast.net
-        * verizon -> verizon.net
-        * cox -> cox.net
-        * outlook -> outlook.com
-        * hotmail -> hotmail.com
-    * Replace .ccom with .com
-    * Add missing periods before net, com, edu, and gov
-    * Change email to NA if:
-        * There is no @ symbol in the email string
-        * If the email is invalid (i.e. none<!-- breaklink -->@none, noemail, n/a)
-    * Any email that wasn't corrected and doesn't fit the standardized email regex remains flagged
-
-The year of the Harvest Information Program must be supplied as a parameter. Since the "errors" column is re-created using `correct`, supplying the year is necessary for the same reasons it is required by `proof`.
-
-All functions in [Stage 2](#stage-2-visualize-data) and [Stage 3](#stage-3-explore-errors) will run on the corrected tibble, `DL1202_corrected`, just as they worked on the example tibble `DL1202_proofed`. Errors can be compared between the proofed stage and corrected stage to get a better idea of which errors were serious (i.e. difficult to correct automatically) and determine how serious errors can be prevented in the future.
-
-### manualFix
-
-The automated `correct` function cannot always catch and fix every error. To finish the job, `manualFix` function replaces specified inaccurate values with the values you want. It is not recommended that this function only be used after correcting the data; it's best used on a case-by-case basis. In the instance of frame shifts, for example, it would be wise to use after `clean`. Or if problems are only identified after `proof`, you can run `manualFix` on the cleaned data and re-run `proof`. This function is highly flexible and recommended to be used as needed.
-
-
-```r
-manualFix(DL1202_corrected, field = "state", error_value = "GS", correct_value = "GA")
-```
-
-## Stage 6: Write and Sample
-
-### writeReport
-
-The `writeReport` function can be used to automatically generate an R markdown document with figures, tables, and summary statistics. This can be done at the end of a download cycle (using `type = "dl_report"`) or the entire HIP season (with `type = "season_report"`). You should expect this function to run for ~1 minute for a download cycle, or ~30 minutes for a total season (containing approximately 4 million records). Writing a total season report is a memory intensive process, so for this option, we recommend [increasing your memory](#memory-problems) allocated to R.
-
-
-```r
-# Windows only
-memory.limit(size = 55000)
-
-writeReport(
-  path = "C:/HIP/all_2019",
-  type = "season_report",
-  yr = 2019,
-  dir = "H:/r_projects/hip_data/script",
-  file = "season_report_2019")
 ```
 
 ### hunterSample
