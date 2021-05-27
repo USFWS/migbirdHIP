@@ -42,6 +42,18 @@ corrected_data <- correct(proofed_data, year = params$year)
 
 This is a summary report of the `r params$year` Season of Harvest Information Program (HIP) data. This year, `r nrow(proofed_data)` records were submitted from `r proofed_data %>% select(dl_state) %>% distinct %>% nrow()` states.
 
+Below is a summary table with the total of number of records per download state.
+
+```{r sum_per_state, echo = FALSE, message = FALSE}
+
+DT::datatable(cleaned_data %>% 
+                select(dl_state) %>% 
+                group_by(dl_state) %>% 
+                summarize(sum = n()) %>% 
+                ungroup())
+
+```
+
 # Data Checking
 
 ## Duplicates
