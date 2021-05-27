@@ -4,7 +4,7 @@
 \alias{errorPlot_fields}
 \title{Plot HIP errors by field}
 \usage{
-errorPlot_fields(x, loc = "all", specify = NA)
+errorPlot_fields(x, loc = "all", year, youth = FALSE)
 }
 \arguments{
 \item{x}{A proofed data table created by \code{\link{proof}}}
@@ -17,7 +17,9 @@ errorPlot_fields(x, loc = "all", specify = NA)
 \item AL, AK, AZ, AR, CA, CO, CT, DE, DC, FL, GA, HI, ID, IL, IN, IA, KS, KY, LA, ME, MD, MA, MI, MN, MS, MO, MT, NE, NV, NH, NJ, NM, NY, NC, ND, OH, OK, OR, PA, RI, SC, SD, TN, TX, UT, VT, VA, WA, WV, WI, WY, AS, GU, MP, PR, VI, UM, FM, MH, PW, AA, AE, AP, CM, CZ, NB, PI, TT, ON, QC, NS, NB, MB, BC, PE, SK, AB, NL}
 }}
 
-\item{specify}{Optional. The year in which the HIP data were collected must be supplied to activate this feature. This parameter breaks down \emph{birth_date} errors into color-coded categories to display youth hunters (< 16 years of age) and non-youth hunters that have another issue causing an error in \emph{birth_date}.}
+\item{year}{The year in which the HIP data were collected.}
+
+\item{youth}{Optional. If set to TRUE, will plot youth hunters in addition to normal birth date errors.}
 }
 \description{
 Create a bar plot of proportion of error per field. The plot defaults to all 49 states, but location can be specified.

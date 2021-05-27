@@ -314,19 +314,19 @@ youthHunters(DL1202_proofed, year = 2020)
 The `errorPlot_fields` function can be run on all states...
 
 ```{r errorfieldsplotall, fig.cap = "Figure 2. Plot of all location's errors by field name.", fig.width = 6, fig.height = 3.6, dpi = 300, out.width = 500, fig.align = "center"}
-errorPlot_fields(DL1202_proofed, loc = "all")
+errorPlot_fields(DL1202_proofed, loc = "all", year = 2020)
 ```
 
 ... or it can be limited to just one.
 
 ```{r errorfieldsplotsc, fig.cap = "Figure 3. Plot of all North Carolina's errors by field name.", fig.width = 6, fig.height = 3.6, dpi = 300, out.width = 500, fig.align = "center"}
-errorPlot_fields(DL1202_proofed, loc = "LA")
+errorPlot_fields(DL1202_proofed, loc = "LA", year = 2020)
 ```
 
-The year in which the HIP data were collected can be specified in `errorPlot_fields` to view the proportion of "errors" created by youth hunters. Youth hunters are not included in the error plot if `specify` is not defined.
+The `youth` parameter can be set to TRUE for `errorPlot_fields` to view the proportion of "errors" created by youth hunters. Youth hunters are not included in the error plot if `youth = FALSE` (set as default).
 
 ```{r errorfieldsplotyouth, fig.cap = "Figure 4. Plot of all location's errors by field name, with stacked colors to indicate if there are youth hunters or Canadian zip codes in the data, two common causes of error.", fig.width = 6, fig.height = 3.6, dpi = 300, out.width = 500, fig.align = "center"}
-errorPlot_fields(DL1202_proofed, specify = 2020)
+errorPlot_fields(DL1202_proofed, year = 2020, youth = TRUE)
 ```
 
 It is possible to add any `ggplot2` components to these plots. For season total data specifically, the plot can be facet_wrapped using either dl_cycle or dl_date. The example below demonstrates how this package's functions can interact with the tidyverse and shows an example of an `errorPlot_fields` facet_wrap (using a subset of 4 download cycles)
@@ -334,7 +334,8 @@ It is possible to add any `ggplot2` components to these plots. For season total 
 ```{r errorfieldsfacet, eval = FALSE}
 errorPlot_fields(
   hipdata2020 %>%
-    filter(str_detect(dl_cycle, "0800|0901|0902|1001"))) +
+    filter(str_detect(dl_cycle, "0800|0901|0902|1001")),
+    year = 2020) +
   theme(
     axis.text.x = element_text(angle = 90, vjust = 0, hjust = 1),
     legend.position = "bottom") +

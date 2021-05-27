@@ -33,7 +33,8 @@
 #'  \itemize{
 #'  \item AL, AK, AZ, AR, CA, CO, CT, DE, DC, FL, GA, HI, ID, IL, IN, IA, KS, KY, LA, ME, MD, MA, MI, MN, MS, MO, MT, NE, NV, NH, NJ, NM, NY, NC, ND, OH, OK, OR, PA, RI, SC, SD, TN, TX, UT, VT, VA, WA, WV, WI, WY, AS, GU, MP, PR, VI, UM, FM, MH, PW, AA, AE, AP, CM, CZ, NB, PI, TT, ON, QC, NS, NB, MB, BC, PE, SK, AB, NL}
 #'  }
-#' @param specify Optional. The year in which the HIP data were collected must be supplied to activate this feature. This parameter breaks down *birth_date* errors into color-coded categories to display youth hunters (< 16 years of age) and non-youth hunters that have another issue causing an error in *birth_date*.
+#' @param year The year in which the HIP data were collected.
+#' @param youth Optional. If set to TRUE, will plot youth hunters in addition to normal birth date errors.
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHarvestData}
@@ -41,14 +42,14 @@
 #' @export
 
 errorPlot_fields <-
-  function(x, loc = "all", specify = NA){
+  function(x, loc = "all", year, youth = FALSE){
 
     # Suppress warning: "Expected 25 pieces. Missing pieces filled with `NA`
     # in ... rows". We start by splitting errors for plotting purposes; if
     # there are less than the full amount of errors in a row, the warning
     # happens.
     suppressWarnings(
-      if(!is.na(specify)){
+      if(youth == TRUE){
         if(loc == "all"){
 
           # Plot all states *with* special legend colors
@@ -60,7 +61,7 @@ errorPlot_fields <-
               birth_year = str_extract(birth_date, "(?<=\\/)[0-9]{4}$"),
               special =
                 ifelse(
-                  birth_year > specify - 16,
+                  birth_year > year - 16,
                   "Youth Hunter",
                   NA)) %>%
             select(errors, special) %>%
@@ -140,7 +141,7 @@ errorPlot_fields <-
               birth_year = str_extract(birth_date, "(?<=\\/)[0-9]{4}$"),
               special =
                 ifelse(
-                  birth_year > specify - 16,
+                  birth_year > year - 16,
                   "Youth Hunter",
                   NA)) %>%
             select(errors, special) %>%
@@ -222,7 +223,7 @@ errorPlot_fields <-
                 birth_year = str_extract(birth_date, "(?<=\\/)[0-9]{4}$"),
                 special =
                   ifelse(
-                    birth_year > specify - 16,
+                    birth_year > year - 16,
                     "Youth Hunter",
                     NA)) %>%
               # Filter out youth hunters
@@ -271,7 +272,7 @@ errorPlot_fields <-
                 birth_year = str_extract(birth_date, "(?<=\\/)[0-9]{4}$"),
                 special =
                   ifelse(
-                    birth_year > specify - 16,
+                    birth_year > year - 16,
                     "Youth Hunter",
                     NA)) %>%
               # Filter out youth hunters
