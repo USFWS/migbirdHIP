@@ -109,7 +109,7 @@ errorPlot_fields <-
             table_2 %>%
             ggplot() +
             geom_bar(
-              aes(x = errors, y = proportion, fill = special),
+              aes(x = reorder(errors, proportion), y = proportion, fill = special),
               stat = "identity") +
             geom_text(
               aes(x = barlabels$errors,
@@ -189,7 +189,7 @@ errorPlot_fields <-
             table_2 %>%
             ggplot() +
             geom_bar(
-              aes(x = errors, y = proportion, fill = special),
+              aes(x = reorder(errors, proportion), y = proportion, fill = special),
               stat = "identity") +
             geom_text(
               aes(
@@ -245,7 +245,9 @@ errorPlot_fields <-
                 proportion = count_errors / nrow(x)) %>%
               # Plot
               ggplot() +
-              geom_bar(aes(x = errors, y = proportion), stat = "identity") +
+              geom_bar(
+                aes(x = reorder(errors, proportion), y = proportion),
+                stat = "identity") +
               geom_text(
                 aes(x = errors, y = proportion, label = count_errors, angle = 90),
                 vjust = 0.2, hjust = -0.2) +
@@ -294,7 +296,9 @@ errorPlot_fields <-
                 proportion = count_errors / nrow(x)) %>%
               # Plot
               ggplot() +
-              geom_bar(aes(x = errors, y = proportion), stat = "identity") +
+              geom_bar(
+                aes(x = reorder(errors, proportion), y = proportion),
+                stat = "identity") +
               geom_text(
                 aes(x = errors, y = proportion, label = count_errors, angle = 90),
                 vjust = 0.2, hjust = -0.2) +
