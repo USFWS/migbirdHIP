@@ -206,6 +206,16 @@ errorPlot_fields <-
 
             fields_plot <-
               x %>%
+              # Identify the youth hunters only to have them filtered out!
+              mutate(
+                birth_year = str_extract(birth_date, "(?<=\\/)[0-9]{4}$"),
+                special =
+                  ifelse(
+                    birth_year > specify - 16,
+                    "Youth Hunter",
+                    NA)) %>%
+              # Filter out youth hunters
+              filter(special != "Youth Hunter") %>%
               select(errors) %>%
               # Pull errors apart, delimited by hyphens
               separate(errors, into = as.character(c(1:25)), sep = "-") %>%
@@ -243,6 +253,17 @@ errorPlot_fields <-
 
             fields_plot <-
               x %>%
+              # Identify the youth hunters only to have them filtered out!
+              mutate(
+                birth_year = str_extract(birth_date, "(?<=\\/)[0-9]{4}$"),
+                special =
+                  ifelse(
+                    birth_year > specify - 16,
+                    "Youth Hunter",
+                    NA)) %>%
+              # Filter out youth hunters
+              filter(special != "Youth Hunter") %>%
+              # Filter data for only the desired location
               filter(dl_state == loc) %>%
               select(errors) %>%
               # Pull errors apart, delimited by hyphens

@@ -444,6 +444,10 @@ The `errorPlot_fields` function can be run on all states...
 errorPlot_fields(DL1202_proofed, loc = "all")
 ```
 
+```
+## Error: Aesthetics must be either length 1 or the same as the data (1): x, y and label
+```
+
 <img src="figure/errorfieldsplotall-1.png" title="Figure 2. Plot of all location's errors by field name." alt="Figure 2. Plot of all location's errors by field name." width="500" style="display: block; margin: auto;" />
 
 ... or it can be limited to just one.
@@ -453,9 +457,13 @@ errorPlot_fields(DL1202_proofed, loc = "all")
 errorPlot_fields(DL1202_proofed, loc = "LA")
 ```
 
+```
+## Error: Aesthetics must be either length 1 or the same as the data (1): x, y and label
+```
+
 <img src="figure/errorfieldsplotsc-1.png" title="Figure 3. Plot of all North Carolina's errors by field name." alt="Figure 3. Plot of all North Carolina's errors by field name." width="500" style="display: block; margin: auto;" />
 
-The year in which the HIP data were collected can also be specified in `errorPlot_fields` to visualize the proportion of "errors" created by youth hunters, since these values fall outside the expected parameters of the `proof` function. It is encouraged to use `specify` when error counts are high to increase transparency by revealing which errors are attributable to a specific cause. This feature should also help maintain confidence in the integrity of the data.
+The year in which the HIP data were collected can be specified in `errorPlot_fields` to view the proportion of "errors" created by youth hunters. Youth hunters are not included in the error plot if `specify` is not defined.
 
 
 ```r
@@ -470,8 +478,7 @@ It is possible to add any `ggplot2` components to these plots. For season total 
 ```r
 errorPlot_fields(
   hipdata2020 %>%
-    filter(str_detect(dl_cycle, "0800|0901|0902|1001")),
-  specify = 2020) +
+    filter(str_detect(dl_cycle, "0800|0901|0902|1001"))) +
   theme(
     axis.text.x = element_text(angle = 90, vjust = 0, hjust = 1),
     legend.position = "bottom") +
@@ -705,7 +712,7 @@ Another version of a parsing failure occurs when a file is missing the last colu
 
 ### Memory problems
 
-Some of these functions require a lot of memory to run. To help your R process these data, especially when working with the large season totals, you can do a few things:
+Some of these functions require a lot of memory to run. To help your R session process these data, especially when working with the large season totals, you can do a few things:
 
 1. Remove objects from the environment. If you have already run `read_hip`, `clean`, and `proof`, you may no longer need your original dataframe or your cleaned dataframe, since most error checking functions work from the proofed or corrected versions of the data. To remove an unneeded object like the cleaned dataframe, run `rm(DL1202_clean)`.
 
