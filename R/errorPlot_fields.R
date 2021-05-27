@@ -107,9 +107,14 @@ errorPlot_fields <-
           fields_plot <-
             table_2 %>%
             ggplot() +
-            geom_bar(aes(x = errors, y = proportion, fill = special), stat = "identity") +
+            geom_bar(
+              aes(x = errors, y = proportion, fill = special),
+              stat = "identity") +
             geom_text(
-              aes(x = barlabels$errors, y = barlabels$proportion, label = barlabels$count_errors, angle = 90),
+              aes(x = barlabels$errors,
+                  y = barlabels$proportion,
+                  label = barlabels$count_errors,
+                  angle = 90),
               vjust = 0.2, hjust = -0.2) +
             labs(
               x = "Field",
@@ -182,9 +187,15 @@ errorPlot_fields <-
           fields_plot <-
             table_2 %>%
             ggplot() +
-            geom_bar(aes(x = errors, y = proportion, fill = special), stat = "identity") +
+            geom_bar(
+              aes(x = errors, y = proportion, fill = special),
+              stat = "identity") +
             geom_text(
-              aes(x = barlabels$errors, y = barlabels$proportion, label = barlabels$count_errors, angle = 90),
+              aes(
+                x = barlabels$errors,
+                y = barlabels$proportion,
+                label = barlabels$count_errors,
+                angle = 90),
               vjust = 0.2, hjust = -0.2) +
             labs(
               x = "Field",
@@ -215,7 +226,7 @@ errorPlot_fields <-
                     "Youth Hunter",
                     NA)) %>%
               # Filter out youth hunters
-              filter(special != "Youth Hunter") %>%
+              filter(is.na(special)) %>%
               select(errors) %>%
               # Pull errors apart, delimited by hyphens
               separate(errors, into = as.character(c(1:25)), sep = "-") %>%
@@ -253,6 +264,8 @@ errorPlot_fields <-
 
             fields_plot <-
               x %>%
+              # Filter data for only the desired location
+              filter(dl_state == loc) %>%
               # Identify the youth hunters only to have them filtered out!
               mutate(
                 birth_year = str_extract(birth_date, "(?<=\\/)[0-9]{4}$"),
@@ -262,9 +275,7 @@ errorPlot_fields <-
                     "Youth Hunter",
                     NA)) %>%
               # Filter out youth hunters
-              filter(special != "Youth Hunter") %>%
-              # Filter data for only the desired location
-              filter(dl_state == loc) %>%
+              filter(is.na(special)) %>%
               select(errors) %>%
               # Pull errors apart, delimited by hyphens
               separate(errors, into = as.character(c(1:25)), sep = "-") %>%

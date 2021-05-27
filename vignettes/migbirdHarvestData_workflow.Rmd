@@ -444,10 +444,6 @@ The `errorPlot_fields` function can be run on all states...
 errorPlot_fields(DL1202_proofed, loc = "all")
 ```
 
-```
-## Error: Aesthetics must be either length 1 or the same as the data (1): x, y and label
-```
-
 <img src="figure/errorfieldsplotall-1.png" title="Figure 2. Plot of all location's errors by field name." alt="Figure 2. Plot of all location's errors by field name." width="500" style="display: block; margin: auto;" />
 
 ... or it can be limited to just one.
@@ -455,10 +451,6 @@ errorPlot_fields(DL1202_proofed, loc = "all")
 
 ```r
 errorPlot_fields(DL1202_proofed, loc = "LA")
-```
-
-```
-## Error: Aesthetics must be either length 1 or the same as the data (1): x, y and label
 ```
 
 <img src="figure/errorfieldsplotsc-1.png" title="Figure 3. Plot of all North Carolina's errors by field name." alt="Figure 3. Plot of all North Carolina's errors by field name." width="500" style="display: block; margin: auto;" />
