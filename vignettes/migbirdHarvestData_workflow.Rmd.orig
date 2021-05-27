@@ -456,7 +456,7 @@ knitr::include_graphics("image/parsing_failure_2.png")
 
 ### Memory problems
 
-Some of these functions require a lot of memory to run. To help your R process these data, especially when working with the large season totals, you can do a few things:
+Some of these functions require a lot of memory to run. To help your R session process these data, especially when working with the large season totals, you can do a few things:
 
 1. Remove objects from the environment. If you have already run `read_hip`, `clean`, and `proof`, you may no longer need your original dataframe or your cleaned dataframe, since most error checking functions work from the proofed or corrected versions of the data. To remove an unneeded object like the cleaned dataframe, run `rm(DL1202_clean)`.
 
