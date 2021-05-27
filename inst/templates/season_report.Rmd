@@ -105,13 +105,13 @@ rm(fxd)
 ### Before correction
 
 ```{r erpf, echo = FALSE}
-errorPlot_fields(proofed_data)
+errorPlot_fields(proofed_data, year = params$year)
 ```
 
 ### After correction
 
 ```{r erpf_c, echo = FALSE}
-errorPlot_fields(corrected_data)
+errorPlot_fields(corrected_data, year = params$year)
 ```
 
 ## By state
