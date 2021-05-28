@@ -56,6 +56,14 @@ DT::datatable(cleaned_data %>%
 
 # Data Checking
 
+## Unique issue dates
+
+```{r issuedates, echo = FALSE}
+DT::datatable(cleaned_data %>% 
+                select(issue_date, dl_state) %>% 
+                distinct())
+```
+
 ## Duplicates
 
 ### Before fixDuplicates
