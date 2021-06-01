@@ -43,7 +43,7 @@ redFlags <-
         # Suppress message from summarize: "`summarise()` regrouping output by
         # 'dl_state' (override with `.groups` argument)
         suppressMessages(
-          x %>%
+          rf <- x %>%
             select(errors, dl_state) %>%
             # Pull errors apart, delimited by hyphens
             separate(errors, into = as.character(c(1:25)), sep = "-") %>%
@@ -71,6 +71,12 @@ redFlags <-
             arrange(desc(proportion))
         )
       )
+      if(nrow(rf) > 0){
+        return(rf)
+      }
+      else{
+        message("No states with error exceeding the threshold.")
+      }
     }
     else if(type == "field"){
 
@@ -84,7 +90,7 @@ redFlags <-
         # Suppress message from summarize: "`summarise()` regrouping output by
         # 'dl_state' (override with `.groups` argument)
         suppressMessages(
-          x %>%
+          rf <- x %>%
             select(errors) %>%
             # Pull errors apart, delimited by hyphens
             separate_rows(errors, sep = "-") %>%
@@ -108,6 +114,12 @@ redFlags <-
             arrange(desc(proportion))
         )
       )
+      if(nrow(rf) > 0){
+        return(rf)
+      }
+      else{
+        message("No fields with error exceeding the threshold.")
+      }
     }
     else{
       message("Error: Invalid type provided.")
