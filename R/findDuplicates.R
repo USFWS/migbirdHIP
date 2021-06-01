@@ -184,6 +184,8 @@ findDuplicates <-
 
       dupl_plot <-
         dupl_tibble %>%
+        # Bin into generic "2+ fields" if more than one field contributes to a
+        # duplicate
         mutate(
           dupl =
             case_when(
@@ -193,7 +195,11 @@ findDuplicates <-
               str_detect(dupl, "[a-z|a-z\\_a-z]{1,}\\-[a-z|a-z\\_a-z]{1,}") ~ "2+ fields",
               TRUE ~ dupl)
         ) %>%
-        ggplot(aes(x = dupl)) +
+        # Make a new col to reorder the bars
+        group_by(dupl) %>%
+        mutate(total_count = n()) %>%
+        ungroup() %>%
+        ggplot(aes(x = reorder(dupl, -total_count))) +
         geom_bar(stat = "count") +
         geom_text(
           aes(
