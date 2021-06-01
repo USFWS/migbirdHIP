@@ -136,12 +136,12 @@ Let's take a closer look at common errors and issues within this download's HIP 
 
 Q: What were the most common errors, and what values caused them?
 
-Tibble of most common errors...
+Table of most common errors...
 
 ```{r et, echo = FALSE}
 et <- errorTable(proofed_data, loc = "none") %>% arrange(desc(error_count))
 
-et
+DT::datatable(et)
 ```
 
 Values associated with error in `r et$error[1]`
