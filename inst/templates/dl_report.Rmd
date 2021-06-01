@@ -128,6 +128,22 @@ errorPlot_states(proofed_data)
 errorPlot_states(corrected_data)
 ```
 
+# Other Visualizations
+
+## Permits
+
+```{r perms, echo = FALSE}
+fxd %>% 
+  select(record_type) %>% 
+  group_by(record_type) %>% 
+  summarize(total_count = n()) %>% 
+  ungroup() %>% 
+  ggplot(x = reorder(record_type, -total_count), y = total_count) + 
+  geom_bar(stat = "identity") +
+  labs(x = "Record Type", y = "Count")
+  theme_classic()
+```
+
 # Error Exploration
 
 Let's take a closer look at common errors and issues within this download's HIP data.
