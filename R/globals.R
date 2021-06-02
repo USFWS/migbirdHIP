@@ -97,4 +97,5 @@ utils::globalVariables(
     "prop_repeat",
     "special_sum",
     "other_sum",
-    "record_key"))
+    "record_key",
+    "total_count"))
