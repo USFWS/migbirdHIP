@@ -160,7 +160,7 @@ perms <-
   group_by(record_type) %>% 
   summarize(total_count = n()) %>% 
   ungroup() %>% 
-  ggplot(x = reorder(record_type, -total_count), y = total_count) + 
+  ggplot(aes(x = reorder(record_type, -total_count), y = total_count)) + 
   geom_bar(stat = "identity") +
   labs(x = "Record Type", y = "Count") +
   theme_classic()
