@@ -92,9 +92,8 @@ DT::datatable(validate(fxd, type = "vertical"))
 
 ```{r data_sweep, include = FALSE}
 
-# Remove cleaned and fixed data to improve memory use
+# Remove cleaned data to improve memory use
 rm(cleaned_data)
-rm(fxd)
 
 ```
 
@@ -145,6 +144,9 @@ perms <-
   theme_classic()
   
 perms
+
+# Remove fxd to improve memory use
+rm(fxd)
 ```
 
 # Error Exploration
