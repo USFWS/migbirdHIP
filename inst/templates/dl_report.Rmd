@@ -58,16 +58,36 @@ DT::datatable(cleaned_data %>%
 
 ## Duplicates
 
-### Before fixDuplicates
+### Before fixDuplicates (all 49 states)
 
 ```{r b_fd, echo = FALSE}
 findDuplicates(cleaned_data)
 ```
 
-### After fixDuplicates
+### Before fixDuplicates (only permit states)
+
+Permit states include AK, AZ, CO, KS, MN, MT, ND, NM, OK, OR, SD, TX, UT, WA, and WY.
+
+```{r perms, echo = FALSE}
+perm_states <- 
+  c("AK", "AZ", "CO", "KS", "MN", "MT", "ND", "NM", "OK", "OR", "SD", "TX", 
+    "UT", "WA", "WY")
+
+findDuplicates(cleaned_data %>% filter(dl_state %in% perm_states))
+```
+
+### After fixDuplicates (all 49 states)
 
 ```{r a_fd, echo = FALSE}
 findDuplicates(fxd)
+```
+
+### After fixDuplicates (only permit states)
+
+Permit states include AK, AZ, CO, KS, MN, MT, ND, NM, OK, OR, SD, TX, UT, WA, and WY.
+
+```{r perms, echo = FALSE}
+findDuplicates(fxd %>% filter(dl_state %in% perm_states))
 ```
 
 ## Strata
@@ -92,9 +112,10 @@ DT::datatable(validate(fxd, type = "vertical"))
 
 ```{r data_sweep, include = FALSE}
 
-# Remove cleaned data to improve memory use
+# Remove data objects to improve memory use
 rm(cleaned_data)
-
+rm(fxd)
+rm(perm_states)
 ```
 
 # Error Visualizations
@@ -125,28 +146,6 @@ errorPlot_states(proofed_data)
 
 ```{r erps_c, echo = FALSE}
 errorPlot_states(corrected_data)
-```
-
-# Other Visualizations
-
-## Permits
-
-```{r perms, echo = FALSE}
-perms <- 
-  fxd %>% 
-  select(record_type) %>% 
-  group_by(record_type) %>% 
-  summarize(total_count = n()) %>% 
-  ungroup() %>% 
-  ggplot(aes(x = reorder(record_type, -total_count), y = total_count)) + 
-  geom_bar(stat = "identity") +
-  labs(x = "Record Type", y = "Count") +
-  theme_classic()
-  
-perms
-
-# Remove fxd to improve memory use
-rm(fxd)
 ```
 
 # Error Exploration
