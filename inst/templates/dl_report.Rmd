@@ -68,7 +68,7 @@ findDuplicates(cleaned_data)
 
 Permit states include AK, AZ, CO, KS, MN, MT, ND, NM, OK, OR, SD, TX, UT, WA, and WY.
 
-```{r perms, echo = FALSE}
+```{r b_perms, echo = FALSE}
 perm_states <- 
   c("AK", "AZ", "CO", "KS", "MN", "MT", "ND", "NM", "OK", "OR", "SD", "TX", 
     "UT", "WA", "WY")
@@ -86,7 +86,7 @@ findDuplicates(fxd)
 
 Permit states include AK, AZ, CO, KS, MN, MT, ND, NM, OK, OR, SD, TX, UT, WA, and WY.
 
-```{r perms, echo = FALSE}
+```{r a_perms, echo = FALSE}
 findDuplicates(fxd %>% filter(dl_state %in% perm_states))
 ```
 
