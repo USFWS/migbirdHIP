@@ -12,7 +12,8 @@ Imports:
     ggplot2,
     lifecycle,
     rmarkdown,
-    DT
+    DT,
+    shiny
 Suggests:
     knitr
 VignetteBuilder: knitr
