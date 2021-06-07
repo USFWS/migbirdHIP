@@ -11,8 +11,6 @@ runtime: shiny
 params:
   comp_path:
     value: x
-  year:
-    value: x
 ---
 
 ```{r libs, include = FALSE}
@@ -29,15 +27,6 @@ cleaned_data <- clean(dl_data)
 
 # Remove original data to improve memory use
 rm(dl_data)
-
-fixed_data <- fixDuplicates(cleaned_data)
-fxd <- fixed_data$fixed_duplicates %>% as_tibble()
-rm(fixed_data)
-
-proofed_data <- proof(fxd, year = params$year)
-
-corrected_data <- correct(proofed_data, year = params$year)
-
 ```
 
 ## Duplicates
