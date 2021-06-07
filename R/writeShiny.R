@@ -9,7 +9,6 @@
 #' \itemize{
 #' \item dl_shiny - for a download cycle summary report
 #' \item season_shiny - for a summary of the entire HIP season}
-#' @param yr The year in which the Harvest Information Program data were collected
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHarvestData}
@@ -17,7 +16,7 @@
 #' @export
 
 writeShiny <-
-  function(path, type, yr){
+  function(path, type){
 
     # Create Rmd
     rmarkdown::run(
@@ -28,7 +27,7 @@ writeShiny <-
           paste0(type, ".Rmd"),
           package = "migbirdHarvestData"),
       # Include the specified parameters so the functions can run
-      render_args = list(params = list(comp_path = path, year = yr))
+      render_args = list(params = list(comp_path = path))
     )
 
   }

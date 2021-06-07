@@ -4,7 +4,7 @@
 \alias{writeShiny}
 \title{Write an R markdown report with shiny plots from template}
 \usage{
-writeShiny(path, type, yr)
+writeShiny(path, type)
 }
 \arguments{
 \item{path}{File path to the folder containing HIP .txt files}
@@ -13,8 +13,6 @@ writeShiny(path, type, yr)
 \itemize{
 \item dl_shiny - for a download cycle summary report
 \item season_shiny - for a summary of the entire HIP season}}
-
-\item{yr}{The year in which the Harvest Information Program data were collected}
 }
 \description{
 Create documentation with shiny figures that summarizes HIP download data at a download cycle or season total scale.
