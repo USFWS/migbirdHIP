@@ -30,6 +30,7 @@
 #' @importFrom dplyr summarize
 #'
 #' @param x A cleaned data table created by \code{\link{clean}}
+#' @param return Option to return either a plot or a table; default value is "plot"
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHarvestData}
@@ -37,7 +38,7 @@
 #' @export
 
 findDuplicates <-
-  function(x){
+  function(x, return = "plot"){
 
     duplicates <-
       x %>%
@@ -175,65 +176,69 @@ findDuplicates <-
         paste(
           "There are", duplicate_individuals,
           "registrations with duplicates;", duplicate_total,
-          "total duplicated records.", sep = " ")
-      )
+          "total duplicated records.", sep = " "))
 
     }
-
     else{
+      if(return == "plot"){
 
-      dupl_plot <-
-        dupl_tibble %>%
-        # Bin into generic "2+ fields" if more than one field contributes to a
-        # duplicate
-        mutate(
-          dupl =
-            case_when(
-              str_detect(dupl, "[a-z|a-z\\_a-z|a-z|a-z\\_a-z\\_a-z|a-z\\_a-z]{1,}\\-[a-z|a-z\\_a-z]{1,}\\-[a-z|a-z\\_a-z]{1,}\\-[a-z|a-z\\_a-z]{1,}\\-[a-z|a-z\\_a-z]{1,}") ~ "2+ fields", #5+ fields
-              str_detect(dupl, "[a-z|a-z\\_a-z]{1,}\\-[a-z|a-z\\_a-z]{1,}\\-[a-z|a-z\\_a-z]{1,}\\-[a-z|a-z\\_a-z]{1,}") ~ "2+ fields", #4 fields
-              str_detect(dupl, "[a-z|a-z\\_a-z]{1,}\\-[a-z|a-z\\_a-z]{1,}\\-[a-z|a-z\\_a-z]{1,}") ~ "2+ fields", #3 fields
-              str_detect(dupl, "[a-z|a-z\\_a-z]{1,}\\-[a-z|a-z\\_a-z]{1,}") ~ "2+ fields",
-              TRUE ~ dupl)
-        ) %>%
-        # Make a new col to reorder the bars
-        group_by(dupl) %>%
-        mutate(total_count = n()) %>%
-        ungroup() %>%
-        ggplot(aes(x = reorder(dupl, -total_count))) +
-        geom_bar(stat = "count") +
-        geom_text(
-          aes(
-            x = dupl,
-            label = stat(count),
-            angle = 90),
-          stat = "count",
-          vjust = 0.2,
-          hjust = -0.2) +
-        labs(
-          x = "Inconsistent field(s) for duplicated hunters",
-          y = "Count",
-          title = "Types of duplicates") +
-        scale_y_continuous(expand = expansion(mult = c(-0, 0.2))) +
-        theme_classic() +
-        theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
-
-      dupl_summary <-
-        suppressMessages(
+        dupl_plot <-
           dupl_tibble %>%
-            group_by(dupl) %>%
-            summarize(count = n()) %>%
-            ungroup())
+          # Bin into generic "2+ fields" if more than one field contributes to a
+          # duplicate
+          mutate(
+            dupl =
+              case_when(
+                str_detect(dupl, "[a-z|a-z\\_a-z|a-z|a-z\\_a-z\\_a-z|a-z\\_a-z]{1,}\\-[a-z|a-z\\_a-z]{1,}\\-[a-z|a-z\\_a-z]{1,}\\-[a-z|a-z\\_a-z]{1,}\\-[a-z|a-z\\_a-z]{1,}") ~ "2+ fields", #5+ fields
+                str_detect(dupl, "[a-z|a-z\\_a-z]{1,}\\-[a-z|a-z\\_a-z]{1,}\\-[a-z|a-z\\_a-z]{1,}\\-[a-z|a-z\\_a-z]{1,}") ~ "2+ fields", #4 fields
+                str_detect(dupl, "[a-z|a-z\\_a-z]{1,}\\-[a-z|a-z\\_a-z]{1,}\\-[a-z|a-z\\_a-z]{1,}") ~ "2+ fields", #3 fields
+                str_detect(dupl, "[a-z|a-z\\_a-z]{1,}\\-[a-z|a-z\\_a-z]{1,}") ~ "2+ fields",
+                TRUE ~ dupl)
+          ) %>%
+          # Make a new col to reorder the bars
+          group_by(dupl) %>%
+          mutate(total_count = n()) %>%
+          ungroup() %>%
+          ggplot(aes(x = reorder(dupl, -total_count))) +
+          geom_bar(stat = "count") +
+          geom_text(
+            aes(
+              x = dupl,
+              label = stat(count),
+              angle = 90),
+            stat = "count",
+            vjust = 0.2,
+            hjust = -0.2) +
+          labs(
+            x = "Inconsistent field(s) for duplicated hunters",
+            y = "Count",
+            title = "Types of duplicates") +
+          scale_y_continuous(expand = expansion(mult = c(-0, 0.2))) +
+          theme_classic() +
+          theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
 
-      message(
-        paste(
-          "There are", duplicate_individuals,
-          "registrations with duplicates;", duplicate_total,
-          "total duplicated records.", sep = " ")
-      )
+        return(dupl_plot)
+      }
 
-      print(dupl_plot)
+      else if(return == "table"){
 
-      return(dupl_summary)
+        dupl_table <-
+          suppressMessages(
+            dupl_tibble %>%
+              group_by(dupl) %>%
+              summarize(count = n()) %>%
+              ungroup())
+
+        return(dupl_table)
+
+        message(
+          paste(
+            "There are", duplicate_individuals,
+            "registrations with duplicates;", duplicate_total,
+            "total duplicated records.", sep = " "))
+      }
+      else{
+        message("Invalid value supplied to the return parameter.")
+      }
     }
-
   }

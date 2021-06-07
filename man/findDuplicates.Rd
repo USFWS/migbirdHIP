@@ -4,10 +4,12 @@
 \alias{findDuplicates}
 \title{Find duplicates}
 \usage{
-findDuplicates(x)
+findDuplicates(x, return = "plot")
 }
 \arguments{
 \item{x}{A cleaned data table created by \code{\link{clean}}}
+
+\item{return}{Option to return either a plot or a table; default value is "plot"}
 }
 \description{
 Determine how many duplicate records are in the data. Plot and tabulate which fields are duplicates of individual hunters (i.e. data grouped by first name, last name, city, state, and birth date).
