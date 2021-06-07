@@ -71,6 +71,8 @@ DT::datatable(cleaned_data %>%
 
 ```{r b_fd, echo = FALSE}
 findDuplicates(cleaned_data)
+
+DT::datatable(findDuplicates(cleaned_data, return = "table"))
 ```
 
 ### Before fixDuplicates (only permit states)
@@ -83,12 +85,16 @@ perm_states <-
     "UT", "WA", "WY")
 
 findDuplicates(cleaned_data %>% filter(dl_state %in% perm_states))
+
+DT::datatable(findDuplicates(cleaned_data %>% filter(dl_state %in% perm_states), return = "table"))
 ```
 
 ### After fixDuplicates (all 49 states)
 
 ```{r a_fd, echo = FALSE}
 findDuplicates(fxd)
+
+DT::datatable(findDuplicates(fxd, return = "table"))
 ```
 
 ### After fixDuplicates (only permit states)
@@ -97,6 +103,8 @@ Permit states include AK, AZ, CO, KS, MN, MT, ND, NM, OK, OR, SD, TX, UT, WA, an
 
 ```{r a_perms, echo = FALSE}
 findDuplicates(fxd %>% filter(dl_state %in% perm_states))
+
+DT::datatable(findDuplicates(fxd %>% filter(dl_state %in% perm_states), return = "table"))
 ```
 
 ## Strata

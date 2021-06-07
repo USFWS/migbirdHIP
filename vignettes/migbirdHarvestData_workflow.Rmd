@@ -98,18 +98,19 @@ This function renames columns and does simple mutations, such as:
 
 ### findDuplicates
 
-The `findDuplicates` function finds hunters that have more than one registration. Records are grouped by first name, last name, city, state, birth date, and download state to identify unique hunters. If the same hunter has 2 or more registrations, the fields that are not identical are counted and summarized in a tibble and plot.
+The `findDuplicates` function finds hunters that have more than one registration. Records are grouped by first name, last name, city, state, birth date, and download state to identify unique hunters. If the same hunter has 2 or more registrations, the fields that are not identical are counted and summarized. A plot is returned by default, but the type of output can be specified using `return = "plot"` for plot, or `return = "table"` for table and summary message.
 
 
 ```r
 findDuplicates(DL1202_clean)
 ```
 
-```
-## There are 72 registrations with duplicates; 144 total duplicated records.
-```
-
 <img src="figure/findDuplicates-1.png" title="Figure 1. Plot of types of duplicates." alt="Figure 1. Plot of types of duplicates." width="500" style="display: block; margin: auto;" />
+
+
+```r
+findDuplicates(DL1202_clean, return = "table")
+```
 
 ```
 ## # A tibble: 18 x 2
