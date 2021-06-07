@@ -7,6 +7,7 @@ output:
     toc_depth: 3
     number_sections: true
     theme: cerulean
+runtime: shiny
 params:
   comp_path:
     value: x
