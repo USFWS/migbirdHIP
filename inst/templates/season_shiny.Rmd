@@ -204,9 +204,3 @@ shinyApp(
   options = list(height = 500)
 )
 ```
-
-### After fixDuplicates (all 49 states)
-
-```{r a_fd, echo = FALSE}
-findDuplicates(fxd)
-```
