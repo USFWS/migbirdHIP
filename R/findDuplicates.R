@@ -167,7 +167,7 @@ findDuplicates <-
         dupl = str_remove(dupl, "^\\-")
       ) %>%
       ungroup() %>%
-      select(hunter_key, dupl) %>%
+      select(hunter_key, dupl, dl_state) %>%
       distinct()
 
     if(nrow(dupl_tibble) == 0){
