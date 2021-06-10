@@ -41,9 +41,17 @@ findDuplicates(cleaned_data)
 
 ```{r b_fd_s, echo = FALSE}
 dl_states <-
-  cleaned_data %>% 
-  select(dl_state) %>% 
-  distinct() %>% 
+  cleaned_data %>%
+  mutate(hunter_key = paste0("hunter_", row_number())) %>%
+  group_by(firstname, lastname, city, state, birth_date, dl_state) %>%
+  # Identify duplicates
+  mutate(duplicate = ifelse(n() > 1, "duplicate", "1")) %>%
+  ungroup() %>%
+  # Filter out non-duplicate records
+  filter(duplicate == "duplicate") %>%
+  # Select states w/ duplicates
+  select(dl_state) %>%
+  distinct() %>%
   pull()
 
 shinyApp(
