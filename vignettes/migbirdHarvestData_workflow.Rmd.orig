@@ -27,6 +27,7 @@ vignette: >
     - [correct](#correct)
     - [pullErrors](#pullerrors)
     - [manualFix](#manualfix)
+    - [write_hip](#write_hip)
     - [writeReport](#writereport)
     - [writeShiny](#writeshiny)
 - [Part C: Data Visualization and Tabulation](#part-c-data-visualization-and-tabulation)
@@ -277,6 +278,17 @@ The automated `correct` function cannot always catch and fix every error. To fin
 ```{r manualfix, eval = FALSE}
 manualFix(DL1202_corrected, field = "state", error_value = "GS", correct_value = "GA")
 ```
+
+### write_hip
+
+After the data have been processed with `correct`, the table is ready to be written for the database. Use `write_hip` to do final processing to the table, which includes dropping some columns and setting NAs to blank strings. The final table will be saved as a csv to your specified path.
+
+```{r, writecsv, eval = FALSE}
+
+write_hip(DL1202_corrected, path = "C:/HIP/all_2019")
+
+```
+
 ### writeReport
 
 The `writeReport` function can be used to automatically generate an R markdown document with figures, tables, and summary statistics. This can be done at the end of a download cycle (using `type = "dl_report"`) or the entire HIP season (with `type = "season_report"`). You should expect this function to run for ~1 minute for a download cycle, or ~30 minutes for a total season (containing approximately 4 million records). Writing a total season report is a memory intensive process, so for this option, we recommend [increasing your memory](#memory-problems) allocated to R.
