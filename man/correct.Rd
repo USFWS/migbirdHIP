@@ -4,12 +4,14 @@
 \alias{correct}
 \title{Correct data}
 \usage{
-correct(x, year)
+correct(x, year, data)
 }
 \arguments{
 \item{x}{The object created after error flagging data with \code{\link{proof}}}
 
 \item{year}{The year in which the Harvest Information Program data were collected}
+
+\item{data}{Do you want the frame to include original state \code{bag} values or FWS \code{strata}?}
 }
 \description{
 After flagging errors in the data with \code{\link{proof}}, attempt corrections in all fields. Errors that cannot be programmatically corrected will be reported for manual correction.

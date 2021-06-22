@@ -195,10 +195,10 @@ The year of the Harvest Information Program must be supplied as a parameter. Thi
 
 ### correct
 
-After the download data are proofed, the next step is to fix the data to the best of our ability. Data can be corrected by running the `correct` function on the proofed tibble.
+After the download data are proofed, the next step is to fix the data to the best of our ability. Data can be corrected by running the `correct` function on the proofed tibble. You must specify whether the function should return original state bag values (`data = "bag"`) or FWS strata values (`data = "strata"`).
 
 ```{r correct}
-DL1202_corrected <- correct(DL1202_proofed, year = 2020)
+DL1202_corrected <- correct(DL1202_proofed, year = 2020, data = "bag")
 ```
 
 The following changes are made by the `correct` function:
