@@ -119,48 +119,60 @@ fixDuplicates <-
       filter(length(unique(other_sum)) > 1) %>%
       # Arrange by special_sum
       arrange(duplicate, special_sum) %>%
-      # Consolidate the tibble If a hunter's record is == 0 for special_sum,
-      # paste that record's crane, BTPI, brant & seaducks values into the other
-      # record where special_sum > 0
-      mutate(
-        cranes =
-          case_when(
-            str_detect(dl_state, "SD|CO") ~
-              ifelse(
-                special_sum == 0,
-                lead(cranes),
-                999999),
-            TRUE ~ cranes),
-        band_tailed_pigeon =
-          case_when(
-            str_detect(dl_state, "WA|OR") ~
-              ifelse(
-                special_sum == 0,
-                lead(band_tailed_pigeon),
-                999999),
-            TRUE ~ band_tailed_pigeon),
-        brant =
-          case_when(
-            str_detect(dl_state, "WA|OR") ~
-              ifelse(
-                special_sum == 0,
-                lead(brant),
-                999999),
-            TRUE ~ brant),
-        seaducks =
-          case_when(
-            str_detect(dl_state, "WA|OR") ~
-              ifelse(
-                special_sum == 0,
-                lead(seaducks),
-                999999),
-            TRUE ~ seaducks)
-      ) %>%
-      ungroup() %>%
-      # Remove the duplicates
-      # Remaining values are consolidated records
-      filter(special_sum == 0) %>%
-      select(-c("duplicate", "special_sum", "other_sum"))
+      ungroup()
+
+    # Handle dup2_record if nrow == 0
+    # This bypasses "Error: Can't subset elements that don't exist." when trying
+    # to mutate an empty table...
+    if(nrow(dup_2record) > 0){
+      dup_2record <-
+        dup_2record %>%
+        group_by(duplicate) %>%
+        # Consolidate the tibble If a hunter's record is == 0 for special_sum,
+        # paste that record's crane, BTPI, brant & seaducks values into the other
+        # record where special_sum > 0
+        mutate(
+          cranes =
+            case_when(
+              str_detect(dl_state, "SD|CO") ~
+                ifelse(
+                  special_sum == 0,
+                  lead(cranes),
+                  999999),
+              TRUE ~ cranes),
+          band_tailed_pigeon =
+            case_when(
+              str_detect(dl_state, "WA|OR") ~
+                ifelse(
+                  special_sum == 0,
+                  lead(band_tailed_pigeon),
+                  999999),
+              TRUE ~ band_tailed_pigeon),
+          brant =
+            case_when(
+              str_detect(dl_state, "WA|OR") ~
+                ifelse(
+                  special_sum == 0,
+                  lead(brant),
+                  999999),
+              TRUE ~ brant),
+          seaducks =
+            case_when(
+              str_detect(dl_state, "WA|OR") ~
+                ifelse(
+                  special_sum == 0,
+                  lead(seaducks),
+                  999999),
+              TRUE ~ seaducks)
+        ) %>%
+        ungroup() %>%
+        # Remove the duplicates
+        # Remaining values are consolidated records
+        filter(special_sum == 0) %>%
+        select(-c("duplicate", "special_sum", "other_sum"))}
+    else{
+      dup_2record <- dup_2record
+    }
 
     # Remove duplicates and add in the consolidated records
     fixed_x <-
