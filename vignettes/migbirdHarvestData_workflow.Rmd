@@ -91,7 +91,9 @@ After data are imported, we `clean`:
 DL1202_clean <- clean(DL1202)
 ```
 
-This function renames columns and does simple mutations, such as:
+This function renames columns and does simple mutations. Importantly, records are discarded if first name, last name, city of residence, state of residence, or date of birth are missing.
+
+Other quick fixes include:
 
 * Converts names to uppercase
 * Moves suffixes from first or last name columns to the appropriate suffix column
@@ -432,10 +434,10 @@ outOfStateHunters(DL1202_proofed)
 ##  4 CA          3998            0.06
 ##  5 CO          1747            0.09
 ##  6 CT           110            0.1 
-##  7 FL          3649            0.09
-##  8 GA          3584            0.12
-##  9 IA          3234            0.05
-## 10 ID          1865            0.22
+##  7 FL          3648            0.09
+##  8 GA          3572            0.12
+##  9 IA          3227            0.05
+## 10 ID          1863            0.22
 ## # ... with 20 more rows
 ```
 
@@ -456,7 +458,7 @@ youthHunters(DL1202_proofed, year = 2020)
 ##   <chr>               <int>            <int>            <dbl>
 ## 1 MO                      1             4047         0.000247
 ## 2 ND                    117              175         0.669   
-## 3 NE                      1              547         0.00183
+## 3 NE                      1              546         0.00183
 ```
 
 ### errorPlot_fields
@@ -569,7 +571,7 @@ errorTable(DL1202_proofed, field = "none")
 ##  6 CT               116
 ##  7 FL                53
 ##  8 GA                57
-##  9 IA              3221
+##  9 IA              3216
 ## 10 ID               161
 ## # ... with 20 more rows
 ```
@@ -586,12 +588,12 @@ errorTable(DL1202_proofed, loc = "none")
 ##    error              error_count
 ##    <chr>                    <dbl>
 ##  1 band_tailed_pigeon           2
-##  2 birth_date                5634
+##  2 birth_date                5628
 ##  3 city                         3
 ##  4 coots_snipe                 60
 ##  5 cranes                      49
 ##  6 dove_bag                   113
-##  7 ducks_bag                 3113
+##  7 ducks_bag                 3109
 ##  8 email                     5489
 ##  9 firstname                  111
 ## 10 geese_bag                   38
@@ -679,7 +681,7 @@ redFlags(DL1202_proofed, type = "state", threshold = 0.03)
 ##   dl_state count_errors count_correct proportion flag        
 ##   <chr>           <int>         <int>      <dbl> <chr>       
 ## 1 CT                116          2634     0.0422 error > 0.03
-## 2 IA               3221         77629     0.0398 error > 0.03
+## 2 IA               3216         77459     0.0399 error > 0.03
 ```
 
 <b>By field.</b>
@@ -694,10 +696,10 @@ redFlags(DL1202_proofed, type = "field", threshold = 0.01)
 ## # A tibble: 4 x 5
 ##   errors     count_errors count_correct proportion flag        
 ##   <chr>             <int>         <int>      <dbl> <chr>       
-## 1 birth_date         5634         87393     0.0606 error > 0.01
-## 2 email              5489         87538     0.0590 error > 0.01
-## 3 ducks_bag          3113         89914     0.0335 error > 0.01
-## 4 zip                2132         90895     0.0229 error > 0.01
+## 1 birth_date         5628         87296     0.0606 error > 0.01
+## 2 email              5489         87435     0.0591 error > 0.01
+## 3 ducks_bag          3109         89815     0.0335 error > 0.01
+## 4 zip                2132         90792     0.0229 error > 0.01
 ```
 
 ### hunterSample

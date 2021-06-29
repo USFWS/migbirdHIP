@@ -90,7 +90,9 @@ After data are imported, we `clean`:
 DL1202_clean <- clean(DL1202)
 ```
 
-This function renames columns and does simple mutations, such as:
+This function renames columns and does simple mutations. Importantly, records are discarded if first name, last name, city of residence, state of residence, or date of birth are missing.
+
+Other quick fixes include:
 
 * Converts names to uppercase
 * Moves suffixes from first or last name columns to the appropriate suffix column
