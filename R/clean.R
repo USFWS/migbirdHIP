@@ -426,8 +426,8 @@ clean <-
                  " state, or date of birth.")
         )
       }
-      else{
-        return(tidied_x)
-      }
+    }
+    else{
+      return(tidied_x)
     }
   }
