@@ -4,10 +4,12 @@
 \alias{clean}
 \title{Tidy data}
 \usage{
-clean(x)
+clean(x, plot = FALSE)
 }
 \arguments{
 \item{x}{The object created after reading in data with \code{\link{compile}}}
+
+\item{plot}{If TRUE, plots the records and fields that were filtered out of critical identifying information was missing; default is FALSE.}
 }
 \description{
 After reading the data with \code{\link{compile}}, rename the column names and do preliminary cleaning of firstname, lastname, middle initial, and suffixes.

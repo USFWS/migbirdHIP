@@ -98,4 +98,6 @@ utils::globalVariables(
     "special_sum",
     "other_sum",
     "record_key",
-    "total_count"))
+    "total_count",
+    "field",
+    "hunter_id"))
