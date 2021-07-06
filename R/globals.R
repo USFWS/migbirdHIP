@@ -100,4 +100,5 @@ utils::globalVariables(
     "record_key",
     "total_count",
     "field",
-    "hunter_id"))
+    "hunter_id",
+    "jdate"))

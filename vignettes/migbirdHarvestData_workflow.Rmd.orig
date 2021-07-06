@@ -16,6 +16,7 @@ vignette: >
     - [Functions overview](#functions-overview)
 - [Part A: Data Import and Cleaning](#part-a-data-import-and-cleaning)
     - [read_hip](#read_hip)
+    - [renameJulian](#renamejulian)
     - [clean](#clean)
     - [findDuplicates](#findduplicates)
     - [fixDuplicates](#fixduplicates)
@@ -72,7 +73,9 @@ knitr::include_graphics("image/migbirdHarvestData_flowchart.svg")
 
 ### read_hip
 
-The first step is to import .txt files containing HIP data. To do this, we use the `read_hip` function. This function allows data to be read in for just a specific state or for an entire season (parameters "state" and "season", respectively). We will use the default settings to read in all of the states from download 1202.
+The first step is to import .txt files containing HIP data. Files must adhere to a 10-digit naming convention in order to successfully import data using the `read_hip` function; if files were submitted with the old 5-digit format, run [renameJulian](#renamejulian) first.
+
+The `read_hip` function allows data to be read in for just a specific state or for an entire season (parameters "state" and "season", respectively). We will use the default settings to read in all of the states from download 1202.
 
 ```{r, readhip, message = FALSE, warning = FALSE}
 library(migbirdHarvestData)
@@ -81,6 +84,14 @@ DL1202 <- read_hip("C:/HIP/DL1202")
 ```
 
 Did you get a warning or three? Read an explanation of common `read_hip` warnings, [below](#common-read_hip-warnings).
+
+### renameJulian
+
+The `renameJulian` function was incorporated into this package for special cases. Some states submit .txt  files using the "old" 5-digit file name format, containing 2 letters for the state abbreviation followed by a 3-digit Julian date (representing the date the file was uploaded). To convert these pesky 5-digit filenames to the standard 10-digit format (a requirement to read data properly with [read_hip](#read_hip)), supply the `renameJulian` with the directory containing HIP data. File names will be automatically overwritten with the YYYYMMDD format date corresponding to the submitted Julian date.
+
+```{r rename, eval = FALSE}
+renameJulian(path = "C:/HIP/DL1202")
+```
 
 ### clean
 
