@@ -41,7 +41,6 @@ vignette: >
     - Tabulation
         - [errorTable](#errortable)
         - [redFlags](#redflags)
-        - [hunterSample](#huntersample)
 - [Troubleshooting](#troubleshooting)
     - [Common read_hip warnings](#common-read_hip-warnings)
     - [Memory problems](#memory-problems)
@@ -64,7 +63,7 @@ install_github("USFWS/migbirdHarvestData")
 
 ### Functions overview
 
-The flowchart below is a visual guide to the order in which functions are used. Some functions are only used situationally and some issues with the data cannot be solved using a function at all. The general process of handling HIP data is demonstrated here; every function in the *migbirdHarvestData* package is included except for [hunterSample](#huntersample).
+The flowchart below is a visual guide to the order in which functions are used. Some functions are only used situationally and some issues with the data cannot be solved using a function at all. The general process of handling HIP data is demonstrated here; every function in the *migbirdHarvestData* package is included.
 
 <img src="image/migbirdHarvestData_flowchart.svg" title="Overview of migbirdHarvestData functions in a flowchart format." alt="Overview of migbirdHarvestData functions in a flowchart format." width="100%" style="display: block; margin: auto;" />
 
@@ -714,15 +713,6 @@ redFlags(DL1202_proofed, type = "field", threshold = 0.01)
 ## 2 email              5489         87435     0.0591 error > 0.01
 ## 3 ducks_bag          3109         89815     0.0335 error > 0.01
 ## 4 zip                2132         90792     0.0229 error > 0.01
-```
-
-### hunterSample
-
-After correcting the data, the `hunterSample` function subsets hunters without any errors in their records, ensuring each hunter has a valid mailing address, email address, registration year, and issue date. The function can be run with or without the "random" parameter. If the "random" parameter is used, the specified number of records will be randomly sampled from the corrected data (a non-reproducible event). Without specifying "random", all valid hunters in the data will be returned.
-
-
-```r
-hunterSample(DL1202_corrected, random = 100)
 ```
 
 ## Troubleshooting
