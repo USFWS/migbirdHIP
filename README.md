@@ -34,8 +34,8 @@ Tasks that can be accomplished with this package include:
     `outOfStateHunters`
   - Detailed error reporting with `errorTable`, `pullErrors`, and
     `redFlags`
-  - Automated report writing with `writeReport`
-  - Random sampling with `hunterSample`
+  - Automated report writing with `writeReport` and `writeShiny`
+  - Custom .csv writing with `write_hip`
 
 ## Installation
 
