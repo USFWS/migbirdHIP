@@ -107,4 +107,5 @@ utils::globalVariables(
     "x_seaducks",
     "x_reg_yr",
     "decision",
-    "record_type"))
+    "record_type",
+    "old"))
