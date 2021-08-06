@@ -16,7 +16,7 @@ vignette: >
     - [Functions overview](#functions-overview)
 - [Part A: Data Import and Cleaning](#part-a-data-import-and-cleaning)
     - [read_hip](#read_hip)
-    - [renameJulian](#renamejulian)
+    - [renameFiles](#renamefiles)
     - [clean](#clean)
     - [findDuplicates](#findduplicates)
     - [fixDuplicates](#fixduplicates)
@@ -71,7 +71,7 @@ The flowchart below is a visual guide to the order in which functions are used. 
 
 ### read_hip
 
-The first step is to import .txt files containing HIP data. Files must adhere to a 10-digit naming convention in order to successfully import data using the `read_hip` function; if files were submitted with the old 5-digit format, run [renameJulian](#renamejulian) first.
+The first step is to import .txt files containing HIP data. Files must adhere to a 10-digit naming convention in order to successfully import data using the `read_hip` function; if files were submitted with the old 5-digit format, run [renameFiles](#renamefiles) first.
 
 The `read_hip` function allows data to be read in for just a specific state or for an entire season (parameters "state" and "season", respectively). We will use the default settings to read in all of the states from download 1202.
 
@@ -84,13 +84,13 @@ DL1202 <- read_hip("C:/HIP/DL1202")
 
 Did you get a warning or three? Read an explanation of common `read_hip` warnings, [below](#common-read_hip-warnings).
 
-### renameJulian
+### renameFiles
 
-The `renameJulian` function was incorporated into this package for special cases. Some states submit .txt  files using the "old" 5-digit file name format, containing 2 letters for the state abbreviation followed by a 3-digit Julian date (representing the date the file was uploaded). To convert these pesky 5-digit filenames to the standard 10-digit format (a requirement to read data properly with [read_hip](#read_hip)), supply the `renameJulian` with the directory containing HIP data. File names will be automatically overwritten with the YYYYMMDD format date corresponding to the submitted Julian date.
+The `renameFiles` function was incorporated into this package for special cases. Some states submit .txt  files using the "old" 5-digit file name format, containing 2 letters for the state abbreviation followed by a 3-digit Julian date (representing the date the file was uploaded). To convert these pesky 5-digit filenames to the standard 10-digit format (a requirement to read data properly with [read_hip](#read_hip)), supply the `renameFiles` with the directory containing HIP data. File names will be automatically overwritten with the YYYYMMDD format date corresponding to the submitted Julian date.
 
 
 ```r
-renameJulian(path = "C:/HIP/DL1202")
+renameFiles(path = "C:/HIP/DL1202")
 ```
 
 ### clean
@@ -173,6 +173,28 @@ Note: This function replaces "." values with NA in non-permit species columns fo
 
 ```r
 DL1202_fixed <- fixDuplicates(DL1202_clean)
+```
+
+```
+## Warning: Problem with `mutate()` input `x_bags`.
+## i `select_()` is deprecated as of dplyr 0.7.0.
+## Please use `select()` instead.
+## This warning is displayed once every 8 hours.
+## Call `lifecycle::last_warnings()` to see where this warning was generated.
+## i Input `x_bags` is `pmap_chr(...)`.
+```
+
+```
+## Warning: `select_()` is deprecated as of dplyr 0.7.0.
+## Please use `select()` instead.
+## This warning is displayed once every 8 hours.
+## Call `lifecycle::last_warnings()` to see where this warning was generated.
+```
+
+```
+## Error: Problem with `mutate()` input `x_bags`.
+## x no applicable method for 'select_' applied to an object of class "rlang_data_pronoun"
+## i Input `x_bags` is `pmap_chr(...)`.
 ```
 
 ### strataCheck
@@ -260,14 +282,6 @@ After data are cleaned and checked for any important issues that would require m
 
 ```r
 DL1202_proofed <- proof(DL1202_fixed, year = 2020)
-```
-
-```
-## Warning: `mutate_()` is deprecated as of dplyr 0.7.0.
-## Please use `mutate()` instead.
-## See vignette('programming') for more help
-## This warning is displayed once every 8 hours.
-## Call `lifecycle::last_warnings()` to see where this warning was generated.
 ```
 
 ```

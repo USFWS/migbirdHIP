@@ -1,6 +1,6 @@
-#' Julian date conversion in raw HIP filenames
+#' Raw HIP file name correction
 #'
-#' This function overwrites HIP filenames. Files in the supplied directory are renamed by converting the Julian date to YYYYMMDD format.
+#' This function overwrites HIP filenames. Files in the supplied directory are renamed by converting the Julian date to YYYYMMDD format. State abbreviations that are in lowercase format are capitalized.
 #'
 #' @importFrom dplyr %>%
 #' @importFrom stringr str_detect
