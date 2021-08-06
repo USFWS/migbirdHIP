@@ -3,16 +3,18 @@
 #' This function overwrites HIP filenames. Files in the supplied directory are renamed by converting the Julian date to YYYYMMDD format. State abbreviations that are in lowercase format are capitalized.
 #'
 #' @importFrom dplyr %>%
-#' @importFrom stringr str_detect
-#' @importFrom tibble as_tibble
-#' @importFrom tidyr separate
 #' @importFrom dplyr mutate
-#' @importFrom stringr str_remove_all
-#' @importFrom tidyr unite
 #' @importFrom dplyr pull
 #' @importFrom dplyr bind_cols
+#' @importFrom stringr str_detect
+#' @importFrom stringr str_remove_all
+#' @importFrom stringr str_to_upper
+#' @importFrom stringr str_replace
+#' @importFrom tibble as_tibble
+#' @importFrom tidyr separate
+#' @importFrom tidyr unite
 #'
-#' @param path Directory to HIP files
+#' @param path Directory to download folder containing new HIP files
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHarvestData}
@@ -28,7 +30,7 @@ renameJulian <-
       if(!str_detect(path, "\\/$")){
         x <- paste0(path, "/")
       }else{
-        NULL
+        x <- path
       }
 
       # File name(s) with 5-digit format
@@ -62,11 +64,32 @@ renameJulian <-
       # Overwrite the file names in the given directory
       file.rename(from = names5, to = names10)
 
-      return(bind_cols(old = names5, new = names10))
+      print(bind_cols(old = names5, new = names10))
     }
     else{
       message(
         paste0("No file name(s) containing a Julian date exist in the provided",
                " directory."))
+    }
+    if(TRUE %in% str_detect(list.files(path), "[a-z]")){
+
+      names_lower <-
+        list.files(path)
+
+      names_upper <-
+        names_lower %>%
+        str_to_upper() %>%
+        str_replace("TXT", "txt")
+
+      # Add dir to file names
+      names_lower <- paste0(x, names_lower)
+      names_upper <- paste0(x, names_upper)
+
+      # Overwrite the file names in the given directory
+      file.rename(from = names_lower, to = names_upper)
+
+      print(bind_cols(old = names_lower, new = names_upper))
+    }else{
+      NULL
     }
   }

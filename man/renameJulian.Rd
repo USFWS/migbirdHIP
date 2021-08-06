@@ -7,7 +7,7 @@
 renameJulian(path)
 }
 \arguments{
-\item{path}{Directory to HIP files}
+\item{path}{Directory to download folder containing new HIP files}
 }
 \description{
 This function overwrites HIP filenames. Files in the supplied directory are renamed by converting the Julian date to YYYYMMDD format. State abbreviations that are in lowercase format are capitalized.
