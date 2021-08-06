@@ -101,4 +101,10 @@ utils::globalVariables(
     "total_count",
     "field",
     "hunter_id",
-    "jdate"))
+    "jdate",
+    "x_issue_date",
+    "x_bags",
+    "x_seaducks",
+    "x_reg_yr",
+    "decision",
+    "record_type"))
