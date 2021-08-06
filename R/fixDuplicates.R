@@ -136,7 +136,9 @@ fixDuplicates <-
         # Check records for all 0s or all 1s
         x_bags =
           pmap_chr(
-            select(.data, matches("bag|coots|rails|cranes|pigeon|brant|seaducks")),
+            select(
+              .data,
+              matches("bag|coots|rails|cranes|pigeon|brant|seaducks")),
             ~case_when(
               # Look for 0s in every species column
               all(c(...) == "0") ~ "zeros",
@@ -299,7 +301,7 @@ fixDuplicates <-
     ){
       message(
         paste0(
-          "Error 6: Inconsistent number of rows between tables.\n",,
+          "Error 6: Inconsistent number of rows between tables.\n",
           "Is there an error in the standardization of source file name(s)?"))
       print(
         anti_join(
@@ -384,7 +386,9 @@ fixDuplicates <-
         # Check records for all 0s or all 1s
         x_bags =
           pmap_chr(
-            select(.data, matches("bag|coots|rails|cranes|pigeon|brant|seaducks")),
+            select(
+              .data,
+              matches("bag|coots|rails|cranes|pigeon|brant|seaducks")),
             ~case_when(
               # Look for 0s in every species column
               all(c(...) == "0") ~ "zeros",
@@ -566,7 +570,9 @@ fixDuplicates <-
         # Check records for all 0s or all 1s
         x_bags =
           pmap_chr(
-            select(.data, matches("bag|coots|rails|cranes|pigeon|brant|seaducks")),
+            select(
+              .data,
+              matches("bag|coots|rails|cranes|pigeon|brant|seaducks")),
             ~case_when(
               # Look for 0s in every species column
               all(c(...) == "0") ~ "zeros",
