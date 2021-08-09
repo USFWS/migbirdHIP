@@ -28,8 +28,8 @@ Tasks that can be accomplished with this package include:
 
 * `read_hip` imports data
 * `clean` does basic reorganization tasks
-* `findDuplicates` identifies registrants with multiple records
-* `fixDuplicates` consolidates duplicate records
+* `findDuplicates` identifies duplicate HIP records
+* `fixDuplicates` resolves duplicate HIP records
 * `strataCheck` identifies any new strata
 * `validate` checks for table-wide repetition
 * `investigate` reports details on repeated values
