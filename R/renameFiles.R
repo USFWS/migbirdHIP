@@ -78,16 +78,16 @@ renameFiles <-
         str_replace("TXT", "txt")
 
       # Add dir to file names
-      names_lower <- paste0(x, names_lower)
-      names_upper <- paste0(x, names_upper)
+      names_lower2 <- paste0(x, names_lower)
+      names_upper2 <- paste0(x, names_upper)
 
       # Overwrite the file names in the given directory
-      file.rename(from = names_lower, to = names_upper)
+      file.rename(from = names_lower2, to = names_upper2)
 
       message("Success: Lowercase state abbreviations changed to upper.")
       print(
         bind_cols(old = names_lower, new = names_upper) %>%
-          filter(str_detect(old, ".*[a-z].*(?=\\.)")))
+          filter(str_detect(old, "[a-z]{1,2}(?=\\.)")))
       }
     if(FALSE %in% str_detect(list.files(x), "^[A-Z]{2}[0-9]{8}(?=\\.)")){
       message("Error: Unresolved issue(s) with file name(s) in directory.")
