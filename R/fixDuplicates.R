@@ -21,7 +21,6 @@
 #' @importFrom stringr str_replace
 #' @importFrom lubridate mdy
 #' @importFrom purrr pmap_chr
-#' @importFrom rlang .data
 #'
 #' @param x A cleaned data table created by \code{\link{clean}}
 #'
@@ -131,13 +130,15 @@ fixDuplicates <-
               n(),
               NA),
             999))%>%
-      ungroup() %>%
+      ungroup()
+
+    af_dupes %<>%
       mutate(
         # Check records for all 0s or all 1s
         x_bags =
           pmap_chr(
             select(
-              .data,
+              af_dupes,
               matches("bag|coots|rails|cranes|pigeon|brant|seaducks")),
             ~case_when(
               # Look for 0s in every species column
@@ -381,13 +382,15 @@ fixDuplicates <-
               n(),
               NA),
             999))%>%
-      ungroup() %>%
+      ungroup()
+
+    af_dupes %<>%
       mutate(
         # Check records for all 0s or all 1s
         x_bags =
           pmap_chr(
             select(
-              .data,
+              af_dupes,
               matches("bag|coots|rails|cranes|pigeon|brant|seaducks")),
             ~case_when(
               # Look for 0s in every species column
@@ -565,13 +568,15 @@ fixDuplicates <-
               n(),
               NA),
             999))%>%
-      ungroup() %>%
+      ungroup()
+
+    af_dupes %<>%
       mutate(
         # Check records for all 0s or all 1s
         x_bags =
           pmap_chr(
             select(
-              .data,
+              af_dupes,
               matches("bag|coots|rails|cranes|pigeon|brant|seaducks")),
             ~case_when(
               # Look for 0s in every species column
