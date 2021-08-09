@@ -100,9 +100,11 @@ read_hip <-
       }
 
     if(nrow(files) == 0){
-      message("No file(s) to read in. Did you specify a state that did not submit data?")
-    }
-
+      message(
+        paste0(
+          "No file(s) to read in. Did you specify a state that did not submit",
+          " data?"))
+      }
     else{
       # Check encodings of the files that will be read
       checked_encodings <-
@@ -129,7 +131,11 @@ read_hip <-
               pull(files[i,]),
               fwf_widths(c(1, 15, 1, 20, 3, 60, 20, 2, 10, 10, 10,
                            1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4, NA)),
-              col_types = "cccccccccccccccccccccccc") %>%
+              col_types = "c",
+              na = c("", " ", "NA"),
+              # Read in as UTF-16 instead of UTF-8 so that the read cooperates
+              # with BOMs
+              locale = locale(encoding = "UTF-16")) %>%
               mutate(
                 # Add the download state as a column
                 dl_state =
@@ -152,15 +158,53 @@ read_hip <-
         # Remove duplicates
         distinct()
 
+      # Return a message for records with blank or NA values in firstname,
+      # lastname, state, or birth date
+      if(TRUE %in% is.na(pulled_data$firstname) |
+         TRUE %in% is.na(pulled_data$lastname) |
+         TRUE %in% is.na(pulled_data$state) |
+         TRUE %in% is.na(pulled_data$birth_date)){
+        message(
+          paste0("Error: One more more NA values detected in ID fields."))
+
+        print(
+          pulled_data %>%
+            filter(is.na(pulled_data$firstname) |
+                     is.na(pulled_data$lastname) |
+                     is.na(pulled_data$state) |
+                     is.na(pulled_data$birth_date)))}
+
+      # Return a message if there is an NA in dl_state
+      if(TRUE %in% is.na(pulled_data$dl_state)){
+        message(
+          paste0("Error: One or more more NA values detected in dl_state."))
+
+        print(
+          pulled_data %>%
+            select(dl_state, source_file) %>%
+            filter(is.na(dl_state)) %>%
+            distinct())}
+
+      # Return a message if there is an NA in dl_date
+      if(TRUE %in% is.na(pulled_data$dl_date)){
+        message(
+          paste0("Error: One or more more NA values detected in dl_date."))
+
+        print(
+          pulled_data %>%
+            select(dl_date, source_file) %>%
+            filter(is.na(dl_date)) %>%
+            distinct())}
+
       # Check if all dl_states are acceptable
 
       # String of 49 continental US states
       acceptable_49_dl_states <-
-        c("AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "ID", "IL",
-          "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO",
-          "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR",
-          "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI",
-          "WY")
+        c("AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "ID",
+          "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN",
+          "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND",
+          "OH", "OK", "OR","PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT",
+          "VA", "WA", "WV", "WI", "WY")
 
       # String of states in the data
       dl_states_in_data <-
@@ -169,16 +213,17 @@ read_hip <-
         distinct() %>%
         pull()
 
-      # If there is a dl_state not found in the list of 49 continental US states,
-      # return a message reporting the problem
+      # Return a message if there is a dl_state not found in the list of 49
+      # continental US states
       if(FALSE %in% (dl_states_in_data %in% acceptable_49_dl_states) == TRUE){
         message(
-          paste0("One or more dl_state values do not belong in the list of ",
-                 "expected 49 continental US states."))
-        return(pulled_data)
-      }else{
-        return(pulled_data)
-      }
-    }
+          paste0("Error: One or more dl_state values do not belong in the ",
+                 "list of expected 49 continental US states."))
 
+        print(
+          dl_states_in_data %>%
+            filter(!dl_state %in% acceptable_49_dl_states))}
+
+      return(pulled_data)
+    }
   }
