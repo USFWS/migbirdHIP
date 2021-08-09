@@ -32,7 +32,7 @@ renameFiles <-
       }
 
     # Run if there are files in the dir with 5 digits (old Julian data format)
-    if(TRUE %in% str_detect(list.files(path), "^[A-Z]{2}[0-9]{3}(?=\\.)")){
+    if(TRUE %in% str_detect(list.files(x), "^[A-Z]{2}[0-9]{3}(?=\\.)")){
 
       # File name(s) with 5-digit format
       names5 <- list.files(x, pattern = "^[A-Z]{2}[0-9]{3}\\.")
@@ -65,16 +65,12 @@ renameFiles <-
       # Overwrite the file names in the given directory
       file.rename(from = names5, to = names10)
 
+      message("Success: Julian dates changed to standard format.")
       print(bind_cols(old = names5, new = names10))
-      }else{
-      message(
-        paste0("No file name(s) containing a Julian date exist in the provided",
-               " directory."))
-        }
-    if(TRUE %in% str_detect(list.files(path), "[a-z]")){
+      }
+    if(TRUE %in% str_detect(list.files(x), "[a-z]")){
 
-      names_lower <-
-        list.files(path)
+      names_lower <- list.files(x)
 
       names_upper <-
         names_lower %>%
@@ -88,16 +84,13 @@ renameFiles <-
       # Overwrite the file names in the given directory
       file.rename(from = names_lower, to = names_upper)
 
+      message("Success: Lowercase state abbreviations changed to upper.")
       print(
         bind_cols(old = names_lower, new = names_upper) %>%
           filter(str_detect(old, ".*[a-z].*(?=\\.)")))
-      }else{
-        NULL
       }
-    if(FALSE %in% str_detect(list.files(path), "^[A-Z]{2}[0-9]{8}(?=\\.)")){
+    if(FALSE %in% str_detect(list.files(x), "^[A-Z]{2}[0-9]{8}(?=\\.)")){
       message("Error: Unresolved issue(s) with file name(s) in directory.")
-      print(!str_detect(list.files(path), "^[A-Z]{2}[0-9]{8}(?=\\.)"))
-    }else{
-      NULL
+      print(!str_detect(list.files(x), "^[A-Z]{2}[0-9]{8}(?=\\.)"))
     }
   }
