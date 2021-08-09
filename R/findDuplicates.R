@@ -42,13 +42,24 @@ findDuplicates <-
 
     duplicates <-
       x %>%
+      # Filter out permits
+      filter(
+        ducks_bag != "0" &
+          geese_bag != "0" &
+          dove_bag != "0" &
+          woodcock_bag != "0" &
+          coots_snipe != "0" &
+          rails_gallinules != "0" &
+          (cranes != "2" |
+             band_tailed_pigeon != "2" |
+             brant != "2" |
+             seaduck != "2")) %>%
       # Create a row key
       mutate(hunter_key = paste0("hunter_", row_number())) %>%
       # Group by registrant information; name, city, state, birthday, dl_state
       group_by(
         firstname,
         lastname,
-        city,
         state,
         birth_date,
         dl_state) %>%
