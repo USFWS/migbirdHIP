@@ -4,7 +4,7 @@
 \alias{clean}
 \title{Tidy data}
 \usage{
-clean(x, plot)
+clean(x, plot = FALSE)
 }
 \arguments{
 \item{x}{The object created after reading in data with \code{\link{compile}}}
