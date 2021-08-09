@@ -85,11 +85,11 @@ write_hip <-
     else{
 
       # Write data to csv
-
       write.csv(
         final_table,
         file = path,
         row.names = FALSE,
-        na = "")
+        na = "",
+        fileEncoding = "UTF-8")
     }
   }
