@@ -1,6 +1,6 @@
 #' Find duplicates
 #'
-#' Determine how many duplicate records are in the data. Plot and tabulate which fields are duplicates of individual hunters (i.e. data grouped by first name, last name, city, state, and birth date).
+#' Determine how many duplicate records are in the data. Plot and tabulate which fields are duplicates of individual hunters (i.e. data grouped by first name, last name, state, and birth date).
 #'
 #' @importFrom dplyr %>%
 #' @importFrom dplyr mutate
@@ -56,7 +56,8 @@ findDuplicates <-
              seaduck != "2")) %>%
       # Create a row key
       mutate(hunter_key = paste0("hunter_", row_number())) %>%
-      # Group by registrant information; name, city, state, birthday, dl_state
+      # Group by registrant information; first name, last name, state, birthday,
+      # dl_state
       group_by(
         firstname,
         lastname,
@@ -77,7 +78,6 @@ findDuplicates <-
       arrange(
         firstname,
         lastname,
-        city,
         state,
         birth_date,
         dl_state)
@@ -93,7 +93,6 @@ findDuplicates <-
       select(
         firstname,
         lastname,
-        city,
         state,
         birth_date,
         dl_state) %>%
@@ -105,7 +104,7 @@ findDuplicates <-
     dupl_tibble <-
       duplicates %>%
       select(-c("hunter_key", "duplicate")) %>%
-      group_by(firstname, lastname, city, state, birth_date, dl_state) %>%
+      group_by(firstname, lastname, state, birth_date, dl_state) %>%
       mutate(
         # Hunter key per individual (not per row)
         hunter_key = cur_group_id(),
@@ -133,6 +132,11 @@ findDuplicates <-
           ifelse(
             length(unique(address)) > 1,
             paste(dupl, "address", sep = "-"),
+            dupl),
+        dupl =
+          ifelse(
+            length(unique(city)) > 1,
+            paste(dupl, "city", sep = "-"),
             dupl),
         dupl =
           ifelse(
