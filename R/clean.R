@@ -38,7 +38,7 @@
 #' @export
 
 clean <-
-  function(x, plot){
+  function(x, plot = FALSE){
 
     tidied_x <-
       x %>%
@@ -416,7 +416,7 @@ clean <-
           geom_tile() +
           labs(y = "Hunter ID", x = "Data Field") +
           theme_classic() +
-          theme(legend.position = "none")
+          theme(legend.position = "none", axis.text.y = element_blank())
 
         print(missing_plot)
       }
