@@ -14,13 +14,15 @@
 #' @importFrom dplyr distinct
 #' @importFrom purrr map_dfr
 #' @importFrom purrr map_df
-#' @importFrom readr read_fwf
-#' @importFrom readr fwf_widths
+#' @importFrom purrr set_names
 #' @importFrom readr guess_encoding
 #' @importFrom stringr str_detect
 #' @importFrom stringr str_replace
 #' @importFrom stringr str_extract
 #' @importFrom stringr str_remove
+#' @importFrom stringr str_trim
+#' @importFrom stringr str_sub
+#' @importFrom utils read.fwf
 #'
 #' @param path File path to the folder containing HIP .txt files
 #' @param state When specified, reads in download data from a specified state. Must match one of the following two-letter abbreviations:
@@ -35,6 +37,14 @@
 
 read_hip <-
   function(path, state = NA, season = FALSE) {
+
+    # Add a final "/" if not included already
+    if(!str_detect(path, "\\/$")){
+      path <- paste0(path, "/")
+    }else{
+      path <- path
+    }
+
     # Create a tibble of the HIP .txt files to be read from the provided
     # directory
     files <-
@@ -49,7 +59,7 @@ read_hip <-
           # Keep only files from the specified state
           filter(str_detect(filepath, state)) %>%
           # Create new complete file paths
-          mutate(filepath = paste(path, filepath, sep = "/")) %>%
+          mutate(filepath = paste0(path, filepath)) %>%
           # Filter out blank files
           mutate(
             filepath =
@@ -67,7 +77,7 @@ read_hip <-
         # Keep only txt files
         filter(str_detect(filepath, "(?<=\\.)txt$")) %>%
         # Create new complete file paths
-        mutate(filepath = paste(path, filepath, sep = "/")) %>%
+        mutate(filepath = paste0(path, filepath)) %>%
         # Filter out blank files
         mutate(
           filepath =
@@ -87,7 +97,7 @@ read_hip <-
         # Keep only txt files
         filter(str_detect(filepath, "(?<=\\.)txt$")) %>%
         # Create new complete file paths
-        mutate(filepath = paste(path, filepath, sep = "/")) %>%
+        mutate(filepath = paste0(path, filepath)) %>%
         # Filter out blank files
         mutate(
           filepath =
@@ -97,8 +107,12 @@ read_hip <-
               filepath)) %>%
         filter(filepath != "blank")
     }
+
     if(nrow(files) == 0){
-      message("No file(s) to read in. Did you specify a state that did not submit data?")
+      message(
+        paste0(
+          "No file(s) to read in. Did you specify a state that did not submit",
+          " data?"))
     }
     else{
       # Check encodings of the files that will be read
@@ -115,37 +129,47 @@ read_hip <-
         ungroup() %>%
         filter(encoding != "UTF-8") %>%
         select(filepath, encoding, confidence)
+
       # Read data from filepaths
-      pulled_data <-
+      raw_data <-
         map_df(
           1:nrow(files),
-          function(i) {
-            # Compile each state's file into one table
-            read_fwf(
-              pull(files[i,]),
-              fwf_widths(c(1, 15, 1, 20, 3, 60, 20, 2, 10, 10, 10,
-                           1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4, NA)),
-              col_types = "cccccccccccccccccccccccc") %>%
-              mutate(
-                # Add the download state as a column
-                dl_state =
-                  str_extract(
-                    pull(files[i, ]), "[A-Z]{2}(?=[0-9]{8}\\.txt)"),
-                # Add the download date as a column
-                dl_date =
-                  str_extract(
-                    pull(files[i, ]), "(?<=[A-Z]{2})[0-9]{8}(?=\\.txt)"),
-                # Add the source file as a column
-                source_file =
-                  str_remove(pull(files[i, ]), path),
-                source_file =
-                  str_remove(source_file, "^\\/"),
-                # Add the download cycle as a column
-                dl_cycle =
-                  str_extract(pull(files[i, ]), "(?<=DL).+(?=\\/)")
-              )
-          }) %>%
-        # Remove duplicates
+          # Compile each state's file into one table
+          ~read.fwf(
+            pull(files[.x,]),
+            widths = 268,
+            fileEncoding = 'UTF-8-BOM') %>%
+            mutate(
+              # Add the download state as a column
+              dl_state =
+                str_extract(pull(files[.x,]), "[A-Z]{2}(?=[0-9]{8}\\.txt)"),
+              # Add the download date as a column
+              dl_date =
+                str_extract(pull(files[.x,]), "(?<=[A-Z]{2})[0-9]{8}(?=\\.txt)"),
+              # Add the source file as a column
+              source_file =
+                str_remove(pull(files[.x,]), path),
+              source_file =
+                str_remove(source_file, "^\\/"),
+              # Add the download cycle as a column
+              dl_cycle =
+                str_extract(pull(files[.x,]), "(?<=DL).+(?=\\/)")))
+
+      # Define fwf limits
+      col_start <- c(1, 2, 17, 18, 38, 41, 101, 121, 123, 133, 143, 153, 154,
+                     155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 168)
+      col_stop <-  c(1, 16, 17, 37, 40, 100, 120, 122, 132, 142, 152, 153, 154,
+                     155, 156, 157, 158, 159, 160, 161, 162, 163, 167, 267)
+
+      # Parse lines to columns
+      pulled_data <-
+        map_dfr(
+          raw_data$V1,
+          ~trimws(substring(.x, col_start, col_stop)) %>%
+            set_names(c(paste0("X", seq_along(1:24))))) %>%
+        # Bind file info cols in
+        bind_cols(raw_data %>% select(-V1)) %>%
+        # Remove exact duplicates
         distinct()
 
       # Return a message for records with blank or NA values in firstname,
