@@ -53,7 +53,7 @@ findDuplicates <-
           (cranes != "2" |
              band_tailed_pigeon != "2" |
              brant != "2" |
-             seaduck != "2")) %>%
+             seaducks != "2")) %>%
       # Create a row key
       mutate(hunter_key = paste0("hunter_", row_number())) %>%
       # Group by registrant information; first name, last name, state, birthday,

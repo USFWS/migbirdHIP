@@ -83,7 +83,9 @@ DL1202 <- read_hip("C:/HIP/DL1202")
 ```
 
 ```
-## Error in set_names(., c(paste0("X", seq_along(1:24)))): could not find function "set_names"
+## Error: Problem with `mutate()` input `dl_state`.
+## x object 'i' not found
+## i Input `dl_state` is `str_extract(pull(files[i, ]), "[A-Z]{2}(?=[0-9]{8}\\.txt)")`.
 ```
 
 Did you get a warning or three? Read an explanation of common `read_hip` warnings, [below](#common-read_hip-warnings).
@@ -145,10 +147,10 @@ findDuplicates(DL1202_clean, return = "table")
 ##  3 address-email                1
 ##  4 address-issue_date           1
 ##  5 address-issue_date-email     1
-##  6 bag                         14
+##  6 bag                          6
 ##  7 city-issue_date              1
-##  8 email                        4
-##  9 issue_date                  33
+##  8 email                        3
+##  9 issue_date                  27
 ## 10 issue_date-email             1
 ## 11 middle-address               1
 ## 12 middle-address-email         2
