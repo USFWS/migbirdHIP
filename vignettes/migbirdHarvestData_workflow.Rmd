@@ -83,9 +83,8 @@ DL1202 <- read_hip("C:/HIP/DL1202")
 ```
 
 ```
-## Error: Problem with `mutate()` input `dl_state`.
-## x object 'i' not found
-## i Input `dl_state` is `str_extract(pull(files[i, ]), "[A-Z]{2}(?=[0-9]{8}\\.txt)")`.
+## Error: Can't subset columns that don't exist.
+## [31mx[39m Column `dl_state` doesn't exist.
 ```
 
 Did you get a warning or three? Read an explanation of common `read_hip` warnings, [below](#common-read_hip-warnings).
@@ -230,7 +229,7 @@ validate(DL1202_fixed, type = "horizontal")
 ##    source_file    h_value h_rep h_total prop_repeat
 ##    <chr>          <chr>   <int>   <int>       <dbl>
 ##  1 WI20201216.txt 1         465     546       0.852
-##  2 AL20201216.txt 1        5796    7080       0.819
+##  2 AL20201216.txt 1        5798    7080       0.819
 ##  3 MI20201216.txt 1         343     419       0.819
 ##  4 SC20201202.txt 1        6318    7841       0.806
 ##  5 MS20201215.txt 1        6708    8929       0.751

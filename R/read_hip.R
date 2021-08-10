@@ -167,6 +167,8 @@ read_hip <-
           raw_data$V1,
           ~trimws(substring(.x, col_start, col_stop)) %>%
             set_names(c(paste0("X", seq_along(1:24))))) %>%
+        # Bind file info cols in
+        bind_cols(raw_data %>% select(-V1)) %>%
         # Remove exact duplicates
         distinct()
 
