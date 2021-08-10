@@ -20,6 +20,7 @@
 #' @importFrom ggplot2 labs
 #' @importFrom ggplot2 theme_classic
 #' @importFrom ggplot2 theme
+#' @importFrom ggplot2 element_blank
 #' @importFrom stringr str_to_upper
 #' @importFrom stringr str_detect
 #' @importFrom stringr str_extract
@@ -416,7 +417,9 @@ clean <-
           geom_tile() +
           labs(y = "Hunter ID", x = "Data Field") +
           theme_classic() +
-          theme(legend.position = "none", axis.text.y = element_blank())
+          theme(legend.position = "none",
+                axis.text.y = element_blank(),
+                axis.ticks.y = element_blank())
 
         print(missing_plot)
       }
