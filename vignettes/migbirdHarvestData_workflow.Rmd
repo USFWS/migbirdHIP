@@ -83,21 +83,7 @@ DL1202 <- read_hip("C:/HIP/DL1202")
 ```
 
 ```
-## # A tibble: 103 x 28
-##    X1    X2     X3    X4     X5    X6    X7    X8    X9    X10   X11   X12   X13   X14   X15   X16   X17   X18   X19  
-##    <chr> <chr>  <chr> <chr>  <chr> <chr> <chr> <chr> <chr> <chr> <chr> <chr> <chr> <chr> <chr> <chr> <chr> <chr> <chr>
-##  1 1     <NA>   G     KYI    <NA>  4427~ JACK~ FL    3220~ 10/2~ 12/0~ 2     1     0     1     2     1     1     0    
-##  2 1     TYLER  W     CARY   <NA>  2595~ VENE~ <NA>  <NA>  10/2~ 12/0~ 2     1     1     1     1     1     1     0    
-##  3 1     DANIEL E     BLODG~ <NA>  6707  SPOT~ <NA>  <NA>  03/2~ 12/0~ 2     1     1     1     1     1     1     0    
-##  4 1     JUAN   M     ORTIZ~ <NA>  155 ~ FAYE~ <NA>  <NA>  01/0~ 12/1~ 2     1     1     1     1     1     1     0    
-##  5 1     CODY   M     CORMI~ <NA>  3748~ NEW ~ <NA>  <NA>  09/1~ 12/1~ 2     1     1     1     1     1     1     0    
-##  6 1     THOMAS J     BRENN~ Jr.   1520~ POMP~ <NA>  <NA>  02/1~ 12/1~ 2     1     1     1     1     1     1     0    
-##  7 1     CHRIS~ <NA>  PERRO~ <NA>  4494~ LOXA~ <NA>  <NA>  06/2~ 12/1~ 2     2     2     2     2     1     1     0    
-##  8 1     ANDREW C     ADAMS  <NA>  45 M~ MILAN <NA>  <NA>  09/0~ 12/1~ 2     3     2     1     1     1     1     0    
-##  9 1     MASON  E     HITCH~ <NA>  BRAS~ ROCK~ <NA>  <NA>  05/3~ 12/1~ 2     1     1     1     1     1     1     0    
-## 10 1     WILLIS L     MANCIL <NA>  8926~ WILL~ <NA>  <NA>  05/2~ 12/1~ 2     1     1     1     1     1     1     0    
-## # ... with 93 more rows, and 9 more variables: X20 <chr>, X21 <chr>, X22 <chr>, X23 <chr>, X24 <chr>, dl_state <chr>,
-## #   dl_date <chr>, source_file <chr>, dl_cycle <chr>
+## Error in set_names(., c(paste0("X", seq_along(1:24)))): could not find function "set_names"
 ```
 
 Did you get a warning or three? Read an explanation of common `read_hip` warnings, [below](#common-read_hip-warnings).
@@ -120,7 +106,10 @@ After data are imported, we `clean`:
 DL1202_clean <- clean(DL1202, plot = TRUE)
 ```
 
-![plot of chunk clean](figure/clean-1.png)
+```
+## Error: Can't rename columns that don't exist.
+## [31mx[39m Column `X1` doesn't exist.
+```
 
 This function renames columns and does simple mutations. Importantly, records are discarded if first name, last name, city of residence, state of residence, or date of birth are missing. These records with missing values can be visualized using `plot = TRUE`.
 
@@ -239,7 +228,7 @@ validate(DL1202_fixed, type = "horizontal")
 ##    source_file    h_value h_rep h_total prop_repeat
 ##    <chr>          <chr>   <int>   <int>       <dbl>
 ##  1 WI20201216.txt 1         465     546       0.852
-##  2 AL20201216.txt 1        5798    7080       0.819
+##  2 AL20201216.txt 1        5796    7080       0.819
 ##  3 MI20201216.txt 1         343     419       0.819
 ##  4 SC20201202.txt 1        6318    7841       0.806
 ##  5 MS20201215.txt 1        6708    8929       0.751
