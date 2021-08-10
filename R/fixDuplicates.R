@@ -384,13 +384,13 @@ fixDuplicates <-
             999))%>%
       ungroup()
 
-    af_dupes %<>%
+    other_dupes %<>%
       mutate(
         # Check records for all 0s or all 1s
         x_bags =
           pmap_chr(
             select(
-              af_dupes,
+              other_dupes,
               matches("bag|coots|rails|cranes|pigeon|brant|seaducks")),
             ~case_when(
               # Look for 0s in every species column
@@ -570,13 +570,13 @@ fixDuplicates <-
             999))%>%
       ungroup()
 
-    af_dupes %<>%
+    hip_dupes %<>%
       mutate(
         # Check records for all 0s or all 1s
         x_bags =
           pmap_chr(
             select(
-              af_dupes,
+              hip_dupes,
               matches("bag|coots|rails|cranes|pigeon|brant|seaducks")),
             ~case_when(
               # Look for 0s in every species column
