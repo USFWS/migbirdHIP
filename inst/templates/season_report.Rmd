@@ -30,10 +30,8 @@ cleaned_data <- clean(season_data)
 rm(season_data)
 
 fixed_data <- fixDuplicates(cleaned_data)
-fxd <- fixed_data$fixed_duplicates %>% as_tibble()
-rm(fixed_data)
 
-proofed_data <- proof(fxd, year = params$year)
+proofed_data <- proof(fixed_data, year = params$year)
 
 corrected_data <- correct(proofed_data, year = params$year)
 
@@ -75,42 +73,18 @@ findDuplicates(cleaned_data)
 DT::datatable(findDuplicates(cleaned_data, return = "table"))
 ```
 
-### Before fixDuplicates (only permit states)
-
-Permit states include AK, AZ, CO, KS, MN, MT, ND, NM, OK, OR, SD, TX, UT, WA, and WY.
-
-```{r b_perms, echo = FALSE}
-perm_states <- 
-  c("AK", "AZ", "CO", "KS", "MN", "MT", "ND", "NM", "OK", "OR", "SD", "TX", 
-    "UT", "WA", "WY")
-
-findDuplicates(cleaned_data %>% filter(dl_state %in% perm_states))
-
-DT::datatable(findDuplicates(cleaned_data %>% filter(dl_state %in% perm_states), return = "table"))
-```
-
 ### After fixDuplicates (all 49 states)
 
 ```{r a_fd, echo = FALSE}
-findDuplicates(fxd)
+findDuplicates(fixed_data)
 
-DT::datatable(findDuplicates(fxd, return = "table"))
-```
-
-### After fixDuplicates (only permit states)
-
-Permit states include AK, AZ, CO, KS, MN, MT, ND, NM, OK, OR, SD, TX, UT, WA, and WY.
-
-```{r a_perms, echo = FALSE}
-findDuplicates(fxd %>% filter(dl_state %in% perm_states))
-
-DT::datatable(findDuplicates(fxd %>% filter(dl_state %in% perm_states), return = "table"))
+DT::datatable(findDuplicates(fixed_data, return = "table"))
 ```
 
 ## Strata
 
 ```{r stratacheck, echo = FALSE}
-DT::datatable(strataCheck(fxd))
+DT::datatable(strataCheck(fixed_data))
 ```
 
 ## Repeated values
@@ -118,20 +92,20 @@ DT::datatable(strataCheck(fxd))
 ### Horizontal
 
 ```{r h_validate, echo = FALSE}
-DT::datatable(migbirdHarvestData::validate(fxd, type = "horizontal"))
+DT::datatable(migbirdHarvestData::validate(fixed_data, type = "horizontal"))
 ```
 
 ### Vertical
 
 ```{r v_validate, echo = FALSE}
-DT::datatable(migbirdHarvestData::validate(fxd, type = "vertical"))
+DT::datatable(migbirdHarvestData::validate(fixed_data, type = "vertical"))
 ```
 
 ```{r data_sweep, include = FALSE}
 
 # Remove data objects to improve memory use
 rm(cleaned_data)
-rm(fxd)
+rm(fixed_data)
 rm(perm_states)
 ```
 
