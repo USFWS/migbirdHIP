@@ -169,7 +169,8 @@ read_hip <-
             filter(is.na(pulled_data$X2) |
                      is.na(pulled_data$X4) |
                      is.na(pulled_data$X8) |
-                     is.na(pulled_data$X10)))}
+                     is.na(pulled_data$X10)) %>%
+            select(dl_state, X2, X4, X8, X10))}
 
       # Return a message if there is an NA in dl_state
       if(TRUE %in% is.na(pulled_data$dl_state)){
