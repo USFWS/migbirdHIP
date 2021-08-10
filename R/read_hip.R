@@ -134,12 +134,26 @@ read_hip <-
       raw_data <-
         map_df(
           1:nrow(files),
-          function(i) {
-            # Compile each state's file into one table
-            read.fwf(
-              pull(files[i,]),
-              widths = 268,
-              fileEncoding = 'UTF-8-BOM')})
+          # Compile each state's file into one table
+          ~read.fwf(
+            pull(files[.x,]),
+            widths = 268,
+            fileEncoding = 'UTF-8-BOM') %>%
+            mutate(
+              # Add the download state as a column
+              dl_state =
+                str_extract(pull(files[.x,]), "[A-Z]{2}(?=[0-9]{8}\\.txt)"),
+              # Add the download date as a column
+              dl_date =
+                str_extract(pull(files[.x,]), "(?<=[A-Z]{2})[0-9]{8}(?=\\.txt)"),
+              # Add the source file as a column
+              source_file =
+                str_remove(pull(files[.x,]), path),
+              source_file =
+                str_remove(source_file, "^\\/"),
+              # Add the download cycle as a column
+              dl_cycle =
+                str_extract(pull(files[.x,]), "(?<=DL).+(?=\\/)")))
 
       # Define fwf limits
       col_start <- c(1, 2, 17, 18, 38, 41, 101, 121, 123, 133, 143, 153, 154,
@@ -153,21 +167,6 @@ read_hip <-
           raw_data$V1,
           ~trimws(substring(.x, col_start, col_stop)) %>%
             set_names(c(paste0("X", seq_along(1:24))))) %>%
-        mutate(
-          # Add the download state as a column
-          dl_state =
-            str_extract(pull(files[i, ]), "[A-Z]{2}(?=[0-9]{8}\\.txt)"),
-          # Add the download date as a column
-          dl_date =
-            str_extract(pull(files[i, ]), "(?<=[A-Z]{2})[0-9]{8}(?=\\.txt)"),
-          # Add the source file as a column
-          source_file =
-            str_remove(pull(files[i, ]), path),
-          source_file =
-            str_remove(source_file, "^\\/"),
-          # Add the download cycle as a column
-          dl_cycle =
-            str_extract(pull(files[i, ]), "(?<=DL).+(?=\\/)")) %>%
         # Remove exact duplicates
         distinct()
 
