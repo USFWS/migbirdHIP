@@ -719,5 +719,6 @@ fixDuplicates <-
             select(firstname, lastname, state, birth_date, dl_state),
           by = c("firstname", "lastname", "state", "birth_date", "dl_state"))
       )}
-    else{return(resolved_duplicates)}
+
+    return(resolved_duplicates)
   }
