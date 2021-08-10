@@ -71,7 +71,8 @@ renameFiles <-
       }
     if(TRUE %in% str_detect(list.files(x), "^[a-z]{2}")){
 
-      list.files(x) %>%
+      names_lower <-
+        list.files(x) %>%
         as_tibble() %>%
         filter(str_detect(value, "^[a-z]{2}")) %>%
         pull()
@@ -94,6 +95,9 @@ renameFiles <-
       }
     if(FALSE %in% str_detect(list.files(x), "^[A-Z]{2}[0-9]{8}\\.")){
       message("Error: Unresolved issue(s) with file name(s) in directory.")
-      print(!str_detect(list.files(x), "^[A-Z]{2}[0-9]{8}\\."))
+      print(
+        list.files(x) %>%
+          as_tibble() %>%
+          filter(!str_detect(value, "^[A-Z]{2}[0-9]{8}\\.")))
     }
   }
