@@ -131,11 +131,8 @@ read_hip <-
               pull(files[i,]),
               fwf_widths(c(1, 15, 1, 20, 3, 60, 20, 2, 10, 10, 10,
                            1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4, NA)),
-              col_types = "c",
-              na = c("", " ", "NA"),
-              # Read in as UTF-16 instead of UTF-8 so that the read cooperates
-              # with BOMs
-              locale = locale(encoding = "UTF-16")) %>%
+              col_types = "cccccccccccccccccccccccc",
+              na = c("", " ", "NA")) %>%
               mutate(
                 # Add the download state as a column
                 dl_state =
@@ -160,19 +157,19 @@ read_hip <-
 
       # Return a message for records with blank or NA values in firstname,
       # lastname, state, or birth date
-      if(TRUE %in% is.na(pulled_data$firstname) |
-         TRUE %in% is.na(pulled_data$lastname) |
-         TRUE %in% is.na(pulled_data$state) |
-         TRUE %in% is.na(pulled_data$birth_date)){
+      if(TRUE %in% is.na(pulled_data$X2) |
+         TRUE %in% is.na(pulled_data$X4) |
+         TRUE %in% is.na(pulled_data$X8) |
+         TRUE %in% is.na(pulled_data$X10)){
         message(
           paste0("Error: One more more NA values detected in ID fields."))
 
         print(
           pulled_data %>%
-            filter(is.na(pulled_data$firstname) |
-                     is.na(pulled_data$lastname) |
-                     is.na(pulled_data$state) |
-                     is.na(pulled_data$birth_date)))}
+            filter(is.na(pulled_data$X2) |
+                     is.na(pulled_data$X4) |
+                     is.na(pulled_data$X8) |
+                     is.na(pulled_data$X10)))}
 
       # Return a message if there is an NA in dl_state
       if(TRUE %in% is.na(pulled_data$dl_state)){
