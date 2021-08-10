@@ -6,6 +6,7 @@
 #' @importFrom dplyr mutate
 #' @importFrom dplyr pull
 #' @importFrom dplyr bind_cols
+#' @importFrom dplyr filter
 #' @importFrom stringr str_detect
 #' @importFrom stringr str_remove_all
 #' @importFrom stringr str_to_upper
@@ -68,9 +69,12 @@ renameFiles <-
       message("Success: Julian dates changed to standard format.")
       print(bind_cols(old = names5, new = names10))
       }
-    if(TRUE %in% str_detect(list.files(x), "[a-z]")){
+    if(TRUE %in% str_detect(list.files(x), "^[a-z]{2}")){
 
-      names_lower <- list.files(x)
+      list.files(pathx) %>%
+        as_tibble() %>%
+        filter(str_detect(value, "^[a-z]{2}")) %>%
+        pull()
 
       names_upper <-
         names_lower %>%
@@ -86,11 +90,10 @@ renameFiles <-
 
       message("Success: Lowercase state abbreviations changed to upper.")
       print(
-        bind_cols(old = names_lower, new = names_upper) %>%
-          filter(str_detect(old, "[a-z]{1,2}(?=\\.)")))
+        bind_cols(old = names_lower, new = names_upper))
       }
-    if(FALSE %in% str_detect(list.files(x), "^[A-Z]{2}[0-9]{8}(?=\\.)")){
+    if(FALSE %in% str_detect(list.files(x), "^[A-Z]{2}[0-9]{8}\\.")){
       message("Error: Unresolved issue(s) with file name(s) in directory.")
-      print(!str_detect(list.files(x), "^[A-Z]{2}[0-9]{8}(?=\\.)"))
+      print(!str_detect(list.files(x), "^[A-Z]{2}[0-9]{8}\\."))
     }
   }
