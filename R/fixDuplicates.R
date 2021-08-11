@@ -695,7 +695,8 @@ fixDuplicates <-
         ia_dupes,
         other_dupes,
         permit_dupes,
-        hip_dupes)
+        hip_dupes) %>%
+      select(-c("duplicate", "other_sum", "decision"))
 
     # Error checker #15
     if(
