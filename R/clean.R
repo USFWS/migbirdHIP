@@ -80,7 +80,6 @@ clean <-
       # residence, or date of birth are missing -- records discarded
       filter(!is.na(firstname)) %>%
       filter(!is.na(lastname)) %>%
-      filter(!is.na(city)) %>%
       filter(!is.na(state)) %>%
       filter(!is.na(birth_date)) %>%
       mutate(
