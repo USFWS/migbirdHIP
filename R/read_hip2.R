@@ -35,7 +35,7 @@
 #'
 #' @export
 
-read_hip <-
+read_hip2 <-
   function(path, state = NA, season = FALSE) {
 
     # Add a final "/" if not included already

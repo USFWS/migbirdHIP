@@ -82,6 +82,11 @@ library(migbirdHarvestData)
 DL1202 <- read_hip("C:/HIP/DL1202")
 ```
 
+```
+## Error: Can't rename columns that don't exist.
+## [31mx[39m Column `firstname` doesn't exist.
+```
+
 Did you get a warning or three? Read an explanation of common `read_hip` warnings, [below](#common-read_hip-warnings).
 
 ### renameFiles
@@ -223,7 +228,7 @@ validate(DL1202_fixed, type = "horizontal")
 ##    source_file    h_value h_rep h_total prop_repeat
 ##    <chr>          <chr>   <int>   <int>       <dbl>
 ##  1 WI20201216.txt 1         462     546       0.846
-##  2 AL20201216.txt 1        5797    7080       0.819
+##  2 AL20201216.txt 1        5796    7080       0.819
 ##  3 MI20201216.txt 1         343     419       0.819
 ##  4 SC20201202.txt 1        6320    7841       0.806
 ##  5 MS20201215.txt 1        6708    8929       0.751
