@@ -39,7 +39,7 @@ corrected_data <- correct(proofed_data, year = params$year)
 
 # Introduction
 
-This is a report of download cycle `r proofed_data %>% select(dl_cycle) %>% distinct %>% pull`. This cycle, `r nrow(proofed_data)` records were submitted from `r proofed_data %>% select(dl_state) %>% distinct %>% nrow()` states.
+This is a report of download cycle `r proofed_data %>% select(dl_cycle) %>% distinct %>% pull`. This cycle, `r sumLines(params$comp_path)` lines of data (`r nrow(fixed_data)` unique records) were submitted in `r length(list.files(params$comp_path) %>% as_tibble() %>% transmute(filepath = as.character(value)) %>% mutate(filepath = str_replace(filepath, "TXT", "txt")) %>% filter(str_detect(filepath, "(?<=\\.)txt$")) %>% pull)` files from `r proofed_data %>% select(dl_state) %>% distinct %>% nrow()` states.
 
 Below is a table summarizing the total of number of records per download state.
 
