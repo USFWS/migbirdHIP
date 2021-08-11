@@ -1,4 +1,4 @@
-#' Read in data
+#' Read in data 2
 #'
 #' Compile data from state-exported text files by providing a path to the download directory.
 #'
@@ -23,6 +23,8 @@
 #' @importFrom stringr str_trim
 #' @importFrom stringr str_sub
 #' @importFrom utils read.fwf
+#' @importFrom dplyr across
+#' @importFrom dplyr na_if
 #'
 #' @param path File path to the folder containing HIP .txt files
 #' @param state When specified, reads in download data from a specified state. Must match one of the following two-letter abbreviations:
@@ -170,7 +172,9 @@ read_hip2 <-
         # Bind file info cols in
         bind_cols(raw_data %>% select(-V1)) %>%
         # Remove exact duplicates
-        distinct()
+        distinct() %>%
+        # Set blanks as NA
+        mutate(across(where(is.character), ~na_if(., "")))
 
       # Return a message for records with blank or NA values in firstname,
       # lastname, state, or birth date
@@ -179,21 +183,17 @@ read_hip2 <-
          TRUE %in% is.na(pulled_data$X8) |
          TRUE %in% is.na(pulled_data$X10)){
         message(
-          paste0("Error: One more more NA values detected in ID fields."))
+          paste0("Error: One more more NA values detected in ID fields ",
+                 "(firstname, lastname, state, birth date)."))
 
         print(
           pulled_data %>%
-            rename(
-              X2 = firstname,
-              X4 = lastname,
-              X8 = state,
-              X10 = birth_date) %>%
             filter(
-              is.na(firstname)|
-                is.na(lastname)|
-                is.na(state)|
-                is.na(birth_date)) %>%
-            select(dl_state, firstname, lastname, state, birth_date))}
+              is.na(X2)|
+                is.na(X4)|
+                is.na(X8)|
+                is.na(X10)) %>%
+            select(dl_state, X2, X4, X8, X10))}
 
       # Return a message if there is an NA in dl_state
       if(TRUE %in% is.na(pulled_data$dl_state)){
@@ -248,3 +248,5 @@ read_hip2 <-
       return(pulled_data)
     }
   }
+
+utils::globalVariables("where")

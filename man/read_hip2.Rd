@@ -2,7 +2,7 @@
 % Please edit documentation in R/read_hip2.R
 \name{read_hip2}
 \alias{read_hip2}
-\title{Read in data}
+\title{Read in data 2}
 \usage{
 read_hip2(path, state = NA, season = FALSE)
 }

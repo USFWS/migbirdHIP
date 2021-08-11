@@ -164,21 +164,17 @@ read_hip <-
          TRUE %in% is.na(pulled_data$X8) |
          TRUE %in% is.na(pulled_data$X10)){
         message(
-          paste0("Error: One more more NA values detected in ID fields."))
+          paste0("Error: One more more NA values detected in ID fields ",
+                 "(firstname, lastname, state, birth date)."))
 
         print(
           pulled_data %>%
-            rename(
-              X2 = firstname,
-              X4 = lastname,
-              X8 = state,
-              X10 = birth_date) %>%
             filter(
-              is.na(firstname)|
-                is.na(lastname)|
-                is.na(state)|
-                is.na(birth_date)) %>%
-            select(dl_state, firstname, lastname, state, birth_date))}
+              is.na(X2)|
+                is.na(X4)|
+                is.na(X8)|
+                is.na(X10)) %>%
+            select(dl_state, X2, X4, X8, X10))}
 
       # Return a message if there is an NA in dl_state
       if(TRUE %in% is.na(pulled_data$dl_state)){
