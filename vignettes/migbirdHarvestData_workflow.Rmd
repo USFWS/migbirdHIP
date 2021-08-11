@@ -83,8 +83,20 @@ DL1202 <- read_hip("C:/HIP/DL1202")
 ```
 
 ```
-## Error: Can't rename columns that don't exist.
-## [31mx[39m Column `firstname` doesn't exist.
+## # A tibble: 104 x 5
+##    dl_state X2          X4           X8    X10       
+##    <chr>    <chr>       <chr>        <chr> <chr>     
+##  1 AR       <NA>        <NA>         <NA>  <NA>      
+##  2 FL       <NA>        KYI          FL    10/28/1990
+##  3 GA       TYLER       CARY         <NA>  10/27/1985
+##  4 GA       DANIEL      BLODGETT     <NA>  03/28/1955
+##  5 GA       JUAN        ORTIZ-ATILES <NA>  01/04/1974
+##  6 GA       CODY        CORMIER      <NA>  09/12/1997
+##  7 GA       THOMAS      BRENNAN      <NA>  02/19/1992
+##  8 GA       CHRISTOPHER PERRONE      <NA>  06/25/2001
+##  9 GA       ANDREW      ADAMS        <NA>  09/08/2001
+## 10 GA       MASON       HITCHCOCK    <NA>  05/31/2002
+## # ... with 94 more rows
 ```
 
 Did you get a warning or three? Read an explanation of common `read_hip` warnings, [below](#common-read_hip-warnings).
@@ -107,9 +119,7 @@ After data are imported, we `clean`:
 DL1202_clean <- clean(DL1202, plot = TRUE)
 ```
 
-```
-## No records detected with missing first name, last name, city state, or date of birth.
-```
+![plot of chunk clean](figure/clean-1.png)
 
 This function renames columns and does simple mutations. Importantly, records are discarded if first name, last name, city of residence, state of residence, or date of birth are missing. These records with missing values can be visualized using `plot = TRUE`.
 
@@ -196,20 +206,20 @@ strataCheck(DL1202_fixed)
 ```
 
 ```
-## # A tibble: 442 x 4
-##    dl_state spp                state_strata normal_strata
-##    <chr>    <chr>              <chr>        <chr>        
-##  1 TX       dove_bag           ""           2, 3, 5      
-##  2 OR       dove_bag           "0"          1, 2, 3, 5   
-##  3 OR       dove_bag           ""           1, 2, 3, 5   
-##  4 OR       ducks_bag          "0"          1, 2, 3, 4   
-##  5 OR       ducks_bag          ""           1, 2, 3, 4   
-##  6 OR       geese_bag          "0"          1, 2, 3, 4   
-##  7 OR       geese_bag          ""           1, 2, 3, 4   
-##  8 OR       band_tailed_pigeon "0"          1, 2         
-##  9 OR       band_tailed_pigeon ""           1, 2         
-## 10 OR       brant              "0"          1, 2         
-## # ... with 432 more rows
+## # A tibble: 269 x 4
+##    dl_state spp                state_strata normal_strata   
+##    <chr>    <chr>              <chr>        <chr>           
+##  1 OR       dove_bag           0            1, 2, 3, 5      
+##  2 OR       ducks_bag          0            1, 2, 3, 4      
+##  3 OR       geese_bag          0            1, 2, 3, 4      
+##  4 OR       band_tailed_pigeon 0            1, 2            
+##  5 OR       brant              0            1, 2            
+##  6 OR       seaducks           0            1, 2            
+##  7 MO       dove_bag           9            0, 1, 2, 3, 5   
+##  8 NE       dove_bag           9            0, 1, 2, 3, 5   
+##  9 MO       woodcock_bag       9            0, 1, 2, 3, 4, 5
+## 10 NE       woodcock_bag       6            0, 1, 2, 3, 4, 5
+## # ... with 259 more rows
 ```
 
 ### validate
@@ -224,20 +234,20 @@ validate(DL1202_fixed, type = "horizontal")
 ```
 
 ```
-## # A tibble: 66 x 5
+## # A tibble: 47 x 5
 ##    source_file    h_value h_rep h_total prop_repeat
 ##    <chr>          <chr>   <int>   <int>       <dbl>
-##  1 WI20201216.txt 1         462     546       0.846
-##  2 AL20201216.txt 1        5796    7080       0.819
+##  1 WI20201216.txt 1         465     546       0.852
+##  2 AL20201216.txt 1        5797    7080       0.819
 ##  3 MI20201216.txt 1         343     419       0.819
-##  4 SC20201202.txt 1        6320    7841       0.806
+##  4 SC20201202.txt 1        6318    7841       0.806
 ##  5 MS20201215.txt 1        6708    8929       0.751
-##  6 MO20201216.txt 1        1848    2621       0.705
+##  6 MO20201216.txt 1        2954    4047       0.730
 ##  7 RI20201216.txt 1         101     157       0.643
-##  8 CT20201216.txt 1          74     116       0.638
+##  8 CT20201216.txt 1          73     114       0.640
 ##  9 OH20201216.txt 1         629    1057       0.595
-## 10 MN20201216.txt 1         731    1279       0.572
-## # ... with 56 more rows
+## 10 MN20201216.txt 1         733    1279       0.573
+## # ... with 37 more rows
 ```
 
 <b>Vertically.</b> The vertical check searches within each column for repetition. Any species group column with the same value in all rows will be detected. *Coming soon:* States that do not have a hunting season for one or more species groups (e.g. seaducks) will not be returned using this function for reporting all zero values. The default version of this function (`all = FALSE`) only checks duck bags. If the parameter is set to `all = TRUE`, every species group will be checked.
@@ -385,7 +395,7 @@ pullErrors(DL1202_proofed, error = "dove_bag")
 ```
 
 ```
-## [1] ""  "4"
+## [1] "4" "9"
 ```
 
 ### manualFix
@@ -454,14 +464,14 @@ outOfStateHunters(DL1202_proofed)
 ##    <chr>      <int>           <dbl>
 ##  1 AK           106            0.41
 ##  2 AL          7056            0.15
-##  3 AR          6569            0.65
+##  3 AR          6568            0.65
 ##  4 CA          3998            0.06
-##  5 CO          1749            0.1 
-##  6 CT           114            0.11
-##  7 FL          3654            0.09
-##  8 GA          3591            0.12
-##  9 IA          3236            0.06
-## 10 ID          1881            0.22
+##  5 CO          1749            0.09
+##  6 CT           114            0.1 
+##  7 FL          3653            0.09
+##  8 GA          3579            0.12
+##  9 IA          3229            0.05
+## 10 ID          1879            0.22
 ## # ... with 21 more rows
 ```
 
@@ -477,10 +487,12 @@ youthHunters(DL1202_proofed, year = 2020)
 <img src="figure/youth-1.png" title="Figure 7. Plot of proportions of youth hunters." alt="Figure 7. Plot of proportions of youth hunters." width="500" style="display: block; margin: auto;" />
 
 ```
-## # A tibble: 1 x 4
+## # A tibble: 3 x 4
 ##   dl_state registered_youth total_registered youth_proportion
 ##   <chr>               <int>            <int>            <dbl>
-## 1 ND                    117              175            0.669
+## 1 MO                      1             4047         0.000247
+## 2 ND                    117              175         0.669   
+## 3 NE                      1              548         0.00182
 ```
 
 ### errorPlot_fields
@@ -558,20 +570,20 @@ errorTable(DL1202_proofed)
 ```
 
 ```
-## # A tibble: 399 x 3
+## # A tibble: 136 x 3
 ##    dl_state error      error_count
 ##    <chr>    <chr>            <dbl>
 ##  1 AK       birth_date           2
-##  2 AK       email               55
-##  3 AK       zip                 32
-##  4 AL       birth_date         190
-##  5 AL       city                 1
-##  6 AL       email             1618
-##  7 AL       firstname            7
-##  8 AL       lastname             1
-##  9 AL       suffix              10
-## 10 AL       zip                 25
-## # ... with 389 more rows
+##  2 AK       zip                 32
+##  3 AL       birth_date         190
+##  4 AL       city                 1
+##  5 AL       firstname            7
+##  6 AL       lastname             1
+##  7 AL       suffix              10
+##  8 AL       zip                 25
+##  9 AR       birth_date         176
+## 10 AR       email                1
+## # ... with 126 more rows
 ```
 
 Errors can be reported by only location by turning off the `field` parameter.
@@ -585,16 +597,16 @@ errorTable(DL1202_proofed, field = "none")
 ## # A tibble: 31 x 2
 ##    dl_state error_count
 ##    <chr>          <dbl>
-##  1 AK                89
-##  2 AL              1852
-##  3 AR              1236
-##  4 CA              1907
-##  5 CO               743
-##  6 CT               134
-##  7 FL               205
-##  8 GA               518
-##  9 IA              5236
-## 10 ID               730
+##  1 AK                34
+##  2 AL               234
+##  3 AR               726
+##  4 CA               464
+##  5 CO               193
+##  6 CT               120
+##  7 FL                53
+##  8 GA                57
+##  9 IA              3216
+## 10 ID               163
 ## # ... with 21 more rows
 ```
 
@@ -606,20 +618,28 @@ errorTable(DL1202_proofed, loc = "none")
 ```
 
 ```
-## # A tibble: 21 x 2
+## # A tibble: 19 x 2
 ##    error              error_count
 ##    <chr>                    <dbl>
-##  1 band_tailed_pigeon         290
-##  2 birth_date                5577
-##  3 brant                      290
-##  4 city                       293
-##  5 coots_snipe                348
-##  6 cranes                     339
-##  7 dove_bag                   401
-##  8 ducks_bag                 3396
-##  9 email                    23909
-## 10 firstname                  109
-## # ... with 11 more rows
+##  1 band_tailed_pigeon           2
+##  2 birth_date                5637
+##  3 city                         3
+##  4 coots_snipe                 60
+##  5 cranes                      49
+##  6 dove_bag                   113
+##  7 ducks_bag                 3109
+##  8 email                     5495
+##  9 firstname                  111
+## 10 geese_bag                   38
+## 11 hunt_mig_birds              20
+## 12 lastname                    10
+## 13 rails_gallinules            48
+## 14 registration_yr              4
+## 15 seaducks                     1
+## 16 state                        6
+## 17 suffix                     283
+## 18 woodcock_bag                 4
+## 19 zip                       2132
 ```
 
 Location can be specified.
@@ -630,13 +650,12 @@ errorTable(DL1202_proofed, loc = "CA")
 ```
 
 ```
-## # A tibble: 4 x 3
+## # A tibble: 3 x 3
 ##   dl_state error      error_count
 ##   <chr>    <chr>            <dbl>
 ## 1 CA       birth_date         410
 ## 2 CA       dove_bag            53
-## 3 CA       email             1443
-## 4 CA       firstname            1
+## 3 CA       firstname            1
 ```
 
 Field can be specified.
@@ -650,7 +669,7 @@ errorTable(DL1202_proofed, field = "suffix")
 ## # A tibble: 1 x 2
 ##   error  error_count
 ##   <chr>        <dbl>
-## 1 suffix         278
+## 1 suffix         283
 ```
 
 Total errors for a location can be pulled.
@@ -664,7 +683,7 @@ errorTable(DL1202_proofed, loc = "CA", field = "none")
 ## # A tibble: 1 x 2
 ##   dl_state total_errors
 ##   <chr>           <dbl>
-## 1 CA               1907
+## 1 CA                464
 ```
 
 Total errors for a field in a particular location can be pulled.
@@ -692,18 +711,11 @@ redFlags(DL1202_proofed, type = "state", threshold = 0.03)
 ```
 
 ```
-## # A tibble: 9 x 5
+## # A tibble: 2 x 5
 ##   dl_state count_errors count_correct proportion flag        
 ##   <chr>           <int>         <int>      <dbl> <chr>       
-## 1 MT               3148         33402     0.0861 error > 0.03
-## 2 IA               5236         75664     0.0647 error > 0.03
-## 3 ND                216          4159     0.0494 error > 0.03
-## 4 CT                134          2716     0.0470 error > 0.03
-## 5 RI                181          3719     0.0464 error > 0.03
-## 6 MD               5120        111105     0.0441 error > 0.03
-## 7 WI                509         13141     0.0373 error > 0.03
-## 8 SC               6582        189268     0.0336 error > 0.03
-## 9 AK                 89          2561     0.0336 error > 0.03
+## 1 CT                120          2730     0.0421 error > 0.03
+## 2 IA               3216         77509     0.0398 error > 0.03
 ```
 
 <b>By field.</b>
@@ -715,14 +727,13 @@ redFlags(DL1202_proofed, type = "field", threshold = 0.01)
 ```
 
 ```
-## # A tibble: 5 x 5
-##   errors          count_errors count_correct proportion flag        
-##   <chr>                  <int>         <int>      <dbl> <chr>       
-## 1 email                  23909         67760     0.261  error > 0.01
-## 2 birth_date              5577         86092     0.0608 error > 0.01
-## 3 ducks_bag               3396         88273     0.0370 error > 0.01
-## 4 zip                     2107         89562     0.0230 error > 0.01
-## 5 registration_yr         1752         89917     0.0191 error > 0.01
+## # A tibble: 4 x 5
+##   errors     count_errors count_correct proportion flag        
+##   <chr>             <int>         <int>      <dbl> <chr>       
+## 1 birth_date         5637         87390     0.0606 error > 0.01
+## 2 email              5495         87532     0.0591 error > 0.01
+## 3 ducks_bag          3109         89918     0.0334 error > 0.01
+## 4 zip                2132         90895     0.0229 error > 0.01
 ```
 
 ## Troubleshooting

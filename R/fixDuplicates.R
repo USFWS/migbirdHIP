@@ -37,9 +37,10 @@ fixDuplicates <-
 
     duplicates <-
       x %>%
-      # Group by firstname, lastname, state, birth date, and download state to
-      # determine each unique hunter
-      group_by(firstname, lastname, state, birth_date, dl_state) %>%
+      # Group by firstname, lastname, state, birth date, download state, and
+      # registration year to determine each unique hunter
+      group_by(
+        firstname, lastname, state, birth_date, dl_state, registration_yr) %>%
       # Identify duplicates, aka records in groups of n > 1 that belong to the
       # same individual
       mutate(
@@ -50,9 +51,7 @@ fixDuplicates <-
             "single")) %>%
       ungroup() %>%
       # Filter out non-duplicate records
-      filter(str_detect(duplicate, "duplicate")) %>%
-      # Sort tibble
-      arrange(firstname, lastname, state, birth_date, dl_state)
+      filter(str_detect(duplicate, "duplicate"))
 
     # Define Atlantic Flyway states
     af_states <-
@@ -679,7 +678,8 @@ fixDuplicates <-
     resolved_duplicates <-
       # Remove duplicates from the input frame
       x %>%
-      group_by(firstname, lastname, state, birth_date, dl_state) %>%
+      group_by(
+        firstname, lastname, state, birth_date, dl_state, registration_yr) %>%
       mutate(
         duplicate =
           ifelse(
@@ -701,10 +701,12 @@ fixDuplicates <-
     if(
       n_distinct(
         x %>%
-        select(firstname, lastname, state, birth_date, dl_state)) !=
+        select(
+          firstname, lastname, state, birth_date, dl_state, registration_yr)) !=
       n_distinct(
         resolved_duplicates %>%
-        select(firstname, lastname, state, birth_date, dl_state))
+        select(
+          firstname, lastname, state, birth_date, dl_state, registration_yr))
     ){
       message(
         paste0(
@@ -713,11 +715,24 @@ fixDuplicates <-
       print(
         anti_join(
           x %>%
-            select(firstname, lastname, state, birth_date, dl_state) %>%
+            select(
+              firstname,
+              lastname,
+              state,
+              birth_date,
+              dl_state,
+              registration_yr) %>%
             distinct(),
           resolved_duplicates %>%
-            select(firstname, lastname, state, birth_date, dl_state),
-          by = c("firstname", "lastname", "state", "birth_date", "dl_state"))
+            select(
+              firstname, lastname, state, birth_date, dl_state, registration_yr),
+          by =
+            c("firstname",
+              "lastname",
+              "state",
+              "birth_date",
+              "dl_state",
+              "registration_yr"))
       )}
 
     return(resolved_duplicates)
