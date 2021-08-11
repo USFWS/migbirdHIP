@@ -360,46 +360,46 @@ clean <-
       # Convert N/A strings to NA
       na_if("N/A")
 
-    missing_x <-
-      x %>%
-      rename(
-        title = X1,
-        firstname = X2,
-        middle = X3,
-        lastname = X4,
-        suffix = X5,
-        address = X6,
-        city = X7,
-        state = X8,
-        zip = X9,
-        birth_date = X10,
-        # Edited X11 to specific .data$X11 to avoid error:
-        # "Found an obsolete/platform-specific call in: 'tidy'"
-        # "Found the platform-specific device: 'X11'"
-        issue_date = .data$X11,
-        hunt_mig_birds = X12,
-        ducks_bag = X13,
-        geese_bag = X14,
-        dove_bag = X15,
-        woodcock_bag = X16,
-        coots_snipe = X17,
-        rails_gallinules = X18,
-        cranes = X19,
-        band_tailed_pigeon = X20,
-        brant = X21,
-        seaducks = X22,
-        registration_yr = X23,
-        email = X24
-      ) %>%
-      # Add a download key
-      group_by(dl_date, dl_state) %>%
-      mutate(dl_key = paste0("dl_", cur_group_id())) %>%
-      ungroup() %>%
-      # Filter to records if firstname, lastname, city of residence, state of
-      # residence, or date of birth are missing
-      filter(is.na(firstname)|is.na(lastname)|is.na(city)|is.na(state)|is.na(birth_date))
-
     if(plot == TRUE){
+      missing_x <-
+        x %>%
+        rename(
+          title = X1,
+          firstname = X2,
+          middle = X3,
+          lastname = X4,
+          suffix = X5,
+          address = X6,
+          city = X7,
+          state = X8,
+          zip = X9,
+          birth_date = X10,
+          # Edited X11 to specific .data$X11 to avoid error:
+          # "Found an obsolete/platform-specific call in: 'tidy'"
+          # "Found the platform-specific device: 'X11'"
+          issue_date = .data$X11,
+          hunt_mig_birds = X12,
+          ducks_bag = X13,
+          geese_bag = X14,
+          dove_bag = X15,
+          woodcock_bag = X16,
+          coots_snipe = X17,
+          rails_gallinules = X18,
+          cranes = X19,
+          band_tailed_pigeon = X20,
+          brant = X21,
+          seaducks = X22,
+          registration_yr = X23,
+          email = X24
+        ) %>%
+        # Add a download key
+        group_by(dl_date, dl_state) %>%
+        mutate(dl_key = paste0("dl_", cur_group_id())) %>%
+        ungroup() %>%
+        # Filter to records if firstname, lastname, city of residence, state of
+        # residence, or date of birth are missing
+        filter(is.na(firstname)|is.na(lastname)|is.na(city)|is.na(state)|is.na(birth_date))
+
       if(nrow(missing_x) > 0){
         missing_plot <-
           missing_x %>%
@@ -408,7 +408,7 @@ clean <-
           mutate(hunter_id = row_number()) %>%
           # Pivot the field names to long format
           pivot_longer(firstname:birth_date, names_to = "field") %>%
-          # Pnly keep hunters' fields with NA values
+          # Only keep hunters' fields with NA values
           filter(is.na(value)) %>%
           # Set NA to 1 for plotting
           mutate(value = 1) %>%
@@ -429,9 +429,6 @@ clean <-
                  " state, or date of birth.")
         )
       }
-    }
-    else{
-      NULL
     }
 
     return(tidied_x)

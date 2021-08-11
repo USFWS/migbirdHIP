@@ -35,6 +35,14 @@
 
 read_hip <-
   function(path, state = NA, season = FALSE) {
+
+    # Add a final "/" if not included already
+    if(!str_detect(path, "\\/$")){
+      path <- paste0(path, "/")
+    }else{
+      path <- path
+    }
+
     # Create a tibble of the HIP .txt files to be read from the provided
     # directory
     files <-
@@ -49,7 +57,7 @@ read_hip <-
           # Keep only files from the specified state
           filter(str_detect(filepath, state)) %>%
           # Create new complete file paths
-          mutate(filepath = paste(path, filepath, sep = "/")) %>%
+          mutate(filepath = paste0(path, filepath)) %>%
           # Filter out blank files
           mutate(
             filepath =
@@ -67,7 +75,7 @@ read_hip <-
         # Keep only txt files
         filter(str_detect(filepath, "(?<=\\.)txt$")) %>%
         # Create new complete file paths
-        mutate(filepath = paste(path, filepath, sep = "/")) %>%
+        mutate(filepath = paste0(path, filepath)) %>%
         # Filter out blank files
         mutate(
           filepath =
@@ -87,7 +95,7 @@ read_hip <-
         # Keep only txt files
         filter(str_detect(filepath, "(?<=\\.)txt$")) %>%
         # Create new complete file paths
-        mutate(filepath = paste(path, filepath, sep = "/")) %>%
+        mutate(filepath = paste0(path, filepath)) %>%
         # Filter out blank files
         mutate(
           filepath =
@@ -102,19 +110,20 @@ read_hip <-
     }
     else{
       # Check encodings of the files that will be read
-      checked_encodings <-
-        map_dfr(
-          1:nrow(files),
-          function(i) {
-            guess_encoding(pull(files[i,])) %>%
-              mutate(filepath = pull(files[i,]))
-          }
-        ) %>%
-        group_by(filepath) %>%
-        filter(str_detect(encoding, "UTF\\-16") | confidence < 1| n() > 1) %>%
-        ungroup() %>%
-        filter(encoding != "UTF-8") %>%
-        select(filepath, encoding, confidence)
+      # checked_encodings <-
+      #   map_dfr(
+      #     1:nrow(files),
+      #     function(i) {
+      #       guess_encoding(pull(files[i,])) %>%
+      #         mutate(filepath = pull(files[i,]))
+      #     }
+      #   ) %>%
+      #   group_by(filepath) %>%
+      #   filter(str_detect(encoding, "UTF\\-16") | confidence < 1| n() > 1) %>%
+      #   ungroup() %>%
+      #   filter(encoding != "UTF-8") %>%
+      #   select(filepath, encoding, confidence)
+
       # Read data from filepaths
       pulled_data <-
         map_df(
