@@ -110,19 +110,20 @@ read_hip <-
     }
     else{
       # Check encodings of the files that will be read
-      # checked_encodings <-
-      #   map_dfr(
-      #     1:nrow(files),
-      #     function(i) {
-      #       guess_encoding(pull(files[i,])) %>%
-      #         mutate(filepath = pull(files[i,]))
-      #     }
-      #   ) %>%
-      #   group_by(filepath) %>%
-      #   filter(str_detect(encoding, "UTF\\-16") | confidence < 1| n() > 1) %>%
-      #   ungroup() %>%
-      #   filter(encoding != "UTF-8") %>%
-      #   select(filepath, encoding, confidence)
+      checked_encodings <-
+        map_dfr(
+          1:nrow(files),
+          function(i) {
+            guess_encoding(pull(files[i,])) %>%
+              mutate(filepath = pull(files[i,]))
+          }
+        ) %>%
+        group_by(filepath) %>%
+        filter(str_detect(encoding, "UTF\\-16") | confidence < 1| n() > 1) %>%
+        ungroup() %>%
+        filter(encoding != "UTF-8") %>%
+        select(filepath, encoding, confidence)
+      print(checked_encodings)
 
       # Read data from filepaths
       pulled_data <-
