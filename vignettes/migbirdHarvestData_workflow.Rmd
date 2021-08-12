@@ -83,6 +83,13 @@ DL1202 <- read_hip("C:/HIP/DL1202")
 ```
 
 ```
+## # A tibble: 4 x 3
+##   filepath                     encoding   confidence
+##   <chr>                        <chr>           <dbl>
+## 1 C:/HIP/DL1202/MO20201216.txt ISO-8859-1      0.27 
+## 2 C:/HIP/DL1202/NE20201209.txt ISO-8859-1      0.290
+## 3 C:/HIP/DL1202/NE20201209.txt ISO-8859-2      0.22 
+## 4 C:/HIP/DL1202/SC20201202.txt ISO-8859-1      0.28 
 ## # A tibble: 104 x 5
 ##    dl_state X2          X4           X8    X10       
 ##    <chr>    <chr>       <chr>        <chr> <chr>     
@@ -206,7 +213,7 @@ strataCheck(DL1202_fixed)
 ```
 
 ```
-## # A tibble: 269 x 4
+## # A tibble: 148 x 4
 ##    dl_state spp                state_strata normal_strata   
 ##    <chr>    <chr>              <chr>        <chr>           
 ##  1 OR       dove_bag           0            1, 2, 3, 5      
@@ -214,12 +221,12 @@ strataCheck(DL1202_fixed)
 ##  3 OR       geese_bag          0            1, 2, 3, 4      
 ##  4 OR       band_tailed_pigeon 0            1, 2            
 ##  5 OR       brant              0            1, 2            
-##  6 OR       seaducks           0            1, 2            
-##  7 MO       dove_bag           9            0, 1, 2, 3, 5   
-##  8 NE       dove_bag           9            0, 1, 2, 3, 5   
-##  9 MO       woodcock_bag       9            0, 1, 2, 3, 4, 5
-## 10 NE       woodcock_bag       6            0, 1, 2, 3, 4, 5
-## # ... with 259 more rows
+##  6 OR       coots_snipe        0            1, 2            
+##  7 OR       seaducks           0            1, 2            
+##  8 MO       dove_bag           9            0, 1, 2, 3, 5   
+##  9 NE       dove_bag           9            0, 1, 2, 3, 5   
+## 10 MO       woodcock_bag       9            0, 1, 2, 3, 4, 5
+## # ... with 138 more rows
 ```
 
 ### validate
