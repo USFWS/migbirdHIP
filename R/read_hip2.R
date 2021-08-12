@@ -52,7 +52,7 @@ read_hip2 <-
     files <-
       # For reading data from a download cycle with a specific state
       if(!is.na(state) & season == FALSE){
-        list.files(path, recursive = "TRUE")  %>%
+        list.files(path, recursive = FALSE)  %>%
           as_tibble() %>%
           transmute(filepath = as.character(value)) %>%
           mutate(filepath = str_replace(filepath, "TXT", "txt")) %>%
@@ -72,7 +72,7 @@ read_hip2 <-
           filter(filepath != "blank")}
     # For reading data from a download cycle for ALL states available
     else if(is.na(state) & season == FALSE){
-      list.files(path, recursive = "TRUE")  %>%
+      list.files(path, recursive = FALSE)  %>%
         as_tibble() %>%
         transmute(filepath = as.character(value)) %>%
         mutate(filepath = str_replace(filepath, "TXT", "txt")) %>%
@@ -90,7 +90,7 @@ read_hip2 <-
         filter(filepath != "blank")}
     # For reading in all data from the season
     else if(season == TRUE){
-      list.files(path, recursive = "TRUE")  %>%
+      list.files(path, recursive = TRUE)  %>%
         as_tibble() %>%
         # Disregard folders that do not begin with "DL"
         filter(str_detect(value, "^DL")) %>%
