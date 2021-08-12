@@ -689,7 +689,7 @@ fixDuplicates <-
       ungroup() %>%
       filter(!str_detect(duplicate, "duplicate")) %>%
       select(-duplicate) %>%
-      mutate(record_type == "HIP") %>%
+      mutate(record_type = "HIP") %>%
       # Add back in the resolved duplicates
       bind_rows(
         af_dupes %>% select(-duplicate),
