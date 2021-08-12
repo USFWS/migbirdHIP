@@ -34,7 +34,7 @@
 #' @export
 
 read_hip <-
-  function(path, state = NA, season = FALSE) {
+  function(path, unique = TRUE, state = NA, season = FALSE) {
 
     # Add a final "/" if not included already
     if(!str_detect(path, "\\/$")){
@@ -153,9 +153,13 @@ read_hip <-
                 dl_cycle =
                   str_extract(pull(files[i, ]), "(?<=DL).+(?=\\/)")
               )
-          }) %>%
-        # Remove duplicates
-        distinct()
+          })
+
+      # Remove duplicates (or not)
+      if(unique == TRUE){
+        pulled_data <-
+          pulled_data %>%
+          distinct()}
 
       # Return a message for records with blank or NA values in firstname,
       # lastname, state, or birth date
