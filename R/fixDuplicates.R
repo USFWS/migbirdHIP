@@ -689,14 +689,14 @@ fixDuplicates <-
       ungroup() %>%
       filter(!str_detect(duplicate, "duplicate")) %>%
       select(-duplicate) %>%
+      mutate(record_type == "HIP") %>%
       # Add back in the resolved duplicates
       bind_rows(
-        af_dupes,
-        ia_dupes,
-        other_dupes,
-        permit_dupes,
-        hip_dupes) %>%
-      select(-c("duplicate", "other_sum", "decision")) %>%
+        af_dupes %>% select(-duplicate),
+        ia_dupes %>% select(-duplicate),
+        other_dupes %>% select(-duplicate),
+        permit_dupes %>% select(-c("duplicate", "other_sum")),
+        hip_dupes %>% select(-c("duplicate", "decision"))) %>%
       distinct()
 
     # Error checker #15
