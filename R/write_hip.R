@@ -6,7 +6,6 @@
 #' @importFrom dplyr select
 #' @importFrom dplyr rename
 #' @importFrom dplyr mutate
-#' @importFrom dplyr case_when
 #' @importFrom stringr str_detect
 #' @importFrom stringr str_remove
 #' @importFrom lubridate ymd
@@ -40,17 +39,6 @@ write_hip <-
         Q_bt_pigeons = band_tailed_pigeon,
         Q_brant = brant,
         Q_seaducks = seaducks) %>%
-      # Set standard codes for record_type field
-      mutate(
-        record_type =
-          case_when(
-            record_type == "hip" ~ "HIP",
-            record_type == "hip-permit" ~ "HIP-PMT",
-            record_type == "permit" ~ "PMT",
-            record_type == "unsolved" ~ "unsolved",
-            TRUE ~ NA_character_
-          )
-      ) %>%
       mutate(
         # Only include file names in the "source_file" field, not folder names.
         # The field theoretically shouldn't include DL folder names if the
