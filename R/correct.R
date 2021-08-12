@@ -285,6 +285,8 @@ correct <-
             case_when(
               # If there is no @
               !str_detect(email, "\\@") ~ NA_character_,
+              # If there are two @ (two emails submitted)
+              str_detect(email, "\\@.+\\@") ~ NA_character_,
               # If the email is invalid
               str_detect(email, "noemail\\@") ~ NA_character_,
               str_detect(email, "^none@none$") ~ NA_character_,
