@@ -689,7 +689,23 @@ fixDuplicates <-
       ungroup() %>%
       filter(!str_detect(duplicate, "duplicate")) %>%
       select(-duplicate) %>%
-      mutate(record_type = "HIP") %>%
+      # These records should all be HIP, unless they are a solo IAD record
+      mutate(
+        record_type =
+          ifelse(
+            dl_state == "IA" &
+            as.numeric(dove_bag) > 0 &
+              ducks_bag == "0" &
+              geese_bag == "0" &
+              woodcock_bag == "0" &
+              coots_snipe == "0" &
+              rails_gallinules == "0" &
+              cranes == "0" &
+              band_tailed_pigeon == "0" &
+              brant == "0" &
+              seaducks == "0",
+          "IAD",
+          "HIP")) %>%
       # Add back in the resolved duplicates
       bind_rows(
         af_dupes %>% select(-duplicate),
@@ -727,7 +743,12 @@ fixDuplicates <-
             distinct(),
           resolved_duplicates %>%
             select(
-              firstname, lastname, state, birth_date, dl_state, registration_yr),
+              firstname,
+              lastname,
+              state,
+              birth_date,
+              dl_state,
+              registration_yr),
           by =
             c("firstname",
               "lastname",
