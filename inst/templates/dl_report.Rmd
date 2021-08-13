@@ -35,9 +35,6 @@ dl_data <- read_hip(params$comp_path) %>% mutate(dl_cycle = params$dl)
 
 cleaned_data <- clean(dl_data)
 
-# Remove original data to improve memory use
-rm(dl_data)
-
 fixed_data <- fixDuplicates(cleaned_data)
 
 proofed_data <- proof(fixed_data, year = params$year)
@@ -114,6 +111,8 @@ record_check <-
     filter(!is.na(state) & !is.na(zip))
 
 DT::datatable(record_check)
+
+rm(dl_data)
 ```
 
 ## State check
