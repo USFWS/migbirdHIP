@@ -10,6 +10,7 @@
 #' \item dl_report - for a download cycle summary report
 #' \item season_report - for a summary of the entire HIP season}
 #' @param yr The year in which the Harvest Information Program data were collected
+#' @param dl Download cycle (when running a download report)
 #' @param dir Folder in which to save the completed report
 #' @param file What the report file should be named
 #'
@@ -19,7 +20,7 @@
 #' @export
 
 writeReport <-
-  function(path, type, yr, dir, file){
+  function(path, type, yr, dl = NA, dir, file){
 
     # Create Rmd
     render(
@@ -33,6 +34,7 @@ writeReport <-
       params =
         list(
           comp_path = path,
+          dl = dl,
           year = yr),
       output_file = file,
       output_dir = dir,
