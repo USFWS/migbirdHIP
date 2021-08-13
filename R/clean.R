@@ -77,11 +77,18 @@ clean <-
       mutate(dl_key = paste0("dl_", cur_group_id())) %>%
       ungroup() %>%
       # Filter out records if firstname, lastname, city of residence, state of
-      # residence, or date of birth are missing -- records discarded
+      # residence, or date of birth are missing -- records discarded because
+      # these are needed to identify individuals
       filter(!is.na(firstname)) %>%
       filter(!is.na(lastname)) %>%
       filter(!is.na(state)) %>%
       filter(!is.na(birth_date)) %>%
+      # Discard additional records if they are missing elements of an address
+      # and we have no way to resolve it from remaining information (i.e. state
+      # from zip)
+      filter(!is.na(address)) %>%
+      filter(!is.na(city)) %>%
+      filter(!is.na(state) & !is.na(zip)) %>%
       mutate(
         # Add a record key
         record_key = paste0("record_", row_number()),
@@ -397,7 +404,11 @@ clean <-
         ungroup() %>%
         # Filter to records if firstname, lastname, city of residence, state of
         # residence, or date of birth are missing
-        filter(is.na(firstname)|is.na(lastname)|is.na(city)|is.na(state)|is.na(birth_date))
+        filter(
+          is.na(firstname)|
+            is.na(lastname)|
+            is.na(state)|
+            is.na(birth_date))
 
       if(nrow(missing_x) > 0){
         missing_plot <-
