@@ -87,7 +87,7 @@ clean <-
       # and we have no way to resolve it from remaining information (i.e. state
       # from zip)
       filter(!is.na(address)) %>%
-      filter(!is.na(city)) %>%
+      filter(!is.na(city) & !is.na(zip)) %>%
       filter(!is.na(state) & !is.na(zip)) %>%
       mutate(
         # Add a record key
