@@ -133,7 +133,7 @@ state_check <-
   mutate(
     valid = 
       case_when(
-        !(state %in% c("AB", "BC", "MB", "NB", "NL", "NT", "NS", "NU", "ON", "PE", "QC", "SK", "YT")) ~ "Canada"
+        !(state %in% c("AB", "BC", "MB", "NB", "NL", "NT", "NS", "NU", "ON", "PE", "QC", "SK", "YT")) ~ "Canada",
         !(state %in% acceptable_residences) ~ "invalid", 
         TRUE ~ NA_character_)) %>%
   filter(!is.na(valid)) %>%
