@@ -121,7 +121,7 @@ rm(dl_data)
 rm(record_check)
 
 state_check <-
-  clean_data %>% 
+  cleaned_data %>% 
   select(state) %>% 
   group_by(state) %>% 
   summarize(n_records = n()) %>% 
