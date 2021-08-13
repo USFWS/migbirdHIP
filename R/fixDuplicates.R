@@ -271,14 +271,37 @@ fixDuplicates <-
             dove_bag != "0" ~ "IAD",
             TRUE ~ NA_character_))
 
-    # Error checker #5
+    ia_hips <-
+      ia_dupes %>%
+      filter(record_type == "HIP")
+
+    ia_doves <-
+      ia_dupes %>%
+      filter(record_type == "IAD") %>%
+      group_by(duplicate) %>%
+      slice_sample(n = 1) %>%
+      ungroup()
+
+    rm(ia_dupes)
+
+    # Error checker #5a
     # Make sure number of rows are equal between 1) duplicates not belonging to
     # AF or permit states and 2) the tables made from explicitly excluding and
     # including Iowa. These tables might not be equal when dl_state == NA, which
     # occurs when file names are not in the standard format
-    if(nrow(ia_dupes %>% group_by(duplicate) %>% filter(n() > 2)) != 0){
-      message("Error 5: Extra duplicates (n > 2) detected in Iowa.")
-      print(ia_dupes %>% group_by(duplicate) %>% filter(n() > 2))
+    if(length(unique(ia_hips$duplicate)) > 1){
+      message("Error 5a: Extra duplicates (n > 1) detected in Iowa HIPs.")
+      print(ia_hips %>% group_by(duplicate) %>% filter(n() > 1))
+    }
+
+    # Error checker #5a
+    # Make sure number of rows are equal between 1) duplicates not belonging to
+    # AF or permit states and 2) the tables made from explicitly excluding and
+    # including Iowa. These tables might not be equal when dl_state == NA, which
+    # occurs when file names are not in the standard format
+    if(length(unique(ia_doves$duplicate)) > 1){
+      message("Error 5b: Extra duplicates (n > 1) detected in Iowa IADs.")
+      print(ia_doves %>% group_by(duplicate) %>% filter(n() > 1))
     }
 
     # Error checker #6
@@ -709,7 +732,8 @@ fixDuplicates <-
       # Add back in the resolved duplicates
       bind_rows(
         af_dupes %>% select(-duplicate),
-        ia_dupes %>% select(-duplicate),
+        ia_hips %>% select(-duplicate),
+        ia_doves %>% select(-duplicate),
         other_dupes %>% select(-duplicate),
         permit_dupes %>% select(-c("duplicate", "other_sum")),
         hip_dupes %>% select(-c("duplicate", "decision"))) %>%
