@@ -24,12 +24,13 @@ library(shiny)
 
 ```{r import, include = FALSE}
 
-acceptable_49_dl_states <-
+acceptable_residences <-
         c("AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "ID",
           "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN",
           "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND",
           "OH", "OK", "OR","PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT",
-          "VA", "WA", "WV", "WI", "WY")
+          "VA", "WA", "WV", "WI", "WY", "DC", "HI", "AS", "GU", "MP", "PR", 
+          "VI", "UM", "AA", "AE","AP")
 
 dl_data <- read_hip(params$comp_path) %>% mutate(dl_cycle = params$dl)
 
@@ -68,47 +69,48 @@ The following records are missing first name, last name, date of birth, address,
 ```{r record_check, echo = FALSE}
 record_check <- 
   dl_data %>%
-    rename(
-      title = X1,
-      firstname = X2,
-      middle = X3,
-      lastname = X4,
-      suffix = X5,
-      address = X6,
-      city = X7,
-      state = X8,
-      zip = X9,
-      birth_date = X10,
-      # Edited X11 to specific .data$X11 to avoid error:
-      # "Found an obsolete/platform-specific call in: 'tidy'"
-      # "Found the platform-specific device: 'X11'"
-      issue_date = X11,
-      hunt_mig_birds = X12,
-      ducks_bag = X13,
-      geese_bag = X14,
-      dove_bag = X15,
-      woodcock_bag = X16,
-      coots_snipe = X17,
-      rails_gallinules = X18,
-      cranes = X19,
-      band_tailed_pigeon = X20,
-      brant = X21,
-      seaducks = X22,
-      registration_yr = X23,
-      email = X24) %>%
-    # Filter out records if firstname, lastname, city of residence, state of
-    # residence, or date of birth are missing -- records discarded because
-    # these are needed to identify individuals
-    filter(!is.na(firstname)) %>%
-    filter(!is.na(lastname)) %>%
-    filter(!is.na(state)) %>%
-    filter(!is.na(birth_date)) %>%
-    # Discard additional records if they are missing elements of an address
-    # and we have no way to resolve it from remaining information (i.e. state
-    # from zip)
-    filter(!is.na(address)) %>%
-    filter(!is.na(city)) %>%
-    filter(!is.na(state) & !is.na(zip))
+  rename(
+    title = X1,
+    firstname = X2,
+    middle = X3,
+    lastname = X4,
+    suffix = X5,
+    address = X6,
+    city = X7,
+    state = X8,
+    zip = X9,
+    birth_date = X10,
+    # Edited X11 to specific .data$X11 to avoid error:
+    # "Found an obsolete/platform-specific call in: 'tidy'"
+    # "Found the platform-specific device: 'X11'"
+    issue_date = X11,
+    hunt_mig_birds = X12,
+    ducks_bag = X13,
+    geese_bag = X14,
+    dove_bag = X15,
+    woodcock_bag = X16,
+    coots_snipe = X17,
+    rails_gallinules = X18,
+    cranes = X19,
+    band_tailed_pigeon = X20,
+    brant = X21,
+    seaducks = X22,
+    registration_yr = X23,
+    email = X24) %>%
+  # Filter out records if firstname, lastname, city of residence, state of
+  # residence, or date of birth are missing -- records discarded because
+  # these are needed to identify individuals
+  filter(is.na(firstname)) %>%
+  filter(is.na(lastname)) %>%
+  filter(is.na(state)) %>%
+  filter(is.na(birth_date)) %>%
+  # Discard additional records if they are missing elements of an address
+  # and we have no way to resolve it from remaining information (i.e. state
+  # from zip)
+  filter(is.na(address)) %>%
+  filter(is.na(city)) %>%
+  filter(is.na(state) & is.na(zip)) %>%
+  select(title:birth_date)
 
 DT::datatable(record_check)
 
@@ -116,6 +118,8 @@ rm(dl_data)
 ```
 
 ## State check
+
+Abbreviated states, districts, territories, etc that are considered valid include: all 50 states, DC, HI, AS (American Samoa), GU (Guam), MP (Northern Mariana Islands), PR (Puerto Rico), VI (Virgin Islands), UM (US Minor Outlying Islands), AA (US Armed Forces - America), AE (US Armed Forces - Europe), and AP (US Armed Forces - Pacific).
 
 ```{r state_check, echo = FALSE}
 rm(record_check)
@@ -126,8 +130,14 @@ state_check <-
   group_by(state) %>% 
   summarize(n_records = n()) %>% 
   ungroup() %>% 
-  mutate(valid = ifelse(!(state %in% acceptable_49_dl_states), "invalid", NA)) %>% 
-  arrange(valid)
+  mutate(
+    valid = 
+      case_when(
+        !(state %in% c("AB", "BC", "MB", "NB", "NL", "NT", "NS", "NU", "ON", "PE", "QC", "SK", "YT")) ~ "Canada"
+        !(state %in% acceptable_residences) ~ "invalid", 
+        TRUE ~ NA_character_)) %>%
+  filter(!is.na(valid)) %>%
+  arrange(desc(valid))
 
 DT::datatable(state_check)
 ```
@@ -173,7 +183,8 @@ all0s <-
       cranes == "0" &
       band_tailed_pigeon == "0" &
       brant == "0" &
-      seaducks == "0")
+      seaducks == "0") %>%
+  select(record_key, hunt_mig_birds:seaducks)
 
 DT::datatable(all0s)
 ```
