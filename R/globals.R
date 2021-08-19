@@ -108,4 +108,6 @@ utils::globalVariables(
     "x_reg_yr",
     "decision",
     "record_type",
-    "old"))
+    "old",
+    "value2",
+    "V1"))
