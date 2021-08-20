@@ -3,6 +3,7 @@
 #' Shift record values by a designated number of characters.
 #'
 #' @importFrom dplyr %>%
+#' @importFrom magrittr %<>%
 #' @importFrom rlang :=
 #' @importFrom dplyr slice
 #' @importFrom dplyr select
@@ -41,17 +42,24 @@ shiftFix <-
     firstlastfix <-
       x %>%
       filter(record_key == record_id) %>%
-      select(!!sym(first_col):!!sym(last_col)) %>%
+      select(!!sym(first_col):!!sym(last_col))
+
+    # Can't pipe a ., use "firstlastfix" table name instead
+    firstlastfix %<>%
       # Fix the first column in the line shift
       mutate(
         !!sym(first_col) :=
-          paste0(.[[1]], str_extract(.[[2]], paste0("^.{", n_shift, "}")))) %>%
+          paste0(
+            firstlastfix[[1]],
+            str_extract(firstlastfix[[2]], paste0("^.{", n_shift, "}")))) %>%
       # Fix the last column in the line shift
       mutate(
         !!sym(last_col) :=
-          str_remove(.[[length(col_list)]], paste0("^.{", n_shift, "}"))) %>%
+          str_remove(
+            firstlastfix[[length(col_list)]], paste0("^.{", n_shift, "}"))) %>%
       select(!!sym(first_col), !!sym(last_col))
 
+    # Shift correction for all middle columns
     unshifted <-
       # Bind the cleaned up record back together
       bind_cols(
