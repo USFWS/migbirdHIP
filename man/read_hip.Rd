@@ -9,6 +9,8 @@ read_hip(path, unique = TRUE, state = NA, season = FALSE)
 \arguments{
 \item{path}{File path to the folder containing HIP .txt files}
 
+\item{unique}{Return a distinct frame? Defaults to TRUE}
+
 \item{state}{When specified, reads in download data from a specified state. Must match one of the following two-letter abbreviations:
 \itemize{
 \item AL, AK, AZ, AR, CA, CO, CT, DE, DC, FL, GA, ID, IL, IN, IA, KS, KY, LA, ME, MD, MA, MI, MN, MS, MO, MT, NE, NV, NH, NJ, NM, NY, NC, ND, OH, OK, OR, PA, RI, SC, SD, TN, TX, UT, VT, VA, WA, WV, WI, WY}}
