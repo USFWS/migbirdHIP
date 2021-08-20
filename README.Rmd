@@ -15,11 +15,6 @@ knitr::opts_chunk$set(
 
 # migbirdHarvestData
 
-<!-- badges: start -->
-`r usethis::use_lifecycle_badge("experimental")`
-[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
-<!-- badges: end -->
-
 ## Overview
 
 The migbirdHarvestData package provides an easy-to-use set of R functions for the U.S. Fish and Wildlife Service Migratory Bird Program to wrangle, tidy, and visualize [Harvest Information Program](https://www.fws.gov/harvestsurvey) data.

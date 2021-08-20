@@ -3,12 +3,6 @@
 
 # migbirdHarvestData
 
-<!-- badges: start -->
-
-[![Lifecycle:
-experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
-<!-- badges: end -->
-
 ## Overview
 
 The migbirdHarvestData package provides an easy-to-use set of R
