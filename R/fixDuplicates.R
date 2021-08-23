@@ -215,7 +215,7 @@ fixDuplicates <-
           filter(n() > 1))}
 
     # Get the final frame with 1 record per hunter
-    af_dupes %<>%
+    af_dupes <-
       bind_rows(
         # Handle "dupl"s; randomly keep one per group using slice_sample()
         af_dupes %>%
@@ -442,7 +442,7 @@ fixDuplicates <-
           filter(n() > 1))}
 
     # Get the final frame with 1 record per hunter
-    other_dupes %<>%
+    other_dupes <-
       bind_rows(
         # Handle "dupl"s; randomly keep one per group using slice_sample()
         other_dupes %>%
@@ -622,8 +622,20 @@ fixDuplicates <-
           by = c("duplicate"))
       )}
 
-    # Filter permit_dupes to exclude HIP records since they are in their own
-    # table now with 1 record per person
+    # Get the final frame with 1 record per hunter
+    hip_dupes <-
+      bind_rows(
+        # Handle "dupl"s; randomly keep one per group using slice_sample()
+        hip_dupes %>%
+          filter(decision == "dupl") %>%
+          group_by(duplicate) %>%
+          slice_sample(n = 1) %>%
+          ungroup(),
+        # Row bind in the "keepers" (should already be 1 per hunter)
+        hip_dupes %>%
+          filter(decision == "keeper"))
+
+    # Get table of just permits
     permit_dupes %<>%
       filter(record_type == "PMT")
 
