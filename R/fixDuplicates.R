@@ -94,7 +94,10 @@ fixDuplicates <-
               NA),
             "bad_issue_date_format")) %>%
       ungroup() %>%
-      filter(x_issue_date == "keeper") %>%
+      # If the issue date was in the right format, keep the record(s) from each
+      # group that were the most recent; if the issue date was in the wrong
+      # format, keep those too for future evaluation
+      filter(!is.na(x_issue_date)) %>%
       select(-x_issue_date)
 
     # Quick-check variables
@@ -103,13 +106,28 @@ fixDuplicates <-
       filter(dl_state %in% af_states) %>% select(duplicate) %>% distinct()
     af2 <- af_dupes %>% select(duplicate) %>% distinct()
 
-    # Error checker #1
+    # Error checker #1a
     # Thrown when the filter above for af_dupes removes too many records.
     if(nrow(af2) != nrow(af1)){
       message("Error 1: Internal data issue. Is there a frame shift?")
       print(
         duplicates %>%
           filter(duplicate %in% pull(anti_join(af1, af2, by = "duplicate"))))}
+
+    # Error checker #1b
+    # Thrown when there is a bad issue date detected.
+    if(nrow(af2) != nrow(af1)){
+      message("Error 1b: Internal data issue. Is there a frame shift?")
+      print(
+        af_dupes %>%
+          mutate(
+            x_issue_date =
+              ifelse(
+                str_detect(issue_date, "^[0-9]{2}\\/[0-9]{2}\\/[0-9]{4}$"),
+                "good",
+                "bad_issue_date_format")) %>%
+          filter(x_issue_date == "bad_issue_date_format") %>%
+          select(birth_date:dove_bag, record_key))}
 
     af_dupes %<>%
       mutate(
