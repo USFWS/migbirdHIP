@@ -62,9 +62,9 @@ DT::datatable(cleaned_data %>%
 
 # Data Checking
 
-# Hunt Y/N checking
+## Hunt migratory birds response checking
 
-Below is a summary of all values in "hunt_mig_birds" that are not equal to 2.
+Below is a summary of all values in the hunt_mig_birds field.
 
 ```{r huncheck, echo = FALSE}
 huntcheck <-
@@ -72,15 +72,14 @@ huntcheck <-
   select(hunt_mig_birds) %>% 
   group_by(hunt_mig_birds) %>% 
   summarize(n = n()) %>% 
-  ungroup() %>% 
-  filter(hunt_mig_birds != "2")
+  ungroup() 
 
 DT::datatable(huntcheck)
 
 rm(huntcheck)
 ```
 
-## Records checking
+## PII checking
 
 The following records are missing first name, last name, date of birth, address, city, and/or state of residence.
 
@@ -135,9 +134,9 @@ DT::datatable(record_check)
 rm(dl_data)
 ```
 
-## State check
+## State of residence checking
 
-Abbreviated states, districts, territories, etc that are considered valid include: all 50 states, DC, HI, AS (American Samoa), GU (Guam), MP (Northern Mariana Islands), PR (Puerto Rico), VI (Virgin Islands), UM (US Minor Outlying Islands), AA (US Armed Forces - America), AE (US Armed Forces - Europe), and AP (US Armed Forces - Pacific).
+Below are all states of residence reported in this download cycle. USA (state, district, and territory) and Canada (province and territory) abbreviations are parsed and flagged accordingly in the "country" column. All other state values are marked as "other".
 
 ```{r state_check, echo = FALSE}
 rm(record_check)
@@ -149,13 +148,12 @@ state_check <-
   summarize(n_records = n()) %>% 
   ungroup() %>% 
   mutate(
-    valid = 
+    country = 
       case_when(
-        !(state %in% c("AB", "BC", "MB", "NB", "NL", "NT", "NS", "NU", "ON", "PE", "QC", "SK", "YT")) ~ "Canada",
-        !(state %in% acceptable_residences) ~ "invalid", 
-        TRUE ~ NA_character_)) %>%
-  filter(!is.na(valid)) %>%
-  arrange(desc(valid))
+        state %in% c("AB", "BC", "MB", "NB", "NL", "NT", "NS", "NU", "ON", "PE", "QC", "SK", "YT") ~ "Canada",
+        state %in% acceptable_residences ~ "USA", 
+        TRUE ~ "Other")) %>%
+  arrange(country)
 
 DT::datatable(state_check)
 ```
@@ -184,27 +182,6 @@ DT::datatable(findDuplicates(fixed_data, return = "table"))
 
 ```{r stratacheck, echo = FALSE}
 DT::datatable(strataCheck(fixed_data))
-```
-
-## All 0 records
-
-```{r all0, echo = FALSE}
-all0s <- 
-  fixed_data %>% 
-  filter(
-    ducks_bag == "0" &
-      geese_bag == "0" &
-      dove_bag == "0" &
-      woodcock_bag == "0" &
-      coots_snipe == "0" &
-      rails_gallinules == "0" &
-      cranes == "0" &
-      band_tailed_pigeon == "0" &
-      brant == "0" &
-      seaducks == "0") %>%
-  select(record_key, hunt_mig_birds:seaducks)
-
-DT::datatable(all0s)
 ```
 
 ## Repeated values
