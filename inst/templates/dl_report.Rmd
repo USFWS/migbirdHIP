@@ -71,7 +71,9 @@ huntcheck <-
   cleaned_data %>% 
   select(hunt_mig_birds) %>% 
   group_by(hunt_mig_birds) %>% 
-  summarize(n = n())
+  summarize(n = n()) %>% 
+  ungroup() %>% 
+  filter(hunt_mig_birds != "2")
 
 DT::datatable(huntcheck)
 
@@ -116,15 +118,16 @@ record_check <-
   # Filter out records if firstname, lastname, city of residence, state of
   # residence, or date of birth are missing -- records discarded because
   # these are needed to identify individuals
-  filter(is.na(firstname)) %>%
-  filter(is.na(lastname)) %>%
-  filter(is.na(state)) %>%
-  filter(is.na(birth_date)) %>%
   # Discard additional records if they are missing elements of an address
   # and we have no way to resolve it from remaining information (i.e. state
   # from zip)
-  filter(is.na(address)) %>%
-  filter(is.na(city)) %>%
+  filter(
+    is.na(firstname)|
+      is.na(lastname)|
+      is.na(state)|
+      is.na(birth_date)|
+      is.na(address)|
+      is.na(city)) %>%
   select(title:birth_date)
 
 DT::datatable(record_check)
