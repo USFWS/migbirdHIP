@@ -112,26 +112,6 @@ fixDuplicates <-
           filter(duplicate %in% pull(anti_join(af1, af2, by = "duplicate"))))}
 
     af_dupes %<>%
-      group_by(duplicate) %>%
-      mutate(
-        # Check records for most recent registration year
-        x_reg_yr =
-          # Skip frame shift issues and only evaluate for years in correct yyyy
-          # format
-          ifelse(
-            str_detect(registration_yr, "^[0-9]{4}$"),
-            ifelse(
-              registration_yr ==
-                ifelse(
-                  !is.na(registration_yr),
-                  as.character(max(as.numeric(registration_yr), na.rm = TRUE)),
-                  NA),
-              n(),
-              NA),
-            999))%>%
-      ungroup()
-
-    af_dupes %<>%
       mutate(
         # Check records for all 0s or all 1s
         x_bags =
@@ -168,24 +148,18 @@ fixDuplicates <-
             # When there's only 1 record per group, keep it
             n() == 1 ~ "keeper",
             # When there's a record in a group and it's the only one that passed
-            # the registration year, bag, and seaduck checks above, keep it
-            x_reg_yr == 1 & x_bags == 1 & x_seaducks == 1 ~ "keeper",
+            # the bag and seaduck checks above, keep it
+            x_bags == 1 & x_seaducks == 1 ~ "keeper",
             # When there isn't a 1 value in any of the checking columns, it's a
             # duplicate still and we will need to randomly choose which record
             # in the group to keep later
-            !(1 %in% x_reg_yr)&!(1 %in% x_bags)&!(1 %in% x_seaducks) ~ "dupl",
+            !(1 %in% x_bags)&!(1 %in% x_seaducks) ~ "dupl",
             # If there is a 1 in the seaduck checks col, then that record is the
             # one we want to keep
             x_seaducks == 1 ~ "keeper",
-            # For rare cases that have two records: two registration years, one
-            # record all 1s and the other not all 1s, keep the record with not
-            # all 1s
-            x_reg_yr == 2 & x_bags == 1 ~ "keeper",
-            # Another rare case: two records, one with all 1s and the other not
-            # all 1s, BUT the record without all 1s is from the "wrong"
-            # registration year (although issue dates are the same for both);
-            # keep the record with the not all 1s bag values
-            is.na(x_reg_yr) & x_bags == 1 ~ "keeper",
+            # For rare cases that have two records: keep the record with the not
+            # all 1s bag values (unsure if needed)
+            x_bags == 1 ~ "keeper",
             TRUE ~ NA_character_)) %>%
       # If NA records have another qualifying record in their group, drop them
       mutate(
@@ -235,7 +209,7 @@ fixDuplicates <-
         af_dupes %>%
           filter(decision == "keeper")) %>%
       # Drop unneeded columns
-      select(-c(x_reg_yr:decision)) %>%
+      select(-c(x_bags:decision)) %>%
       # Designate record type
       mutate(record_type = "HIP")
 
@@ -377,26 +351,6 @@ fixDuplicates <-
           filter(duplicate %in% pull(anti_join(o1, o2, by = "duplicate"))))}
 
     other_dupes %<>%
-      group_by(duplicate) %>%
-      mutate(
-        # Check records for most recent registration year
-        x_reg_yr =
-          # Skip frame shift issues and only evaluate for years in correct yyyy
-          # format
-          ifelse(
-            str_detect(registration_yr, "^[0-9]{4}$"),
-            ifelse(
-              registration_yr ==
-                ifelse(
-                  !is.na(registration_yr),
-                  as.character(max(as.numeric(registration_yr), na.rm = TRUE)),
-                  NA),
-              n(),
-              NA),
-            999))%>%
-      ungroup()
-
-    other_dupes %<>%
       mutate(
         # Check records for all 0s or all 1s
         x_bags =
@@ -424,21 +378,15 @@ fixDuplicates <-
             # When there's only 1 record per group, keep it
             n() == 1 ~ "keeper",
             # When there's a record in a group and it's the only one that passed
-            # the registration year and bag checks above, keep it
-            x_reg_yr == 1 & x_bags == 1 ~ "keeper",
-            # When there isn't a 1 value in either of the checking columns, it's
-            # a duplicate still and we will need to randomly choose which record
+            # the bag check above, keep it
+            x_bags == 1 ~ "keeper",
+            # When there isn't a 1 value in the checking column, it's a
+            # duplicate still and we will need to randomly choose which record
             # in the group to keep later
-            !(1 %in% x_reg_yr)&!(1 %in% x_bags) ~ "dupl",
-            # For rare cases that have two records: two registration years, one
-            # record all 1s and the other not all 1s, keep the record with not
-            # all 1s
-            x_reg_yr == 2 & x_bags == 1 ~ "keeper",
-            # Another rare case: two records, one with all 1s and the other not
-            # all 1s, BUT the record without all 1s is from the "wrong"
-            # registration year (although issue dates are the same for both);
-            # keep the record with the not all 1s bag values
-            is.na(x_reg_yr) & x_bags == 1 ~ "keeper",
+            !(1 %in% x_bags) ~ "dupl",
+            # For rare cases that have two records: keep the record with not all
+            # 1s (unsure if needed)
+            x_bags == 1 ~ "keeper",
             TRUE ~ NA_character_)) %>%
       # If NA records have another qualifying record in their group, drop them
       mutate(
@@ -488,7 +436,7 @@ fixDuplicates <-
         other_dupes %>%
           filter(decision == "keeper")) %>%
       # Drop unneeded columns
-      select(-c(x_reg_yr:decision)) %>%
+      select(-c(x_bags:decision)) %>%
       # Designate record type
       mutate(record_type = "HIP")
 
@@ -562,25 +510,7 @@ fixDuplicates <-
     # If there is more than one HIP record per person, decide which one to keep
     hip_dupes <-
       permit_dupes %>%
-      filter(record_type == "HIP") %>%
-      group_by(duplicate) %>%
-      mutate(
-        # Check records for most recent registration year
-        x_reg_yr =
-          # Skip frame shift issues and only evaluate for years in correct yyyy
-          # format
-          ifelse(
-            str_detect(registration_yr, "^[0-9]{4}$"),
-            ifelse(
-              registration_yr ==
-                ifelse(
-                  !is.na(registration_yr),
-                  as.character(max(as.numeric(registration_yr), na.rm = TRUE)),
-                  NA),
-              n(),
-              NA),
-            999))%>%
-      ungroup()
+      filter(record_type == "HIP")
 
     hip_dupes %<>%
       mutate(
@@ -610,21 +540,15 @@ fixDuplicates <-
             # When there's only 1 record per group, keep it
             n() == 1 ~ "keeper",
             # When there's a record in a group and it's the only one that passed
-            # the registration year and bag checks above, keep it
-            x_reg_yr == 1 & x_bags == 1 ~ "keeper",
-            # When there isn't a 1 value in either of the checking columns, it's
-            # a duplicate still and we will need to randomly choose which record
+            # the bag check above, keep it
+            x_bags == 1 ~ "keeper",
+            # When there isn't a 1 value in the checking column, it's a
+            # duplicate still and we will need to randomly choose which record
             # in the group to keep later
-            !(1 %in% x_reg_yr)&!(1 %in% x_bags) ~ "dupl",
-            # For rare cases that have two records: two registration years, one
-            # record all 1s and the other not all 1s, keep the record with not
-            # all 1s
-            x_reg_yr == 2 & x_bags == 1 ~ "keeper",
-            # Another rare case: two records, one with all 1s and the other not
-            # all 1s, BUT the record without all 1s is from the "wrong"
-            # registration year (although issue dates are the same for both);
-            # keep the record with the not all 1s bag values
-            is.na(x_reg_yr) & x_bags == 1 ~ "keeper",
+            !(1 %in% x_bags) ~ "dupl",
+            # For rare cases that have two records: keep the record with the not
+            # all 1s bag values (unsure if needed)
+            x_bags == 1 ~ "keeper",
             TRUE ~ NA_character_)) %>%
       # If NA records have another qualifying record in their group, drop them
       mutate(
@@ -636,7 +560,7 @@ fixDuplicates <-
       ungroup() %>%
       filter(decision != "drop") %>%
       # Remove unneeded rows
-      select(-c("other_sum", "x_reg_yr", "x_bags"))
+      select(-c("other_sum", "x_bags"))
 
     # Error checker #12
     # Thrown when there are still NAs in the decision column (which means some
