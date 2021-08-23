@@ -284,7 +284,7 @@ fixDuplicates <-
 
     rm(ia_dupes)
 
-    # Error checker #5a
+    # Error checker #5
     # Make sure number of rows are equal between 1) duplicates not belonging to
     # AF or permit states and 2) the tables made from explicitly excluding and
     # including Iowa. These tables might not be equal when dl_state == NA, which
@@ -292,16 +292,6 @@ fixDuplicates <-
     if(length(unique(ia_hips$duplicate)) > 1){
       message("Error 5a: Extra duplicates (n > 1) detected in Iowa HIPs.")
       print(ia_hips %>% group_by(duplicate) %>% filter(n() > 1))
-    }
-
-    # Error checker #5a
-    # Make sure number of rows are equal between 1) duplicates not belonging to
-    # AF or permit states and 2) the tables made from explicitly excluding and
-    # including Iowa. These tables might not be equal when dl_state == NA, which
-    # occurs when file names are not in the standard format
-    if(length(unique(ia_doves$duplicate)) > 1){
-      message("Error 5b: Extra duplicates (n > 1) detected in Iowa IADs.")
-      print(ia_doves %>% group_by(duplicate) %>% filter(n() > 1))
     }
 
     # Error checker #6
