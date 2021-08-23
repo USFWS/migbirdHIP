@@ -62,9 +62,25 @@ DT::datatable(cleaned_data %>%
 
 # Data Checking
 
+# Hunt Y/N checking
+
+Below is a summary of all values in "hunt_mig_birds" that are not equal to 2.
+
+```{r huncheck, echo = FALSE}
+huntcheck <-
+  cleaned_data %>% 
+  select(hunt_mig_birds) %>% 
+  group_by(hunt_mig_birds) %>% 
+  summarize(n = n())
+
+DT::datatable(huntcheck)
+
+rm(huntcheck)
+```
+
 ## Records checking
 
-The following records are missing first name, last name, date of birth, address, city, state of residence, and/or state AND zip.
+The following records are missing first name, last name, date of birth, address, city, and/or state of residence.
 
 ```{r record_check, echo = FALSE}
 record_check <- 
@@ -109,7 +125,6 @@ record_check <-
   # from zip)
   filter(is.na(address)) %>%
   filter(is.na(city)) %>%
-  filter(is.na(state) & is.na(zip)) %>%
   select(title:birth_date)
 
 DT::datatable(record_check)
