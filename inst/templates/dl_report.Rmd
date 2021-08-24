@@ -155,8 +155,6 @@ if(nrow(record_check) > 0){
 }
 
 DT::datatable(record_check %>% select(title:birth_date))
-
-rm(record_check)
 ```
 
 Summary of missing PII by .txt file.
@@ -172,6 +170,7 @@ pii_summary <-
 DT::datatable(pii_summary)
 rm(pii_summary)
 
+rm(record_check)
 rm(dl_data)
 ```
 
