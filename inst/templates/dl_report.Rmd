@@ -81,7 +81,7 @@ rm(huntcheck)
 
 ## PII checking
 
-The following records are missing first name, last name, date of birth, address, city, and/or state of residence.
+The following records are missing first name, last name, date of birth, address, city, and/or state of residence. They were not included in the final output table.
 
 ```{r record_check, echo = FALSE}
 record_check <- 
@@ -126,11 +126,58 @@ record_check <-
       is.na(state)|
       is.na(birth_date)|
       is.na(address)|
-      is.na(city)) %>%
-  select(title:birth_date)
+      (is.na(city)&is.na(zip)))
+  
 
-DT::datatable(record_check)
+DT::datatable(record_check %>% select(title:birth_date))
+```
 
+Summary of missing PII by .txt file.
+
+```{r pii_by_file}
+pii_summary <- 
+  record_check %>% 
+  group_by(source_file) %>% 
+  summarize(n = n()) %>% 
+  ungroup()
+
+DT::datatable(pii_summary)
+rm(pii_summary)
+```
+
+Plot of missing PII.
+
+```{r pii_plot, echo = FALSE}
+
+if(nrow(missing_x) > 0){
+  missing_plot <-
+    record_check %>%
+    select(firstname, lastname, city, state, birth_date) %>%
+    # Add an ID per row
+    mutate(hunter_id = row_number()) %>%
+    # Pivot the field names to long format
+    pivot_longer(firstname:birth_date, names_to = "field") %>%
+    # Only keep hunters' fields with NA values
+    filter(is.na(value)) %>%
+    # Set NA to 1 for plotting
+    mutate(value = 1) %>%
+    # Make a heat map
+    ggplot(aes(x = field, y = as.factor(hunter_id), fill = value)) +
+    geom_tile() +
+    labs(y = "Hunter ID", x = "Data Field") +
+    theme_classic() +
+    theme(legend.position = "none",
+          axis.text.y = element_blank(),
+          axis.ticks.y = element_blank())
+
+  print(missing_plot)}else{
+  message(
+    paste0("No records detected with missing first name, last name, city",
+           " state, or date of birth.")
+  )
+}
+
+rm(record_check)
 rm(dl_data)
 ```
 
