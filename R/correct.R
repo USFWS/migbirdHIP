@@ -47,34 +47,6 @@ correct <-
           # Change "none"s back to NAs in errors col
           errors =
             ifelse(errors == "none", NA, errors),
-          # Zip code correction
-          zip =
-            # Insert a hyphen in continuous 9 digit zip codes
-            ifelse(
-              str_detect(zip, "^[0-9]{9}$"),
-              paste0(
-                str_extract(zip, "^[0-9]{5}"),
-                "-",
-                str_extract(zip,"[0-9]{4}$")),
-              zip),
-          zip =
-            # Insert a hyphen in 9 digit zip codes with a middle space
-            ifelse(
-              str_detect(zip, "^[0-9]{5}\\s[0-9]{4}$"),
-              str_replace(zip, "\\s", "\\-"),
-              zip),
-          zip =
-            # Remove trailing -0000
-            ifelse(
-              str_detect(zip, "\\-0000"),
-              str_remove(zip, "\\-0000"),
-              zip),
-          zip =
-            # Remove trailing -___
-            ifelse(
-              str_detect(zip, "\\-\\_+"),
-              str_remove(zip, "\\-\\_+"),
-              zip),
           # Email
           email =
             # Delete spaces
@@ -193,34 +165,6 @@ correct <-
           # Change "none"s back to NAs in errors col
           errors =
             ifelse(errors == "none", NA, errors),
-          # Zip code correction
-          zip =
-            # Insert a hyphen in continuous 9 digit zip codes
-            ifelse(
-              str_detect(zip, "^[0-9]{9}$"),
-              paste0(
-                str_extract(zip, "^[0-9]{5}"),
-                "-",
-                str_extract(zip,"[0-9]{4}$")),
-              zip),
-          zip =
-            # Insert a hyphen in 9 digit zip codes with a middle space
-            ifelse(
-              str_detect(zip, "^[0-9]{5}\\s[0-9]{4}$"),
-              str_replace(zip, "\\s", "\\-"),
-              zip),
-          zip =
-            # Remove trailing -0000
-            ifelse(
-              str_detect(zip, "\\-0000"),
-              str_remove(zip, "\\-0000"),
-              zip),
-          zip =
-            # Remove trailing -___
-            ifelse(
-              str_detect(zip, "\\-\\_+"),
-              str_remove(zip, "\\-\\_+"),
-              zip),
           # Email
           email =
             # Delete spaces

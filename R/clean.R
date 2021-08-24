@@ -84,11 +84,10 @@ clean <-
       filter(!is.na(state)) %>%
       filter(!is.na(birth_date)) %>%
       # Discard additional records if they are missing elements of an address
-      # and we have no way to resolve it from remaining information (i.e. state
-      # from zip)
+      # and we have no way to resolve it from remaining information (i.e. zip
+      # from city)
       filter(!is.na(address)) %>%
       filter(!is.na(city) & !is.na(zip)) %>%
-      filter(!is.na(state) & !is.na(zip)) %>%
       mutate(
         # Add a record key
         record_key = paste0("record_", row_number()),
@@ -359,7 +358,35 @@ clean <-
             str_detect(address, "PO BOX ") ~
               str_replace(address, "PO BOX ", "P.O. BOX "),
             TRUE ~ address
-          )
+          ),
+        # Zip code correction
+        zip =
+          # Insert a hyphen in continuous 9 digit zip codes
+          ifelse(
+            str_detect(zip, "^[0-9]{9}$"),
+            paste0(
+              str_extract(zip, "^[0-9]{5}"),
+              "-",
+              str_extract(zip,"[0-9]{4}$")),
+            zip),
+        zip =
+          # Insert a hyphen in 9 digit zip codes with a middle space
+          ifelse(
+            str_detect(zip, "^[0-9]{5}\\s[0-9]{4}$"),
+            str_replace(zip, "\\s", "\\-"),
+            zip),
+        zip =
+          # Remove trailing -0000
+          ifelse(
+            str_detect(zip, "\\-0000"),
+            str_remove(zip, "\\-0000"),
+            zip),
+        zip =
+          # Remove trailing -___
+          ifelse(
+            str_detect(zip, "\\-\\_+"),
+            str_remove(zip, "\\-\\_+"),
+            zip)
       ) %>%
       # Delete white space around strings
       mutate_all(str_trim) %>%
