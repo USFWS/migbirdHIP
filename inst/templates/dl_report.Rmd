@@ -129,34 +129,14 @@ record_check <-
       (is.na(city)&is.na(zip)))
   
 
-DT::datatable(record_check %>% select(title:birth_date))
-```
-
-Summary of missing PII by .txt file.
-
-```{r pii_by_file}
-pii_summary <- 
-  record_check %>% 
-  group_by(source_file) %>% 
-  summarize(n = n()) %>% 
-  ungroup()
-
-DT::datatable(pii_summary)
-rm(pii_summary)
-```
-
-Plot of missing PII.
-
-```{r pii_plot, echo = FALSE}
-
 if(nrow(record_check) > 0){
   missing_plot <-
     record_check %>%
-    select(firstname, lastname, city, state, birth_date) %>%
+    select(firstname, lastname, birth_date, state, address, city, zip) %>%
     # Add an ID per row
     mutate(hunter_id = row_number()) %>%
     # Pivot the field names to long format
-    pivot_longer(firstname:birth_date, names_to = "field") %>%
+    pivot_longer(firstname:zip, names_to = "field") %>%
     # Only keep hunters' fields with NA values
     filter(is.na(value)) %>%
     # Set NA to 1 for plotting
@@ -171,13 +151,27 @@ if(nrow(record_check) > 0){
           axis.ticks.y = element_blank())
 
   print(missing_plot)}else{
-  message(
-    paste0("No records detected with missing first name, last name, city",
-           " state, or date of birth.")
-  )
+  message("No records detected with missing PII.")
 }
 
+DT::datatable(record_check %>% select(title:birth_date))
+
 rm(record_check)
+```
+
+Summary of missing PII by .txt file.
+
+```{r pii_by_file, echo = FALSE}
+pii_summary <- 
+  record_check %>% 
+  group_by(source_file) %>% 
+  summarize(n = n()) %>% 
+  ungroup() %>% 
+  arrange(desc(n))
+
+DT::datatable(pii_summary)
+rm(pii_summary)
+
 rm(dl_data)
 ```
 
