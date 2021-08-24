@@ -141,12 +141,12 @@ correct <-
               state != zipState & !is.na(errors) & !str_detect(errors, "zip") ~
                 paste0(errors, "-zip"),
               TRUE ~ errors)
-        ) %>%
+        )
 
       # Error check: are any zip codes wrong?
       if(TRUE %in% (corrproof_bag_x$state != corrproof_bag_x$zipState)){
         message(
-          paste0("Warning: Zip codes detected that do not correspond to",
+          paste0("Warning: Zip codes detected that do not correspond to ",
                  "provided state of residence."))
         print(
           corrproof_bag_x %>%
@@ -297,7 +297,7 @@ correct <-
       # Error check: are any zip codes wrong?
       if(TRUE %in% (corrproof_strata_x$state != corrproof_strata_x$zipState)){
         message(
-          paste0("Warning: Zip codes detected that do not correspond to",
+          paste0("Warning: Zip codes detected that do not correspond to ",
                  "provided state of residence."))
         print(
           corrproof_strata_x %>%
@@ -309,8 +309,5 @@ correct <-
         select(-c("zipPrefix", "zipState"))
 
       return(corrproof_strata_x)
-    }
-    else{
-      message("Invalid data type provided, please input 'bag' or 'strata'.")
     }
   }
