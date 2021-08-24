@@ -172,21 +172,11 @@ pii_summary <-
     by = "source_file") %>% 
   mutate(prop = n/total_rows) %>% 
   select(-total_rows) %>% 
+  distinct() %>% 
   arrange(desc(prop)) 
 
 DT::datatable(pii_summary)
 rm(pii_summary)
-```
-
-All records from this download with missing PII.
-
-```{r pii_recs, echo = FALSE}
-DT::datatable(
-  record_check %>% 
-    select(source_file, firstname, lastname, birth_date, address, city, state, zip))
-
-rm(record_check)
-rm(dl_data)
 ```
 
 ## Zip code accuracy checking 
