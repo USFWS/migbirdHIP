@@ -83,7 +83,7 @@ rm(huntcheck)
 
 The following records are missing first name, last name, date of birth, address, city, and/or state of residence. They were not included in the final output table.
 
-```{r record_check, echo = FALSE}
+```{r record_check, echo = FALSE, fig.align = "center"}
 record_check <- 
   dl_data %>%
   rename(
@@ -153,8 +153,6 @@ if(nrow(record_check) > 0){
   print(missing_plot)}else{
   message("No records detected with missing PII.")
 }
-
-DT::datatable(record_check %>% select(title:birth_date))
 ```
 
 Summary of missing PII by .txt file.
@@ -165,42 +163,35 @@ pii_summary <-
   group_by(source_file) %>% 
   summarize(n = n()) %>% 
   ungroup() %>% 
-  arrange(desc(n))
+  left_join(
+    dl_data %>% 
+      select(source_file) %>% 
+      group_by(source_file) %>% 
+      mutate(total_rows = n()) %>% 
+      ungroup(),
+    by = "source_file") %>% 
+  mutate(prop = n/total_rows) %>% 
+  select(-total_rows) %>% 
+  arrange(desc(prop)) 
 
 DT::datatable(pii_summary)
 rm(pii_summary)
+```
+
+All records from this download with missing PII.
+
+```{r pii_recs, echo = FALSE}
+DT::datatable(
+  record_check %>% 
+    select(source_file, firstname, lastname, birth_date, address, city, state, zip))
 
 rm(record_check)
 rm(dl_data)
 ```
 
-## State of residence checking
+## Zip code accuracy checking 
 
-Below are all states of residence reported in this download cycle. USA (state, district, and territory) and Canada (province and territory) abbreviations are parsed and flagged accordingly in the "country" column. All other state values are marked as "other".
-
-```{r state_check, echo = FALSE}
-rm(record_check)
-
-state_check <-
-  cleaned_data %>% 
-  select(state) %>% 
-  group_by(state) %>% 
-  summarize(n_records = n()) %>% 
-  ungroup() %>% 
-  mutate(
-    country = 
-      case_when(
-        state %in% c("AB", "BC", "MB", "NB", "NL", "NT", "NS", "NU", "ON", "PE", "QC", "SK", "YT") ~ "Canada",
-        state %in% acceptable_residences ~ "USA", 
-        TRUE ~ "Other")) %>%
-  arrange(country)
-
-DT::datatable(state_check)
-```
-
-# Zip code accuracy checking 
-
-Check to see which records, if any, have reported zip codes that do not belong to the state of residence.
+Check to see which records have reported zip codes that do not belong to the state of residence.
 
 ```{r zip, echo = FALSE}
 zip_check <-
@@ -211,7 +202,11 @@ zip_check <-
       select(zipPrefix, zipState = state),
     by = "zipPrefix") %>%
   filter(state != zipState) %>% 
-  select(record_key, zip, state, zipState)
+  select(
+    record_key, 
+    zip, 
+    state_provided = state, 
+    correct_state = zipState)
       
 DT::datatable(zip_check)
 rm(zip_check)
@@ -225,8 +220,6 @@ rm(zip_check)
 rm(state_check)
 
 findDuplicates(cleaned_data)
-
-DT::datatable(findDuplicates(cleaned_data, return = "table"))
 ```
 
 ### After fixDuplicates (all 49 states)
@@ -296,7 +289,7 @@ errorPlot_states(corrected_data)
 
 # Error Exploration
 
-Let's take a closer look at common errors and issues within this download's HIP data.
+A closer look at common errors and issues within this download's HIP data.
 
 ## High error counts
 
