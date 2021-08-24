@@ -81,7 +81,7 @@ rm(huntcheck)
 
 ## PII checking
 
-The following records are missing first name, last name, date of birth, address, city, and/or state of residence. They were not included in the final output table.
+The following records are missing first name, last name, date of birth, address, state, and/or city AND zip. They are not included in the final output table.
 
 ```{r record_check, echo = FALSE, fig.align = "center"}
 record_check <- 
@@ -206,15 +206,13 @@ rm(zip_check)
 
 ### Before fixDuplicates (all 49 states)
 
-```{r b_fd, echo = FALSE}
-rm(state_check)
-
+```{r b_fd, echo = FALSE, fig.align = "center"}
 findDuplicates(cleaned_data)
 ```
 
 ### After fixDuplicates (all 49 states)
 
-```{r a_fd, echo = FALSE}
+```{r a_fd, echo = FALSE, fig.align = "center"}
 findDuplicates(fixed_data)
 
 DT::datatable(findDuplicates(fixed_data, return = "table"))
@@ -267,13 +265,13 @@ errorPlot_fields(corrected_data, year = params$year)
 
 ### Before correction
 
-```{r erps, echo = FALSE}
+```{r erps, echo = FALSE, fig.align = "center"}
 errorPlot_states(proofed_data)
 ```
 
 ### After correction
 
-```{r erps_c, echo = FALSE}
+```{r erps_c, echo = FALSE, fig.align = "center"}
 errorPlot_states(corrected_data)
 ```
 
