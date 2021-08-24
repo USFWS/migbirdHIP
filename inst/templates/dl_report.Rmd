@@ -158,6 +158,25 @@ state_check <-
 DT::datatable(state_check)
 ```
 
+# Zip code accuracy checking 
+
+Check to see which records, if any, have reported zip codes that do not belong to the state of residence.
+
+```{r zip, echo = FALSE}
+zip_check <-
+  fixed_data %>% 
+  mutate(zipPrefix = str_extract(zip, "^[0-9]{3}")) %>%
+  left_join(
+    zip_code_ref %>%
+      select(zipPrefix, zipState = state),
+    by = "zipPrefix") %>%
+  filter(state != zipState) %>% 
+  select(record_key, zip, state, zipState)
+      
+DT::datatable(zip_check)
+rm(zip_check)
+```
+
 ## Duplicates
 
 ### Before fixDuplicates (all 49 states)
