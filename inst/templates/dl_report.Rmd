@@ -149,7 +149,7 @@ Plot of missing PII.
 
 ```{r pii_plot, echo = FALSE}
 
-if(nrow(missing_x) > 0){
+if(nrow(record_check) > 0){
   missing_plot <-
     record_check %>%
     select(firstname, lastname, city, state, birth_date) %>%
