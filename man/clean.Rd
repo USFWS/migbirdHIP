@@ -2,7 +2,7 @@
 % Please edit documentation in R/clean.R
 \name{clean}
 \alias{clean}
-\title{Tidy data}
+\title{Clean data}
 \usage{
 clean(x, plot = FALSE)
 }

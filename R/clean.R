@@ -1,4 +1,4 @@
-#' Tidy data
+#' Clean data
 #'
 #' After reading the data with \code{\link{compile}}, rename the column names and do preliminary cleaning of firstname, lastname, middle initial, and suffixes.
 #'
