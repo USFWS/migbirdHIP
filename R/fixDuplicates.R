@@ -282,7 +282,7 @@ fixDuplicates <-
     # including Iowa. These tables might not be equal when dl_state == NA, which
     # occurs when file names are not in the standard format
     if(length(unique(ia_hips$duplicate)) > 1){
-      message("Error 5a: Extra duplicates (n > 1) detected in Iowa HIPs.")
+      message("Error 5: Extra duplicates (n > 1) detected in Iowa HIPs.")
       print(ia_hips %>% group_by(duplicate) %>% filter(n() > 1))
     }
 
@@ -360,13 +360,28 @@ fixDuplicates <-
           dl_state != "IA") %>% select(duplicate) %>% distinct()
     o2 <- other_dupes %>% select(duplicate) %>% distinct()
 
-    # Error checker #7
+    # Error checker #7a
     # Thrown when the filter above for other_dupes removes too many records.
     if(nrow(o2) != nrow(o1)){
-      message("Error 7: Internal data issue. Is there a frame shift?")
+      message("Error 7a: Internal data issue. Is there a frame shift?")
       print(
         duplicates %>%
           filter(duplicate %in% pull(anti_join(o1, o2, by = "duplicate"))))}
+
+    # Error checker #7b
+    # Thrown when there is a bad issue date detected.
+    if(nrow(o2) != nrow(o1)){
+      message("Error 7b: Internal data issue. Is there a frame shift?")
+      print(
+        other_dupes %>%
+          mutate(
+            x_issue_date =
+              ifelse(
+                str_detect(issue_date, "^[0-9]{2}\\/[0-9]{2}\\/[0-9]{4}$"),
+                "good",
+                "bad_issue_date_format")) %>%
+          filter(x_issue_date == "bad_issue_date_format") %>%
+          select(birth_date:dove_bag, record_key))}
 
     other_dupes %<>%
       mutate(
@@ -528,7 +543,28 @@ fixDuplicates <-
     # If there is more than one HIP record per person, decide which one to keep
     hip_dupes <-
       permit_dupes %>%
-      filter(record_type == "HIP")
+      filter(record_type == "HIP") %>%
+      group_by(duplicate) %>%
+      mutate(
+        # Check for most recent issue date
+        x_issue_date =
+          # Skip frame shift issues and only evaluate for dates in correct
+          # mm/dd/yyyy format
+          ifelse(
+            str_detect(issue_date, "^[0-9]{2}\\/[0-9]{2}\\/[0-9]{4}$"),
+            ifelse(
+              issue_date ==
+                strftime(
+                  max(mdy(issue_date), na.rm = TRUE), format = "%m/%d/%Y"),
+              "keeper",
+              NA),
+            "bad_issue_date_format")) %>%
+      ungroup() %>%
+      # If the issue date was in the right format, keep the record(s) from each
+      # group that were the most recent; if the issue date was in the wrong
+      # format, keep those too for future evaluation
+      filter(!is.na(x_issue_date)) %>%
+      select(-x_issue_date)
 
     hip_dupes %<>%
       mutate(
