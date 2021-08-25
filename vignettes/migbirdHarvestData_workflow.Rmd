@@ -110,7 +110,7 @@ Did you get a warning or three? Read an explanation of common `read_hip` warning
 
 ### renameFiles
 
-The `renameFiles` function was incorporated into this package for special cases. Some states submit .txt  files using the "old" 5-digit file name format, containing 2 letters for the state abbreviation followed by a 3-digit Julian date (representing the date the file was uploaded). To convert these pesky 5-digit filenames to the standard 10-digit format (a requirement to read data properly with [read_hip](#read_hip)), supply the `renameFiles` with the directory containing HIP data. File names will be automatically overwritten with the YYYYMMDD format date corresponding to the submitted Julian date.
+The `renameFiles` function was incorporated into this package for special cases. Some states submit .txt  files using the "old" 5-digit file name format, containing 2 letters for the state abbreviation followed by a 3-digit Julian date (representing the date the file was uploaded). To convert these pesky 5-digit filenames to the standard 10-digit format (a requirement to read data properly with [read_hip](#read_hip)), supply the `renameFiles` with the directory containing HIP data. File names will be automatically overwritten with the YYYYMMDD format date corresponding to the submitted Julian date. This function is also handy to use when states submit lowercase abbreviations; `renameFiles` will convert lowercase letters to uppercase.
 
 
 ```r
@@ -119,16 +119,14 @@ renameFiles(path = "C:/HIP/DL1202")
 
 ### clean
 
-After data are imported, we `clean`:
+After data are read, we `clean`:
 
 
 ```r
-DL1202_clean <- clean(DL1202, plot = TRUE)
+DL1202_clean <- clean(DL1202)
 ```
 
-![plot of chunk clean](figure/clean-1.png)
-
-This function renames columns and does simple mutations. Importantly, records are discarded if first name, last name, city of residence, state of residence, or date of birth are missing. These records with missing values can be visualized using `plot = TRUE`.
+This function renames columns and does simple mutations. Importantly, records are discarded if first name, last name, birth date, address, state of residence, OR city AND zip are missing.
 
 Other quick fixes include:
 
@@ -136,10 +134,14 @@ Other quick fixes include:
 * Moves suffixes from first or last name columns to the appropriate suffix column
 * Removes punctuation from middle initial column
 * Removes ending hyphen from zip codes with only 5 digits
+* Inserts a hyphen in continuous 9 digit zip code values
+* Inserts a hyphen in 9 digit zip codes with a middle space
+* Deletes trailing -0000 and -____ from zip codes
+* Trims whitespace on all values
 
 ### findDuplicates
 
-The `findDuplicates` function finds hunters that have more than one registration. Records are grouped by first name, last name, city, state, birth date, and download state to identify unique hunters. If the same hunter has 2 or more registrations, the fields that are not identical are counted and summarized. A plot is returned by default, but the type of output can be specified using `return = "plot"` for plot, or `return = "table"` for table and summary message.
+The `findDuplicates` function finds hunters that have more than one registration. Records are grouped by first name, last name, state, birth date, registration year, and download state to identify unique hunters. If the same hunter has 2 or more registrations, the fields that are not identical are counted and summarized. A plot is returned by default, but the type of output can be specified using `return = "plot"` for plot, or `return = "table"` for table and summary message.
 
 
 ```r
@@ -154,7 +156,7 @@ findDuplicates(DL1202_clean, return = "table")
 ```
 
 ```
-## # A tibble: 20 x 2
+## # A tibble: 19 x 2
 ##    dupl                     count
 ##    <chr>                    <int>
 ##  1 address                      4
@@ -172,26 +174,24 @@ findDuplicates(DL1202_clean, return = "table")
 ## 13 middle-issue_date            2
 ## 14 middle-issue_date-email      1
 ## 15 middle-zip-email             1
-## 16 registration_yr              2
-## 17 suffix                       1
-## 18 suffix-address-email         1
-## 19 suffix-issue_date            1
-## 20 zip                          1
+## 16 suffix                       1
+## 17 suffix-address-email         1
+## 18 suffix-issue_date            1
+## 19 zip                          1
 ```
 
 ### fixDuplicates
 
-We sometimes receive multiple HIP records per person which must be resolved by `fixDuplicates`. Only 1 HIP record per hunter can be kept (although we do allow multiple permits per hunter). To decide which record to keep from a group, we follow a series of logic.
+We sometimes receive multiple HIP records per person which must be resolved by `fixDuplicates`. Only 1 HIP record per hunter can be kept. To decide which record to keep from a group, we follow a series of logic.
 
 Records are kept when they meet the below criteria (in order of importance):
 
 1. The record in the group has the most recent issue date.
 2. Records do not contain all 1s or all 0s in bag columns.
-3. The record in the group has a current registration year.
+3. For duplicates from Atlantic Flyway states (ME, VT, NH, MA, RI, CT, NY, PA, NY, DE, MD, VA, WV, NC, SC, GA, FL), keep records with a 2 in brant or seaduck.
 4. If records are tied, one is chosen randomly.
 
-Duplicates from Atlantic Flyway states (ME, VT, NH, MA, RI, CT, NY, PA, NY, DE, MD, VA, WV, NC, SC, GA, FL) have an additional rule that preferentially keeps records with a 2 in brant or seaduck.
-Permit states WA, OR, CO, and SD send HIP and permit records separately, which are identified as "HIP" and "PMT" respectively in the record_type column. Dove records from Iowa are marked as "IAD" in the record_type column.
+A new field called "record_type" is added to the data after the above deduplicating process. Every HIP record is labeled "HIP". Permit states WA, OR, CO, and SD send HIP and permit records separately, which are labeled "HIP" and "PMT" respectively. Dove records from Iowa are labeled "IAD" (which unlike PMT records, there can only be 1 of these per hunter).
 
 Note: This function replaces "." values with NA in non-permit species columns for WA, OR, CO, and SD records.
 
@@ -245,9 +245,9 @@ validate(DL1202_fixed, type = "horizontal")
 ##    source_file    h_value h_rep h_total prop_repeat
 ##    <chr>          <chr>   <int>   <int>       <dbl>
 ##  1 WI20201216.txt 1         465     546       0.852
-##  2 AL20201216.txt 1        5779    7056       0.819
-##  3 MI20201216.txt 1         342     418       0.818
-##  4 SC20201202.txt 1        6311    7834       0.806
+##  2 AL20201216.txt 1        5774    7049       0.819
+##  3 MI20201216.txt 1         341     417       0.818
+##  4 SC20201202.txt 1        6308    7831       0.806
 ##  5 MS20201215.txt 1        6706    8924       0.751
 ##  6 MO20201216.txt 1        2954    4047       0.730
 ##  7 RI20201216.txt 1         101     156       0.647
@@ -323,11 +323,32 @@ The year of the Harvest Information Program must be supplied as a parameter. Thi
 
 ### correct
 
-After the download data are proofed, the next step is to fix the data to the best of our ability. Data can be corrected by running the `correct` function on the proofed tibble. You must specify whether the function should return original state bag values (`data = "bag"`) or FWS strata values (`data = "strata"`).
+After the download data are proofed, the next step is to fix the data to the best of our ability. Data can be corrected by running the `correct` function on the proofed tibble. You must specify whether the function should return original state bag values (`data = "bag"`) or FWS strata values (`data = "strata"`). The year of the Harvest Information Program must be supplied as a parameter as well. Since the "errors" column is re-created using `correct`, supplying the year is necessary for the same reasons it is required by `proof`.
 
 
 ```r
 DL1202_corrected <- correct(DL1202_proofed, year = 2020, data = "bag")
+```
+
+```
+## Warning: Zip codes detected that do not correspond to provided state of residence.
+```
+
+```
+## # A tibble: 474 x 4
+##    record_key  zip   state zipState
+##    <chr>       <chr> <chr> <chr>   
+##  1 record_292  32525 AL    FL      
+##  2 record_330  34044 AL    AA      
+##  3 record_1935 15425 AL    PA      
+##  4 record_3403 63804 AL    MO      
+##  5 record_5325 36564 MS    AL      
+##  6 record_6417 79556 FL    TX      
+##  7 record_7090 65466 AL    MO      
+##  8 record_7183 44023 AR    OH      
+##  9 record_7223 38655 TN    MS      
+## 10 record_7236 76182 AR    TX      
+## # ... with 464 more rows
 ```
 
 The following changes are made by the `correct` function:
@@ -354,18 +375,15 @@ The following changes are made by the `correct` function:
 * *City* is not changed, but remains flagged if it contains any non-alpha character
 * *State* is not changed, but remains flagged if it is not contained in the following list of abbreviations for US and Canada states, provinces, and territories:
     * AL, AK, AZ, AR, CA, CO, CT, DE, DC, FL, GA, HI, ID, IL, IN, IA, KS, KY, LA, ME, MD, MA, MI, MN, MS, MO, MT, NE, NV, NH, NJ, NM, NY, NC, ND, OH, OK, OR, PA, RI, SC, SD, TN, TX, UT, VT, VA, WA, WV, WI, WY, AS, GU, MP, PR, VI, UM, FM, MH, PW, AA, AE, AP, CM, CZ, NB, PI, TT, ON, QC, NS, NB, MB, BC, PE, SK, AB, NL
-* *Zip* is corrected by:
-    * Inserting a hyphen into continuous 9-digit zip codes
-    * Replacing a central space with a hyphen
-    * Deleting trailing -0000 and -____
-    * Checking corrected zip codes against a master list of USA postal codes; if the hunter's address doesn't have a zip that should be in their state, it's flagged
+* *Zip* is not changed, but is flagged if:
+    * If the hunter's address doesn't have a zip that should be in their reported state of residence (checked against a master list of USA postal codes), it's flagged
     * Foreign zip codes are flagged
     * Zip codes that do not match a 5-digit or 9-digit hyphenated format are flagged
 * *Birth date* is not changed, but remains flagged if the birth year was > 100 or < 16 years ago
 * *Issue date* is not changed, but remains flagged if it is not equal to or +/- 1 year from the HIP data collection year
 * *Hunt migratory birds* is not changed, and remains flagged if it is not equal to 1 or 2
 * *Bag values*
-    * State strata that do not meet expected values are compared to a master list and corrected to standard FWS strata
+    * If `data = "strata"`, state strata that do not meet expected values are compared to a master list and corrected to standard FWS strata
     * Any stratum that can't be converted is changed to NA
 * *Registration year* is not changed, but remains flagged if it is not equal to or +/- 1 year from the HIP data collection year
 * *Email* is corrected by:
@@ -387,8 +405,6 @@ The following changes are made by the `correct` function:
         * There is no @ symbol in the email string
         * If the email is invalid (i.e. none<!-- breaklink -->@none, noemail, n/a)
     * Any email that wasn't corrected and doesn't fit the standardized email regex remains flagged
-
-The year of the Harvest Information Program must be supplied as a parameter. Since the "errors" column is re-created using `correct`, supplying the year is necessary for the same reasons it is required by `proof`.
 
 All functions in [Part C](#part-c-data-visualization-and-tabulation) will run on the corrected tibble, `DL1202_corrected`, just as they worked on the example tibble `DL1202_proofed`. Errors can be compared between the proofed stage and corrected stage to get a better idea of which errors were serious (i.e. difficult to correct automatically) and determine how serious errors can be prevented in the future.
 
@@ -433,23 +449,22 @@ The `writeReport` function can be used to automatically generate an R markdown d
 memory.limit(size = 55000)
 
 writeReport(
-  path = "C:/HIP/all_2019",
-  type = "season_report",
+  path = "C:/HIP/DL1202",
+  type = "dl_report",
   yr = 2019,
-  dir = "H:/r_projects/hip_data/script",
-  file = "season_report_2019")
+  dir = "C:/HIP/dl_reports",
+  file = "DL1202_report")
 ```
 
 ### writeShiny
 
-The `writeShiny` function is a supplement to the `writeReport` function. It launches an instance of Shiny through R, allowing users to interact with a `findDuplicates` plot to view duplicates by state. Features of the data can be explored quickly without weighing down the `writeReport` function with repetitive facet wrapping. The shiny plot cannot be saved to an html document to view again in the future; R has to run the `writeShiny` function each time.
+The `writeShiny` function is a supplement to the `writeReport` function. It launches an instance of Shiny through R, allowing users to interact with a `findDuplicates` plot to view duplicates by state. Features of the data can be explored quickly without weighing down the `writeReport` function with repetitive facet wrapping. The shiny plot cannot be saved to an html document to view again in the future; R has to run the `writeShiny` function each time. To view a shiny output for a season, use `type = season_shiny`.
 
 
 ```r
 writeShiny(
-  path = "C:/HIP/all_2019",
-  type = "season_shiny",
-  yr = 2019)
+  path = "C:/HIP/DL1202",
+  type = "dl_shiny")
 ```
 
 ## Part C: Data Visualization and Tabulation
@@ -470,15 +485,15 @@ outOfStateHunters(DL1202_proofed)
 ##    dl_state n_total outofstate_prop
 ##    <chr>      <int>           <dbl>
 ##  1 AK           106            0.41
-##  2 AL          7056            0.15
+##  2 AL          7049            0.15
 ##  3 AR          6568            0.65
 ##  4 CA          3998            0.06
-##  5 CO          1749            0.09
+##  5 CO          1748            0.09
 ##  6 CT           114            0.1 
-##  7 FL          3653            0.09
-##  8 GA          3579            0.12
+##  7 FL          3652            0.09
+##  8 GA          3577            0.12
 ##  9 IA          3229            0.05
-## 10 ID          1879            0.22
+## 10 ID          1872            0.22
 ## # ... with 21 more rows
 ```
 
@@ -499,7 +514,7 @@ youthHunters(DL1202_proofed, year = 2020)
 ##   <chr>               <int>            <int>            <dbl>
 ## 1 MO                      1             4047         0.000247
 ## 2 ND                    117              175         0.669   
-## 3 NE                      1              548         0.00182
+## 3 NE                      1              547         0.00183
 ```
 
 ### errorPlot_fields
@@ -577,20 +592,20 @@ errorTable(DL1202_proofed)
 ```
 
 ```
-## # A tibble: 136 x 3
+## # A tibble: 124 x 3
 ##    dl_state error      error_count
 ##    <chr>    <chr>            <dbl>
 ##  1 AK       birth_date           2
-##  2 AK       zip                 32
-##  3 AL       birth_date         190
-##  4 AL       city                 1
-##  5 AL       firstname            7
-##  6 AL       lastname             1
-##  7 AL       suffix              10
-##  8 AL       zip                 25
-##  9 AR       birth_date         176
-## 10 AR       email                1
-## # ... with 126 more rows
+##  2 AL       birth_date         190
+##  3 AL       city                 1
+##  4 AL       firstname            7
+##  5 AL       lastname             1
+##  6 AL       suffix              10
+##  7 AR       birth_date         176
+##  8 AR       email                1
+##  9 AR       firstname           14
+## 10 AR       suffix              63
+## # ... with 114 more rows
 ```
 
 Errors can be reported by only location by turning off the `field` parameter.
@@ -604,16 +619,16 @@ errorTable(DL1202_proofed, field = "none")
 ## # A tibble: 31 x 2
 ##    dl_state error_count
 ##    <chr>          <dbl>
-##  1 AK                34
-##  2 AL               234
-##  3 AR               726
+##  1 AK                 2
+##  2 AL               209
+##  3 AR               257
 ##  4 CA               464
 ##  5 CO               193
 ##  6 CT               120
-##  7 FL                53
+##  7 FL                35
 ##  8 GA                57
 ##  9 IA              3216
-## 10 ID               163
+## 10 ID               154
 ## # ... with 21 more rows
 ```
 
@@ -629,13 +644,13 @@ errorTable(DL1202_proofed, loc = "none")
 ##    error              error_count
 ##    <chr>                    <dbl>
 ##  1 band_tailed_pigeon           2
-##  2 birth_date                5637
+##  2 birth_date                5634
 ##  3 city                         3
 ##  4 coots_snipe                 60
 ##  5 cranes                      49
 ##  6 dove_bag                   113
 ##  7 ducks_bag                 3109
-##  8 email                     5495
+##  8 email                     5494
 ##  9 firstname                  111
 ## 10 geese_bag                   38
 ## 11 hunt_mig_birds              20
@@ -646,7 +661,7 @@ errorTable(DL1202_proofed, loc = "none")
 ## 16 state                        6
 ## 17 suffix                     283
 ## 18 woodcock_bag                 4
-## 19 zip                       2132
+## 19 zip                          9
 ```
 
 Location can be specified.
@@ -734,13 +749,12 @@ redFlags(DL1202_proofed, type = "field", threshold = 0.01)
 ```
 
 ```
-## # A tibble: 4 x 5
+## # A tibble: 3 x 5
 ##   errors     count_errors count_correct proportion flag        
 ##   <chr>             <int>         <int>      <dbl> <chr>       
-## 1 birth_date         5637         87390     0.0606 error > 0.01
-## 2 email              5495         87532     0.0591 error > 0.01
-## 3 ducks_bag          3109         89918     0.0334 error > 0.01
-## 4 zip                2132         90895     0.0229 error > 0.01
+## 1 birth_date         5634         87361     0.0606 error > 0.01
+## 2 email              5494         87501     0.0591 error > 0.01
+## 3 ducks_bag          3109         89886     0.0334 error > 0.01
 ```
 
 ## Troubleshooting
