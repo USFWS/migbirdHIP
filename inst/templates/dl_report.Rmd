@@ -72,7 +72,7 @@ Below is a table summarizing the total of number of records per download state.
 
 ```{r sum_per_state, echo = FALSE, message = FALSE}
 
-DT::datatable(cleaned_data %>% 
+DT::datatable(fixed_data %>% 
                 select(dl_state) %>% 
                 group_by(dl_state) %>% 
                 summarize(sum = n()) %>% 
@@ -82,13 +82,24 @@ DT::datatable(cleaned_data %>%
 
 # Data Checking
 
+## Registration year checking
+
+```{r reg_yr_check, echo = FALSE}
+DT::datatable(fixed_data %>% 
+                select(registration_yr) %>% 
+                group_by(registration_yr) %>% 
+                summarize(n = n()) %>% 
+                ungroup())
+
+```
+
 ## Hunt migratory birds response checking
 
-Below is a summary of all values in the hunt_mig_birds field.
+Below is a summary of all values in the hunt_mig_birds (aka "HuntY") field.
 
-```{r huncheck, echo = FALSE}
+```{r hunty_check, echo = FALSE}
 huntcheck <-
-  cleaned_data %>% 
+  fixed_data %>% 
   select(hunt_mig_birds) %>% 
   group_by(hunt_mig_birds) %>% 
   summarize(n = n()) %>% 
