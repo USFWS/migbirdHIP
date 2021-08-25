@@ -43,7 +43,7 @@ findDuplicates(cleaned_data)
 dl_states <-
   cleaned_data %>%
   mutate(hunter_key = paste0("hunter_", row_number())) %>%
-  group_by(firstname, lastname, city, state, birth_date, dl_state) %>%
+  group_by(firstname, lastname, state, birth_date, registration_yr, dl_state) %>%
   # Identify duplicates
   mutate(duplicate = ifelse(n() > 1, "duplicate", "1")) %>%
   ungroup() %>%
@@ -70,13 +70,13 @@ shinyApp(
         filter(dl_state == input$dl_state) %>% 
         # Create a row key
         mutate(hunter_key = paste0("hunter_", row_number())) %>%
-        # Group by registrant information; name, city, state, birthday, dl_state
+        # Group by registrant information
         group_by(
           firstname,
           lastname,
-          city,
           state,
           birth_date,
+          registration_yr,
           dl_state) %>%
         # Identify duplicates
         mutate(
@@ -92,12 +92,18 @@ shinyApp(
         arrange(
           firstname,
           lastname,
-          city,
           state,
           birth_date,
+          registration_yr,
           dl_state) %>%
         select(-c("hunter_key", "duplicate")) %>%
-        group_by(firstname, lastname, city, state, birth_date, dl_state) %>%
+        group_by(
+          firstname,
+          lastname,
+          state,
+          birth_date,
+          registration_yr,
+          dl_state) %>%
         mutate(
           # Hunter key per individual (not per row)
           hunter_key = cur_group_id(),
@@ -128,13 +134,13 @@ shinyApp(
               dupl),
           dupl =
             ifelse(
-              length(unique(zip)) > 1,
-              paste(dupl, "zip", sep = "-"),
+              length(unique(city)) > 1,
+              paste(dupl, "city", sep = "-"),
               dupl),
           dupl =
             ifelse(
-              length(unique(birth_date)) > 1,
-              paste(dupl, "birth_date", sep = "-"),
+              length(unique(zip)) > 1,
+              paste(dupl, "zip", sep = "-"),
               dupl),
           dupl =
             ifelse(
@@ -145,11 +151,6 @@ shinyApp(
             ifelse(
               length(unique(hunt_mig_birds)) > 1,
               paste(dupl, "hunt_mig_birds", sep = "-"),
-              dupl),
-          dupl =
-            ifelse(
-              length(unique(registration_yr)) > 1,
-              paste(dupl, "registration_yr", sep = "-"),
               dupl),
           dupl =
             ifelse(
