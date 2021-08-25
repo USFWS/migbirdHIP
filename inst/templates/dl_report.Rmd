@@ -259,13 +259,13 @@ rm(fixed_data)
 
 ### Before correction
 
-```{r erpf, echo = FALSE}
+```{r erpf, echo = FALSE, fig.align = "center"}
 errorPlot_fields(proofed_data, year = params$year)
 ```
 
 ### After correction
 
-```{r erpf_c, echo = FALSE}
+```{r erpf_c, echo = FALSE, fig.align = "center"}
 errorPlot_fields(corrected_data, year = params$year)
 ```
 
