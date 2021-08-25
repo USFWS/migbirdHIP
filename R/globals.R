@@ -110,4 +110,5 @@ utils::globalVariables(
     "record_type",
     "old",
     "value2",
-    "V1"))
+    "V1",
+    "zipState"))
