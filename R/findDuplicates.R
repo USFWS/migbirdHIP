@@ -1,6 +1,6 @@
 #' Find duplicates
 #'
-#' Determine how many duplicate records are in the data. Plot and tabulate which fields are duplicates of individual hunters (i.e. data grouped by first name, last name, state, and birth date).
+#' Determine how many duplicate records are in the data. Plot and tabulate which fields are duplicates of individual hunters (i.e. data grouped by first name, last name, state, and birth date, registration year, and download state).
 #'
 #' @importFrom dplyr %>%
 #' @importFrom dplyr mutate
@@ -57,12 +57,13 @@ findDuplicates <-
       # Create a row key
       mutate(hunter_key = paste0("hunter_", row_number())) %>%
       # Group by registrant information; first name, last name, state, birthday,
-      # dl_state
+      # registration year, dl_state
       group_by(
         firstname,
         lastname,
         state,
         birth_date,
+        registration_yr,
         dl_state) %>%
       # Identify duplicates
       mutate(
@@ -80,6 +81,7 @@ findDuplicates <-
         lastname,
         state,
         birth_date,
+        registration_yr,
         dl_state)
 
     # Total number of records that are a duplicate
@@ -95,6 +97,7 @@ findDuplicates <-
         lastname,
         state,
         birth_date,
+        registration_yr,
         dl_state) %>%
       distinct() %>%
       nrow()
@@ -104,7 +107,8 @@ findDuplicates <-
     dupl_tibble <-
       duplicates %>%
       select(-c("hunter_key", "duplicate")) %>%
-      group_by(firstname, lastname, state, birth_date, dl_state) %>%
+      group_by(
+        firstname, lastname, state, birth_date, registration_yr, dl_state) %>%
       mutate(
         # Hunter key per individual (not per row)
         hunter_key = cur_group_id(),

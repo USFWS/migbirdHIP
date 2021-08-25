@@ -12,7 +12,7 @@ findDuplicates(x, return = "plot")
 \item{return}{Option to return either a plot or a table; default value is "plot"}
 }
 \description{
-Determine how many duplicate records are in the data. Plot and tabulate which fields are duplicates of individual hunters (i.e. data grouped by first name, last name, state, and birth date).
+Determine how many duplicate records are in the data. Plot and tabulate which fields are duplicates of individual hunters (i.e. data grouped by first name, last name, state, and birth date, registration year, and download state).
 }
 \references{
 \url{https://github.com/USFWS/migbirdHarvestData}
