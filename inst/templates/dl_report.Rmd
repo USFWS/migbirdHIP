@@ -66,8 +66,6 @@ zip_check <-
 
 This is a report of download cycle `r proofed_data %>% select(dl_cycle) %>% distinct %>% pull`. This cycle, `r sumLines(params$comp_path)` lines of data (`r nrow(fixed_data)` unique records) were submitted in `r length(list.files(params$comp_path) %>% as_tibble() %>% transmute(filepath = as.character(value)) %>% mutate(filepath = str_replace(filepath, "TXT", "txt")) %>% filter(str_detect(filepath, "(?<=\\.)txt$")) %>% pull)` files from `r proofed_data %>% select(dl_state) %>% distinct %>% nrow()` states. 
 
-There are `r canada_records` records in this download from Canadian hunters. A total of `r zip_check` records contain zip codes that are not correct based on the provided state of residence.
-
 Below is a table summarizing the total of number of records per download state.
 
 ```{r sum_per_state, echo = FALSE, message = FALSE}
@@ -93,9 +91,7 @@ DT::datatable(fixed_data %>%
 
 ```
 
-## Hunt migratory birds response checking
-
-Below is a summary of all values in the hunt_mig_birds (aka "HuntY") field.
+## HuntY response checking
 
 ```{r hunty_check, echo = FALSE}
 huntcheck <-
@@ -201,7 +197,7 @@ pii_summary <-
       mutate(total_rows = n()) %>% 
       ungroup(),
     by = "source_file") %>% 
-  mutate(prop = n/total_rows) %>% 
+  mutate(prop = round(n/total_rows, digits = 2)) %>% 
   select(-total_rows) %>% 
   distinct() %>% 
   arrange(desc(prop)) 
@@ -234,13 +230,15 @@ DT::datatable(strataCheck(fixed_data))
 
 ## Repeated values
 
-### Horizontal
+### Repeated values across duck, goose, dove, and woodcock bag codes
 
 ```{r h_validate, echo = FALSE}
-DT::datatable(migbirdHarvestData::validate(fixed_data, type = "horizontal"))
+DT::datatable(
+  migbirdHarvestData::validate(fixed_data, type = "horizontal") %>% 
+    mutate(prop_repeat = round(prop_repeat, digits = 2)))
 ```
 
-### Vertical
+### Repeated values within duck bag code
 
 ```{r v_validate, echo = FALSE}
 DT::datatable(migbirdHarvestData::validate(fixed_data, type = "vertical"))
