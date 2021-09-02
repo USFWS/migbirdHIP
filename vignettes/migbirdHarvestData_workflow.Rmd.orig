@@ -319,18 +319,6 @@ writeReport(
 
 ```
 
-### writeShiny
-
-The `writeShiny` function is a supplement to the `writeReport` function. It launches an instance of Shiny through R, allowing users to interact with a `findDuplicates` plot to view duplicates by state. Features of the data can be explored quickly without weighing down the `writeReport` function with repetitive facet wrapping. The shiny plot cannot be saved to an html document to view again in the future; R has to run the `writeShiny` function each time. To view a shiny output for a season, use `type = season_shiny`.
-
-```{r, writeshiny, eval = FALSE}
-
-writeShiny(
-  path = "C:/HIP/DL1202",
-  type = "dl_shiny")
-
-```
-
 ## Part C: Data Visualization and Tabulation
 
 ### outOfStateHunters

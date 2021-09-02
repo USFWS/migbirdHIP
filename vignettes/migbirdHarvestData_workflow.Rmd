@@ -86,24 +86,24 @@ DL1202 <- read_hip("C:/HIP/DL1202")
 ## # A tibble: 4 x 3
 ##   filepath                     encoding   confidence
 ##   <chr>                        <chr>           <dbl>
-## 1 C:/HIP/DL1202/MO20201216.txt ISO-8859-1      0.27 
-## 2 C:/HIP/DL1202/NE20201209.txt ISO-8859-1      0.290
-## 3 C:/HIP/DL1202/NE20201209.txt ISO-8859-2      0.22 
-## 4 C:/HIP/DL1202/SC20201202.txt ISO-8859-1      0.28 
-## # A tibble: 104 x 5
+## 1 C:/HIP/DL1202/MO20201216.txt ISO-8859-1       0.27
+## 2 C:/HIP/DL1202/NE20201209.txt ISO-8859-1       0.29
+## 3 C:/HIP/DL1202/NE20201209.txt ISO-8859-2       0.22
+## 4 C:/HIP/DL1202/SC20201202.txt ISO-8859-1       0.28
+## # A tibble: 103 x 5
 ##    dl_state X2          X4           X8    X10       
 ##    <chr>    <chr>       <chr>        <chr> <chr>     
-##  1 AR       <NA>        <NA>         <NA>  <NA>      
-##  2 FL       <NA>        KYI          FL    10/28/1990
-##  3 GA       TYLER       CARY         <NA>  10/27/1985
-##  4 GA       DANIEL      BLODGETT     <NA>  03/28/1955
-##  5 GA       JUAN        ORTIZ-ATILES <NA>  01/04/1974
-##  6 GA       CODY        CORMIER      <NA>  09/12/1997
-##  7 GA       THOMAS      BRENNAN      <NA>  02/19/1992
-##  8 GA       CHRISTOPHER PERRONE      <NA>  06/25/2001
-##  9 GA       ANDREW      ADAMS        <NA>  09/08/2001
-## 10 GA       MASON       HITCHCOCK    <NA>  05/31/2002
-## # ... with 94 more rows
+##  1 FL       <NA>        KYI          FL    10/28/1990
+##  2 GA       TYLER       CARY         <NA>  10/27/1985
+##  3 GA       DANIEL      BLODGETT     <NA>  03/28/1955
+##  4 GA       JUAN        ORTIZ-ATILES <NA>  01/04/1974
+##  5 GA       CODY        CORMIER      <NA>  09/12/1997
+##  6 GA       THOMAS      BRENNAN      <NA>  02/19/1992
+##  7 GA       CHRISTOPHER PERRONE      <NA>  06/25/2001
+##  8 GA       ANDREW      ADAMS        <NA>  09/08/2001
+##  9 GA       MASON       HITCHCOCK    <NA>  05/31/2002
+## 10 GA       WILLIS      MANCIL       <NA>  05/24/2003
+## # ... with 93 more rows
 ```
 
 Did you get a warning or three? Read an explanation of common `read_hip` warnings, [below](#common-read_hip-warnings).
@@ -201,6 +201,10 @@ Note: This function replaces "." values with NA in non-permit species columns fo
 DL1202_fixed <- fixDuplicates(DL1202_clean)
 ```
 
+```
+## Warning in ~as.numeric(.): NAs introduced by coercion
+```
+
 ### strataCheck
 
 Running `strataCheck` ensures species "bag" values are in order. This function searches for values in species group columns that are not typical or expected by the FWS. If a value outside of the normal range is detected, an output tibble is created. Each row in the output contains the state, species, unusual stratum value, and a list of the normal values we would expect.
@@ -245,14 +249,14 @@ validate(DL1202_fixed, type = "horizontal")
 ##    source_file    h_value h_rep h_total prop_repeat
 ##    <chr>          <chr>   <int>   <int>       <dbl>
 ##  1 WI20201216.txt 1         465     546       0.852
-##  2 AL20201216.txt 1        5774    7049       0.819
-##  3 MI20201216.txt 1         341     417       0.818
+##  2 AL20201216.txt 1        5773    7049       0.819
+##  3 MI20201216.txt 1         340     416       0.817
 ##  4 SC20201202.txt 1        6308    7831       0.806
 ##  5 MS20201215.txt 1        6706    8924       0.751
 ##  6 MO20201216.txt 1        2954    4047       0.730
 ##  7 RI20201216.txt 1         101     156       0.647
 ##  8 CT20201216.txt 1          73     114       0.640
-##  9 OH20201216.txt 1         628    1056       0.595
+##  9 OH20201216.txt 1         627    1055       0.594
 ## 10 MN20201216.txt 1         732    1278       0.573
 ## # ... with 37 more rows
 ```
@@ -456,17 +460,6 @@ writeReport(
   file = "DL1202_report")
 ```
 
-### writeShiny
-
-The `writeShiny` function is a supplement to the `writeReport` function. It launches an instance of Shiny through R, allowing users to interact with a `findDuplicates` plot to view duplicates by state. Features of the data can be explored quickly without weighing down the `writeReport` function with repetitive facet wrapping. The shiny plot cannot be saved to an html document to view again in the future; R has to run the `writeShiny` function each time. To view a shiny output for a season, use `type = season_shiny`.
-
-
-```r
-writeShiny(
-  path = "C:/HIP/DL1202",
-  type = "dl_shiny")
-```
-
 ## Part C: Data Visualization and Tabulation
 
 ### outOfStateHunters
@@ -592,7 +585,7 @@ errorTable(DL1202_proofed)
 ```
 
 ```
-## # A tibble: 124 x 3
+## # A tibble: 122 x 3
 ##    dl_state error      error_count
 ##    <chr>    <chr>            <dbl>
 ##  1 AK       birth_date           2
@@ -605,7 +598,7 @@ errorTable(DL1202_proofed)
 ##  8 AR       email                1
 ##  9 AR       firstname           14
 ## 10 AR       suffix              63
-## # ... with 114 more rows
+## # ... with 112 more rows
 ```
 
 Errors can be reported by only location by turning off the `field` parameter.
@@ -649,8 +642,8 @@ errorTable(DL1202_proofed, loc = "none")
 ##  4 coots_snipe                 60
 ##  5 cranes                      49
 ##  6 dove_bag                   113
-##  7 ducks_bag                 3109
-##  8 email                     5494
+##  7 ducks_bag                 3107
+##  8 email                     5495
 ##  9 firstname                  111
 ## 10 geese_bag                   38
 ## 11 hunt_mig_birds              20
@@ -752,9 +745,9 @@ redFlags(DL1202_proofed, type = "field", threshold = 0.01)
 ## # A tibble: 3 x 5
 ##   errors     count_errors count_correct proportion flag        
 ##   <chr>             <int>         <int>      <dbl> <chr>       
-## 1 birth_date         5634         87361     0.0606 error > 0.01
-## 2 email              5494         87501     0.0591 error > 0.01
-## 3 ducks_bag          3109         89886     0.0334 error > 0.01
+## 1 birth_date         5634         87356     0.0606 error > 0.01
+## 2 email              5495         87495     0.0591 error > 0.01
+## 3 ducks_bag          3107         89883     0.0334 error > 0.01
 ```
 
 ## Troubleshooting
