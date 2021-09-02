@@ -709,6 +709,13 @@ fixDuplicates <-
               seaducks == "0",
           "IAD",
           "HIP")) %>%
+      # Classify solo permit records as PMT
+      mutate_at(vars(matches("bag|coots|rails")), ~as.numeric(.)) %>%
+      mutate(
+        other_sum = rowSums(across(matches("bag|coots|rails")), na.rm = T)) %>%
+      mutate_at(vars(matches("bag|coots|rails")), ~as.character(.)) %>%
+      mutate(record_type =ifelse(other_sum == 0, "PMT", record_type)) %>%
+      select(-other_sum) %>%
       # Add back in the resolved duplicates
       bind_rows(
         af_dupes %>% select(-duplicate),
