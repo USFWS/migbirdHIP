@@ -301,7 +301,7 @@ Values associated with error in `r et$error[1]`
 
 ```{r pe_1, echo = FALSE}
 err1 <- 
-  pullErrors(proofed_data, error = et$error[1]) %>% 
+  pullErrors(proofed_data, error = et$error[1], distinct = FALSE) %>% 
   as_tibble() %>% 
   group_by(value) %>% 
   summarize(count = n()) %>% 
@@ -315,7 +315,7 @@ Values associated with error in `r et$error[2]`
 
 ```{r pe_2, echo = FALSE}
 err2 <- 
-  pullErrors(proofed_data, error = et$error[2]) %>% 
+  pullErrors(proofed_data, error = et$error[2], distinct = FALSE) %>% 
   as_tibble() %>% 
   group_by(value) %>% 
   summarize(count = n()) %>% 
@@ -329,7 +329,7 @@ Values associated with error in `r et$error[3]`
 
 ```{r pe_3, echo = FALSE}
 err3 <- 
-  pullErrors(proofed_data, error = et$error[3]) %>% 
+  pullErrors(proofed_data, error = et$error[3], distinct = FALSE) %>% 
   as_tibble() %>% 
   group_by(value) %>% 
   summarize(count = n()) %>% 
