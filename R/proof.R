@@ -2,6 +2,7 @@
 #'
 #' After cleaning the data with \code{\link{clean}}, compare each field to an expected range of values and flag non-conforming values in a new "errors" column.
 #'
+#' @importFrom magrittr %<>%
 #' @importFrom dplyr %>%
 #' @importFrom dplyr mutate
 #' @importFrom dplyr row_number
@@ -112,7 +113,6 @@ proof <-
           filter(!str_detect(state, states_provinces_and_canada)) %>%
           mutate(error = "state"),
         # Zip code should contain 5 digits or 5 digits-4 digits
-        # Edit: reference an official list against the state
         keyed_x %>%
           mutate(
             error =
@@ -219,9 +219,27 @@ proof <-
             str_remove_all(errors, "NA\\-|\\-NA"),
             errors)) %>%
       # Add a second mutate here because we cannot pipe '.'
-      mutate(
-        errors = ifelse(str_detect(errors, "^NA$"), NA, errors)) %>%
+      mutate(errors = ifelse(str_detect(errors, "^NA$"), NA, errors)) %>%
       as_tibble()
+
+    # Proof the zip codes -- are they associated with the correct states?
+    graded_x %<>%
+      # Make a zipPrefix to join by; pull the first 3 zip digits
+      mutate(zipPrefix = str_extract(zip, "^[0-9]{3}")) %>%
+      left_join(
+        zip_code_ref %>%
+          select(zipPrefix, zipState = state),
+        by = "zipPrefix") %>%
+      # Add an error if the state doesn't match zipState
+      mutate(
+        errors =
+          case_when(
+            state != zipState & is.na(errors) ~ "zip",
+            state != zipState & !is.na(errors) & !str_detect(errors, "zip") ~
+              paste0(errors, "-zip"),
+            TRUE ~ errors)
+      ) %>%
+      select(-c("zipPrefix", "zipState"))
 
     return(graded_x)
 
