@@ -70,11 +70,12 @@ Below is a table summarizing the total of number of records per download state.
 
 ```{r sum_per_state, echo = FALSE, message = FALSE}
 
-DT::datatable(fixed_data %>% 
-                select(dl_state) %>% 
-                group_by(dl_state) %>% 
-                summarize(sum = n()) %>% 
-                ungroup())
+DT::datatable(
+  fixed_data %>% 
+    select(dl_state) %>% 
+    group_by(dl_state) %>% 
+    summarize(sum = n()) %>% 
+    ungroup())
 
 ```
 
@@ -205,6 +206,7 @@ pii_summary <-
 
 DT::datatable(pii_summary)
 rm(pii_summary)
+rm(dl_data)
 ```
 
 ## Duplicates
@@ -280,6 +282,8 @@ errorPlot_states(proofed_data)
 
 ```{r erps_c, echo = FALSE, fig.align = "center"}
 errorPlot_states(corrected_data)
+
+rm(corrected_data)
 ```
 
 # Error Exploration
