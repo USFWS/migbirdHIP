@@ -40,20 +40,27 @@
 findDuplicates <-
   function(x, return = "plot"){
 
+    # List of permit records
+    pmts <-
+      DL0901_clean %>%
+      filter(
+        ducks_bag == "0" &
+          geese_bag == "0" &
+          dove_bag == "0" &
+          woodcock_bag == "0" &
+          coots_snipe == "0" &
+          rails_gallinules == "0" &
+          (cranes == "2" |
+             band_tailed_pigeon == "2" |
+             brant == "2" |
+             seaducks == "2")) %>%
+      select(record_key) %>%
+      pull()
+
     duplicates <-
       x %>%
       # Filter out permits
-      filter(
-        ducks_bag != "0" &
-          geese_bag != "0" &
-          dove_bag != "0" &
-          woodcock_bag != "0" &
-          coots_snipe != "0" &
-          rails_gallinules != "0" &
-          (cranes != "2" |
-             band_tailed_pigeon != "2" |
-             brant != "2" |
-             seaducks != "2")) %>%
+      filter(!record_key %in% pmts) %>%
       # Create a row key
       mutate(hunter_key = paste0("hunter_", row_number())) %>%
       # Group by registrant information; first name, last name, state, birthday,
