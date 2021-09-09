@@ -83,11 +83,12 @@ DT::datatable(fixed_data %>%
 ## Registration year checking
 
 ```{r reg_yr_check, echo = FALSE}
-DT::datatable(fixed_data %>% 
-                select(registration_yr) %>% 
-                group_by(registration_yr) %>% 
-                summarize(n = n()) %>% 
-                ungroup())
+DT::datatable(
+  fixed_data %>% 
+    select(registration_yr, dl_state) %>% 
+    group_by(registration_yr, dl_state) %>% 
+    summarize(n = n()) %>% 
+    ungroup())
 
 ```
 
@@ -96,8 +97,8 @@ DT::datatable(fixed_data %>%
 ```{r hunty_check, echo = FALSE}
 huntcheck <-
   fixed_data %>% 
-  select(hunt_mig_birds) %>% 
-  group_by(hunt_mig_birds) %>% 
+  select(hunt_mig_birds, dl_state) %>% 
+  group_by(hunt_mig_birds, dl_state) %>% 
   summarize(n = n()) %>% 
   ungroup() 
 
@@ -182,7 +183,7 @@ if(nrow(record_check) > 0){
 }
 ```
 
-Summary of missing PII by .txt file.
+There are `r nrow(record_check)` total records with missing PII. Below is a summary of the number of records missing from each HIP file.
 
 ```{r pii_by_file, echo = FALSE}
 pii_summary <- 
