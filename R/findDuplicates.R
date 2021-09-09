@@ -42,7 +42,7 @@ findDuplicates <-
 
     # List of permit records
     pmts <-
-      DL0901_clean %>%
+      x %>%
       filter(
         ducks_bag == "0" &
           geese_bag == "0" &
