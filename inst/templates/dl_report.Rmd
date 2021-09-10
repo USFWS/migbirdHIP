@@ -267,7 +267,65 @@ errorPlot_fields(proofed_data, year = params$year)
 ### After correction
 
 ```{r erpf_c, echo = FALSE, fig.align = "center"}
-errorPlot_fields(corrected_data, year = params$year)
+
+# Get the order of the fields so that they match the plot above
+x_order <-
+  proofed_data %>%
+  select(errors) %>%
+  # Pull errors apart, delimited by hyphens
+  separate(errors, into = as.character(c(1:25)), sep = "-") %>%
+  # Transform errors into a single column
+  pivot_longer(1:25, names_to = "name") %>%
+  select(errors = value) %>%
+  filter(!is.na(errors)) %>%
+  group_by(errors) %>%
+  # Count number of correct values
+  summarize(count_errors = sum(!is.na(errors))) %>%
+  ungroup() %>%
+  # Calculate error proportion
+  mutate(
+    total = nrow(proofed_data),
+    proportion = count_errors / nrow(proofed_data)) %>%
+  arrange(proportion)
+
+left_join(
+  x_order %>% 
+    mutate(order = row_number()) %>% 
+    select(errors, order), 
+  corrected_data %>%
+    select(errors) %>%
+    # Pull errors apart, delimited by hyphens
+    separate(errors, into = as.character(c(1:25)), sep = "-") %>%
+    # Transform errors into a single column
+    pivot_longer(1:25, names_to = "name") %>%
+    select(errors = value) %>%
+    filter(!is.na(errors)) %>%
+    group_by(errors) %>%
+    # Count number of correct values
+    summarize(count_errors = sum(!is.na(errors))) %>%
+    ungroup(),
+  by = "errors") %>%
+  mutate(count_errors = ifelse(is.na(count_errors), 0, count_errors)) %>% 
+  # Calculate error proportion
+  mutate(
+    total = nrow(corrected_data),
+    proportion = count_errors / nrow(corrected_data)) %>%
+  # Plot
+  ggplot() +
+  geom_bar(
+    aes(x = reorder(errors, order), y = proportion),
+    stat = "identity") +
+  geom_text(
+    aes(x = errors, y = proportion, label = count_errors, angle = 90),
+    vjust = 0.2, hjust = -0.2) +
+  labs(
+    x = "Field",
+    y = "Error proportion",
+    title = "Error proportion per field") +
+  scale_y_continuous(expand = expansion(mult = c(-0, 0.25))) +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
+
 ```
 
 ## By state
