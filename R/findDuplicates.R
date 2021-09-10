@@ -4,6 +4,7 @@
 #'
 #' @importFrom dplyr %>%
 #' @importFrom dplyr mutate
+#' @importFrom dplyr mutate_at
 #' @importFrom dplyr row_number
 #' @importFrom dplyr group_by
 #' @importFrom dplyr n
@@ -13,6 +14,9 @@
 #' @importFrom dplyr select
 #' @importFrom dplyr distinct
 #' @importFrom dplyr cur_group_id
+#' @importFrom dplyr across
+#' @importFrom dplyr vars
+#' @importFrom dplyr matches
 #' @importFrom stringr str_detect
 #' @importFrom dplyr case_when
 #' @importFrom ggplot2 ggplot
@@ -43,17 +47,25 @@ findDuplicates <-
     # List of permit records
     pmts <-
       x %>%
-      filter(
-        ducks_bag == "0" &
-          geese_bag == "0" &
-          dove_bag == "0" &
-          woodcock_bag == "0" &
-          coots_snipe == "0" &
-          rails_gallinules == "0" &
-          (cranes == "2" |
-             band_tailed_pigeon == "2" |
-             brant == "2" |
-             seaducks == "2")) %>%
+      # Classify solo permit records as PMT
+      mutate_at(
+        vars(matches("bag|coots|rails|cranes|band|brant|seaducks")),
+        ~as.numeric(.)) %>%
+      mutate(
+        other_sum =
+          rowSums(across(matches("bag|coots|rails")), na.rm = T),
+        special_sum =
+          rowSums(across(matches("cranes|band|brant|seaducks")), na.rm = T)) %>%
+      mutate_at(
+        vars(matches("bag|coots|rails|cranes|band|brant|seaducks")),
+        ~as.character(.)) %>%
+      mutate(
+        record_type =
+          ifelse(
+            other_sum == 0 & special_sum > 0 & dl_state %in% permit_states,
+            "PMT",
+            NA)) %>%
+      filter(record_type == "PMT") %>%
       select(record_key) %>%
       pull()
 
