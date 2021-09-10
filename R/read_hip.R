@@ -5,6 +5,11 @@
 #' @importFrom dplyr as_tibble
 #' @importFrom dplyr transmute
 #' @importFrom dplyr mutate
+#' @importFrom dplyr mutate_at
+#' @importFrom dplyr across
+#' @importFrom dplyr vars
+#' @importFrom dplyr matches
+#' @importFrom dplyr arrange
 #' @importFrom dplyr filter
 #' @importFrom dplyr pull
 #' @importFrom dplyr group_by
@@ -171,7 +176,7 @@ read_hip <-
          TRUE %in% is.na(pulled_data$X8) |
          TRUE %in% is.na(pulled_data$X10)){
         message(
-          paste0("Error: One more more NA values detected in ID fields ",
+          paste0("Error: One or more NA values detected in ID fields ",
                  "(firstname, lastname, state, birth date)."))
 
         print(
@@ -181,7 +186,20 @@ read_hip <-
                 is.na(X4)|
                 is.na(X8)|
                 is.na(X10)) %>%
-            select(dl_state, X2, X4, X8, X10))}
+            select(dl_state, X2, X4, X8, X10) %>%
+            mutate_at(
+              vars(matches("X2|X4|X8|X10")),
+              ~ifelse(is.na(.), "1", NA) %>% as.numeric(.)) %>%
+            mutate(
+              sum = rowSums(across(matches("X2|X4|X8|X10")), na.rm = T),
+              prop = sum/4) %>%
+            group_by(dl_state) %>%
+            summarize(
+              mean_prop = mean(prop),
+              n = n()
+            ) %>%
+            ungroup() %>%
+            arrange(desc(mean_prop)))}
 
       # Return a message if there is an NA in dl_state
       if(TRUE %in% is.na(pulled_data$dl_state)){
