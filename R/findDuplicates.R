@@ -49,15 +49,15 @@ findDuplicates <-
       x %>%
       # Classify solo permit records as PMT
       mutate_at(
-        vars(matches("bag|coots|rails|cranes|band|brant|seaducks")),
+        vars(matches("bag|coots|rails|band|brant|seaducks")),
         ~as.numeric(.)) %>%
       mutate(
         other_sum =
           rowSums(across(matches("bag|coots|rails")), na.rm = T),
         special_sum =
-          rowSums(across(matches("cranes|band|brant|seaducks")), na.rm = T)) %>%
+          rowSums(across(matches("band|brant|seaducks")), na.rm = T)) %>%
       mutate_at(
-        vars(matches("bag|coots|rails|cranes|band|brant|seaducks")),
+        vars(matches("bag|coots|rails|band|brant|seaducks")),
         ~as.character(.)) %>%
       mutate(
         record_type =
