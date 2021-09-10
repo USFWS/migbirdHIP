@@ -710,12 +710,24 @@ fixDuplicates <-
           "IAD",
           "HIP")) %>%
       # Classify solo permit records as PMT
-      mutate_at(vars(matches("bag|coots|rails")), ~as.numeric(.)) %>%
+      mutate_at(
+        vars(matches("bag|coots|rails|cranes|band|brant|seaducks")),
+        ~as.numeric(.)) %>%
       mutate(
-        other_sum = rowSums(across(matches("bag|coots|rails")), na.rm = T)) %>%
-      mutate_at(vars(matches("bag|coots|rails")), ~as.character(.)) %>%
-      mutate(record_type =ifelse(other_sum == 0, "PMT", record_type)) %>%
-      select(-other_sum) %>%
+        other_sum =
+          rowSums(across(matches("bag|coots|rails")), na.rm = T),
+        special_sum =
+          rowSums(across(matches("cranes|band|brant|seaducks")), na.rm = T)) %>%
+      mutate_at(
+        vars(matches("bag|coots|rails|cranes|band|brant|seaducks")),
+        ~as.character(.)) %>%
+      mutate(
+        record_type =
+          ifelse(
+            other_sum == 0 & special_sum > 0 & dl_state %in% permit_states,
+            "PMT",
+            record_type)) %>%
+      select(-c(other_sum, special_sum)) %>%
       # Add back in the resolved duplicates
       bind_rows(
         af_dupes %>% select(-duplicate),
