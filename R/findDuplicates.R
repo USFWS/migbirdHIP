@@ -44,6 +44,9 @@
 findDuplicates <-
   function(x, return = "plot"){
 
+    # Define permit states
+    permit_states <- c("WA", "OR", "CO", "SD")
+
     # List of permit records
     pmts <-
       x %>%
