@@ -368,6 +368,7 @@ if(et$error[1] != "birth_date"){
   err1 <- 
     pullErrors(proofed_data, error = et$error[1], distinct = FALSE) %>% 
     as_tibble() %>% 
+    mutate(value = stri_enc_toutf8(value, is_unknown_8bit = T, validate = T)) %>%
     group_by(value) %>% 
     summarize(count = n()) %>% 
     ungroup() %>% 
@@ -394,6 +395,7 @@ if(et$error[2] != "birth_date"){
   err2 <- 
     pullErrors(proofed_data, error = et$error[2], distinct = FALSE) %>% 
     as_tibble() %>% 
+    mutate(value = stri_enc_toutf8(value, is_unknown_8bit = T, validate = T)) %>%
     group_by(value) %>% 
     summarize(count = n()) %>% 
     ungroup() %>% 
@@ -420,6 +422,7 @@ if(et$error[3] != "birth_date"){
   err3 <- 
     pullErrors(proofed_data, error = et$error[3], distinct = FALSE) %>% 
     as_tibble() %>% 
+    mutate(value = stri_enc_toutf8(value, is_unknown_8bit = T, validate = T)) %>%
     group_by(value) %>% 
     summarize(count = n()) %>% 
     ungroup() %>% 
@@ -427,7 +430,7 @@ if(et$error[3] != "birth_date"){
   }else{
   err3 <- 
     pullErrors(proofed_data, error = et$error[3], distinct = FALSE) %>% 
-    as_tibble() %>% 
+    as_tibble() %>%  
     mutate(value = str_extract(value, ".{4}$")) %>% 
     group_by(value) %>% 
     summarize(count = n()) %>% 
