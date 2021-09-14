@@ -15,7 +15,8 @@ Imports:
     lifecycle,
     rmarkdown,
     DT,
-    shiny
+    shiny,
+    stringi
 Suggests:
     knitr
 VignetteBuilder: knitr
