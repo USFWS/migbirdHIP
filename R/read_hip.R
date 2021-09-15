@@ -2,6 +2,8 @@
 #'
 #' Compile data from state-exported text files by providing a path to the download directory.
 #'
+#' @importFrom magrittr %<>%
+#' @importFrom dplyr %>%
 #' @importFrom dplyr as_tibble
 #' @importFrom dplyr transmute
 #' @importFrom dplyr mutate
@@ -51,10 +53,11 @@ read_hip <-
 
     # Create a tibble of the HIP .txt files to be read from the provided
     # directory
-    files <-
+
       # For reading data from a download cycle with a specific state
       if(!is.na(state) & season == FALSE){
-        list.files(path, recursive = FALSE)  %>%
+        files <-
+          list.files(path, recursive = FALSE)  %>%
           as_tibble() %>%
           transmute(filepath = as.character(value)) %>%
           mutate(filepath = str_replace(filepath, "TXT", "txt")) %>%
@@ -66,15 +69,25 @@ read_hip <-
           mutate(filepath = paste0(path, filepath)) %>%
           # Filter out blank files
           mutate(
-            filepath =
+            check =
               ifelse(
                 file.size(filepath) == 0,
                 "blank",
-                filepath)) %>%
-          filter(filepath != "blank")}
+                filepath))
+
+        if(nrow(files %>% filter(check == "blank")) > 0){
+          message("Warning: One or more files are blank in the directory.")
+          print(files %>% filter(check == "blank"))
+        }
+
+        files %<>%
+          filter(check != "blank") %>%
+          select(-check)}
+
     # For reading data from a download cycle for ALL states available
     else if(is.na(state) & season == FALSE){
-      list.files(path, recursive = FALSE)  %>%
+      files <-
+        list.files(path, recursive = FALSE)  %>%
         as_tibble() %>%
         transmute(filepath = as.character(value)) %>%
         mutate(filepath = str_replace(filepath, "TXT", "txt")) %>%
@@ -84,15 +97,25 @@ read_hip <-
         mutate(filepath = paste0(path, filepath)) %>%
         # Filter out blank files
         mutate(
-          filepath =
+          check =
             ifelse(
               file.size(filepath) == 0,
               "blank",
-              filepath)) %>%
-        filter(filepath != "blank")}
+              filepath))
+
+      if(nrow(files %>% filter(check == "blank")) > 0){
+        message("Warning: One or more files are blank in the directory.")
+        print(files %>% filter(check == "blank"))
+      }
+
+      files %<>%
+        filter(check != "blank") %>%
+        select(-check)}
+
     # For reading in all data from the season
     else if(season == TRUE){
-      list.files(path, recursive = TRUE)  %>%
+      files <-
+        list.files(path, recursive = TRUE)  %>%
         as_tibble() %>%
         # Disregard folders that do not begin with "DL"
         filter(str_detect(value, "^DL")) %>%
@@ -104,15 +127,25 @@ read_hip <-
         mutate(filepath = paste0(path, filepath)) %>%
         # Filter out blank files
         mutate(
-          filepath =
+          check =
             ifelse(
               file.size(filepath) == 0,
               "blank",
-              filepath)) %>%
-        filter(filepath != "blank")
+              filepath))
+
+      if(nrow(files %>% filter(check == "blank")) > 0){
+        message("Warning: One or more files are blank in the directory.")
+        print(files %>% filter(check == "blank"))
+      }
+
+      files %<>%
+        filter(check != "blank") %>%
+        select(-check)
     }
-    if(nrow(files) == 0) {
-      message("No file(s) to read in. Did you specify a state that did not submit data?")
+    if(nrow(files) == 0){
+      message(
+        paste0("No file(s) to read in. Did you specify a state that did not",
+               " submit data?"))
     }
     else{
 
