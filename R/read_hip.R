@@ -53,11 +53,10 @@ read_hip <-
 
     # Create a tibble of the HIP .txt files to be read from the provided
     # directory
-
+    files <-
       # For reading data from a download cycle with a specific state
       if(!is.na(state) & season == FALSE){
-        files <-
-          list.files(path, recursive = FALSE)  %>%
+        list.files(path, recursive = FALSE)  %>%
           as_tibble() %>%
           transmute(filepath = as.character(value)) %>%
           mutate(filepath = str_replace(filepath, "TXT", "txt")) %>%
@@ -74,20 +73,10 @@ read_hip <-
                 file.size(filepath) == 0,
                 "blank",
                 filepath))
-
-        if(nrow(files %>% filter(check == "blank")) > 0){
-          message("Warning: One or more files are blank in the directory.")
-          print(files %>% filter(check == "blank"))
         }
-
-        files %<>%
-          filter(check != "blank") %>%
-          select(-check)}
-
     # For reading data from a download cycle for ALL states available
     else if(is.na(state) & season == FALSE){
-      files <-
-        list.files(path, recursive = FALSE)  %>%
+      list.files(path, recursive = FALSE)  %>%
         as_tibble() %>%
         transmute(filepath = as.character(value)) %>%
         mutate(filepath = str_replace(filepath, "TXT", "txt")) %>%
@@ -102,20 +91,10 @@ read_hip <-
               file.size(filepath) == 0,
               "blank",
               filepath))
-
-      if(nrow(files %>% filter(check == "blank")) > 0){
-        message("Warning: One or more files are blank in the directory.")
-        print(files %>% filter(check == "blank"))
       }
-
-      files %<>%
-        filter(check != "blank") %>%
-        select(-check)}
-
     # For reading in all data from the season
     else if(season == TRUE){
-      files <-
-        list.files(path, recursive = TRUE)  %>%
+      list.files(path, recursive = TRUE)  %>%
         as_tibble() %>%
         # Disregard folders that do not begin with "DL"
         filter(str_detect(value, "^DL")) %>%
@@ -132,23 +111,23 @@ read_hip <-
               file.size(filepath) == 0,
               "blank",
               filepath))
-
-      if(nrow(files %>% filter(check == "blank")) > 0){
-        message("Warning: One or more files are blank in the directory.")
-        print(files %>% filter(check == "blank"))
       }
 
-      files %<>%
-        filter(check != "blank") %>%
-        select(-check)
+    if(nrow(files %>% filter(check == "blank")) > 0){
+      message("Warning: One or more files are blank in the directory.")
+      print(files %>% filter(check == "blank"))
     }
+
+    files %<>%
+      filter(check != "blank") %>%
+      select(-check)
+
     if(nrow(files) == 0){
       message(
         paste0("No file(s) to read in. Did you specify a state that did not",
                " submit data?"))
-    }
+      }
     else{
-
       # Check encodings of the files that will be read
       checked_encodings <-
         map_dfr(1:nrow(files),
