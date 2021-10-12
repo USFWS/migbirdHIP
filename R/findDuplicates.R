@@ -72,10 +72,30 @@ findDuplicates <-
       select(record_key) %>%
       pull()
 
+    # List of IAD records
+    ia_dupes <-
+      x %>%
+      filter(dl_state == "IA") %>%
+      # Handle special Iowa dove cases, in which dove records are sent
+      # separately from HIP
+      mutate(
+        record_type =
+          case_when(
+            # For Iowa records, identify "HIP" records as those with 0s in dove
+            dove_bag == "0" ~ "HIP",
+            # For Iowa records, identify "IAD" records as those with >0 in dove
+            dove_bag != "0" ~ "IAD",
+            TRUE ~ NA_character_)) %>%
+      filter(record_type == "IAD") %>%
+      select(record_key) %>%
+      pull()
+
     duplicates <-
       x %>%
       # Filter out permits
       filter(!record_key %in% pmts) %>%
+      # Filter out IAD records
+      filter(!record_key %in% ia_dupes) %>%
       # Create a row key
       mutate(hunter_key = paste0("hunter_", row_number())) %>%
       # Group by registrant information; first name, last name, state, birthday,
