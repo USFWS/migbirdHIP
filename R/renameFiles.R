@@ -69,12 +69,12 @@ renameFiles <-
       message("Success: Julian dates changed to standard format.")
       print(bind_cols(old = names5, new = names10))
       }
-    if(TRUE %in% str_detect(list.files(x), "^[a-z]{2}")){
+    if(TRUE %in% str_detect(list.files(x), "^[a-z]{2}(?=[0-9])")){
 
       names_lower <-
         list.files(x) %>%
         as_tibble() %>%
-        filter(str_detect(value, "^[a-z]{2}")) %>%
+        filter(str_detect(value, "^[a-z]{2}(?=[0-9])")) %>%
         pull()
 
       names_upper <-
