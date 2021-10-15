@@ -111,4 +111,7 @@ utils::globalVariables(
     "old",
     "value2",
     "V1",
-    "zipState"))
+    "zipState",
+    "check",
+    "prop",
+    "mean_prop"))
