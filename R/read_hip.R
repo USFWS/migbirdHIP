@@ -139,8 +139,7 @@ read_hip <-
         ungroup() %>%
         filter(encoding != "UTF-8") %>%
         select(filepath, encoding, confidence)
-      print(checked_encodings
-      )
+      print(checked_encodings)
 
       # Read data from filepaths
       pulled_data <-
