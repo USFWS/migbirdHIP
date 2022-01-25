@@ -22,23 +22,46 @@
 writeReport <-
   function(path, type, yr, dl = NA, dir, file){
 
-    # Create Rmd
-    render(
-      input =
-        # Use the specified template
-        system.file(
-          "templates",
-          paste0(type, ".Rmd"),
-          package = "migbirdHarvestData"),
-      # Include the specified parameters so the functions can run
-      params =
-        list(
-          comp_path = path,
-          dl = dl,
-          year = yr),
-      output_file = file,
-      output_dir = dir,
-      # Don't show lengthy knitting status text in console
-      quiet = TRUE)
+    # Create Rmd for download
+    if(type == "dl_report"){
+      render(
+        input =
+          # Use the specified template
+          system.file(
+            "templates",
+            paste0(type, ".Rmd"),
+            package = "migbirdHarvestData"),
+        # Include the specified parameters so the functions can run
+        params =
+          list(
+            comp_path = path,
+            dl = dl,
+            year = yr),
+        output_file = file,
+        output_dir = dir,
+        # Don't show lengthy knitting status text in console
+        quiet = TRUE)
+    }
+    else if(type == "season_report"){
+      render(
+        input =
+          # Use the specified template
+          system.file(
+            "templates",
+            paste0(type, ".Rmd"),
+            package = "migbirdHarvestData"),
+        # Include the specified parameters so the functions can run
+        params =
+          list(
+            comp_path = path,
+            year = yr),
+        output_file = file,
+        output_dir = dir,
+        # Don't show lengthy knitting status text in console
+        quiet = TRUE)
+    }
+    else{
+      message("Indicated type must be 'dl_report' or 'season_report'.")
+    }
 
   }
