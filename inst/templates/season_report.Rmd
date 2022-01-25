@@ -97,19 +97,7 @@ corrected_data <- correct(proofed_data, year = params$year, data = "bag")
 # Summarize number of records from Canada
 canada_records <-
   unshifted_data %>% 
-  select(state) %>% 
   filter(state %in% c("AB", "BC", "MB", "NB", "NL", "NT", "NS", "NU", "ON", "PE", "QC", "SK", "YT"))
-
-# Summarize number of bad zip codes
-zip_check <-
-  unshifted_data %>% 
-  mutate(zipPrefix = str_extract(zip, "^[0-9]{3}")) %>%
-  left_join(
-    zip_code_ref %>%
-      select(zipPrefix, zipState = state),
-    by = "zipPrefix") %>%
-  filter(state != zipState) %>% 
-  nrow()
 
 ```
 
