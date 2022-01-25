@@ -418,7 +418,7 @@ DT::datatable(canada_records)
 
 ## Out-of-state hunters
 
-```{r oosh, echo = FALSE}
+```{r canadians, echo = FALSE}
 outOfStateHunters(proofed_data)
 ```
 
