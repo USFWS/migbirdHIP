@@ -96,8 +96,6 @@ read_hip <-
     else if(season == TRUE){
       list.files(path, recursive = TRUE)  %>%
         as_tibble() %>%
-        # Disregard folders that do not begin with "DL"
-        filter(str_detect(value, "^DL")) %>%
         transmute(filepath = as.character(value)) %>%
         mutate(filepath = str_replace(filepath, "TXT", "txt")) %>%
         # Keep only txt files
