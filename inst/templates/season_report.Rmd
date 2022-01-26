@@ -34,7 +34,7 @@ acceptable_residences <-
 
 ```{r import2, include = FALSE}
 # Run the read function
-dl_data <- read_hip(params$comp_path) 
+dl_data <- read_hip(params$comp_path, season = TRUE) 
 ```
 
 ```{r import3, include = FALSE}
