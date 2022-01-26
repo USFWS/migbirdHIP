@@ -257,8 +257,8 @@ read_hip <-
                  "list of expected 49 continental US states."))
 
         print(
-          dl_states_in_data %>%
-            filter(!dl_state %in% acceptable_49_dl_states))}
+          dl_states_in_data[!dl_states_in_data %in% acceptable_49_dl_states]
+          )}
 
       return(pulled_data)
     }
