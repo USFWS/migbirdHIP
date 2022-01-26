@@ -39,14 +39,10 @@ dl_data <- read_hip(params$comp_path, season = TRUE)
 
 ```{r import3, include = FALSE}
 # Run the clean function
-cleaned_data <- clean(dl_data)
-```
-
-```{r import3andahalf, include = FALSE}
-# Convert firstname to utf8
-cleaned_data <- 
-  cleaned_data %>% 
-  mutate(firstname = stringi::str_enc_toutf8(firstname))
+cleaned_data <-
+  dl_data %>% 
+  mutate(X2 = stringi::str_enc_toutf8(X2))
+  clean()
 ```
 
 ```{r import4, include = FALSE}
