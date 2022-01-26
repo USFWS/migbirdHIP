@@ -33,13 +33,19 @@ acceptable_residences <-
 
 # Run the read function
 dl_data <- read_hip(params$comp_path) 
+```
 
+```{r import2, include = FALSE}
 # Run the clean function
 cleaned_data <- clean(dl_data)
+```
 
+```{r import3, include = FALSE}
 # Run the fixDuplicates function
 fixed_data <- fixDuplicates(cleaned_data)
+```
 
+```{r import4, include = FALSE}
 # Standardize birth date format
 fixed_dates_data <-
   fixed_data %>% 
@@ -60,7 +66,9 @@ fixed_dates_data <-
   select(-c("birth_date", "birth_date2")) %>%
   rename(birth_date = birth_date3) %>%
   relocate(birth_date, .before = "issue_date") 
+```
 
+```{r import5, include = FALSE}
 # Snoop for line shift errors
 error_keys <- 
   fixed_dates_data %>% 
@@ -70,7 +78,9 @@ error_keys <-
   relocate(source_file, .before = "record_key") %>%
   select(record_key) %>% 
   pull()
+```
 
+```{r import6, include = FALSE}
 # Correct frame shifts for x number of records
 unshifted_data <-
   map_dfr(
@@ -87,13 +97,19 @@ unshifted_data <-
         birth_date))
 
 rm(fixed_data)
+```
 
+```{r import7, include = FALSE}
 # Run the proof function
 proofed_data <- proof(unshifted_data, year = params$year)
+```
 
+```{r import8, include = FALSE}
 # Run the correct function
 corrected_data <- correct(proofed_data, year = params$year, data = "bag")
+```
 
+```{r import9, include = FALSE}
 # Summarize number of records from Canada
 canada_records <-
   unshifted_data %>% 
