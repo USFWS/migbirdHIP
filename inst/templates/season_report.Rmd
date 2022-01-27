@@ -39,10 +39,7 @@ dl_data <- read_hip(params$comp_path, season = TRUE)
 
 ```{r import3, include = FALSE}
 # Run the clean function
-cleaned_data <-
-  dl_data %>% 
-  mutate(X2 = stringi::str_enc_toutf8(X2))
-  clean()
+cleaned_data <- clean(dl_data)
 ```
 
 ```{r import4, include = FALSE}
