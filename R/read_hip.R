@@ -102,6 +102,8 @@ read_hip <-
         filter(str_detect(filepath, "(?<=\\.)txt$")) %>%
         # Don't process permit files
         filter(!str_detect(filepath, "permit")) %>%
+        # Don't process removed files
+        filter(!str_detect(filepath, "removed")) %>%
         # Create new complete file paths
         mutate(filepath = paste0(path, filepath)) %>%
         # Filter out blank files
