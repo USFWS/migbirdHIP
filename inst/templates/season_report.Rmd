@@ -18,6 +18,7 @@ params:
 library(tidyverse)
 library(DT)
 library(shiny)
+library(stringi)
 ```
 
 ```{r import, include = FALSE}
