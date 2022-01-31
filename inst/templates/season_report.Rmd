@@ -391,8 +391,6 @@ errorPlot_states(proofed_data)
 
 ```{r erps_c, echo = FALSE, fig.align = "center"}
 errorPlot_states(corrected_data)
-
-rm(corrected_data)
 ```
 
 ## By download
@@ -407,6 +405,8 @@ errorPlot_dl(proofed_data)
 
 ```{r erpdl_c, echo = FALSE}
 errorPlot_dl(corrected_data)
+
+rm(corrected_data)
 ```
 
 ## Canadian hunters
