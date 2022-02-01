@@ -278,7 +278,7 @@ findDuplicates(cleaned_data)
 
 ### After fixDuplicates (all 49 states)
 
-```{r a_fd, echo = FALSE, warning = FALSE}
+```{r a_fd, echo = FALSE, warning = FALSE, fig.align = "center"}
 rm(cleaned_data)
 findDuplicates(unshifted_data)
 
@@ -405,13 +405,13 @@ errorPlot_states(corrected_data)
 
 ### Before correction
 
-```{r erpdl, echo = FALSE}
+```{r erpdl, echo = FALSE, fig.align = "center"}
 errorPlot_dl(proofed_data)
 ```
 
 ### After correction
 
-```{r erpdl_c, echo = FALSE}
+```{r erpdl_c, echo = FALSE, fig.align = "center"}
 errorPlot_dl(corrected_data)
 
 rm(corrected_data)
@@ -419,13 +419,13 @@ rm(corrected_data)
 
 ## Out-of-state hunters
 
-```{r canadians, echo = FALSE}
+```{r canadians, echo = FALSE, fig.align = "center"}
 outOfStateHunters(proofed_data)
 ```
 
 ## Youth hunters
 
-```{r yh, echo = FALSE}
+```{r yh, echo = FALSE, fig.align = "center"}
 youthHunters(proofed_data, year = params$year)
 ```
 
