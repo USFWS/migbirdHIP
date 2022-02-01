@@ -94,6 +94,7 @@ unshifted <-
         birth_date))
 
 rm(fixed_data)
+rm(error_keys)
 
 unshifted_data <-
   fixed_dates_data %>%
@@ -101,6 +102,7 @@ unshifted_data <-
   bind_rows(unshifted) 
 
 rm(unshifted)
+rm(fixed_dates_data)
 
 # Run the proof function
 proofed_data <- proof(unshifted_data, year = params$year)
@@ -133,6 +135,7 @@ DT::datatable(
     ungroup())
 
 rm(canada_records)
+rm(season_lines)
 ```
 
 # Data Checking
@@ -537,4 +540,5 @@ Fields with more than 1% error
 
 ```{r rff, echo = FALSE}
 redFlags(proofed_data, type = "field", threshold = 0.1)
+rm(proofed_data)
 ```
