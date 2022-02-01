@@ -34,7 +34,7 @@ dirs <-
   distinct()
 
 # Get total number of lines of data
-season_lines <- map(1:nrow(dirs), ~sumLines(dirs[.x,] %>% pull()))
+season_lines <- map_dbl(1:nrow(dirs), ~sumLines(dirs[.x,] %>% pull()))
 rm(dirs)
 
 # Run the read function
