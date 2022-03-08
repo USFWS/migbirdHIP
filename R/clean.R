@@ -1,6 +1,6 @@
 #' Clean data
 #'
-#' After reading the data with \code{\link{compile}}, rename the column names and do preliminary cleaning of firstname, lastname, middle initial, and suffixes.
+#' After reading the data with \code{\link{read_hip}}, rename the column names and do preliminary cleaning of firstname, lastname, middle initial, and suffixes.
 #'
 #' @importFrom dplyr %>%
 #' @importFrom dplyr rename
@@ -23,7 +23,7 @@
 #' @importFrom stringr str_trim
 #' @importFrom rlang .data
 #'
-#' @param x The object created after reading in data with \code{\link{compile}}
+#' @param x The object created after reading in data with \code{\link{read_hip}}
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHarvestData}
