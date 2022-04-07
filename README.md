@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# migbirdHIP
+# migbirdHIP <img width=150px src="man/figures/logo.svg" align="right" />
 
 ## Overview
 
@@ -64,5 +64,6 @@ product or activity by FWS or the United States Government.
 
 ## License
 
-This project is licensed under the terms of the Creative Commons Zero
-v1.0 Universal license.
+This project is licensed under the terms of the [Creative Commons Zero
+v1.0 Universal](https://creativecommons.org/publicdomain/zero/1.0/)
+license.

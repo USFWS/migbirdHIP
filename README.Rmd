@@ -13,7 +13,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# migbirdHIP
+# migbirdHIP <img width=150px src="man/figures/logo.svg" align="right" />
 
 ## Overview
 
@@ -61,4 +61,4 @@ The United States Fish and Wildlife Service (FWS) GitHub project code is provide
 
 ## License
 
-This project is licensed under the terms of the Creative Commons Zero v1.0 Universal license.
+This project is licensed under the terms of the [Creative Commons Zero v1.0 Universal](https://creativecommons.org/publicdomain/zero/1.0/) license.
