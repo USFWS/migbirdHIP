@@ -238,14 +238,14 @@ DT::datatable(strataCheck(fixed_data))
 
 ```{r h_validate, echo = FALSE}
 DT::datatable(
-  migbirdHarvestData::validate(fixed_data, type = "horizontal") %>% 
+  migbirdHIP::validate(fixed_data, type = "horizontal") %>% 
     mutate(prop_repeat = round(prop_repeat, digits = 2)))
 ```
 
 ### Repeated values within duck bag code
 
 ```{r v_validate, echo = FALSE}
-DT::datatable(migbirdHarvestData::validate(fixed_data, type = "vertical"))
+DT::datatable(migbirdHIP::validate(fixed_data, type = "vertical"))
 ```
 
 ```{r data_sweep, include = FALSE}

@@ -1,13 +1,13 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# migbirdHarvestData
+# migbirdHIP
 
 ## Overview
 
-The migbirdHarvestData package provides an easy-to-use set of R
-functions for the U.S. Fish and Wildlife Service Migratory Bird Program
-to wrangle, tidy, and visualize [Harvest Information
+The migbirdHIP package provides an easy-to-use set of R functions for
+the U.S. Fish and Wildlife Service Migratory Bird Program to wrangle,
+tidy, and visualize [Harvest Information
 Program](https://www.fws.gov/harvestsurvey) data.
 
 Tasks that can be accomplished with this package include:
@@ -36,18 +36,18 @@ Tasks that can be accomplished with this package include:
 
 ``` r
 library(devtools)
-install_github("USFWS/migbirdHarvestData", build_vignettes = TRUE)
+install_github("USFWS/migbirdHIP", build_vignettes = TRUE)
 ```
 
 ## Vignette
 
 ``` r
-vignette(topic = "migbirdHarvestData_workflow", package = "migbirdHarvestData")
+vignette(topic = "migbirdHIP_workflow", package = "migbirdHIP")
 ```
 
 ## Function Flow
 
-<img src="vignettes/image/migbirdHarvestData_flowchart.svg" title="Overview of migbirdHarvestData functions in a flowchart format." alt="Overview of migbirdHarvestData functions in a flowchart format." width="100%" style="display: block; margin: auto;" />
+<img src="vignettes/image/migbirdHIP_flowchart.svg" title="Overview of migbirdHIP functions in a flowchart format." alt="Overview of migbirdHIP functions in a flowchart format." width="100%" style="display: block; margin: auto;" />
 
 ## USFWS Disclaimer
 

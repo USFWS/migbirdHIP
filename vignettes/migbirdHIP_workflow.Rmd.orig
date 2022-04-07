@@ -1,10 +1,10 @@
 ---
-title: "The migbirdHarvestData Workflow"
-package: migbirdHarvestData
+title: "The migbirdHIP Workflow"
+package: migbirdHIP
 output:
   rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{The migbirdHarvestData Workflow}
+  %\VignetteIndexEntry{The migbirdHIP Workflow}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -48,7 +48,7 @@ vignette: >
 
 ## Introduction
 
-The *migbirdHarvestData* package was created for the U.S. Fish and Wildlife Service (USFWS) to wrangle, tidy, and visualize Harvest Information Program (HIP) data.
+The *migbirdHIP* package was created for the U.S. Fish and Wildlife Service (USFWS) to wrangle, tidy, and visualize Harvest Information Program (HIP) data.
 
 HIP data have been used since 1999 to make important management decisions for migratory game birds in the United States. Raw hunting activity data are processed in this package. To read more about HIP, visit: [https://www.fws.gov/harvestsurvey/](https://www.fws.gov/harvestsurvey/)
 
@@ -57,15 +57,15 @@ HIP data have been used since 1999 to make important management decisions for mi
 The package can be installed from the USFWS GitHub repository using:
 ```{r, install, message = FALSE, eval = FALSE}
 library(devtools)
-install_github("USFWS/migbirdHarvestData")
+install_github("USFWS/migbirdHIP")
 ```
 
 ### Functions overview
 
-The flowchart below is a visual guide to the order in which functions are used. Some functions are only used situationally and some issues with the data cannot be solved using a function at all. The general process of handling HIP data is demonstrated here; every function in the *migbirdHarvestData* package is included.
+The flowchart below is a visual guide to the order in which functions are used. Some functions are only used situationally and some issues with the data cannot be solved using a function at all. The general process of handling HIP data is demonstrated here; every function in the *migbirdHIP* package is included.
 
-```{r flowchart_svg, echo = FALSE, fig.cap = "Overview of migbirdHarvestData functions in a flowchart format.", out.width = "100%", dev = "svg", fig.align = "center"}
-knitr::include_graphics("image/migbirdHarvestData_flowchart.svg")
+```{r flowchart_svg, echo = FALSE, fig.cap = "Overview of migbirdHIP functions in a flowchart format.", out.width = "100%", dev = "svg", fig.align = "center"}
+knitr::include_graphics("image/migbirdHIP_flowchart.svg")
 ```
 
 ## Part A: Data Import and Cleaning
@@ -77,7 +77,7 @@ The first step is to import .txt files containing HIP data. Files must adhere to
 The `read_hip` function allows data to be read in for just a specific state or for an entire season (parameters "state" and "season", respectively). We will use the default settings to read in all of the states from download 1202.
 
 ```{r, readhip, message = FALSE, warning = FALSE}
-library(migbirdHarvestData)
+library(migbirdHIP)
 
 DL1202 <- read_hip("C:/HIP/DL1202")
 ```
@@ -486,7 +486,7 @@ Some of these functions require a lot of memory to run. To help your R session p
 
 <b>Issue reporting</b>
 
-If you find a bug in the package, it's advised to [create an issue](https://github.com/USFWS/migbirdHarvestData/issues) at the package's GitHub repo, https://github.com/USFWS/migbirdHarvestData.
+If you find a bug in the package, it's advised to [create an issue](https://github.com/USFWS/migbirdHIP/issues) at the package's GitHub repo, https://github.com/USFWS/migbirdHIP.
 
 <b>Questions?</b>
 
