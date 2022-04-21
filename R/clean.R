@@ -26,7 +26,7 @@
 #' @param x The object created after reading in data with \code{\link{read_hip}}
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHarvestData}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
 #'
 #' @export
 

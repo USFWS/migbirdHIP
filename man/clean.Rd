@@ -7,13 +7,13 @@
 clean(x)
 }
 \arguments{
-\item{x}{The object created after reading in data with \code{\link{compile}}}
+\item{x}{The object created after reading in data with \code{\link{read_hip}}}
 }
 \description{
-After reading the data with \code{\link{compile}}, rename the column names and do preliminary cleaning of firstname, lastname, middle initial, and suffixes.
+After reading the data with \code{\link{read_hip}}, rename the column names and do preliminary cleaning of firstname, lastname, middle initial, and suffixes.
 }
 \references{
-\url{https://github.com/USFWS/migbirdHarvestData}
+\url{https://github.com/USFWS/migbirdHIP}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}
