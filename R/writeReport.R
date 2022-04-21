@@ -15,7 +15,7 @@
 #' @param file What the report file should be named
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHarvestData}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
 #'
 #' @export
 
@@ -30,7 +30,7 @@ writeReport <-
           system.file(
             "templates",
             paste0(type, ".Rmd"),
-            package = "migbirdHarvestData"),
+            package = "migbirdHIP"),
         # Include the specified parameters so the functions can run
         params =
           list(
@@ -49,7 +49,7 @@ writeReport <-
           system.file(
             "templates",
             paste0(type, ".Rmd"),
-            package = "migbirdHarvestData"),
+            package = "migbirdHIP"),
         # Include the specified parameters so the functions can run
         params =
           list(

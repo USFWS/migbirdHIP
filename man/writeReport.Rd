@@ -26,7 +26,7 @@ writeReport(path, type, yr, dl = NA, dir, file)
 Create documentation with figures and tables that summarizes HIP download data at a download cycle or season total scale.
 }
 \references{
-\url{https://github.com/USFWS/migbirdHarvestData}
+\url{https://github.com/USFWS/migbirdHIP}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}
