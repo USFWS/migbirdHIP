@@ -26,7 +26,7 @@
 #' @param x A proofed data table created by \code{\link{proof}}
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHarvestData}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
 #'
 #' @export
 

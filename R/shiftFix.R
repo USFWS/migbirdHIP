@@ -24,7 +24,7 @@
 #' @param n_shift Number of characters that the line needs to be adjusted by
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHarvestData}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
 #'
 #' @export
 

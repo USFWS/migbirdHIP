@@ -18,7 +18,7 @@
 #' @param distinct If FALSE, returns all error vvalues ; if TRUE (default), only returns unique values.
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHarvestData}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
 #'
 #' @export
 

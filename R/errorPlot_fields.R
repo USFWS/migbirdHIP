@@ -37,7 +37,7 @@
 #' @param youth Optional. If set to TRUE, will plot youth hunters in addition to normal birth date errors.
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHarvestData}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
 #'
 #' @export
 

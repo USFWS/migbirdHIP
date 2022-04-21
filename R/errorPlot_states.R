@@ -27,7 +27,7 @@
 #' @param threshold Optional. A decimal value above which error proportions should be plotted.
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHarvestData}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
 #'
 #' @export
 

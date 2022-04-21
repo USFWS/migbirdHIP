@@ -22,7 +22,7 @@
 #' @param data Do you want the frame to include original state `bag` values or FWS `strata`?
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHarvestData}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
 #'
 #' @export
 

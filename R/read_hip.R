@@ -37,7 +37,7 @@
 #' @param season If set as TRUE, selects only folders starting with "DL" in a a season's upper-level directory
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHarvestData}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
 #'
 #' @export
 
