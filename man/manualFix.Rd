@@ -21,7 +21,7 @@ manualFix(x, field, error_value, correct_value)
 Replace incorrect cell contents with a desired value.
 }
 \references{
-\url{https://github.com/USFWS/migbirdHarvestData}
+\url{https://github.com/USFWS/migbirdHIP}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}

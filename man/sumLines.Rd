@@ -13,7 +13,7 @@ sumLines(path)
 Get the sum of the number of lines in new download files.
 }
 \references{
-\url{https://github.com/USFWS/migbirdHarvestData}
+\url{https://github.com/USFWS/migbirdHIP}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}

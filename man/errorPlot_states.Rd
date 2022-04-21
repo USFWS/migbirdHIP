@@ -15,7 +15,7 @@ errorPlot_states(x, threshold = NA)
 Create a bar plot of errors by state, either by count or proportion.
 }
 \references{
-\url{https://github.com/USFWS/migbirdHarvestData}
+\url{https://github.com/USFWS/migbirdHIP}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}

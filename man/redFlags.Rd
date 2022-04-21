@@ -21,7 +21,7 @@ redFlags(x, type, threshold = 0)
 Create a tibble of error data by state or field. Data are reported using a threshold of proportion of error.
 }
 \references{
-\url{https://github.com/USFWS/migbirdHarvestData}
+\url{https://github.com/USFWS/migbirdHIP}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}

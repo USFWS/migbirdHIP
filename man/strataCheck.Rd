@@ -13,7 +13,7 @@ strataCheck(x)
 After cleaning the data with \code{\link{clean}}, ensure there are no new strata that have been introduced by a state to the species groups.
 }
 \references{
-\url{https://github.com/USFWS/migbirdHarvestData}
+\url{https://github.com/USFWS/migbirdHIP}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}

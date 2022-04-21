@@ -15,7 +15,7 @@ youthHunters(x, year)
 Create a tibble and plot of youth hunters (hunters born < 16 years ago). Bar labels are counts.
 }
 \references{
-\url{https://github.com/USFWS/migbirdHarvestData}
+\url{https://github.com/USFWS/migbirdHIP}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}

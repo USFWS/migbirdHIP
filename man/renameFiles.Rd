@@ -13,7 +13,7 @@ renameFiles(path)
 This function overwrites HIP filenames. Files in the supplied directory are renamed by converting the Julian date to YYYYMMDD format. State abbreviations that are in lowercase format are capitalized.
 }
 \references{
-\url{https://github.com/USFWS/migbirdHarvestData}
+\url{https://github.com/USFWS/migbirdHIP}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}

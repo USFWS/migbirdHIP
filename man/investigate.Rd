@@ -26,7 +26,7 @@ investigate(x, loc, period_type, period, species)
 After checking the data with \code{\link{validate}}, look into reported repeated values to determine if they are worrisome.
 }
 \references{
-\url{https://github.com/USFWS/migbirdHarvestData}
+\url{https://github.com/USFWS/migbirdHIP}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}

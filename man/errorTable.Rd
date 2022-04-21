@@ -31,7 +31,7 @@ errorTable(x, loc = "all", field = "all")
 Create a tibble of existing errors in the data, customizing the output with value specifications.
 }
 \references{
-\url{https://github.com/USFWS/migbirdHarvestData}
+\url{https://github.com/USFWS/migbirdHIP}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}

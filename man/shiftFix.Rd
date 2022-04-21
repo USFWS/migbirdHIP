@@ -21,7 +21,7 @@ shiftFix(x, record_id, first_col, last_col, n_shift)
 Shift record values by a designated number of characters.
 }
 \references{
-\url{https://github.com/USFWS/migbirdHarvestData}
+\url{https://github.com/USFWS/migbirdHIP}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}

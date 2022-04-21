@@ -21,7 +21,7 @@ read_hip(path, unique = TRUE, state = NA, season = FALSE)
 Compile data from state-exported text files by providing a path to the download directory.
 }
 \references{
-\url{https://github.com/USFWS/migbirdHarvestData}
+\url{https://github.com/USFWS/migbirdHIP}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}

@@ -21,7 +21,7 @@ errorPlot_dl(x, loc = "all")
 Create a plot of errors per download cycle, either by all states in the data set or a specific state, province, or territory.
 }
 \references{
-\url{https://github.com/USFWS/migbirdHarvestData}
+\url{https://github.com/USFWS/migbirdHIP}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}

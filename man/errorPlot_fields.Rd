@@ -25,7 +25,7 @@ errorPlot_fields(x, loc = "all", year, youth = FALSE)
 Create a bar plot of proportion of error per field. The plot defaults to all 49 states, but location can be specified.
 }
 \references{
-\url{https://github.com/USFWS/migbirdHarvestData}
+\url{https://github.com/USFWS/migbirdHIP}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}
