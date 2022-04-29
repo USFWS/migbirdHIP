@@ -78,18 +78,36 @@ The `read_hip` function allows data to be read in for just a specific state or f
 
 ```r
 library(migbirdHIP)
-```
 
-```
-## Error in library(migbirdHIP): there is no package called 'migbirdHIP'
-```
-
-```r
 DL1202 <- read_hip("C:/HIP/DL1202")
 ```
 
 ```
-## Error in read_hip("C:/HIP/DL1202"): could not find function "read_hip"
+## # A tibble: 1 x 3
+##   filepath                     encoding   confidence
+##   <chr>                        <chr>           <dbl>
+## 1 C:/HIP/DL1202/SC20201202.txt ISO-8859-1       0.28
+## # A tibble: 9 x 3
+##   dl_state mean_prop     n
+##   <chr>        <dbl> <int>
+## 1 FL            0.25     1
+## 2 GA            0.25    12
+## 3 IA            0.25     7
+## 4 ID            0.25     2
+## 5 MA            0.25     3
+## 6 NE            0.25     1
+## 7 OK            0.25    53
+## 8 TN            0.25    25
+## 9 VA            0.25     2
+## # A tibble: 1 x 2
+##   dl_state source_file   
+##   <chr>    <chr>         
+## 1 <NA>     wi20201216.txt
+## # A tibble: 1 x 2
+##   dl_date source_file   
+##   <chr>   <chr>         
+## 1 <NA>    wi20201216.txt
+## [1] NA
 ```
 
 Did you get a warning or three? Read an explanation of common `read_hip` warnings, [below](#common-read_hip-warnings).
@@ -110,10 +128,6 @@ After data are read, we `clean`:
 
 ```r
 DL1202_clean <- clean(DL1202)
-```
-
-```
-## Error in clean(DL1202): could not find function "clean"
 ```
 
 This function renames columns and does simple mutations. Importantly, records are discarded if first name, last name, birth date, address, state of residence, OR city AND zip are missing.
@@ -138,9 +152,7 @@ The `findDuplicates` function finds hunters that have more than one registration
 findDuplicates(DL1202_clean)
 ```
 
-```
-## Error in findDuplicates(DL1202_clean): could not find function "findDuplicates"
-```
+<img src="figure/findDuplicates-1.png" title="Figure 1. Plot of types of duplicates." alt="Figure 1. Plot of types of duplicates." width="500" style="display: block; margin: auto;" />
 
 
 ```r
@@ -148,7 +160,20 @@ findDuplicates(DL1202_clean, return = "table")
 ```
 
 ```
-## Error in findDuplicates(DL1202_clean, return = "table"): could not find function "findDuplicates"
+## # A tibble: 24 x 2
+##    dupl                     count
+##    <chr>                    <int>
+##  1 address                      4
+##  2 address-city-email           1
+##  3 address-email                1
+##  4 address-issue_date           1
+##  5 address-issue_date-email     1
+##  6 bag                         14
+##  7 city-issue_date              1
+##  8 dl_date                     16
+##  9 email                       13
+## 10 hunt_mig_birds               8
+## # ... with 14 more rows
 ```
 
 ### fixDuplicates
@@ -172,10 +197,6 @@ Note: This function replaces "." values with NA in non-permit species columns fo
 DL1202_fixed <- fixDuplicates(DL1202_clean)
 ```
 
-```
-## Error in fixDuplicates(DL1202_clean): could not find function "fixDuplicates"
-```
-
 ### strataCheck
 
 Running `strataCheck` ensures species "bag" values are in order. This function searches for values in species group columns that are not typical or expected by the FWS. If a value outside of the normal range is detected, an output tibble is created. Each row in the output contains the state, species, unusual stratum value, and a list of the normal values we would expect.
@@ -188,7 +209,20 @@ strataCheck(DL1202_fixed)
 ```
 
 ```
-## Error in strataCheck(DL1202_fixed): could not find function "strataCheck"
+## # A tibble: 182 x 4
+##    dl_state spp                state_strata normal_strata   
+##    <chr>    <chr>              <chr>        <chr>           
+##  1 OR       dove_bag           0            1, 2, 3, 5      
+##  2 OR       ducks_bag          0            1, 2, 3, 4      
+##  3 OR       geese_bag          0            1, 2, 3, 4      
+##  4 OR       band_tailed_pigeon 0            1, 2            
+##  5 OR       brant              0            1, 2            
+##  6 OR       coots_snipe        0            1, 2            
+##  7 OR       seaducks           0            1, 2            
+##  8 OH       woodcock_bag       7            0, 1, 2, 3, 4, 5
+##  9 IA       coots_snipe        3            0, 1, 2         
+## 10 AK       band_tailed_pigeon 0            <NA>            
+## # ... with 172 more rows
 ```
 
 ### validate
@@ -203,7 +237,20 @@ validate(DL1202_fixed, type = "horizontal")
 ```
 
 ```
-## Error in validate(DL1202_fixed, type = "horizontal"): could not find function "validate"
+## # A tibble: 71 x 5
+##    source_file    h_value h_rep h_total prop_repeat
+##    <chr>          <chr>   <int>   <int>       <dbl>
+##  1 SC20201118.txt 1        3247    3798       0.855
+##  2 wi20201216.txt 1         465     546       0.852
+##  3 AL20201216.txt 1        5774    7049       0.819
+##  4 MI20201216.txt 1         340     416       0.817
+##  5 SC20201202.txt 1        6308    7831       0.806
+##  6 MS20201215.txt 1        6706    8924       0.751
+##  7 MO20201216.txt 1        2954    4047       0.730
+##  8 NC20201202.txt 1        9072   12981       0.699
+##  9 CT20201202.txt 1         120     172       0.698
+## 10 NV20201207.txt 1         280     420       0.667
+## # ... with 61 more rows
 ```
 
 <b>Vertically.</b> The vertical check searches within each column for repetition. Any species group column with the same value in all rows will be detected. *Coming soon:* States that do not have a hunting season for one or more species groups (e.g. seaducks) will not be returned using this function for reporting all zero values. The default version of this function (`all = FALSE`) only checks duck bags. If the parameter is set to `all = TRUE`, every species group will be checked.
@@ -216,7 +263,7 @@ validate(DL1202_fixed, type = "vertical")
 ```
 
 ```
-## Error in validate(DL1202_fixed, type = "vertical"): could not find function "validate"
+## Data are good to go! No vertical repetition detected.
 ```
 
 ... and `period = "dl_cycle"`.
@@ -227,7 +274,7 @@ validate(DL1202_fixed, type = "vertical", period = "dl_cycle")
 ```
 
 ```
-## Error in validate(DL1202_fixed, type = "vertical", period = "dl_cycle"): could not find function "validate"
+## Data are good to go! No vertical repetition detected.
 ```
 
 It is not possible to include as much detail in the vertical output as in the horizontal output without being specific about which state, species, and time scale you wish to assess. Vertical repetition returned in the output from this function can be looked at more closely using `investigate`.
@@ -249,7 +296,10 @@ investigate(
 ```
 
 ```
-## Error in investigate(DL1202_fixed, loc = "AK", period_type = "dl_date", : could not find function "investigate"
+## # A tibble: 1 x 2
+##   dove_bag source_file   
+##   <chr>    <chr>         
+## 1 0        AK20201215.txt
 ```
 
 ## Part B: Data Proofing and Correction
@@ -261,10 +311,6 @@ After data are cleaned and checked for any important issues that would require m
 
 ```r
 DL1202_proofed <- proof(DL1202_fixed, year = 2020)
-```
-
-```
-## Error in proof(DL1202_fixed, year = 2020): could not find function "proof"
 ```
 
 Data that are considered irregular are flagged in a new column called "errors". No actual corrections take place in this step; all data remain identical except for the new "errors" column. For each field, values are compared to standard expected formats and if they do not conform, the field name is pasted as a string in the "errors" column. Each row can have from zero errors (NA) to all column names listed. Multiple flags are hyphen delimited.
@@ -281,7 +327,24 @@ DL1202_corrected <- correct(DL1202_proofed, year = 2020, data = "bag")
 ```
 
 ```
-## Error in correct(DL1202_proofed, year = 2020, data = "bag"): could not find function "correct"
+## Warning: Zip codes detected that do not correspond to provided state of residence.
+```
+
+```
+## # A tibble: 517 x 4
+##    record_key  zip   state zipState
+##    <chr>       <chr> <chr> <chr>   
+##  1 record_292  32525 AL    FL      
+##  2 record_330  34044 AL    AA      
+##  3 record_1935 15425 AL    PA      
+##  4 record_3403 63804 AL    MO      
+##  5 record_5325 36564 MS    AL      
+##  6 record_6417 79556 FL    TX      
+##  7 record_7090 65466 AL    MO      
+##  8 record_7183 44023 AR    OH      
+##  9 record_7223 38655 TN    MS      
+## 10 record_7236 76182 AR    TX      
+## # ... with 507 more rows
 ```
 
 The following changes are made by the `correct` function:
@@ -351,7 +414,7 @@ pullErrors(DL1202_proofed, error = "dove_bag")
 ```
 
 ```
-## Error in pullErrors(DL1202_proofed, error = "dove_bag"): could not find function "pullErrors"
+## [1] "4"
 ```
 
 ### manualFix
@@ -400,8 +463,23 @@ The `outOfStateHunters` function plots and tabulates how many hunters registered
 outOfStateHunters(DL1202_proofed)
 ```
 
+<img src="figure/outofstate-1.png" title="Figure 6. Plot of proportions of out-of-state hunters." alt="Figure 6. Plot of proportions of out-of-state hunters." width="500" style="display: block; margin: auto;" />
+
 ```
-## Error in outOfStateHunters(DL1202_proofed): could not find function "outOfStateHunters"
+## # A tibble: 37 x 3
+##    dl_state n_total outofstate_prop
+##    <chr>      <int>           <dbl>
+##  1 AK           106            0.41
+##  2 AL          7049            0.15
+##  3 AR          6567            0.65
+##  4 CA          3998            0.06
+##  5 CO          1748            0.09
+##  6 CT           286            0.12
+##  7 FL          3652            0.09
+##  8 GA          3577            0.12
+##  9 IA          3229            0.05
+## 10 ID          1872            0.22
+## # ... with 27 more rows
 ```
 
 ### youthHunters
@@ -413,8 +491,13 @@ The `youthHunters` function returns a table and plot of the number of hunters wi
 youthHunters(DL1202_proofed, year = 2020)
 ```
 
+<img src="figure/youth-1.png" title="Figure 7. Plot of proportions of youth hunters." alt="Figure 7. Plot of proportions of youth hunters." width="500" style="display: block; margin: auto;" />
+
 ```
-## Error in youthHunters(DL1202_proofed, year = 2020): could not find function "youthHunters"
+## # A tibble: 1 x 4
+##   dl_state registered_youth total_registered youth_proportion
+##   <chr>               <int>            <int>            <dbl>
+## 1 ND                    369              600            0.615
 ```
 
 ### errorPlot_fields
@@ -426,9 +509,7 @@ The `errorPlot_fields` function can be run on all states...
 errorPlot_fields(DL1202_proofed, loc = "all", year = 2020)
 ```
 
-```
-## Error in errorPlot_fields(DL1202_proofed, loc = "all", year = 2020): could not find function "errorPlot_fields"
-```
+<img src="figure/errorfieldsplotall-1.png" title="Figure 2. Plot of all location's errors by field name." alt="Figure 2. Plot of all location's errors by field name." width="500" style="display: block; margin: auto;" />
 
 ... or it can be limited to just one.
 
@@ -437,9 +518,7 @@ errorPlot_fields(DL1202_proofed, loc = "all", year = 2020)
 errorPlot_fields(DL1202_proofed, loc = "LA", year = 2020)
 ```
 
-```
-## Error in errorPlot_fields(DL1202_proofed, loc = "LA", year = 2020): could not find function "errorPlot_fields"
-```
+<img src="figure/errorfieldsplotsc-1.png" title="Figure 3. Plot of all North Carolina's errors by field name." alt="Figure 3. Plot of all North Carolina's errors by field name." width="500" style="display: block; margin: auto;" />
 
 The `youth` parameter can be set to TRUE for `errorPlot_fields` to view the proportion of "errors" created by youth hunters. Youth hunters are not included in the error plot if `youth = FALSE` (set as default).
 
@@ -448,9 +527,7 @@ The `youth` parameter can be set to TRUE for `errorPlot_fields` to view the prop
 errorPlot_fields(DL1202_proofed, year = 2020, youth = TRUE)
 ```
 
-```
-## Error in errorPlot_fields(DL1202_proofed, year = 2020, youth = TRUE): could not find function "errorPlot_fields"
-```
+<img src="figure/errorfieldsplotyouth-1.png" title="Figure 4. Plot of all location's errors by field name, with stacked colors to indicate if there are youth hunters or Canadian zip codes in the data, two common causes of error." alt="Figure 4. Plot of all location's errors by field name, with stacked colors to indicate if there are youth hunters or Canadian zip codes in the data, two common causes of error." width="500" style="display: block; margin: auto;" />
 
 It is possible to add any `ggplot2` components to these plots. For season total data specifically, the plot can be facet_wrapped using either dl_cycle or dl_date. The example below demonstrates how this package's functions can interact with the tidyverse and shows an example of an `errorPlot_fields` facet_wrap (using a subset of 4 download cycles)
 
@@ -475,9 +552,7 @@ The `errorPlot_states` function plots error proportions per state. You may optio
 errorPlot_states(DL1202_proofed)
 ```
 
-```
-## Error in errorPlot_states(DL1202_proofed): could not find function "errorPlot_states"
-```
+<img src="figure/errorplotstates-1.png" title="Figure 5. Plot of proportion of error by state." alt="Figure 5. Plot of proportion of error by state." width="500" style="display: block; margin: auto;" />
 
 ### errorPlot_dl
 
@@ -500,7 +575,20 @@ errorTable(DL1202_proofed)
 ```
 
 ```
-## Error in errorTable(DL1202_proofed): could not find function "errorTable"
+## # A tibble: 156 x 3
+##    dl_state error      error_count
+##    <chr>    <chr>            <dbl>
+##  1 AK       birth_date           2
+##  2 AL       birth_date         190
+##  3 AL       city                 1
+##  4 AL       firstname            7
+##  5 AL       lastname             1
+##  6 AL       suffix              10
+##  7 AL       zip                  7
+##  8 AR       birth_date         175
+##  9 AR       email                1
+## 10 AR       firstname           15
+## # ... with 146 more rows
 ```
 
 Errors can be reported by only location by turning off the `field` parameter.
@@ -511,7 +599,20 @@ errorTable(DL1202_proofed, field = "none")
 ```
 
 ```
-## Error in errorTable(DL1202_proofed, field = "none"): could not find function "errorTable"
+## # A tibble: 37 x 2
+##    dl_state error_count
+##    <chr>          <dbl>
+##  1 AK                 2
+##  2 AL               216
+##  3 AR               571
+##  4 CA               464
+##  5 CO               195
+##  6 CT               299
+##  7 FL                37
+##  8 GA                59
+##  9 IA              3218
+## 10 ID               158
+## # ... with 27 more rows
 ```
 
 Errors can be reported by only field by turning off the `loc` parameter.
@@ -522,7 +623,26 @@ errorTable(DL1202_proofed, loc = "none")
 ```
 
 ```
-## Error in errorTable(DL1202_proofed, loc = "none"): could not find function "errorTable"
+## # A tibble: 17 x 2
+##    error            error_count
+##    <chr>                  <dbl>
+##  1 birth_date              7533
+##  2 city                       3
+##  3 coots_snipe               68
+##  4 cranes                    49
+##  5 dove_bag                 473
+##  6 ducks_bag               3226
+##  7 email                   6515
+##  8 firstname                150
+##  9 geese_bag                 78
+## 10 hunt_mig_birds            19
+## 11 lastname                  13
+## 12 rails_gallinules          64
+## 13 registration_yr            2
+## 14 state                      2
+## 15 suffix                   393
+## 16 woodcock_bag              21
+## 17 zip                      525
 ```
 
 Location can be specified.
@@ -533,7 +653,12 @@ errorTable(DL1202_proofed, loc = "CA")
 ```
 
 ```
-## Error in errorTable(DL1202_proofed, loc = "CA"): could not find function "errorTable"
+## # A tibble: 3 x 3
+##   dl_state error      error_count
+##   <chr>    <chr>            <dbl>
+## 1 CA       birth_date         410
+## 2 CA       dove_bag            53
+## 3 CA       firstname            1
 ```
 
 Field can be specified.
@@ -544,7 +669,10 @@ errorTable(DL1202_proofed, field = "suffix")
 ```
 
 ```
-## Error in errorTable(DL1202_proofed, field = "suffix"): could not find function "errorTable"
+## # A tibble: 1 x 2
+##   error  error_count
+##   <chr>        <dbl>
+## 1 suffix         393
 ```
 
 Total errors for a location can be pulled.
@@ -555,7 +683,10 @@ errorTable(DL1202_proofed, loc = "CA", field = "none")
 ```
 
 ```
-## Error in errorTable(DL1202_proofed, loc = "CA", field = "none"): could not find function "errorTable"
+## # A tibble: 1 x 2
+##   dl_state total_errors
+##   <chr>           <dbl>
+## 1 CA                464
 ```
 
 Total errors for a field in a particular location can be pulled.
@@ -566,7 +697,10 @@ errorTable(DL1202_proofed, loc = "CA", field = "dove_bag")
 ```
 
 ```
-## Error in errorTable(DL1202_proofed, loc = "CA", field = "dove_bag"): could not find function "errorTable"
+## # A tibble: 1 x 3
+##   dl_state error    error_count
+##   <chr>    <chr>          <dbl>
+## 1 CA       dove_bag          53
 ```
 
 ### redFlags
@@ -580,7 +714,12 @@ redFlags(DL1202_proofed, type = "state", threshold = 0.03)
 ```
 
 ```
-## Error in redFlags(DL1202_proofed, type = "state", threshold = 0.03): could not find function "redFlags"
+## # A tibble: 3 x 5
+##   dl_state count_errors count_correct proportion flag        
+##   <chr>           <int>         <int>      <dbl> <chr>       
+## 1 WV                331          7369     0.0430 error > 0.03
+## 2 CT                299          6851     0.0418 error > 0.03
+## 3 IA               3218         77507     0.0399 error > 0.03
 ```
 
 <b>By field.</b>
@@ -592,7 +731,12 @@ redFlags(DL1202_proofed, type = "field", threshold = 0.01)
 ```
 
 ```
-## Error in redFlags(DL1202_proofed, type = "field", threshold = 0.01): could not find function "redFlags"
+## # A tibble: 3 x 5
+##   errors     count_errors count_correct proportion flag        
+##   <chr>             <int>         <int>      <dbl> <chr>       
+## 1 birth_date         7533        113653     0.0622 error > 0.01
+## 2 email              6515        114671     0.0538 error > 0.01
+## 3 ducks_bag          3226        117960     0.0266 error > 0.01
 ```
 
 ## Troubleshooting
