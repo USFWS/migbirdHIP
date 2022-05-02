@@ -25,12 +25,12 @@ library(stringi)
 
 # Get the directories for the season
 dirs <- 
-  list.files(dl_path, recursive = TRUE)  %>%
+  list.files(params$comp_path, recursive = TRUE)  %>%
   as_tibble() %>%
   mutate(
     value = 
       str_extract(value, "DL[0-9]{4}") %>% 
-      paste0(dl_path, .)) %>% 
+      paste0(params$comp_path, .)) %>% 
   distinct()
 
 # Get total number of lines of data
@@ -144,6 +144,7 @@ rm(season_lines)
 
 ```{r reg_yr_check, echo = FALSE}
 DT::datatable(
+  filter = "top", 
   unshifted_data %>% 
     select(registration_yr, dl_state) %>% 
     group_by(registration_yr, dl_state) %>% 
@@ -305,6 +306,79 @@ DT::datatable(
 
 ```{r v_validate, echo = FALSE}
 DT::datatable(migbirdHIP::validate(unshifted_data, type = "vertical"))
+```
+
+## Zero values
+
+### Potentially not HIP registrations
+
+All bag values are 0:
+
+```{r zero_all, echo = FALSE}
+
+DT::datatable(
+  unshifted_data %>%
+    # Subset the data
+    select(
+      dl_state,
+      source_file,
+      matches("bag|coots|rails|cranes|pigeon|brant|seaducks")) %>%
+    group_by(source_file) %>%
+    mutate(n_rows = n()) %>% 
+    ungroup() %>% 
+    relocate(n_rows, .before = "ducks_bag") %>% 
+    group_by(dl_state, source_file, n_rows) %>% 
+    mutate_at(
+      vars(
+        unshifted_data %>% 
+        select(matches("bag|coots|rails|cranes|pigeon|brant|seaducks")) %>% 
+        names()), 
+      ~as.integer(.)) %>% 
+    ungroup() %>% 
+    mutate(
+      sumbags = 
+          rowSums(
+            select(
+              cur_data(), 
+              matches("bag|coots|rails|cranes|pigeon|brant|seaducks")))) %>% 
+    filter(sumbags == 0) %>% 
+    select(-matches("bag|coots|rails|cranes|pigeon|brant|seaducks")) %>% 
+    group_by(dl_state, source_file, n_rows) %>% 
+    mutate(all_zero_rows = n()) %>% 
+    ungroup() %>% 
+    distinct() %>% 
+    mutate(zero_proportion = round(all_zero_rows / n_rows, 2)) %>% 
+    arrange(desc(zero_proportion))
+)
+
+```
+
+Duck bag values are 0:
+
+```{r zero_ducks, echo = FALSE}
+DT::datatable(
+  unshifted_data %>%
+  # Subset the data
+  select(dl_state, dl_date, ducks_bag) %>%
+  group_by(dl_state, dl_date) %>%
+  # Add number of rows per group
+  # This is the number of records per file
+  mutate(dl_rows = n()) %>%
+  # Move dl_rows to 3rd col position
+  relocate(dl_rows, .after = dl_date) %>%
+  ungroup() %>%
+  # Filter to only ducks = 0
+  filter(ducks_bag == 0) %>% 
+  group_by(dl_state, dl_date, dl_rows) %>%
+  # Count the number of records per file with ducks = 0
+  mutate(zero_rows = n()) %>%
+  ungroup() %>%
+  select(-ducks_bag) %>% 
+  distinct() %>% 
+  mutate(zero_ducks_prop = round(zero_rows / dl_rows, 2)) %>% 
+  arrange(desc(zero_ducks_prop)) %>% 
+  relocate(zero_rows, .before = "dl_rows")
+)
 ```
 
 ```{r data_sweep, include = FALSE}
