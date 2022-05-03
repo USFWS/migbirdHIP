@@ -497,6 +497,10 @@ rm(corrected_data)
 outOfStateHunters(proofed_data)
 ```
 
+```{r canadians_tbl, echo = FALSE}
+DT::datatable(outOfStateHunters(proofed_data, output = "table"))
+```
+
 ## Youth hunters
 
 ```{r yh, echo = FALSE, fig.align = "center"}
