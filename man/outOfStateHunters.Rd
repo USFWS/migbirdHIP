@@ -4,13 +4,15 @@
 \alias{outOfStateHunters}
 \title{Find out-of-state hunters}
 \usage{
-outOfStateHunters(x)
+outOfStateHunters(x, output = "plot")
 }
 \arguments{
 \item{x}{A proofed data table created by \code{\link{proof}}}
+
+\item{output}{"plot" (defualt) or "table"}
 }
 \description{
-Create a tibble and plot of hunters who have registered outside of their home state.
+Create a tibble or plot of hunters who have registered outside of their home state.
 }
 \references{
 \url{https://github.com/USFWS/migbirdHIP}

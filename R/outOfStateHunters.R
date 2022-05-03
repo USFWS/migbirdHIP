@@ -1,6 +1,6 @@
 #' Find out-of-state hunters
 #'
-#' Create a tibble and plot of hunters who have registered outside of their home state.
+#' Create a tibble or plot of hunters who have registered outside of their home state.
 #'
 #' @importFrom dplyr %>%
 #' @importFrom dplyr select
@@ -24,6 +24,7 @@
 #' @importFrom ggplot2 element_text
 #'
 #' @param x A proofed data table created by \code{\link{proof}}
+#' @param output "plot" (defualt) or "table"
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}
@@ -31,7 +32,7 @@
 #' @export
 
 outOfStateHunters <-
-  function(x){
+  function(x, output = "plot"){
 
     # Tibble of hunters from out-of-state
 
@@ -71,6 +72,8 @@ outOfStateHunters <-
           )
         )
 
+    if(output == "plot"){
+
     # Out of state hunter proportion plot
 
     oos_plot <-
@@ -97,8 +100,15 @@ outOfStateHunters <-
       theme_classic() +
       theme(
         axis.text.x = element_text(angle = 45,vjust = 1,hjust = 1))
+
       print(oos_plot)
 
-    return(oos_proportion)
+    }else if(output == "table"){
+
+      return(oos_proportion)
+
+    }else{
+      message("Error: `output` must be 'plot' or 'table'.")
+    }
 
   }
