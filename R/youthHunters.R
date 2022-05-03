@@ -1,6 +1,6 @@
 #' Youth hunters
 #'
-#' Create a tibble and plot of youth hunters (hunters born < 16 years ago). Bar labels are counts.
+#' Create a plot of youth hunters (hunters born < 16 years ago). Bar labels are counts.
 #'
 #' @importFrom dplyr filter
 #' @importFrom dplyr left_join
@@ -38,29 +38,25 @@ youthHunters <-
           ungroup())
 
     # Count number and calculate proportion of youth hunters by state
-    youth_hunters <-
-      # Suppress group message from summarize function
-      suppressMessages(
-        x %>%
-          select(dl_state, birth_date) %>%
-          mutate(birth_year = str_extract(birth_date, "(?<=\\/)[0-9]{4}$")) %>%
-          filter(birth_date > year - 16) %>%
-          group_by(dl_state) %>%
-          summarize(registered_youth = n()) %>%
-          ungroup() %>%
-          # Join in previous tibble of total hunters per state for proportion
-          # calculation
-          left_join(total_hunters, by = "dl_state") %>%
-          filter(!is.na(dl_state)) %>%
-          # Calculate proportion
-          mutate(youth_proportion = registered_youth/total_registered))
-
-    # Plot
-    youth_plot <-
-      youth_hunters %>%
+    # Suppress group message from summarize function
+    suppressMessages(
+      x %>%
+        select(dl_state, birth_date) %>%
+        mutate(birth_year = str_extract(birth_date, "(?<=\\/)[0-9]{4}$")) %>%
+        filter(birth_date > year - 16) %>%
+        group_by(dl_state) %>%
+        summarize(registered_youth = n()) %>%
+        ungroup() %>%
+        # Join in previous tibble of total hunters per state for proportion
+        # calculation
+        left_join(total_hunters, by = "dl_state") %>%
+        filter(!is.na(dl_state)) %>%
+        # Calculate proportion
+        mutate(youth_proportion = registered_youth/total_registered) %>%
       # Round proportion to limit decimal places
       mutate(youth_proportion = round(youth_proportion, digits = 2)) %>%
       filter(!is.na(dl_state)) %>%
+      # Plot
       ggplot(aes(x = reorder(dl_state, youth_proportion))) +
       geom_bar(
         aes(
@@ -82,9 +78,6 @@ youthHunters <-
       scale_y_continuous(expand = expansion(mult = c(-0, 0.2))) +
       theme_classic() +
       theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
-
-    print(youth_plot)
-
-    return(youth_hunters)
+    )
 
   }

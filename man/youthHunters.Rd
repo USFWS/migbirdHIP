@@ -12,7 +12,7 @@ youthHunters(x, year)
 \item{year}{The year in which the Harvest Information Program data were collected}
 }
 \description{
-Create a tibble and plot of youth hunters (hunters born < 16 years ago). Bar labels are counts.
+Create a plot of youth hunters (hunters born < 16 years ago). Bar labels are counts.
 }
 \references{
 \url{https://github.com/USFWS/migbirdHIP}
