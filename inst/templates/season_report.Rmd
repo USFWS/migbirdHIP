@@ -269,6 +269,43 @@ rm(pii_summary)
 rm(dl_data)
 ```
 
+## Missing email addresses
+
+```{r b_fd, echo = FALSE, warning = FALSE, fig.align = "center"}
+proofed_data %>% 
+  select(dl_state, email, errors) %>% 
+  group_by(dl_state) %>% 
+  mutate(total_n = n()) %>% 
+  ungroup() %>% 
+  filter(is.na(email)|errors == "email") %>% 
+  group_by(dl_state, total_n) %>% 
+  summarize(missing_email_n = n()) %>% 
+  ungroup() %>% 
+  mutate(prop = missing_email_n/total_n) %>% 
+  arrange(desc(prop)) %>% 
+  # Plot
+  ggplot() +
+  geom_bar(aes(
+    y = prop,
+    x = reorder(dl_state, prop)),
+    stat = "identity") +
+  geom_text(
+    aes(
+      y = prop,
+      x = reorder(dl_state, prop),
+      label = missing_email_n,
+      angle = 90),
+    vjust = 0.2, hjust = -0.2) +
+  labs(
+    x = "State",
+    y = "Missing email\naddresses (proportion)") +
+  #scale_y_continuous() +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1)) + 
+  scale_y_continuous(
+    breaks = seq(0, 1, 0.25), expand = expansion(mult = c(-0, 0.3)))
+```
+
 ## Duplicates
 
 ### Before fixDuplicates (all 49 states)
