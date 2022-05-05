@@ -54,7 +54,7 @@ read_hip <-
     # Create a tibble of the HIP .txt files to be read from the provided
     # directory
     files <-
-      # For reading data from a download cycle with a specific state
+      # Read data for a specific state from a download cycle
       if(!is.na(state) & season == FALSE){
         list.files(path, recursive = FALSE)  %>%
           as_tibble() %>%
@@ -73,46 +73,71 @@ read_hip <-
                 file.size(filepath) == 0,
                 "blank",
                 filepath))
-        }
-    # For reading data from a download cycle for ALL states available
-    else if(is.na(state) & season == FALSE){
-      list.files(path, recursive = FALSE)  %>%
-        as_tibble() %>%
-        transmute(filepath = as.character(value)) %>%
-        mutate(filepath = str_replace(filepath, "TXT", "txt")) %>%
-        # Keep only txt files
-        filter(str_detect(filepath, "(?<=\\.)txt$")) %>%
-        # Create new complete file paths
-        mutate(filepath = paste0(path, filepath)) %>%
-        # Filter out blank files
-        mutate(
-          check =
-            ifelse(
-              file.size(filepath) == 0,
-              "blank",
-              filepath))
-      }
-    # For reading in all data from the season
-    else if(season == TRUE){
-      list.files(path, recursive = TRUE)  %>%
-        as_tibble() %>%
-        transmute(filepath = as.character(value)) %>%
-        mutate(filepath = str_replace(filepath, "TXT", "txt")) %>%
-        # Keep only txt files
-        filter(str_detect(filepath, "(?<=\\.)txt$")) %>%
-        # Don't process permit files
-        filter(!str_detect(filepath, "permit")) %>%
-        # Don't process removed files
-        filter(!str_detect(filepath, "removed")) %>%
-        # Create new complete file paths
-        mutate(filepath = paste0(path, filepath)) %>%
-        # Filter out blank files
-        mutate(
-          check =
-            ifelse(
-              file.size(filepath) == 0,
-              "blank",
-              filepath))
+      }else if(!is.na(state) & season == TRUE){
+        # Read data for a specific state across the whole season
+        list.files(path, recursive = TRUE)  %>%
+          as_tibble() %>%
+          transmute(filepath = as.character(value)) %>%
+          mutate(filepath = str_replace(filepath, "TXT", "txt")) %>%
+          # Keep only txt files
+          filter(str_detect(filepath, "(?<=\\.)txt$")) %>%
+          # Keep only files from the specified state
+          filter(str_detect(filepath, state)) %>%
+          # Don't process permit files
+          filter(!str_detect(filepath, "permit")) %>%
+          # Don't process removed files
+          filter(!str_detect(filepath, "removed")) %>%
+          # Create new complete file paths
+          mutate(filepath = paste0(path, filepath)) %>%
+          # Filter out blank files
+          mutate(
+            check =
+              ifelse(
+                file.size(filepath) == 0,
+                "blank",
+                filepath))
+      }else if(is.na(state) & season == FALSE){
+        # Read data from a download cycle for all states
+        list.files(path, recursive = FALSE)  %>%
+          as_tibble() %>%
+          transmute(filepath = as.character(value)) %>%
+          mutate(filepath = str_replace(filepath, "TXT", "txt")) %>%
+          # Keep only txt files
+          filter(str_detect(filepath, "(?<=\\.)txt$")) %>%
+          # Create new complete file paths
+          mutate(filepath = paste0(path, filepath)) %>%
+          # Filter out blank files
+          mutate(
+            check =
+              ifelse(
+                file.size(filepath) == 0,
+                "blank",
+                filepath))
+      }else if(is.na(state) & season == TRUE){
+        # Read in all data from the season
+        list.files(path, recursive = TRUE)  %>%
+          as_tibble() %>%
+          transmute(filepath = as.character(value)) %>%
+          mutate(filepath = str_replace(filepath, "TXT", "txt")) %>%
+          # Keep only txt files
+          filter(str_detect(filepath, "(?<=\\.)txt$")) %>%
+          # Don't process permit files
+          filter(!str_detect(filepath, "permit")) %>%
+          # Don't process removed files
+          filter(!str_detect(filepath, "removed")) %>%
+          # Create new complete file paths
+          mutate(filepath = paste0(path, filepath)) %>%
+          # Filter out blank files
+          mutate(
+            check =
+              ifelse(
+                file.size(filepath) == 0,
+                "blank",
+                filepath))
+      }else{
+        message(
+          paste0("Error: `state` must be a two-letter abbreviation or NA. `sea",
+                 "son` must be TRUE or FALSE."))
       }
 
     if(nrow(files %>% filter(check == "blank")) > 0){
@@ -128,8 +153,7 @@ read_hip <-
       message(
         paste0("No file(s) to read in. Did you specify a state that did not",
                " submit data?"))
-      }
-    else{
+      }else{
       # Check encodings of the files that will be read
       checked_encodings <-
         map_dfr(1:nrow(files),
