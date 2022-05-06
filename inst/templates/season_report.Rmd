@@ -271,7 +271,7 @@ rm(dl_data)
 
 ## Missing email addresses
 
-```{r b_fd, echo = FALSE, warning = FALSE, fig.align = "center"}
+```{r missing_emails, echo = FALSE, warning = FALSE, fig.align = "center"}
 proofed_data %>% 
   select(dl_state, email, errors) %>% 
   group_by(dl_state) %>% 
