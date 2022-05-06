@@ -57,7 +57,7 @@ youthHunters <-
       mutate(youth_proportion = round(youth_proportion, digits = 2)) %>%
       filter(!is.na(dl_state)) %>%
       # Plot
-      ggplot(aes(x = reorder(dl_state, youth_proportion))) +
+      ggplot() +
       geom_bar(
         aes(
           x = reorder(dl_state, youth_proportion),
