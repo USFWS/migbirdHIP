@@ -43,7 +43,7 @@ youthHunters <-
       x %>%
         select(dl_state, birth_date) %>%
         mutate(birth_year = str_extract(birth_date, "(?<=\\/)[0-9]{4}$")) %>%
-        filter(birth_date > year - 16) %>%
+        filter(birth_year > year - 16) %>%
         group_by(dl_state) %>%
         summarize(registered_youth = n()) %>%
         ungroup() %>%
