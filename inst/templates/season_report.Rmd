@@ -370,7 +370,7 @@ DT::datatable(
         unshifted_data %>% 
         select(matches("bag|coots|rails|cranes|pigeon|brant|seaducks")) %>% 
         names()), 
-      ~as.integer(.)) %>% 
+      ~suppressWarnings(as.integer(.))) %>% 
     ungroup() %>% 
     mutate(
       sumbags = 
