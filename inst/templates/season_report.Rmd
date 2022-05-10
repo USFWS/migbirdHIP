@@ -351,7 +351,7 @@ DT::datatable(migbirdHIP::validate(unshifted_data, type = "vertical"))
 
 All bag values are 0:
 
-```{r zero_all, echo = FALSE}
+```{r zero_all, echo = FALSE, warning = FALSE}
 
 DT::datatable(
   unshifted_data %>%
@@ -562,7 +562,7 @@ DT::datatable(et)
 
 Values associated with error in `r et$error[1]`
 
-```{r pe_1, echo = FALSE}
+```{r pe_1, echo = FALSE, warning = FALSE}
 
 if(et$error[1] != "birth_date"){
   err1 <- 
@@ -592,7 +592,7 @@ DT::datatable(err1)
 
 Values associated with error in `r et$error[2]`
 
-```{r pe_2, echo = FALSE}
+```{r pe_2, echo = FALSE, warning = FALSE}
 
 if(et$error[2] != "birth_date"){
   err2 <- 
@@ -622,7 +622,7 @@ DT::datatable(err2)
 
 Values associated with error in `r et$error[3]`
 
-```{r pe_3, echo = FALSE}
+```{r pe_3, echo = FALSE, warning = FALSE}
 
 if(et$error[3] != "birth_date"){
   err3 <- 
