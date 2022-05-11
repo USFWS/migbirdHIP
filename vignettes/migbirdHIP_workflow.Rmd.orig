@@ -57,8 +57,7 @@ HIP data have been used since 1999 to make important management decisions for mi
 
 The package can be installed from the USFWS GitHub repository using:
 ```{r, install, message = FALSE, eval = FALSE}
-library(devtools)
-install_github("USFWS/migbirdHIP")
+devtools::install_github("USFWS/migbirdHIP", quiet = T, upgrade = F, , build_vignettes = T)
 ```
 
 ### Functions overview
@@ -87,22 +86,22 @@ The `read_hip` function allows data to be read in for all states (e.g. `state = 
 * Creates a dl_key column by grouping data by dl_state and dl_date
 * Creates a record_key column (unique identifier for each row, used later by `shiftFix`)
 
-We will use the default settings to read in all of the states from download 1202.
+We will use the default settings to read in all of the states from download 1301.
 
 ```{r, readhip, message = FALSE, warning = FALSE}
 library(migbirdHIP)
 
-DL1202 <- read_hip("C:/HIP/DL1202")
+DL1301 <- read_hip("C:/HIP/DL1301")
 ```
 
 Did you get a warning or three? Read an explanation of common `read_hip` warnings, [below](#common-read_hip-warnings).
 
 ### renameFiles
 
-The `renameFiles` function was incorporated into this package for special cases. Some states submit .txt  files using the "old" 5-digit file name format, containing 2 letters for the state abbreviation followed by a 3-digit Julian date (representing the date the file was uploaded). To convert these pesky 5-digit filenames to the standard 10-digit format (a requirement to read data properly with [read_hip](#read_hip)), supply the `renameFiles` with the directory containing HIP data. File names will be automatically overwritten with the YYYYMMDD format date corresponding to the submitted Julian date. This function is also handy to use when states submit lowercase abbreviations; `renameFiles` will convert lowercase letters to uppercase.
+The `renameFiles` function was incorporated into this package for special cases. Some states submit .txt  files using a 5-digit file name format, containing 2 letters for the state abbreviation followed by a 3-digit Julian date (representing the date the file was uploaded). To convert these 5-digit filenames to the standard 10-digit format (a requirement to read data properly with [read_hip](#read_hip)), supply the `renameFiles` with the directory containing HIP data. File names will be automatically overwritten with the YYYYMMDD format date corresponding to the submitted Julian date. This function also converts lowercase state abbreviations to uppercase.
 
 ```{r rename, eval = FALSE}
-renameFiles(path = "C:/HIP/DL1202")
+renameFiles(path = "C:/HIP/DL1301")
 ```
 
 ### shiftFix
@@ -117,10 +116,10 @@ For HIP processing, this function is used in conjunction with other R code to ac
 
 # Snooping
 snoop <-
-  DL1202 %>%
+  DL1301 %>%
   filter(
     !str_detect(birth_date, "^[0-9]{2}\\/[0-9]{2}\\/[0-9]{4}$")) %>%
-  mutate(n_shift = str_length(str_extract(issue_date, "^[0-9]+(?=\\/)")) - 2) %>%
+  mutate(n_shift = stringr::str_length(str_extract(issue_date, "^[0-9]+(?=\\/)")) - 2) %>%
   relocate(record_key, .before = "title") %>%
   relocate(source_file, .before = "record_key") %>%
   select(record_key, n_shift) %>%
@@ -132,7 +131,7 @@ unshifted <-
     1:length(snoop$record_key),
     ~shiftFix(
       # Fix the raw data file
-      DL1202,
+      DL1301,
       # For x record id
       snoop$record_key[.x],
       # Shift from state col to email col
@@ -150,8 +149,8 @@ unshifted <-
         paste0("0", birth_date),
         birth_date))
 
-DL1202_unshifted <-
-  DL1202 %>%
+DL1301_unshifted <-
+  DL1301 %>%
   filter(!record_key %in% unshifted$record_key) %>%
   bind_rows(unshifted)
 ```
@@ -161,7 +160,7 @@ DL1202_unshifted <-
 After data are read and unshifted, we `clean`:
 
 ```{r, clean}
-DL1202_clean <- clean(DL1202_unshifted)
+DL1301_clean <- clean(DL1301_unshifted)
 ```
 
 This function does simple data cleaning. Importantly, records are discarded if first name, last name, birth date, address, state of residence, OR city AND zip are missing.
@@ -186,11 +185,11 @@ Other quick fixes include:
 The `findDuplicates` function finds hunters that have more than one registration. Records are grouped by first name, last name, state, birth date, registration year, and download state to identify unique hunters. If the same hunter has 2 or more registrations, the fields that are not identical are counted and summarized. A plot is returned by default, but the type of output can be specified using `return = "plot"` for plot, or `return = "table"` for table and summary message.
 
 ```{r findDuplicates, fig.cap = "Figure 1. Plot of types of duplicates.", fig.width = 6, fig.height = 3.5, dpi = 300, out.width = 500, fig.align = "center"}
-findDuplicates(DL1202_clean)
+findDuplicates(DL1301_clean)
 ```
 
 ```{r findDuplicates_tbl}
-findDuplicates(DL1202_clean, return = "table")
+findDuplicates(DL1301_clean, return = "table")
 ```
 
 ### fixDuplicates
@@ -210,7 +209,7 @@ Note: This function replaces "." values with NA in non-permit species columns fo
 
 
 ```{r, fixduplicates}
-DL1202_fixed <- fixDuplicates(DL1202_clean)
+DL1301_fixed <- fixDuplicates(DL1301_clean)
 ```
 
 ### strataCheck
@@ -220,7 +219,7 @@ Running `strataCheck` ensures species "bag" values are in order. This function s
 If a value for a species group is given in the HIP data that doesn't match anything in our records, the species reported in the output will have NA values in the "normal_strata" column. These species are not hunted in the reported states.
 
 ```{r, stratacheck}
-strataCheck(DL1202_fixed)
+strataCheck(DL1301_fixed)
 ```
 
 ### validate
@@ -230,7 +229,7 @@ The `validate` function looks for repeated values in two dimensions, both horizo
 <b>Horizontally.</b> The horizontal check for repetition looks across records and finds any rows with same value in each species group column. Details in the output tibble include: the repeated value (h_value), number of records with repeats (h_rep), total number of records (h_total), and proportion of repeated values per file (prop_repeat). The default version of this function (`all = FALSE`) only checks ducks, geese, dove, and woodcock bags. If the parameter is set to `all = TRUE`, every species group will be checked.
 
 ```{r, validate_h}
-validate(DL1202_fixed, type = "horizontal")
+validate(DL1301_fixed, type = "horizontal")
 ```
 
 <b>Vertically.</b> The vertical check searches within each column for repetition. Any species group column with the same value in all rows will be detected. *Coming soon:* States that do not have a hunting season for one or more species groups (e.g. seaducks) will not be returned using this function for reporting all zero values. The default version of this function (`all = FALSE`) only checks duck bags. If the parameter is set to `all = TRUE`, every species group will be checked.
@@ -238,13 +237,13 @@ validate(DL1202_fixed, type = "horizontal")
 The two time period options to assess vertical repetition are `period = "dl_date"` (used automatically)...
 
 ```{r, validate_v}
-validate(DL1202_fixed, type = "vertical")
+validate(DL1301_fixed, type = "vertical")
 ```
 
 ... and `period = "dl_cycle"`.
 
 ```{r, validate_v_time}
-validate(DL1202_fixed, type = "vertical", period = "dl_cycle")
+validate(DL1301_fixed, type = "vertical", period = "dl_cycle")
 ```
 
 It is not possible to include as much detail in the vertical output as in the horizontal output without being specific about which state, species, and time scale you wish to assess. Vertical repetition returned in the output from this function can be looked at more closely using `investigate`.
@@ -257,7 +256,7 @@ Did the vertical output from the `validate` function return repeated values? Are
 
 ```{r investigate}
 investigate(
-  DL1202_fixed,
+  DL1301_fixed,
   loc = "AK",
   period_type = "dl_date",
   period = "20201215",
@@ -271,7 +270,7 @@ investigate(
 After data are cleaned and checked for any important issues that would require manual attention, we `proof`:
 
 ```{r, proof}
-DL1202_proofed <- proof(DL1202_fixed, year = 2020)
+DL1301_proofed <- proof(DL1301_fixed, year = 2021)
 ```
 
 Data that are considered irregular are flagged in a new column called "errors". No actual corrections take place in this step; all data remain identical except for the new "errors" column. For each field, values are compared to standard expected formats and if they do not conform, the field name is pasted as a string in the "errors" column. Each row can have from zero errors (NA) to all column names listed. Multiple flags are hyphen delimited.
@@ -283,7 +282,7 @@ The year of the Harvest Information Program must be supplied as a parameter. Thi
 After the download data are proofed, the next step is to fix the data to the best of our ability. Data can be corrected by running the `correct` function on the proofed tibble. You must specify whether the function should return original state bag values (`data = "bag"`) or FWS strata values (`data = "strata"`). The year of the Harvest Information Program must be supplied as a parameter as well. Since the "errors" column is re-created using `correct`, supplying the year is necessary for the same reasons it is required by `proof`.
 
 ```{r correct}
-DL1202_corrected <- correct(DL1202_proofed, year = 2020, data = "bag")
+DL1301_corrected <- correct(DL1301_proofed, year = 2021, data = "bag")
 ```
 
 The following changes are made by the `correct` function:
@@ -341,22 +340,24 @@ The following changes are made by the `correct` function:
         * If the email is invalid (i.e. none<!-- breaklink -->@none, noemail, n/a)
     * Any email that wasn't corrected and doesn't fit the standardized email regex remains flagged
 
-All functions in [Part C](#part-c-data-visualization-and-tabulation) will run on the corrected tibble, `DL1202_corrected`, just as they worked on the example tibble `DL1202_proofed`. Errors can be compared between the proofed stage and corrected stage to get a better idea of which errors were serious (i.e. difficult to correct automatically) and determine how serious errors can be prevented in the future.
+All functions in [Part C](#part-c-data-visualization-and-tabulation) will run on the corrected tibble, `DL1301_corrected`, just as they worked on the example tibble `DL1301_proofed`. Errors can be compared between the proofed stage and corrected stage to get a better idea of which errors were serious (i.e. difficult to correct automatically) and determine how serious errors can be prevented in the future.
 
 ### pullErrors
 
 The `pullErrors` function can be used to view all of the actual values that were flagged as errors in a particular field. In this example, we find that the "dove_bag" field contains entries of "4" and "9", when the only values permissible are 0, 1, 2, 3, and 5.
 
 ```{r pullerrors}
-pullErrors(DL1202_proofed, error = "dove_bag")
+pullErrors(DL1301_proofed, error = "dove_bag")
 ```
 
 ### manualFix
 
-The automated `correct` function cannot always catch and fix every error. To finish the job, `manualFix` function replaces specified inaccurate values with the values you want. It is not recommended that this function only be used after correcting the data; it's best used on a case-by-case basis. In the instance of frame shifts, for example, it would be wise to use after `clean`. Or if problems are only identified after `proof`, you can run `manualFix` on the cleaned data and re-run `proof`. This function is highly flexible and recommended to be used as needed.
+The automated `correct` function cannot always catch and fix every error. To finish the job, `manualFix` function replaces specified inaccurate values with the values you want. It is not recommended that this function only be used after correcting the data; it's best used on a case-by-case basis. If problems are only identified after `proof`, you can run `manualFix` on the cleaned data and re-run `proof`. This function is highly flexible and recommended to be used as needed.
+
+In the below example, a "GS" value in the state field is corrected to "GA".
 
 ```{r manualfix, eval = FALSE}
-manualFix(DL1202_corrected, field = "state", error_value = "GS", correct_value = "GA")
+manualFix(DL1301_corrected, field = "state", error_value = "GS", correct_value = "GA")
 ```
 
 ### write_hip
@@ -365,7 +366,7 @@ After the data have been processed with `correct`, the table is ready to be writ
 
 ```{r, writecsv, eval = FALSE}
 
-write_hip(DL1202_corrected, path = "C:/HIP/all_2019")
+write_hip(DL1301_corrected, path = "C:/HIP/all_2019")
 
 ```
 
@@ -379,11 +380,11 @@ The `writeReport` function can be used to automatically generate an R markdown d
 memory.limit(size = 55000)
 
 writeReport(
-  path = "C:/HIP/DL1202",
+  path = "C:/HIP/DL1301",
   type = "dl_report",
   yr = 2019,
   dir = "C:/HIP/dl_reports",
-  file = "DL1202_report")
+  file = "DL1301_report")
 
 ```
 
@@ -394,7 +395,7 @@ writeReport(
 The `outOfStateHunters` function plots and tabulates how many hunters registered in a download state that does not match the state, province, or territory of their address. This function plots proportion of out-of-staters with counts as bar labels. The tibble contains counts and proportions by state.
 
 ```{r outofstate, fig.cap = "Figure 6. Plot of proportions of out-of-state hunters.", fig.width = 6, fig.height = 4, dpi = 300, out.width = 500, fig.align = "center"}
-outOfStateHunters(DL1202_proofed)
+outOfStateHunters(DL1301_proofed)
 ```
 
 ### youthHunters
@@ -402,7 +403,7 @@ outOfStateHunters(DL1202_proofed)
 The `youthHunters` function returns a table and plot of the number of hunters with birth dates < 16 years from the year of HIP data collection. These data are interesting to explore because hunters younger than 16 years of age are not required to have a migratory bird hunting license in the United States.
 
 ```{r youth, fig.cap = "Figure 7. Plot of proportions of youth hunters.", fig.width = 6, fig.height = 3.5, dpi = 300, out.width = 500, fig.align = "center"}
-youthHunters(DL1202_proofed, year = 2020)
+youthHunters(DL1301_proofed, year = 2021)
 ```
 
 ### errorPlot_fields
@@ -410,19 +411,19 @@ youthHunters(DL1202_proofed, year = 2020)
 The `errorPlot_fields` function can be run on all states...
 
 ```{r errorfieldsplotall, fig.cap = "Figure 2. Plot of all location's errors by field name.", fig.width = 6, fig.height = 3.6, dpi = 300, out.width = 500, fig.align = "center"}
-errorPlot_fields(DL1202_proofed, loc = "all", year = 2020)
+errorPlot_fields(DL1301_proofed, loc = "all", year = 2021)
 ```
 
 ... or it can be limited to just one.
 
 ```{r errorfieldsplotsc, fig.cap = "Figure 3. Plot of all North Carolina's errors by field name.", fig.width = 6, fig.height = 3.6, dpi = 300, out.width = 500, fig.align = "center"}
-errorPlot_fields(DL1202_proofed, loc = "LA", year = 2020)
+errorPlot_fields(DL1301_proofed, loc = "LA", year = 2021)
 ```
 
 The `youth` parameter can be set to TRUE for `errorPlot_fields` to view the proportion of "errors" created by youth hunters. Youth hunters are not included in the error plot if `youth = FALSE` (set as default).
 
 ```{r errorfieldsplotyouth, fig.cap = "Figure 4. Plot of all location's errors by field name, with stacked colors to indicate if there are youth hunters or Canadian zip codes in the data, two common causes of error.", fig.width = 6, fig.height = 3.6, dpi = 300, out.width = 500, fig.align = "center"}
-errorPlot_fields(DL1202_proofed, year = 2020, youth = TRUE)
+errorPlot_fields(DL1301_proofed, year = 2021, youth = TRUE)
 ```
 
 It is possible to add any `ggplot2` components to these plots. For season total data specifically, the plot can be facet_wrapped using either dl_cycle or dl_date. The example below demonstrates how this package's functions can interact with the tidyverse and shows an example of an `errorPlot_fields` facet_wrap (using a subset of 4 download cycles)
@@ -431,7 +432,7 @@ It is possible to add any `ggplot2` components to these plots. For season total 
 errorPlot_fields(
   hipdata2020 %>%
     filter(str_detect(dl_cycle, "0800|0901|0902|1001")),
-    year = 2020) +
+    year = 2021) +
   theme(
     axis.text.x = element_text(angle = 90, vjust = 0, hjust = 1),
     legend.position = "bottom") +
@@ -443,7 +444,7 @@ errorPlot_fields(
 The `errorPlot_states` function plots error proportions per state. You may optionally set a threshold value to only view states above a certain proportion of error. Bar labels are error counts.
 
 ```{r errorplotstates, fig.cap = "Figure 5. Plot of proportion of error by state.", fig.width = 6, fig.height = 4, dpi = 300, out.width = 500, fig.align = "center"}
-errorPlot_states(DL1202_proofed)
+errorPlot_states(DL1301_proofed)
 ```
 
 ### errorPlot_dl
@@ -463,43 +464,43 @@ knitr::include_graphics("image/errorPlot_dl.png")
 The `errorTable` function is a flexible way to obtain error data as a tibble, which can be assessed as needed or exported to create records of download cycle errors. The basic function reports errors by both location and field.
 
 ```{r errortable1}
-errorTable(DL1202_proofed)
+errorTable(DL1301_proofed)
 ```
 
 Errors can be reported by only location by turning off the `field` parameter.
 
 ```{r errortable2}
-errorTable(DL1202_proofed, field = "none")
+errorTable(DL1301_proofed, field = "none")
 ```
 
 Errors can be reported by only field by turning off the `loc` parameter.
 
 ```{r errortable3}
-errorTable(DL1202_proofed, loc = "none")
+errorTable(DL1301_proofed, loc = "none")
 ```
 
 Location can be specified.
 
 ```{r errortable4}
-errorTable(DL1202_proofed, loc = "CA")
+errorTable(DL1301_proofed, loc = "CA")
 ```
 
 Field can be specified.
 
 ```{r errortable5}
-errorTable(DL1202_proofed, field = "suffix")
+errorTable(DL1301_proofed, field = "suffix")
 ```
 
 Total errors for a location can be pulled.
 
 ```{r errortable6}
-errorTable(DL1202_proofed, loc = "CA", field = "none")
+errorTable(DL1301_proofed, loc = "CA", field = "none")
 ```
 
 Total errors for a field in a particular location can be pulled.
 
 ```{r errortable7}
-errorTable(DL1202_proofed, loc = "CA", field = "dove_bag")
+errorTable(DL1301_proofed, loc = "CA", field = "dove_bag")
 ```
 
 ### redFlags
@@ -508,14 +509,14 @@ errorTable(DL1202_proofed, loc = "CA", field = "dove_bag")
 States with an unacceptable level of error can be pulled into a tibble. The tibble contains information pertaining to state, the count of errors from that state, the number of correct records from that state, the proportion of error per state, and a "flag" column that prints the threshold used. Any threshold can be supplied; in this example, we see which states had more than 3% error.
 
 ```{r redflags1}
-redFlags(DL1202_proofed, type = "state", threshold = 0.03)
+redFlags(DL1301_proofed, type = "state", threshold = 0.03)
 ```
 
 <b>By field.</b>
 The same can be done for data fields. In this example, we see which fields had more than 1% error.
 
 ```{r redflags2}
-redFlags(DL1202_proofed, type = "field", threshold = 0.01)
+redFlags(DL1301_proofed, type = "field", threshold = 0.01)
 ```
 
 ## Troubleshooting
@@ -544,7 +545,7 @@ knitr::include_graphics("image/parsing_failure_2.png")
 
 Some of these functions require a lot of memory to run. To help your R session process these data, especially when working with the large season totals, you can do a few things:
 
-1. Remove objects from the environment. If you have already run `read_hip`, `clean`, and `proof`, you may no longer need your original dataframe or your cleaned dataframe, since most error checking functions work from the proofed or corrected versions of the data. To remove an unneeded object like the cleaned dataframe, run `rm(DL1202_clean)`.
+1. Remove objects from the environment. If you have already run `read_hip`, `clean`, and `proof`, you may no longer need your original dataframe or your cleaned dataframe, since most error checking functions work from the proofed or corrected versions of the data. To remove an unneeded object like the cleaned dataframe, run `rm(DL1301_clean)`.
 
 2. Check your memory using `memory.limit()`
 
