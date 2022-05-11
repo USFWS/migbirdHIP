@@ -250,10 +250,10 @@ read_hip <-
 
       # Return a message for records with blank or NA values in firstname,
       # lastname, state, or birth date
-      if(TRUE %in% is.na(pulled_data$X2) |
-         TRUE %in% is.na(pulled_data$X4) |
-         TRUE %in% is.na(pulled_data$X8) |
-         TRUE %in% is.na(pulled_data$X10)){
+      if(TRUE %in% is.na(pulled_data$firstname) |
+         TRUE %in% is.na(pulled_data$lastname) |
+         TRUE %in% is.na(pulled_data$state) |
+         TRUE %in% is.na(pulled_data$birth_date)){
         message(
           paste0("Error: One or more NA values detected in ID fields ",
                  "(firstname, lastname, state, birth date)."))
@@ -261,16 +261,19 @@ read_hip <-
         print(
           pulled_data %>%
             filter(
-              is.na(X2)|
-                is.na(X4)|
-                is.na(X8)|
-                is.na(X10)) %>%
-            select(dl_state, X2, X4, X8, X10) %>%
+              is.na(firstname)|
+                is.na(lastname)|
+                is.na(state)|
+                is.na(birth_date)) %>%
+            select(dl_state, firstname, lastname, state, birth_date) %>%
             mutate_at(
-              vars(matches("X2|X4|X8|X10")),
+              vars(matches("firstname|lastname|state|birth_date")),
               ~ifelse(is.na(.), "1", NA) %>% as.numeric(.)) %>%
             mutate(
-              sum = rowSums(across(matches("X2|X4|X8|X10")), na.rm = T),
+              sum =
+                rowSums(
+                  across(matches("firstname|lastname|state|birth_date")),
+                  na.rm = T),
               prop = sum/4) %>%
             group_by(dl_state) %>%
             summarize(
