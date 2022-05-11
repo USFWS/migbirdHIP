@@ -233,14 +233,16 @@ read_hip <-
                   str_remove(source_file, "^\\/"),
                 # Add the download cycle as a column
                 dl_cycle =
-                  str_extract(pull(files[i, ]), "(?<=DL).+(?=\\/)")) %>%
-              # Add a download key
-              group_by(dl_date, dl_state) %>%
-              mutate(dl_key = paste0("dl_", cur_group_id())) %>%
-              ungroup() %>%
-              # Add a record key
-              mutate(record_key = paste0("record_", row_number()))
+                  str_extract(pull(files[i, ]), "(?<=DL).+(?=\\/)"))
           })
+
+      pulled_data %<>%
+        # Add a download key
+        group_by(dl_date, dl_state) %>%
+        mutate(dl_key = paste0("dl_", cur_group_id())) %>%
+        ungroup() %>%
+        # Add a record key
+        mutate(record_key = paste0("record_", row_number()))
 
       # Remove duplicates (or not)
       if(unique == TRUE){
