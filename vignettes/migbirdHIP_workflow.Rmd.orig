@@ -84,7 +84,7 @@ The `read_hip` function allows data to be read in for all states (e.g. `state = 
 * Converts "N/A" strings to NA
 * Creates a dl_state, dl_date, dl_cycle, and source_file column from each .txt filename
 * Creates a dl_key column by grouping data by dl_state and dl_date
-* Creates a record_key column (unique identifier for each row, used later by `shiftFix`)
+* Creates a record_key column (unique identifier for each row, used later by [shiftFix](#shiftFix))
 
 We will use the default settings to read in all of the states from download 1301.
 
@@ -236,6 +236,13 @@ validate(DL1301_fixed, type = "horizontal")
 
 The two time period options to assess vertical repetition are `period = "dl_date"` (used automatically)...
 
+```{r, validate_make_bad_values, echo = F}
+# Make vertical repitition in the data (for example purposes) since there are none!
+DL1301_fixed <-
+  DL1301_fixed %>%
+  mutate(ducks_bag = ifelse(dl_state == "AK", 3, ducks_bag))
+```
+
 ```{r, validate_v}
 validate(DL1301_fixed, type = "vertical")
 ```
@@ -259,8 +266,8 @@ investigate(
   DL1301_fixed,
   loc = "AK",
   period_type = "dl_date",
-  period = "20201215",
-  species = "dove_bag")
+  period = "20211228",
+  species = "ducks_bag")
 ```
 
 ## Part B: Data Proofing and Correction

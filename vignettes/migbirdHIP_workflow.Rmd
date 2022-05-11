@@ -83,7 +83,7 @@ The `read_hip` function allows data to be read in for all states (e.g. `state = 
 * Converts "N/A" strings to NA
 * Creates a dl_state, dl_date, dl_cycle, and source_file column from each .txt filename
 * Creates a dl_key column by grouping data by dl_state and dl_date
-* Creates a record_key column (unique identifier for each row, used later by `shiftFix`)
+* Creates a record_key column (unique identifier for each row, used later by [shiftFix](#shiftFix))
 
 We will use the default settings to read in all of the states from download 1301.
 
@@ -310,7 +310,7 @@ validate(DL1301_fixed, type = "horizontal")
 ##  4 WV20211229.txt 2         183     294       0.622
 ##  5 IN20211229.txt 1         406     690       0.588
 ##  6 MN20211229.txt 1         171     297       0.576
-##  7 WA20211229.txt 1         816    1460       0.559
+##  7 WA20211229.txt 1         815    1460       0.558
 ##  8 WA20211215.txt 1         937    1737       0.539
 ##  9 KY20211228.txt 1         528     984       0.537
 ## 10 NE20211217.txt 1         477     903       0.528
@@ -322,12 +322,17 @@ validate(DL1301_fixed, type = "horizontal")
 The two time period options to assess vertical repetition are `period = "dl_date"` (used automatically)...
 
 
+
+
 ```r
 validate(DL1301_fixed, type = "vertical")
 ```
 
 ```
-## Data are good to go! No vertical repetition detected.
+## # A tibble: 1 x 4
+##   dl_state dl_date  species_grp v_repeated
+##   <chr>    <chr>    <chr>            <int>
+## 1 AK       20211228 ducks_bag           65
 ```
 
 ... and `period = "dl_cycle"`.
@@ -338,7 +343,10 @@ validate(DL1301_fixed, type = "vertical", period = "dl_cycle")
 ```
 
 ```
-## Data are good to go! No vertical repetition detected.
+## # A tibble: 1 x 4
+##   dl_state dl_cycle species_grp v_repeated
+##   <chr>    <chr>    <chr>            <int>
+## 1 AK       1301     ducks_bag           65
 ```
 
 It is not possible to include as much detail in the vertical output as in the horizontal output without being specific about which state, species, and time scale you wish to assess. Vertical repetition returned in the output from this function can be looked at more closely using `investigate`.
@@ -355,12 +363,15 @@ investigate(
   DL1301_fixed,
   loc = "AK",
   period_type = "dl_date",
-  period = "20201215",
-  species = "dove_bag")
+  period = "20211228",
+  species = "ducks_bag")
 ```
 
 ```
-## Are you sure you entered all of the parameters correctly?
+## # A tibble: 1 x 2
+##   ducks_bag source_file   
+##   <chr>     <chr>         
+## 1 3         AK20211228.txt
 ```
 
 ## Part B: Data Proofing and Correction
