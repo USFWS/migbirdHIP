@@ -231,9 +231,8 @@ clean <-
             str_detect(firstname, "(?<=\\s)ESQ$") ~
               str_remove(firstname, "(?<=\\s)ESQ$"),
             TRUE ~ firstname),
-        # Remove anything that's not a letter or number from middle initial col
-        # Preserve numbers in case of a frame shift
-        middle = ifelse(str_detect(middle, "[^A-Z|0-9]"), NA, middle),
+        # Remove anything that's not a letter from middle initial col
+        middle = ifelse(str_detect(middle, "[^A-Z]"), NA, middle),
         # Do a little P.O. Box string cleaning
         address =
           case_when(
