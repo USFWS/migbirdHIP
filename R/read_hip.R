@@ -268,13 +268,14 @@ read_hip <-
                 is.na(state)|
                 is.na(birth_date)) %>%
             select(dl_state, firstname, lastname, state, birth_date) %>%
+            rename(X = state) %>%
             mutate_at(
-              vars(matches("firstname|lastname|state|birth_date")),
+              vars(matches("firstname|lastname|X|birth_date")),
               ~ifelse(is.na(.), "1", NA) %>% as.numeric(.)) %>%
             mutate(
               sum =
                 rowSums(
-                  across(matches("firstname|lastname|state|birth_date")),
+                  across(matches("firstname|lastname|X|birth_date")),
                   na.rm = T),
               prop = sum/4) %>%
             group_by(dl_state) %>%
