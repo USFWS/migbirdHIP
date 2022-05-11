@@ -17,6 +17,7 @@ vignette: >
 - [Part A: Data Import and Cleaning](#part-a-data-import-and-cleaning)
     - [read_hip](#read_hip)
     - [renameFiles](#renamefiles)
+    - [shiftFix](#shiftFix)
     - [clean](#clean)
     - [findDuplicates](#findduplicates)
     - [fixDuplicates](#fixduplicates)
@@ -72,9 +73,21 @@ knitr::include_graphics("image/migbirdHIP_flowchart.svg")
 
 ### read_hip
 
-The first step is to import .txt files containing HIP data. Files must adhere to a 10-digit naming convention in order to successfully import data using the `read_hip` function; if files were submitted with the old 5-digit format, run [renameFiles](#renamefiles) first.
+The first step is to import fixed-width .txt files containing HIP data. Files must adhere to a 10-digit naming convention in order to successfully import data using the `read_hip` function; if files were submitted with the old 5-digit format, run [renameFiles](#renamefiles) first.
 
-The `read_hip` function allows data to be read in for just a specific state or for an entire season (parameters "state" and "season", respectively). We will use the default settings to read in all of the states from download 1202.
+The `read_hip` function allows data to be read in for all states (e.g. `state = NA`, the default), for just a specific state (e.g. `state = "DE"`), a specific download (e.g. `season = FALSE`, the default) or data over an entire season (e.g. `season = TRUE`). Use `unique = TRUE` to read in a frame without exact duplicates, or `unique = FALSE` for all records. This function also:
+
+* Returns a message if one or more files are blank in the directory
+* Return a message by download state for records with blank or NA values in firstname, lastname, state, or birth date
+* Guesses encodings of .txt files and prints a table of any that are not UTF-8
+* Checks download state abbreviations in the .txt file names
+* Trims whitespace on all values
+* Converts "N/A" strings to NA
+* Creates a dl_state, dl_date, dl_cycle, and source_file column from each .txt filename
+* Creates a dl_key column by grouping data by dl_state and dl_date
+* Creates a record_key column (unique identifier for each row, used later by `shiftFix`)
+
+We will use the default settings to read in all of the states from download 1202.
 
 ```{r, readhip, message = FALSE, warning = FALSE}
 library(migbirdHIP)
@@ -92,26 +105,81 @@ The `renameFiles` function was incorporated into this package for special cases.
 renameFiles(path = "C:/HIP/DL1202")
 ```
 
-### clean
+### shiftFix
 
-After data are read, we `clean`:
+The `shiftFix` function moves row values by a designated number of characters across a designated span of columns. It takes parameters `x`, `record_id`, `first_col`, `last_col`, and `n_shift`. For example, if we wanted to modify the 117th row (with row id = "row_117") in a dataframe called "ducks" from column "wing" to column "tail", to shift the data 2 characters to the left, we would run:
 
-```{r, clean}
-DL1202_clean <- clean(DL1202)
+`shiftFix(x = ducks, record_id = "row_117", first_col = "wing", last_col = "tail", n_shift = 2)`
+
+For HIP processing, this function is used in conjunction with other R code to achieve a final dataframe.
+
+```{r shiftFix}
+
+# Snooping
+snoop <-
+  DL1202 %>%
+  filter(
+    !str_detect(birth_date, "^[0-9]{2}\\/[0-9]{2}\\/[0-9]{4}$")) %>%
+  mutate(n_shift = str_length(str_extract(issue_date, "^[0-9]+(?=\\/)")) - 2) %>%
+  relocate(record_key, .before = "title") %>%
+  relocate(source_file, .before = "record_key") %>%
+  select(record_key, n_shift) %>%
+  print()
+
+# Correct frame shift for x number of records
+unshifted <-
+  map_dfr(
+    1:length(snoop$record_key),
+    ~shiftFix(
+      # Fix the raw data file
+      DL1202,
+      # For x record id
+      snoop$record_key[.x],
+      # Shift from state col to email col
+      "state",
+      "email",
+      # Shift n number of characters
+      snoop$n_shift[.x])) %>%
+  # Delete the 0s from end of zip
+  mutate(zip = str_remove(zip, "0$")) %>%
+  # Add 0s to the beginning of birth_date
+  mutate(
+    birth_date =
+      ifelse(
+        str_detect(birth_date, "^[0-9]{1}\\/"),
+        paste0("0", birth_date),
+        birth_date))
+
+DL1202_unshifted <-
+  DL1202 %>%
+  filter(!record_key %in% unshifted$record_key) %>%
+  bind_rows(unshifted)
 ```
 
-This function renames columns and does simple mutations. Importantly, records are discarded if first name, last name, birth date, address, state of residence, OR city AND zip are missing.
+### clean
+
+After data are read and unshifted, we `clean`:
+
+```{r, clean}
+DL1202_clean <- clean(DL1202_unshifted)
+```
+
+This function does simple data cleaning. Importantly, records are discarded if first name, last name, birth date, address, state of residence, OR city AND zip are missing.
 
 Other quick fixes include:
 
 * Converts names to uppercase
 * Moves suffixes from first or last name columns to the appropriate suffix column
-* Removes punctuation from middle initial column
-* Removes ending hyphen from zip codes with only 5 digits
-* Inserts a hyphen in continuous 9 digit zip code values
-* Inserts a hyphen in 9 digit zip codes with a middle space
-* Deletes trailing -0000 and -____ from zip codes
-* Trims whitespace on all values
+* If any value other than a letter is in the middle initial column, it's set to NA
+* Zip code correction
+    * Removes ending hyphen from zip codes with only 5 digits
+    * Inserts a hyphen in continuous 9 digit zip code values
+    * Inserts a hyphen in 9 digit zip codes with a middle space
+    * Deletes trailing -0000 and -____ from zip codes
+* Address cleaning
+    * Deletes leading "." in addresses (a spillover character from suffix)
+    * Attempt at P.O. Box standardization, by changing "P.O.BOX" to "P.O. BOX" and "PO BOX" to "P.O. BOX"
+* Trims whitespace on all values (again)
 
 ### findDuplicates
 

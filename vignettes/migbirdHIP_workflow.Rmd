@@ -17,6 +17,7 @@ vignette: >
 - [Part A: Data Import and Cleaning](#part-a-data-import-and-cleaning)
     - [read_hip](#read_hip)
     - [renameFiles](#renamefiles)
+    - [shiftFix](#shiftFix)
     - [clean](#clean)
     - [findDuplicates](#findduplicates)
     - [fixDuplicates](#fixduplicates)
@@ -71,9 +72,21 @@ The flowchart below is a visual guide to the order in which functions are used. 
 
 ### read_hip
 
-The first step is to import .txt files containing HIP data. Files must adhere to a 10-digit naming convention in order to successfully import data using the `read_hip` function; if files were submitted with the old 5-digit format, run [renameFiles](#renamefiles) first.
+The first step is to import fixed-width .txt files containing HIP data. Files must adhere to a 10-digit naming convention in order to successfully import data using the `read_hip` function; if files were submitted with the old 5-digit format, run [renameFiles](#renamefiles) first.
 
-The `read_hip` function allows data to be read in for just a specific state or for an entire season (parameters "state" and "season", respectively). We will use the default settings to read in all of the states from download 1202.
+The `read_hip` function allows data to be read in for all states (e.g. `state = NA`, the default), for just a specific state (e.g. `state = "DE"`), a specific download (e.g. `season = FALSE`, the default) or data over an entire season (e.g. `season = TRUE`). Use `unique = TRUE` to read in a frame without exact duplicates, or `unique = FALSE` for all records. This function also:
+
+* Returns a message if one or more files are blank in the directory
+* Return a message by download state for records with blank or NA values in firstname, lastname, state, or birth date
+* Guesses encodings of .txt files and prints a table of any that are not UTF-8
+* Checks download state abbreviations in the .txt file names
+* Trims whitespace on all values
+* Converts "N/A" strings to NA
+* Creates a dl_state, dl_date, dl_cycle, and source_file column from each .txt filename
+* Creates a dl_key column by grouping data by dl_state and dl_date
+* Creates a record_key column (unique identifier for each row, used later by `shiftFix`)
+
+We will use the default settings to read in all of the states from download 1202.
 
 
 ```r
@@ -87,18 +100,10 @@ DL1202 <- read_hip("C:/HIP/DL1202")
 ##   filepath                     encoding   confidence
 ##   <chr>                        <chr>           <dbl>
 ## 1 C:/HIP/DL1202/SC20201202.txt ISO-8859-1       0.28
-## # A tibble: 9 x 3
+## # A tibble: 1 x 3
 ##   dl_state mean_prop     n
-##   <chr>        <dbl> <int>
-## 1 FL            0.25     1
-## 2 GA            0.25    12
-## 3 IA            0.25     7
-## 4 ID            0.25     2
-## 5 MA            0.25     3
-## 6 NE            0.25     1
-## 7 OK            0.25    53
-## 8 TN            0.25    25
-## 9 VA            0.25     2
+##      <dbl>     <dbl> <int>
+## 1       NA      0.25   107
 ## # A tibble: 1 x 2
 ##   dl_state source_file   
 ##   <chr>    <chr>         
@@ -121,27 +126,106 @@ The `renameFiles` function was incorporated into this package for special cases.
 renameFiles(path = "C:/HIP/DL1202")
 ```
 
-### clean
+### shiftFix
 
-After data are read, we `clean`:
+The `shiftFix` function moves row values by a designated number of characters across a designated span of columns. It takes parameters `x`, `record_id`, `first_col`, `last_col`, and `n_shift`. For example, if we wanted to modify the 117th row (with row id = "row_117") in a dataframe called "ducks" from column "wing" to column "tail", to shift the data 2 characters to the left, we would run:
+
+`shiftFix(x = ducks, record_id = "row_117", first_col = "wing", last_col = "tail", n_shift = 2)`
+
+For HIP processing, this function is used in conjunction with other R code to achieve a final dataframe.
 
 
 ```r
-DL1202_clean <- clean(DL1202)
+# Snooping
+snoop <-
+  DL1202 %>%
+  filter(
+    !str_detect(birth_date, "^[0-9]{2}\\/[0-9]{2}\\/[0-9]{4}$")) %>%
+  mutate(n_shift = str_length(str_extract(issue_date, "^[0-9]+(?=\\/)")) - 2) %>%
+  relocate(record_key, .before = "title") %>%
+  relocate(source_file, .before = "record_key") %>%
+  select(record_key, n_shift) %>%
+  print()
 ```
 
-This function renames columns and does simple mutations. Importantly, records are discarded if first name, last name, birth date, address, state of residence, OR city AND zip are missing.
+```
+## Error: Problem with `mutate()` column `n_shift`.
+## i `n_shift = str_length(str_extract(issue_date, "^[0-9]+(?=\\/)")) - 2`.
+## x could not find function "str_length"
+```
+
+```r
+# Correct frame shift for x number of records
+unshifted <-
+  map_dfr(
+    1:length(snoop$record_key),
+    ~shiftFix(
+      # Fix the raw data file
+      DL1202,
+      # For x record id
+      snoop$record_key[.x],
+      # Shift from state col to email col
+      "state",
+      "email",
+      # Shift n number of characters
+      snoop$n_shift[.x])) %>%
+  # Delete the 0s from end of zip
+  mutate(zip = str_remove(zip, "0$")) %>%
+  # Add 0s to the beginning of birth_date
+  mutate(
+    birth_date =
+      ifelse(
+        str_detect(birth_date, "^[0-9]{1}\\/"),
+        paste0("0", birth_date),
+        birth_date))
+```
+
+```
+## Error in map(.x, .f, ...): object 'snoop' not found
+```
+
+```r
+DL1202_unshifted <-
+  DL1202 %>%
+  filter(!record_key %in% unshifted$record_key) %>%
+  bind_rows(unshifted)
+```
+
+```
+## Error: Problem with `filter()` input `..1`.
+## i Input `..1` is `!record_key %in% unshifted$record_key`.
+## x object 'unshifted' not found
+```
+
+### clean
+
+After data are read and unshifted, we `clean`:
+
+
+```r
+DL1202_clean <- clean(DL1202_unshifted)
+```
+
+```
+## Error in filter(., !is.na(firstname)): object 'DL1202_unshifted' not found
+```
+
+This function does simple data cleaning. Importantly, records are discarded if first name, last name, birth date, address, state of residence, OR city AND zip are missing.
 
 Other quick fixes include:
 
 * Converts names to uppercase
 * Moves suffixes from first or last name columns to the appropriate suffix column
-* Removes punctuation from middle initial column
-* Removes ending hyphen from zip codes with only 5 digits
-* Inserts a hyphen in continuous 9 digit zip code values
-* Inserts a hyphen in 9 digit zip codes with a middle space
-* Deletes trailing -0000 and -____ from zip codes
-* Trims whitespace on all values
+* If any value other than a letter is in the middle initial column, it's set to NA
+* Zip code correction
+    * Removes ending hyphen from zip codes with only 5 digits
+    * Inserts a hyphen in continuous 9 digit zip code values
+    * Inserts a hyphen in 9 digit zip codes with a middle space
+    * Deletes trailing -0000 and -____ from zip codes
+* Address cleaning
+    * Deletes leading "." in addresses (a spillover character from suffix)
+    * Attempt at P.O. Box standardization, by changing "P.O.BOX" to "P.O. BOX" and "PO BOX" to "P.O. BOX"
+* Trims whitespace on all values (again)
 
 ### findDuplicates
 
@@ -160,20 +244,26 @@ findDuplicates(DL1202_clean, return = "table")
 ```
 
 ```
-## # A tibble: 24 x 2
-##    dupl                     count
-##    <chr>                    <int>
-##  1 address                      4
-##  2 address-city-email           1
-##  3 address-email                1
-##  4 address-issue_date           1
-##  5 address-issue_date-email     1
-##  6 bag                         14
-##  7 city-issue_date              1
-##  8 dl_date                     16
-##  9 email                       13
-## 10 hunt_mig_birds               8
-## # ... with 14 more rows
+## # A tibble: 17 x 2
+##    dupl                      count
+##    <chr>                     <int>
+##  1 address                       1
+##  2 address-city-email            1
+##  3 address-issue_date            1
+##  4 address-issue_date-email      1
+##  5 bag                          91
+##  6 email                         3
+##  7 hunt_mig_birds                5
+##  8 issue_date                   13
+##  9 issue_date-email              1
+## 10 issue_date-hunt_mig_birds     3
+## 11 middle-address                2
+## 12 middle-address-email          2
+## 13 middle-issue_date             1
+## 14 middle-issue_date-email       1
+## 15 middle-suffix                 1
+## 16 suffix-issue_date             1
+## 17 zip                           1
 ```
 
 ### fixDuplicates
@@ -334,16 +424,16 @@ DL1202_corrected <- correct(DL1202_proofed, year = 2020, data = "bag")
 ## # A tibble: 517 x 4
 ##    record_key  zip   state zipState
 ##    <chr>       <chr> <chr> <chr>   
-##  1 record_292  32525 AL    FL      
-##  2 record_330  34044 AL    AA      
-##  3 record_1935 15425 AL    PA      
-##  4 record_3403 63804 AL    MO      
-##  5 record_5325 36564 MS    AL      
-##  6 record_6417 79556 FL    TX      
-##  7 record_7090 65466 AL    MO      
-##  8 record_7183 44023 AR    OH      
-##  9 record_7223 38655 TN    MS      
-## 10 record_7236 76182 AR    TX      
+##  1 record_186  32525 AL    FL      
+##  2 record_224  34044 AL    AA      
+##  3 record_1829 15425 AL    PA      
+##  4 record_3297 63804 AL    MO      
+##  5 record_5219 36564 MS    AL      
+##  6 record_6311 79556 FL    TX      
+##  7 record_6984 65466 AL    MO      
+##  8 record_4    44023 AR    OH      
+##  9 record_44   38655 TN    MS      
+## 10 record_57   76182 AR    TX      
 ## # ... with 507 more rows
 ```
 
@@ -465,23 +555,6 @@ outOfStateHunters(DL1202_proofed)
 
 <img src="figure/outofstate-1.png" title="Figure 6. Plot of proportions of out-of-state hunters." alt="Figure 6. Plot of proportions of out-of-state hunters." width="500" style="display: block; margin: auto;" />
 
-```
-## # A tibble: 37 x 3
-##    dl_state n_total outofstate_prop
-##    <chr>      <int>           <dbl>
-##  1 AK           106            0.41
-##  2 AL          7049            0.15
-##  3 AR          6567            0.65
-##  4 CA          3998            0.06
-##  5 CO          1748            0.09
-##  6 CT           286            0.12
-##  7 FL          3652            0.09
-##  8 GA          3577            0.12
-##  9 IA          3229            0.05
-## 10 ID          1872            0.22
-## # ... with 27 more rows
-```
-
 ### youthHunters
 
 The `youthHunters` function returns a table and plot of the number of hunters with birth dates < 16 years from the year of HIP data collection. These data are interesting to explore because hunters younger than 16 years of age are not required to have a migratory bird hunting license in the United States.
@@ -492,13 +565,6 @@ youthHunters(DL1202_proofed, year = 2020)
 ```
 
 <img src="figure/youth-1.png" title="Figure 7. Plot of proportions of youth hunters." alt="Figure 7. Plot of proportions of youth hunters." width="500" style="display: block; margin: auto;" />
-
-```
-## # A tibble: 1 x 4
-##   dl_state registered_youth total_registered youth_proportion
-##   <chr>               <int>            <int>            <dbl>
-## 1 ND                    369              600            0.615
-```
 
 ### errorPlot_fields
 
@@ -632,7 +698,7 @@ errorTable(DL1202_proofed, loc = "none")
 ##  4 cranes                    49
 ##  5 dove_bag                 473
 ##  6 ducks_bag               3226
-##  7 email                   6515
+##  7 email                   6516
 ##  8 firstname                150
 ##  9 geese_bag                 78
 ## 10 hunt_mig_birds            19
@@ -735,7 +801,7 @@ redFlags(DL1202_proofed, type = "field", threshold = 0.01)
 ##   errors     count_errors count_correct proportion flag        
 ##   <chr>             <int>         <int>      <dbl> <chr>       
 ## 1 birth_date         7533        113653     0.0622 error > 0.01
-## 2 email              6515        114671     0.0538 error > 0.01
+## 2 email              6516        114670     0.0538 error > 0.01
 ## 3 ducks_bag          3226        117960     0.0266 error > 0.01
 ```
 
