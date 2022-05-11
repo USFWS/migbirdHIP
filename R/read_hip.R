@@ -22,6 +22,8 @@
 #' @importFrom dplyr rename
 #' @importFrom dplyr mutate_all
 #' @importFrom dplyr na_if
+#' @importFrom dplyr cur_group_id
+#' @importFrom dplyr row_number
 #' @importFrom purrr map_dfr
 #' @importFrom purrr map_df
 #' @importFrom readr read_fwf
@@ -231,8 +233,13 @@ read_hip <-
                   str_remove(source_file, "^\\/"),
                 # Add the download cycle as a column
                 dl_cycle =
-                  str_extract(pull(files[i, ]), "(?<=DL).+(?=\\/)")
-              )
+                  str_extract(pull(files[i, ]), "(?<=DL).+(?=\\/)")) %>%
+              # Add a download key
+              group_by(dl_date, dl_state) %>%
+              mutate(dl_key = paste0("dl_", cur_group_id())) %>%
+              ungroup() %>%
+              # Add a record key
+              mutate(record_key = paste0("record_", row_number()))
           })
 
       # Remove duplicates (or not)
