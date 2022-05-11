@@ -1,9 +1,8 @@
 #' Clean data
 #'
-#' After reading the data with \code{\link{read_hip}}, rename the column names and do preliminary cleaning of firstname, lastname, middle initial, and suffixes.
+#' After reading the data with \code{\link{read_hip}}, do basic data cleaning.
 #'
 #' @importFrom dplyr %>%
-#' @importFrom dplyr rename
 #' @importFrom dplyr group_by
 #' @importFrom dplyr mutate
 #' @importFrom dplyr cur_group_id
@@ -11,7 +10,6 @@
 #' @importFrom dplyr case_when
 #' @importFrom dplyr row_number
 #' @importFrom dplyr mutate_all
-#' @importFrom dplyr na_if
 #' @importFrom dplyr filter
 #' @importFrom dplyr select
 #' @importFrom stringr str_to_upper
@@ -35,38 +33,6 @@ clean <-
 
     cleaned_x <-
       x %>%
-      rename(
-        title = X1,
-        firstname = X2,
-        middle = X3,
-        lastname = X4,
-        suffix = X5,
-        address = X6,
-        city = X7,
-        state = X8,
-        zip = X9,
-        birth_date = X10,
-        # Edited X11 to specific .data$X11 to avoid error:
-        # "Found an obsolete/platform-specific call in: 'tidy'"
-        # "Found the platform-specific device: 'X11'"
-        issue_date = .data$X11,
-        hunt_mig_birds = X12,
-        ducks_bag = X13,
-        geese_bag = X14,
-        dove_bag = X15,
-        woodcock_bag = X16,
-        coots_snipe = X17,
-        rails_gallinules = X18,
-        cranes = X19,
-        band_tailed_pigeon = X20,
-        brant = X21,
-        seaducks = X22,
-        registration_yr = X23,
-        email = X24) %>%
-      # Delete white space around strings
-      mutate_all(str_trim) %>%
-      # Convert N/A strings to NA
-      na_if("N/A") %>%
       # Add a download key
       group_by(dl_date, dl_state) %>%
       mutate(dl_key = paste0("dl_", cur_group_id())) %>%
@@ -279,6 +245,8 @@ clean <-
         # Do a little P.O. Box string cleaning
         address =
           case_when(
+            str_detect(address, "^\\.") ~
+              str_remove(address, "^\\."),
             str_detect(address, "P.O.BOX ") ~
               str_replace(address, "P.O.BOX ", "P.O. BOX "),
             str_detect(address, "PO BOX ") ~
