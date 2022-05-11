@@ -5,10 +5,8 @@
 #' @importFrom dplyr %>%
 #' @importFrom dplyr group_by
 #' @importFrom dplyr mutate
-#' @importFrom dplyr cur_group_id
 #' @importFrom dplyr ungroup
 #' @importFrom dplyr case_when
-#' @importFrom dplyr row_number
 #' @importFrom dplyr mutate_all
 #' @importFrom dplyr filter
 #' @importFrom dplyr select
@@ -33,10 +31,6 @@ clean <-
 
     cleaned_x <-
       x %>%
-      # Add a download key
-      group_by(dl_date, dl_state) %>%
-      mutate(dl_key = paste0("dl_", cur_group_id())) %>%
-      ungroup() %>%
       # Filter out records if firstname, lastname, city of residence, state of
       # residence, or date of birth are missing -- records discarded because
       # these are needed to identify individuals
@@ -50,8 +44,6 @@ clean <-
       filter(!is.na(address)) %>%
       filter(!is.na(city) & !is.na(zip)) %>%
       mutate(
-        # Add a record key
-        record_key = paste0("record_", row_number()),
         # Names to uppercase for easier stringr
         firstname = str_to_upper(firstname),
         lastname = str_to_upper(lastname),
