@@ -506,7 +506,7 @@ After the data have been processed with `correct`, the table is ready to be writ
 
 
 ```r
-write_hip(DL1301_corrected, path = "C:/HIP/all_2019")
+write_hip(DL1301_corrected, path = "C:/HIP/processed_data/")
 ```
 
 ### writeReport
