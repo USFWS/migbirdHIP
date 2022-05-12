@@ -53,8 +53,6 @@ youthHunters <-
         filter(!is.na(dl_state)) %>%
         # Calculate proportion
         mutate(youth_proportion = registered_youth/total_registered) %>%
-      # Round proportion to limit decimal places
-      mutate(youth_proportion = round(youth_proportion, digits = 2)) %>%
       filter(!is.na(dl_state)) %>%
       # Plot
       ggplot() +
