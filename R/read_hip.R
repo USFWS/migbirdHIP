@@ -214,7 +214,7 @@ read_hip <-
                 registration_yr = X23,
                 email = X24) %>%
               # Delete white space around strings
-              mutate_all(str_trim) %>%
+              # mutate_all(str_trim) %>%
               # Convert N/A strings to NA
               na_if("N/A") %>%
               mutate(
