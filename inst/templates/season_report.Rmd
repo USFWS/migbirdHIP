@@ -587,7 +587,15 @@ if(et$error[1] != "birth_date"){
     arrange(desc(count))
 }
 
-DT::datatable(err1)
+if(et$error[1] == "email"){
+  DT::datatable(
+    err1 %>% 
+      filter(count > 3))
+}else{
+  DT::datatable(err1)
+}
+
+rm(err1)
 ```
 
 Values associated with error in `r et$error[2]`
@@ -617,7 +625,15 @@ if(et$error[2] != "birth_date"){
     arrange(desc(count))
 }
 
-DT::datatable(err2)
+if(et$error[2] == "email"){
+  DT::datatable(
+    err2 %>% 
+      filter(count > 3))
+}else{
+  DT::datatable(err2)
+}
+
+rm(err2)
 ```
 
 Values associated with error in `r et$error[3]`
@@ -647,7 +663,15 @@ if(et$error[3] != "birth_date"){
     arrange(desc(count))
 }
 
-DT::datatable(err3)
+if(et$error[3] == "email"){
+  DT::datatable(
+    err3 %>% 
+      filter(count > 3))
+}else{
+  DT::datatable(err3)
+}
+
+rm(err3)
 ```
 
 ## High error proportions
