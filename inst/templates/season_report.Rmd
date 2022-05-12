@@ -40,15 +40,9 @@ rm(dirs)
 # Run the read function
 dl_data <- read_hip(params$comp_path, season = TRUE) 
 
-# Run the clean function
-cleaned_data <- clean(dl_data)
-
-# Run the fixDuplicates function
-fixed_data <- fixDuplicates(cleaned_data)
-
 # Standardize birth date format
 fixed_dates_data <-
-  fixed_data %>% 
+  dl_data %>% 
   mutate(
     birth_date2 =
       ifelse(
@@ -67,6 +61,8 @@ fixed_dates_data <-
   rename(birth_date = birth_date3) %>%
   relocate(birth_date, .before = "issue_date") 
 
+rm(dl_data)
+
 # Snoop for line shift errors
 error_keys <- 
   fixed_dates_data %>% 
@@ -82,7 +78,7 @@ error_keys <-
 unshifted <-
   map_dfr(
     1:length(error_keys),
-    ~shiftFix(fixed_data, error_keys[.x], "state", "email", 1)
+    ~shiftFix(fixed_dates_data, error_keys[.x], "state", "email", 1)
   ) %>% 
   # Delete the 0s from end of zip
   mutate(zip = str_remove(zip, "0$")) %>%
@@ -93,7 +89,6 @@ unshifted <-
         paste0("0", birth_date),
         birth_date))
 
-rm(fixed_data)
 rm(error_keys)
 
 unshifted_data <-
@@ -101,18 +96,28 @@ unshifted_data <-
   filter(!record_key %in% unshifted$record_key) %>%
   bind_rows(unshifted) 
 
-rm(unshifted)
 rm(fixed_dates_data)
+rm(unshifted)
+
+# Run the clean function
+cleaned_data <- clean(unshifted_data)
+
+rm(unshifted_data)
+
+# Run the fixDuplicates function
+fixed_data <- fixDuplicates(cleaned_data)
 
 # Run the proof function
-proofed_data <- proof(unshifted_data, year = params$year)
+proofed_data <- proof(fixed_data, year = params$year)
+
+rm(fixed_data)
 
 # Run the correct function
 corrected_data <- correct(proofed_data, year = params$year, data = "bag")
 
 # Summarize number of records from Canada
 canada_records <-
-  unshifted_data %>% 
+  proofed_data %>% 
   filter(
     state %in% c("AB", "BC", "MB", "NB", "NL", "NT", "NS", 
                  "NU", "ON", "PE", "QC", "SK", "YT"))
@@ -128,7 +133,7 @@ Below is a table summarizing the total of number of records per download state.
 ```{r sum_per_state, echo = FALSE, message = FALSE}
 
 DT::datatable(
-  unshifted_data %>% 
+  fixed_data %>% 
     select(dl_state) %>% 
     group_by(dl_state) %>% 
     summarize(sum = n()) %>% 
@@ -145,7 +150,7 @@ rm(season_lines)
 ```{r reg_yr_check, echo = FALSE}
 DT::datatable(
   filter = "top", 
-  unshifted_data %>% 
+  fixed_data %>% 
     select(registration_yr, dl_state) %>% 
     group_by(registration_yr, dl_state) %>% 
     summarize(n = n()) %>% 
@@ -157,7 +162,7 @@ DT::datatable(
 
 ```{r hunty_check, echo = FALSE}
 huntcheck <-
-  unshifted_data %>% 
+  fixed_data %>% 
   select(hunt_mig_birds, dl_state) %>% 
   group_by(hunt_mig_birds, dl_state) %>% 
   summarize(n = n()) %>% 
@@ -318,15 +323,15 @@ findDuplicates(cleaned_data)
 
 ```{r a_fd, echo = FALSE, warning = FALSE, fig.align = "center"}
 rm(cleaned_data)
-findDuplicates(unshifted_data)
+findDuplicates(fixed_data)
 
-DT::datatable(findDuplicates(unshifted_data, return = "table"))
+DT::datatable(findDuplicates(fixed_data, return = "table"))
 ```
 
 ## Strata
 
 ```{r stratacheck, echo = FALSE}
-DT::datatable(strataCheck(unshifted_data))
+DT::datatable(strataCheck(fixed_data))
 ```
 
 ## Repeated values
@@ -335,14 +340,14 @@ DT::datatable(strataCheck(unshifted_data))
 
 ```{r h_validate, echo = FALSE}
 DT::datatable(
-  migbirdHIP::validate(unshifted_data, type = "horizontal") %>% 
+  migbirdHIP::validate(fixed_data, type = "horizontal") %>% 
     mutate(prop_repeat = round(prop_repeat, digits = 2)))
 ```
 
 ### Repeated values within duck bag code
 
 ```{r v_validate, echo = FALSE}
-DT::datatable(migbirdHIP::validate(unshifted_data, type = "vertical"))
+DT::datatable(migbirdHIP::validate(fixed_data, type = "vertical"))
 ```
 
 ## Zero values
@@ -354,7 +359,7 @@ All bag values are 0:
 ```{r zero_all, echo = FALSE, warning = FALSE}
 
 DT::datatable(
-  unshifted_data %>%
+  fixed_data %>%
     # Subset the data
     select(
       dl_state,
@@ -367,7 +372,7 @@ DT::datatable(
     group_by(dl_state, source_file, n_rows) %>% 
     mutate_at(
       vars(
-        unshifted_data %>% 
+        fixed_data %>% 
         select(matches("bag|coots|rails|cranes|pigeon|brant|seaducks")) %>% 
         names()), 
       ~suppressWarnings(as.integer(.))) %>% 
@@ -394,7 +399,7 @@ Duck bag values are 0:
 
 ```{r zero_ducks, echo = FALSE}
 DT::datatable(
-  unshifted_data %>%
+  fixed_data %>%
   # Subset the data
   select(dl_state, dl_date, ducks_bag) %>%
   group_by(dl_state, dl_date) %>%
@@ -421,7 +426,7 @@ DT::datatable(
 ```{r data_sweep, include = FALSE}
 
 # Remove data objects to improve memory use
-rm(unshifted_data)
+rm(fixed_data)
 ```
 
 # Error Visualizations
