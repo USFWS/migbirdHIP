@@ -61,8 +61,6 @@ fixed_dates_data <-
   rename(birth_date = birth_date3) %>%
   relocate(birth_date, .before = "issue_date") 
 
-rm(dl_data)
-
 # Snoop for line shift errors
 error_keys <- 
   fixed_dates_data %>% 
