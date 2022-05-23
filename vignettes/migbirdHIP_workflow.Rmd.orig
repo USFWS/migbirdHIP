@@ -177,7 +177,7 @@ Other quick fixes include:
     * Deletes trailing -0000 and -____ from zip codes
 * Address cleaning
     * Deletes leading "." in addresses (a spillover character from suffix)
-    * Attempt at P.O. Box standardization, by changing "P.O.BOX" to "P.O. BOX" and "PO BOX" to "P.O. BOX"
+    * Attempt at PO Box standardization, by changing "P.O.BOX" to "PO BOX" and "P.O. BOX" to "PO BOX"
 * Trims whitespace on all values (again)
 
 ### findDuplicates
