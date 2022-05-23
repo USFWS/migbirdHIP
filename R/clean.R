@@ -239,9 +239,9 @@ clean <-
             str_detect(address, "^\\.") ~
               str_remove(address, "^\\."),
             str_detect(address, "P.O.BOX ") ~
-              str_replace(address, "P.O.BOX ", "P.O. BOX "),
-            str_detect(address, "PO BOX ") ~
-              str_replace(address, "PO BOX ", "P.O. BOX "),
+              str_replace(address, "P.O.BOX ", "PO BOX "),
+            str_detect(address, "P.O. BOX ") ~
+              str_replace(address, "P.O. BOX ", "PO BOX "),
             TRUE ~ address),
         # Zip code correction
         zip =
