@@ -25,7 +25,7 @@ write_hip <-
     final_table <-
       x %>%
       # Exclude unwanted columns
-      select(-c("dl_cycle", "dl_key", "record_key", "errors")) %>%
+      select(-c("dl_cycle", "dl_date", "dl_key", "record_key", "errors")) %>%
       # Rename columns to desired output
       rename(
         postal_code = zip,
@@ -48,17 +48,11 @@ write_hip <-
           ifelse(
             str_detect(source_file, "\\/"),
             str_remove(source_file, "^.+(?=\\/)"),
-            source_file),
-        # Convert dl_date to something that interprets as a date and not an
-        # integer
-        dl_date = ymd(dl_date)
-      ) %>%
+            source_file)) %>%
       mutate(
         # Do one last pass through source_file to remove the last "/", couldn't
         # pipe a dot above
-        source_file = str_remove(source_file, "\\/")
-      )
-
+        source_file = str_remove(source_file, "\\/"))
 
     # Check to see if there are bags or strata in the table
     if("strata" %in% names(x)){
