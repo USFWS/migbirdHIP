@@ -4,7 +4,7 @@
 \alias{writeReport}
 \title{Write an R markdown report from template}
 \usage{
-writeReport(path, type, yr, dl = NA, dir, file)
+writeReport(path, type, yr, dl = NA, corrected_path = NA, dir, file)
 }
 \arguments{
 \item{path}{File path to the folder containing HIP .txt files}
@@ -17,6 +17,8 @@ writeReport(path, type, yr, dl = NA, dir, file)
 \item{yr}{The year in which the Harvest Information Program data were collected}
 
 \item{dl}{Download cycle (when running a download report)}
+
+\item{corrected_path}{Path to directory that containes output .csv files (when running a season report)}
 
 \item{dir}{Folder in which to save the completed report}
 
