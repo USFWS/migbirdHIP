@@ -48,157 +48,35 @@ clean <-
         firstname = str_to_upper(firstname),
         lastname = str_to_upper(lastname),
         # Extract suffixes from lastname and firstname cols to suffix col
-        # We cannot go above VII in Roman numerals or 9TH in ordinal numbering
-        # because of the 3 char column limit
+        # Catches values from 1-20 in Roman numerals and numeric, excluding
+        # XVIII since the db limit is 4 characters
         suffix =
           case_when(
             # Lastname
-            str_detect(lastname, "(?<=\\s)(JR|SR|I{1,3}|IV?|VI{0,2}|1ST|2ND|3RD|[4-9]TH)\\.?$") ~
-              str_extract(lastname, "(?<=\\s)(JR|SR|I{1,3}|IV|VI{0,2}|1ST|2ND|3RD|[4-9]TH)\\.?$"),
+            str_detect(lastname, "(?<=\\s)(JR|SR|I{1,3}|IV|VI{0,3}|I{0,1}X|XI{1,3}|XI{0,1}V|XVI{1,2}|XI{0,1}X|1ST|2ND|3RD|[4-9]TH|1[0-9]TH|20TH)\\.?$") ~
+              str_extract(lastname, "(?<=\\s)(JR|SR|I{1,3}|IV|VI{0,3}|I{0,1}X|XI{1,3}|XI{0,1}V|XVI{1,2}|XI{0,1}X|1ST|2ND|3RD|[4-9]TH|1[0-9]TH|20TH)\\.?$"),
             # Firstname
-            str_detect(firstname, "(?<=\\s)(JR|SR|I{1,3}|IV?|VI{0,2}|1ST|2ND|3RD|[4-9]TH)\\.?$") ~
-              str_extract(firstname, "(?<=\\s)(JR|SR|I{1,3}|IV|VI{0,2}|1ST|2ND|3RD|[4-9]TH)\\.?$"),
+            str_detect(firstname, "(?<=\\s)(JR|SR|I{1,3}|IV|VI{0,3}|I{0,1}X|XI{1,3}|XI{0,1}V|XVI{1,2}|XI{0,1}X|1ST|2ND|3RD|[4-9]TH|1[0-9]TH|20TH)\\.?$") ~
+              str_extract(firstname, "(?<=\\s)(JR|SR|I{1,3}|IV|VI{0,3}|I{0,1}X|XI{1,3}|XI{0,1}V|XVI{1,2}|XI{0,1}X|1ST|2ND|3RD|[4-9]TH|1[0-9]TH|20TH)\\.?$"),
             TRUE ~ suffix),
         # The original suffixes aren't uppercase, convert them to upper
         suffix = str_to_upper(suffix),
         # Delete periods and commas from suffixes
         suffix = str_remove_all(suffix, "\\.|\\,"),
-        # Delete suffixes from lastname col
+        # Delete suffixes from lastname col (includes 1-20 in Roman numerals and
+        # numeric, excluding XVIII since the db limit is 4 characters)
         lastname =
-          case_when(
-            str_detect(lastname, "(?<=\\s)JR\\.?$") ~
-              str_remove(lastname, "(?<=\\s)JR\\.?$"),
-            str_detect(lastname, "(?<=\\s)SR\\.?$") ~
-              str_remove(lastname, "(?<=\\s)SR\\.?$"),
-            str_detect(lastname, "(?<=\\s)XX$") ~
-              str_remove(lastname, "(?<=\\s)XX$"),
-            str_detect(lastname, "(?<=\\s)XIX$") ~
-              str_remove(lastname, "(?<=\\s)XIX$"),
-            str_detect(lastname, "(?<=\\s)XVIII$") ~
-              str_remove(lastname, "(?<=\\s)XVIII$"),
-            str_detect(lastname, "(?<=\\s)XVII$") ~
-              str_remove(lastname, "(?<=\\s)XVII$"),
-            str_detect(lastname, "(?<=\\s)XVI$") ~
-              str_remove(lastname, "(?<=\\s)XVI$"),
-            str_detect(lastname, "(?<=\\s)XV$") ~
-              str_remove(lastname, "(?<=\\s)XV$"),
-            str_detect(lastname, "(?<=\\s)XIV$") ~
-              str_remove(lastname, "(?<=\\s)XIV$"),
-            str_detect(lastname, "(?<=\\s)XIII$") ~
-              str_remove(lastname, "(?<=\\s)XIII$"),
-            str_detect(lastname, "(?<=\\s)XII$") ~
-              str_remove(lastname, "(?<=\\s)XII$"),
-            str_detect(lastname, "(?<=\\s)XI$") ~
-              str_remove(lastname, "(?<=\\s)XI$"),
-            str_detect(lastname, "(?<=\\s)X$") ~
-              str_remove(lastname, "(?<=\\s)X$"),
-            str_detect(lastname, "(?<=\\s)IX$") ~
-              str_remove(lastname, "(?<=\\s)IX$"),
-            str_detect(lastname, "(?<=\\s)VIII$") ~
-              str_remove(lastname, "(?<=\\s)VIII$"),
-            str_detect(lastname, "(?<=\\s)VII$") ~
-              str_remove(lastname, "(?<=\\s)VII$"),
-            str_detect(lastname, "(?<=\\s)VI$") ~
-              str_remove(lastname, "(?<=\\s)VI$"),
-            str_detect(lastname, "(?<=\\s)V$") ~
-              str_remove(lastname, "(?<=\\s)V$"),
-            str_detect(lastname, "(?<=\\s)IV$") ~
-              str_remove(lastname, "(?<=\\s)IV$"),
-            str_detect(lastname, "(?<=\\s)III$") ~
-              str_remove(lastname, "(?<=\\s)III$"),
-            str_detect(lastname, "(?<=\\s)II$") ~
-              str_remove(lastname, "(?<=\\s)II$"),
-            str_detect(lastname, "(?<=\\s)I$") ~
-              str_remove(lastname, "(?<=\\s)I$"),
-            str_detect(lastname, "(?<=\\s)1ST$") ~
-              str_remove(lastname, "(?<=\\s)1ST$"),
-            str_detect(lastname, "(?<=\\s)2ND$") ~
-              str_remove(lastname, "(?<=\\s)2ND$"),
-            str_detect(lastname, "(?<=\\s)3RD$") ~
-              str_remove(lastname, "(?<=\\s)3RD$"),
-            str_detect(lastname, "(?<=\\s)4TH$") ~
-              str_remove(lastname, "(?<=\\s)4TH$"),
-            str_detect(lastname, "(?<=\\s)5TH$") ~
-              str_remove(lastname, "(?<=\\s)5TH$"),
-            str_detect(lastname, "(?<=\\s)6TH$") ~
-              str_remove(lastname, "(?<=\\s)6TH$"),
-            str_detect(lastname, "(?<=\\s)7TH$") ~
-              str_remove(lastname, "(?<=\\s)7TH$"),
-            str_detect(lastname, "(?<=\\s)8TH$") ~
-              str_remove(lastname, "(?<=\\s)8TH$"),
-            str_detect(lastname, "(?<=\\s)9TH$") ~
-              str_remove(lastname, "(?<=\\s)9TH$"),
-            str_detect(lastname, "(?<=\\s)ESQ$") ~
-              str_remove(lastname, "(?<=\\s)ESQ$"),
-            TRUE ~ lastname),
-        # Delete suffixes from firstname col
+          ifelse(
+            str_detect(lastname, "(?<=\\s)(JR|SR|I{1,3}|IV|VI{0,3}|I{0,1}X|XI{1,3}|XI{0,1}V|XVI{1,2}|XI{0,1}X|1ST|2ND|3RD|[4-9]TH|1[0-9]TH|20TH)\\.?$"),
+            str_remove(lastname, "(?<=\\s)(JR|SR|I{1,3}|IV|VI{0,3}|I{0,1}X|XI{1,3}|XI{0,1}V|XVI{1,2}|XI{0,1}X|1ST|2ND|3RD|[4-9]TH|1[0-9]TH|20TH)\\.?$"),
+            lastname),
+        # Delete suffixes from firstname col (includes 1-20 in Roman numerals
+        # and numeric, excluding XVIII since the db limit is 4 characters)
         firstname =
-          case_when(
-            str_detect(firstname, "(?<=\\s)JR\\.?$") ~
-              str_remove(firstname, "(?<=\\s)JR\\.?$"),
-            str_detect(firstname, "(?<=\\s)SR\\.?$") ~
-              str_remove(firstname, "(?<=\\s)SR\\.?$"),
-            str_detect(firstname, "(?<=\\s)XX$") ~
-              str_remove(firstname, "(?<=\\s)XX$"),
-            str_detect(firstname, "(?<=\\s)XIX$") ~
-              str_remove(firstname, "(?<=\\s)XIX$"),
-            str_detect(firstname, "(?<=\\s)XVIII$") ~
-              str_remove(firstname, "(?<=\\s)XVIII$"),
-            str_detect(firstname, "(?<=\\s)XVII$") ~
-              str_remove(firstname, "(?<=\\s)XVII$"),
-            str_detect(firstname, "(?<=\\s)XVI$") ~
-              str_remove(firstname, "(?<=\\s)XVI$"),
-            str_detect(firstname, "(?<=\\s)XV$") ~
-              str_remove(firstname, "(?<=\\s)XV$"),
-            str_detect(firstname, "(?<=\\s)XIV$") ~
-              str_remove(firstname, "(?<=\\s)XIV$"),
-            str_detect(firstname, "(?<=\\s)XIII$") ~
-              str_remove(firstname, "(?<=\\s)XIII$"),
-            str_detect(firstname, "(?<=\\s)XII$") ~
-              str_remove(firstname, "(?<=\\s)XII$"),
-            str_detect(firstname, "(?<=\\s)XI$") ~
-              str_remove(firstname, "(?<=\\s)XI$"),
-            str_detect(firstname, "(?<=\\s)X$") ~
-              str_remove(firstname, "(?<=\\s)X$"),
-            str_detect(firstname, "(?<=\\s)IX$") ~
-              str_remove(firstname, "(?<=\\s)IX$"),
-            str_detect(firstname, "(?<=\\s)VIII$") ~
-              str_remove(firstname, "(?<=\\s)VIII$"),
-            str_detect(firstname, "(?<=\\s)VII$") ~
-              str_remove(firstname, "(?<=\\s)VII$"),
-            str_detect(firstname, "(?<=\\s)VI$") ~
-              str_remove(firstname, "(?<=\\s)VI$"),
-            str_detect(firstname, "(?<=\\s)V$") ~
-              str_remove(firstname, "(?<=\\s)V$"),
-            str_detect(firstname, "(?<=\\s)IV$") ~
-              str_remove(firstname, "(?<=\\s)IV$"),
-            str_detect(firstname, "(?<=\\s)III$") ~
-              str_remove(firstname, "(?<=\\s)III$"),
-            str_detect(firstname, "(?<=\\s)II$") ~
-              str_remove(firstname, "(?<=\\s)II$"),
-            str_detect(firstname, "(?<=\\s)I$") ~
-              str_remove(firstname, "(?<=\\s)I$"),
-            str_detect(firstname, "(?<=\\s)1ST$") ~
-              str_remove(firstname, "(?<=\\s)1ST$"),
-            str_detect(firstname, "(?<=\\s)2ND$") ~
-              str_remove(firstname, "(?<=\\s)2ND$"),
-            str_detect(firstname, "(?<=\\s)3RD$") ~
-              str_remove(firstname, "(?<=\\s)3RD$"),
-            str_detect(firstname, "(?<=\\s)4TH$") ~
-              str_remove(firstname, "(?<=\\s)4TH$"),
-            str_detect(firstname, "(?<=\\s)5TH$") ~
-              str_remove(firstname, "(?<=\\s)5TH$"),
-            str_detect(firstname, "(?<=\\s)6TH$") ~
-              str_remove(firstname, "(?<=\\s)6TH$"),
-            str_detect(firstname, "(?<=\\s)7TH$") ~
-              str_remove(firstname, "(?<=\\s)7TH$"),
-            str_detect(firstname, "(?<=\\s)8TH$") ~
-              str_remove(firstname, "(?<=\\s)8TH$"),
-            str_detect(firstname, "(?<=\\s)9TH$") ~
-              str_remove(firstname, "(?<=\\s)9TH$"),
-            str_detect(firstname, "(?<=\\s)ESQ$") ~
-              str_remove(firstname, "(?<=\\s)ESQ$"),
-            TRUE ~ firstname),
+          ifelse(
+            str_detect(firstname, "(?<=\\s)(JR|SR|I{1,3}|IV|VI{0,3}|I{0,1}X|XI{1,3}|XI{0,1}V|XVI{1,2}|XI{0,1}X|1ST|2ND|3RD|[4-9]TH|1[0-9]TH|20TH)\\.?$"),
+            str_remove(firstname, "(?<=\\s)(JR|SR|I{1,3}|IV|VI{0,3}|I{0,1}X|XI{1,3}|XI{0,1}V|XVI{1,2}|XI{0,1}X|1ST|2ND|3RD|[4-9]TH|1[0-9]TH|20TH)\\.?$"),
+            firstname),
         # Remove anything that's not a letter from middle initial col
         middle = ifelse(str_detect(middle, "[^A-Z]"), NA, middle),
         # Do a little P.O. Box string cleaning
