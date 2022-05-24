@@ -374,21 +374,21 @@ DT::datatable(
   group_by(dl_state, dl_date) %>%
   # Add number of rows per group
   # This is the number of records per file
-  mutate(dl_rows = n()) %>%
-  # Move dl_rows to 3rd col position
-  relocate(dl_rows, .after = dl_date) %>%
+  mutate(total_rows = n()) %>%
+  # Move total_rows to 3rd col position
+  relocate(total_rows, .after = dl_date) %>%
   ungroup() %>%
   # Filter to only ducks = 0
   filter(ducks_bag == 0) %>% 
-  group_by(dl_state, dl_date, dl_rows) %>%
+  group_by(dl_state, dl_date, total_rows) %>%
   # Count the number of records per file with ducks = 0
   mutate(zero_rows = n()) %>%
   ungroup() %>%
   select(-ducks_bag) %>% 
   distinct() %>% 
-  mutate(zero_ducks_prop = round(zero_rows / dl_rows, 2)) %>% 
+  mutate(zero_ducks_prop = round(zero_rows / total_rows, 2)) %>% 
   arrange(desc(zero_ducks_prop)) %>% 
-  relocate(zero_rows, .before = "dl_rows")
+  relocate(zero_rows, .after = "total_rows")
 )
 ```
 
@@ -503,7 +503,9 @@ outOfStateHunters(proofed_data)
 ```
 
 ```{r canadians_tbl, echo = FALSE}
-DT::datatable(outOfStateHunters(proofed_data, output = "table"))
+DT::datatable(
+  outOfStateHunters(proofed_data, output = "table") %>% 
+    arrange(desc(outofstate_prop)))
 ```
 
 ## Youth hunters
