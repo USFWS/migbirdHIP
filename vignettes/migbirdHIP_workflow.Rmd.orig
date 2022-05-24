@@ -168,7 +168,7 @@ This function does simple data cleaning. Importantly, records are discarded if f
 Other quick fixes include:
 
 * Converts names to uppercase
-* Moves suffixes from first or last name columns to the appropriate suffix column
+* Moves suffixes from first or last name columns to the appropriate suffix column (including any value from I to XX or 1ST to 20TH, except for XVIII)
 * If any value other than a letter is in the middle initial column, it's set to NA
 * Zip code correction
     * Removes ending hyphen from zip codes with only 5 digits
