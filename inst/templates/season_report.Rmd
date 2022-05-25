@@ -446,11 +446,14 @@ x_order <-
     proportion = count_errors / nrow(proofed_data)) %>%
   arrange(proportion)
 
+corrected_data_proofed <-
+  proof(corrected_data, year = params$year)
+
 left_join(
   x_order %>% 
     mutate(order = row_number()) %>% 
     select(errors, order), 
-  corrected_data %>%
+  corrected_data_proofed %>%
     select(errors) %>%
     # Pull errors apart, delimited by hyphens
     separate(errors, into = as.character(c(1:25)), sep = "-") %>%
@@ -484,6 +487,7 @@ left_join(
   theme_classic() +
   theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
 
+rm(corrected_data_proofed)
 ```
 
 ## By state
