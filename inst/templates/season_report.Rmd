@@ -127,7 +127,9 @@ corrected_data <-
     cranes = Q_cranes,
     band_tailed_pigeon = Q_bt_pigeons,
     brant = Q_brant,
-    seaducks = Q_seaducks)
+    seaducks = Q_seaducks) %>% 
+  mutate(record_key = paste0("record_", row_number())) %>% 
+  relocate(record_key, .after = "source_file")
 
 # Summarize number of records from Canada
 canada_records <-
