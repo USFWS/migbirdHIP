@@ -114,8 +114,8 @@ rm(fixed_data)
 
 # Read in pre-processed data
 corrected_data <-
-  map_df(1:length(list.files(proc_path)),
-      ~read_csv(list.files(proc_path, full.names = T)[.x])) %>% 
+  map_df(1:length(list.files(params$proc_path)),
+      ~read_csv(list.files(params$proc_path, full.names = T)[.x])) %>% 
   rename(
     zip = postal_code,
     ducks_bag = Q_ducks,
