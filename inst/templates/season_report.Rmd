@@ -410,6 +410,7 @@ DT::datatable(
   arrange(desc(zero_ducks_prop)) %>% 
   relocate(zero_rows, .after = "total_rows")
 )
+
 ```
 
 # Error Visualizations
@@ -487,7 +488,7 @@ left_join(
   theme_classic() +
   theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
 
-rm(corrected_data_proofed)
+rm(corrected_data)
 ```
 
 ## By state
@@ -501,7 +502,7 @@ errorPlot_states(proofed_data)
 ### After correction
 
 ```{r erps_c, echo = FALSE, fig.align = "center"}
-errorPlot_states(corrected_data)
+errorPlot_states(corrected_data_proofed)
 ```
 
 ## By download
@@ -515,9 +516,9 @@ errorPlot_dl(proofed_data)
 ### After correction
 
 ```{r erpdl_c, echo = FALSE, fig.align = "center"}
-errorPlot_dl(corrected_data)
+errorPlot_dl(corrected_data_proofed)
 
-rm(corrected_data)
+rm(corrected_data_proofed)
 ```
 
 ## Out-of-state hunters
