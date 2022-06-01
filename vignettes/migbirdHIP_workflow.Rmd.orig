@@ -114,6 +114,8 @@ For HIP processing, this function is used in conjunction with other R code to ac
 
 ```{r shiftFix}
 
+library(tidyverse)
+
 # Snooping
 snoop <-
   DL1301 %>%
