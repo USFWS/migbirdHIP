@@ -117,7 +117,7 @@ corrected_data <-
   map_df(1:length(list.files(params$proc_path)),
       ~read_csv(list.files(params$proc_path, full.names = T)[.x],
                 col_types = paste(rep("c", 28), collapse = "")) %>% 
-        mutate(dl_cycle = str_extract(list.files(path)[.x], "(?<=DL)[0-9]{4}"))) %>% 
+        mutate(dl_cycle = str_extract(list.files(params$proc_path)[.x], "(?<=DL)[0-9]{4}"))) %>% 
   rename(
     zip = postal_code,
     ducks_bag = Q_ducks,
