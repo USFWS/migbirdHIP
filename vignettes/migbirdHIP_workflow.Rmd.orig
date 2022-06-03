@@ -112,7 +112,7 @@ The `shiftFix` function moves row values by a designated number of characters ac
 
 For HIP processing, this function is used in conjunction with other R code to achieve a final dataframe.
 
-```{r shiftFix}
+```{r shiftFix, warning = FALSE, message = FALSE}
 
 library(tidyverse)
 
