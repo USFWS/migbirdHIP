@@ -267,12 +267,17 @@ fixDuplicates <-
       ia_dupes %>%
       filter(record_type == "HIP")
 
-    ia_doves <-
-      ia_dupes %>%
-      filter(record_type == "IAD") %>%
-      group_by(duplicate) %>%
-      slice_sample(n = 1) %>%
-      ungroup()
+    if(nrow(ia_dupes) > 0){
+      ia_doves <-
+        ia_dupes %>%
+        filter(record_type == "IAD") %>%
+        group_by(duplicate) %>%
+        slice_sample(n = 1) %>%
+        ungroup()
+    }else{
+      ia_doves <-
+        ia_dupes
+    }
 
     rm(ia_dupes)
 
