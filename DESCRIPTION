@@ -13,10 +13,7 @@ Imports:
     tibble,
     ggplot2,
     lifecycle,
-    rmarkdown,
-    DT,
-    shiny,
-    stringi
+    rmarkdown
 Suggests:
     knitr
 VignetteBuilder: knitr
@@ -35,6 +32,6 @@ License: CC0
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.1
+RoxygenNote: 7.2.0
 Depends: 
     R (>= 2.10)
