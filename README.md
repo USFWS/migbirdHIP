@@ -12,25 +12,25 @@ Program](https://www.fws.gov/harvestsurvey) data.
 
 Tasks that can be accomplished with this package include:
 
-  - `read_hip` imports data
-  - `clean` does basic reorganization tasks
-  - `findDuplicates` identifies duplicate HIP records
-  - `fixDuplicates` resolves duplicate HIP records
-  - `strataCheck` identifies any new strata
-  - `validate` checks for table-wide repetition
-  - `investigate` reports details on repeated values
-  - `proof` checks values for errors
-  - `correct` systematically fixes erroneous values
-  - `shiftFix` corrects line shift errors
-  - `manualFix` lets the user fix any remaining unsatisfactory values
-  - Error visualization with `errorPlot_dl`, `errorPlot_fields`, and
+-   `read_hip` imports data
+-   `strataCheck` identifies any new strata
+-   `validate` checks for table-wide repetition
+-   `clean` does basic reorganization tasks
+-   `findDuplicates` identifies duplicate HIP records
+-   `fixDuplicates` resolves duplicate HIP records
+-   `investigate` reports details on repeated values
+-   `proof` checks values for errors
+-   `correct` systematically fixes erroneous values
+-   `shiftFix` corrects line shift errors
+-   `manualFix` lets the user fix any remaining unsatisfactory values
+-   Error visualization with `errorPlot_dl`, `errorPlot_fields`, and
     `errorPlot_states`
-  - Exploration of specific errors with `youthHunters` and
+-   Exploration of specific errors with `youthHunters` and
     `outOfStateHunters`
-  - Detailed error reporting with `errorTable`, `pullErrors`, and
+-   Detailed error reporting with `errorTable`, `pullErrors`, and
     `redFlags`
-  - Automated report writing with `writeReport`
-  - Custom .csv writing with `write_hip`
+-   Automated report writing with `writeReport`
+-   Custom .csv writing with `write_hip`
 
 ## Installation
 
