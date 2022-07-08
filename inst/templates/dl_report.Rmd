@@ -68,19 +68,23 @@ error_keys <-
   pull()
 
 # Correct frame shifts for x number of records
-unshifted <-
-  map_dfr(
-    1:length(error_keys),
-    ~shiftFix(fixed_dates_data, error_keys[.x], "state", "email", 1)
-  ) %>% 
-  # Delete the 0s from end of zip
-  mutate(zip = str_remove(zip, "0$")) %>%
-  mutate(
-    birth_date =
-      ifelse(
-        str_detect(birth_date, "^[0-9]{1}\\/"),
-        paste0("0", birth_date),
-        birth_date))
+if(length(error_keys) > 0){
+  unshifted <-
+    map_dfr(
+      1:length(error_keys),
+      ~shiftFix(fixed_dates_data, error_keys[.x], "state", "email", 1)
+    ) %>% 
+    # Delete the 0s from end of zip
+    mutate(zip = str_remove(zip, "0$")) %>%
+    mutate(
+      birth_date =
+        ifelse(
+          str_detect(birth_date, "^[0-9]{1}\\/"),
+          paste0("0", birth_date),
+          birth_date))
+}else{
+  unshifted <- NULL
+}
 
 rm(error_keys)
 
