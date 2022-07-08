@@ -1,6 +1,6 @@
 Package: migbirdHIP
 Title: Process USFWS Migratory Bird Harvest Information Program Data in R
-Version: 1.2.2
+Version: 1.2.3
 Imports: 
     dplyr,
     tidyr,
