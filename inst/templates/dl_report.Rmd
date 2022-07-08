@@ -35,7 +35,64 @@ acceptable_residences <-
 
 dl_data <- read_hip(params$comp_path) %>% mutate(dl_cycle = params$dl)
 
-cleaned_data <- clean(dl_data)
+# Standardize birth date format
+fixed_dates_data <-
+  dl_data %>% 
+  mutate(
+    birth_date2 =
+      ifelse(
+        str_detect(birth_date, "^[0-9]{1}\\/"),
+        paste0("0", birth_date),
+        birth_date),
+    birth_date3 =
+      ifelse(
+        str_length(birth_date2) == 9,
+        paste0(
+          str_sub(birth_date2, 1, 3),
+          "0",
+          str_sub(birth_date2, 4, 9)),
+        birth_date2)) %>% 
+  select(-c("birth_date", "birth_date2")) %>%
+  rename(birth_date = birth_date3) %>%
+  relocate(birth_date, .before = "issue_date") 
+
+# Snoop for line shift errors
+error_keys <- 
+  fixed_dates_data %>% 
+  filter(
+    !str_detect(
+      birth_date, "^[0-9]{2}\\/[0-9]{2}\\/[0-9]{4}$")) %>% 
+  relocate(record_key, .before = "title") %>% 
+  relocate(source_file, .before = "record_key") %>%
+  select(record_key) %>% 
+  pull()
+
+# Correct frame shifts for x number of records
+unshifted <-
+  map_dfr(
+    1:length(error_keys),
+    ~shiftFix(fixed_dates_data, error_keys[.x], "state", "email", 1)
+  ) %>% 
+  # Delete the 0s from end of zip
+  mutate(zip = str_remove(zip, "0$")) %>%
+  mutate(
+    birth_date =
+      ifelse(
+        str_detect(birth_date, "^[0-9]{1}\\/"),
+        paste0("0", birth_date),
+        birth_date))
+
+rm(error_keys)
+
+unshifted_data <-
+  fixed_dates_data %>%
+  filter(!record_key %in% unshifted$record_key) %>%
+  bind_rows(unshifted) 
+
+rm(fixed_dates_data)
+rm(unshifted)
+
+cleaned_data <- clean(unshifted_data)
 
 fixed_data <- fixDuplicates(cleaned_data)
 
