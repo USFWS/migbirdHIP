@@ -173,34 +173,6 @@ The following records are missing first name, last name, date of birth, address,
 ```{r record_check, echo = FALSE, fig.align = "center"}
 record_check <- 
   dl_data %>%
-  rename(
-    title = X1,
-    firstname = X2,
-    middle = X3,
-    lastname = X4,
-    suffix = X5,
-    address = X6,
-    city = X7,
-    state = X8,
-    zip = X9,
-    birth_date = X10,
-    # Edited X11 to specific .data$X11 to avoid error:
-    # "Found an obsolete/platform-specific call in: 'tidy'"
-    # "Found the platform-specific device: 'X11'"
-    issue_date = X11,
-    hunt_mig_birds = X12,
-    ducks_bag = X13,
-    geese_bag = X14,
-    dove_bag = X15,
-    woodcock_bag = X16,
-    coots_snipe = X17,
-    rails_gallinules = X18,
-    cranes = X19,
-    band_tailed_pigeon = X20,
-    brant = X21,
-    seaducks = X22,
-    registration_yr = X23,
-    email = X24) %>%
   # Filter out records if firstname, lastname, city of residence, state of
   # residence, or date of birth are missing -- records discarded because
   # these are needed to identify individuals
