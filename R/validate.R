@@ -30,7 +30,7 @@
 #'  \item vertical - Checks for repetition vertically in species and/or bag fields, grouped by dl_state and dl_date
 #'  \item horizontal - Checks for repetition horizontally, across each record
 #'  }
-#' @param all Should all species groups be checked (TRUE)? If set to FALSE (default), then only ducks will be vertically checked and only ducks, geese, doves, and woodcock will be horizontally checked.
+#' @param all Should all species groups be checked (TRUE)? If set to FALSE (default), then only ducks will be vertically checked and only ducks, geese, and coots_snipe will be horizontally checked.
 #' @param period Time period in which to group the data. The function uses dl_date automatically, but either of the following may be supplied:
 #'  \itemize{
 #'  \item dl_date - Date the HIP data were downloaded
@@ -184,12 +184,12 @@ validate <-
 
       # Horizontal validation
 
-      # Quick check (duck, goose, dove, and woodcock check only)
+      # Quick check (duck, goose, & coots_snipe only)
       if(all == FALSE){
         h_test <-
           x %>%
           # Subset the data
-          select(source_file, ducks_bag, geese_bag, dove_bag, woodcock_bag) %>%
+          select(source_file, ducks_bag, geese_bag, coots_snipe) %>%
           group_by(source_file) %>%
           # Paste all of the species group values together
           unite(h_string, !contains("source"), sep = "-") %>%

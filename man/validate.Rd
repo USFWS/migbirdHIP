@@ -15,7 +15,7 @@ validate(x, type, all = FALSE, period = NA)
 \item horizontal - Checks for repetition horizontally, across each record
 }}
 
-\item{all}{Should all species groups be checked (TRUE)? If set to FALSE (default), then only ducks will be vertically checked and only ducks, geese, doves, and woodcock will be horizontally checked.}
+\item{all}{Should all species groups be checked (TRUE)? If set to FALSE (default), then only ducks will be vertically checked and only ducks, geese, and coots_snipe will be horizontally checked.}
 
 \item{period}{Time period in which to group the data. The function uses dl_date automatically, but either of the following may be supplied:
 \itemize{

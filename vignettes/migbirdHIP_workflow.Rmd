@@ -276,6 +276,13 @@ Note: This function replaces "." values with NA in non-permit species columns fo
 DL1301_fixed <- fixDuplicates(DL1301_clean)
 ```
 
+```
+## Error in `slice_sample()`:
+## ! Problem while computing indices.
+## Caused by error in `sample.int()`:
+## ! invalid first argument
+```
+
 ### strataCheck
 
 Running `strataCheck` ensures species "bag" values are in order. This function searches for values in species group columns that are not typical or expected by the FWS. If a value outside of the normal range is detected, an output tibble is created. Each row in the output contains the state, species, unusual stratum value, and a list of the normal values we would expect.
@@ -308,7 +315,7 @@ strataCheck(DL1301_fixed)
 
 The `validate` function looks for repeated values in two dimensions, both horizontally and vertically.
 
-<b>Horizontally.</b> The horizontal check for repetition looks across records and finds any rows with same value in each species group column. Details in the output tibble include: the repeated value (h_value), number of records with repeats (h_rep), total number of records (h_total), and proportion of repeated values per file (prop_repeat). The default version of this function (`all = FALSE`) only checks ducks, geese, dove, and woodcock bags. If the parameter is set to `all = TRUE`, every species group will be checked.
+<b>Horizontally.</b> The horizontal check for repetition looks across records and finds any rows with same value in each species group column. Details in the output tibble include: the repeated value (h_value), number of records with repeats (h_rep), total number of records (h_total), and proportion of repeated values per file (prop_repeat). The default version of this function (`all = FALSE`) only checks ducks, geese, and coots_snipe bags. If the parameter is set to `all = TRUE`, every species group will be checked.
 
 
 ```r
@@ -316,20 +323,20 @@ validate(DL1301_fixed, type = "horizontal")
 ```
 
 ```
-## # A tibble: 43 × 5
+## # A tibble: 47 × 5
 ##    source_file    h_value h_rep h_total prop_repeat
 ##    <chr>          <chr>   <int>   <int>       <dbl>
-##  1 WI20211229.txt 1         276     323       0.854
-##  2 AL20211229.txt 1        3995    4790       0.834
-##  3 MO20211229.txt 1        2680    3604       0.744
-##  4 WV20211229.txt 2         183     294       0.622
-##  5 IN20211229.txt 1         406     690       0.588
-##  6 MN20211229.txt 1         171     297       0.576
-##  7 WA20211229.txt 1         815    1460       0.558
-##  8 WA20211215.txt 1         937    1737       0.539
-##  9 KY20211228.txt 1         528     984       0.537
-## 10 NE20211217.txt 1         477     903       0.528
-## # … with 33 more rows
+##  1 IA20211215.txt 0        2841    3175       0.895
+##  2 AL20211229.txt 1        4223    4790       0.882
+##  3 WI20211229.txt 1         273     323       0.845
+##  4 MO20211229.txt 1        2697    3604       0.748
+##  5 ME20211229.txt 1         112     151       0.742
+##  6 NM20211229.txt 1         208     295       0.705
+##  7 ID20211229.txt 1        1763    2588       0.681
+##  8 ND20211215.txt 1         130     204       0.637
+##  9 CA20211229.txt 1        2003    3211       0.624
+## 10 IN20211229.txt 1         416     690       0.603
+## # … with 37 more rows
 ```
 
 <b>Vertically.</b> The vertical check searches within each column for repetition. Any species group column with the same value in all rows will be detected. *Coming soon:* States that do not have a hunting season for one or more species groups (e.g. seaducks) will not be returned using this function for reporting all zero values. The default version of this function (`all = FALSE`) only checks duck bags. If the parameter is set to `all = TRUE`, every species group will be checked.

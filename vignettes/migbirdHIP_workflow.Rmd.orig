@@ -229,7 +229,7 @@ strataCheck(DL1301_fixed)
 
 The `validate` function looks for repeated values in two dimensions, both horizontally and vertically.
 
-<b>Horizontally.</b> The horizontal check for repetition looks across records and finds any rows with same value in each species group column. Details in the output tibble include: the repeated value (h_value), number of records with repeats (h_rep), total number of records (h_total), and proportion of repeated values per file (prop_repeat). The default version of this function (`all = FALSE`) only checks ducks, geese, dove, and woodcock bags. If the parameter is set to `all = TRUE`, every species group will be checked.
+<b>Horizontally.</b> The horizontal check for repetition looks across records and finds any rows with same value in each species group column. Details in the output tibble include: the repeated value (h_value), number of records with repeats (h_rep), total number of records (h_total), and proportion of repeated values per file (prop_repeat). The default version of this function (`all = FALSE`) only checks ducks, geese, and coots_snipe bags. If the parameter is set to `all = TRUE`, every species group will be checked.
 
 ```{r, validate_h}
 validate(DL1301_fixed, type = "horizontal")
