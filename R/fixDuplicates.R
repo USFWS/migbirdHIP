@@ -216,21 +216,29 @@ fixDuplicates <-
           filter(n() > 1))}
 
     # Get the final frame with 1 record per hunter
-    seaduck_dupes <-
-      bind_rows(
-        # Handle "dupl"s; randomly keep one per group using slice_sample()
+    if(nrow(seaduck_dupes) > 0){
+      seaduck_dupes <-
+        bind_rows(
+          # Handle "dupl"s; randomly keep one per group using slice_sample()
+          seaduck_dupes %>%
+            filter(decision == "dupl") %>%
+            group_by(duplicate) %>%
+            slice_sample(n = 1) %>%
+            ungroup(),
+          # Row bind in the "keepers" (should already be 1 per hunter)
+          seaduck_dupes %>%
+            filter(decision == "keeper")) %>%
+        # Drop unneeded columns
+        select(-c(x_bags:decision)) %>%
+        # Designate record type
+        mutate(record_type = "HIP")
+    }else{
+      seaduck_dupes <-
         seaduck_dupes %>%
-          filter(decision == "dupl") %>%
-          group_by(duplicate) %>%
-          slice_sample(n = 1) %>%
-          ungroup(),
-        # Row bind in the "keepers" (should already be 1 per hunter)
-        seaduck_dupes %>%
-          filter(decision == "keeper")) %>%
-      # Drop unneeded columns
-      select(-c(x_bags:decision)) %>%
-      # Designate record type
-      mutate(record_type = "HIP")
+        # Drop unneeded columns
+        select(-c(x_bags:decision)) %>%
+        # Designate record type
+        mutate(record_type = NA_character_)}
 
     # Error checker #4
     # Thrown when the number of unique hunters in the final seaduck_dupes table are
@@ -397,21 +405,29 @@ fixDuplicates <-
           filter(n() > 1))}
 
     # Get the final frame with 1 record per hunter
-    brant_dupes <-
-      bind_rows(
-        # Handle "dupl"s; randomly keep one per group using slice_sample()
+    if(nrow(brant_dupes) > 0){
+      brant_dupes <-
+        bind_rows(
+          # Handle "dupl"s; randomly keep one per group using slice_sample()
+          brant_dupes %>%
+            filter(decision == "dupl") %>%
+            group_by(duplicate) %>%
+            slice_sample(n = 1) %>%
+            ungroup(),
+          # Row bind in the "keepers" (should already be 1 per hunter)
+          brant_dupes %>%
+            filter(decision == "keeper")) %>%
+        # Drop unneeded columns
+        select(-c(x_bags:decision)) %>%
+        # Designate record type
+        mutate(record_type = "HIP")
+    }else{
+      brant_dupes <-
         brant_dupes %>%
-          filter(decision == "dupl") %>%
-          group_by(duplicate) %>%
-          slice_sample(n = 1) %>%
-          ungroup(),
-        # Row bind in the "keepers" (should already be 1 per hunter)
-        brant_dupes %>%
-          filter(decision == "keeper")) %>%
-      # Drop unneeded columns
-      select(-c(x_bags:decision)) %>%
-      # Designate record type
-      mutate(record_type = "HIP")
+        # Drop unneeded columns
+        select(-c(x_bags:decision)) %>%
+        # Designate record type
+        mutate(record_type = NA_character_)}
 
     # Error checker #4
     # Thrown when the number of unique hunters in the final brant_dupes table are
