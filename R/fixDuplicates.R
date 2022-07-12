@@ -872,17 +872,24 @@ fixDuplicates <-
       )}
 
     # Get the final frame with 1 record per hunter
-    hip_dupes <-
-      bind_rows(
-        # Handle "dupl"s; randomly keep one per group using slice_sample()
+    if(nrow(filter(hip_dupes, decision == "dupl")) > 0){
+      hip_dupes <-
+        bind_rows(
+          # Handle "dupl"s; randomly keep one per group using slice_sample()
+          hip_dupes %>%
+            filter(decision == "dupl") %>%
+            group_by(duplicate) %>%
+            slice_sample(n = 1) %>%
+            ungroup(),
+          # Row bind in the "keepers" (should already be 1 per hunter)
+          hip_dupes %>%
+            filter(decision == "keeper"))
+    }else{
+      hip_dupes <-
+        #Keep the "keepers" (should already be 1 per hunter)
         hip_dupes %>%
-          filter(decision == "dupl") %>%
-          group_by(duplicate) %>%
-          slice_sample(n = 1) %>%
-          ungroup(),
-        # Row bind in the "keepers" (should already be 1 per hunter)
-        hip_dupes %>%
-          filter(decision == "keeper"))
+        filter(decision == "keeper")
+    }
 
     # Get table of just permits
     permit_dupes %<>%
