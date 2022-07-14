@@ -519,7 +519,7 @@ errorPlot_states(proofed_data)
 ### After correction
 
 ```{r erps_c, echo = FALSE, fig.align = "center"}
-errorPlot_states(corrected_data_proofed)
+errorPlot_states(corrected_data_proofed %>% filter(dl_state %in% state.abbr))
 ```
 
 ## By download
