@@ -155,7 +155,8 @@ DT::datatable(
     select(dl_state) %>% 
     group_by(dl_state) %>% 
     summarize(sum = n()) %>% 
-    ungroup())
+    ungroup() %>% 
+    arrange(desc(sum)))
 
 rm(canada_records)
 rm(season_lines)
@@ -174,7 +175,8 @@ DT::datatable(
     select(registration_yr, dl_state) %>% 
     group_by(registration_yr, dl_state) %>% 
     summarize(n = n()) %>% 
-    ungroup())
+    ungroup() %>% 
+    arrange(desc(n)))
 
 ```
 
@@ -322,7 +324,7 @@ findDuplicates(cleaned_data)
 
 ### After fixDuplicates (all 49 states)
 
-Below is a figure showing the total of number of partial duplicates in the corrected data.
+Below is a figure showing the total of number of partial duplicates in the corrected data. These duplicates are among downloads. Records that are duplicated with the only difference being the "dl_cycle" field are exact duplicates; the same record was sent more than once by a state.
 
 ```{r a_fd, echo = FALSE, warning = FALSE, fig.align = "center"}
 rm(cleaned_data)
@@ -354,7 +356,7 @@ DT::datatable(
 The table below summarizes corrected data by state and download cycle to show the number of vertically repeated values ("v_repeated") in ducks_bag. To find out what the vertically repeated values were, please refer to the corresponding download report.
 
 ```{r v_validate, echo = FALSE}
-DT::datatable(migbirdHIP::validate(corrected_data, type = "vertical", period = "dl_cycle"))
+DT::datatable(migbirdHIP::validate(corrected_data, type = "vertical", period = "dl_cycle") %>% arrange(desc(v_repeated)))
 ```
 
 ## Zero values
