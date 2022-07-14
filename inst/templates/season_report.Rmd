@@ -339,9 +339,9 @@ DT::datatable(strataCheck(corrected_data))
 
 ## Repeated values
 
-### Repeated values across duck, goose, dove, and woodcock bag codes
+### Repeated values across duck, goose, and snipe_coot bag codes
 
-Below is a table summarizing the number of records per file that have the same value repeated in the duck, goose, dove, and woodcock fields in the corrected data. The "h_value" column contains the repeated value, "h_rep" indicates the number of rows that had repeated values in all four fields, "h_total" indicates the number of total rows in the file, and "prop_repeat" is the proportion of rows with repetition in the file.
+Below is a table summarizing the number of records per file that have the same value repeated in the duck, goose, and snipe_coot fields in the corrected data. The "h_value" column contains the repeated value, "h_rep" indicates the number of rows that had repeated values in all four fields, "h_total" indicates the number of total rows in the file, and "prop_repeat" is the proportion of rows with repetition in the file.
 
 ```{r h_validate, echo = FALSE}
 DT::datatable(

@@ -267,7 +267,7 @@ DT::datatable(strataCheck(fixed_data))
 
 ## Repeated values
 
-### Repeated values across duck, goose, dove, and woodcock bag codes
+### Repeated values across duck, goose, and snipe_coot bag codes
 
 ```{r h_validate, echo = FALSE}
 DT::datatable(
