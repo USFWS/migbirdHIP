@@ -900,7 +900,7 @@ fixDuplicates <-
         #Keep the "keepers" (should already be 1 per hunter)
         hip_dupes %>%
         filter(decision == "keeper") %>%
-        mutate(record_type == "HIP")}
+        mutate(record_type = "HIP")}
 
     # Get table of just permits
     permit_dupes %<>%
