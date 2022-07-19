@@ -9,7 +9,7 @@
 #' @importFrom stringr str_detect
 #' @importFrom stringr str_remove
 #' @importFrom lubridate ymd
-#' @importFrom utils write.csv
+#' @importFrom readr write_csv
 #'
 #' @param x The object created after correcting data with \code{\link{correct}}
 #' @param path The file path and file name to write the final table
@@ -67,11 +67,9 @@ write_hip <-
     else{
 
       # Write data to csv
-      write.csv(
+      write_csv(
         final_table,
         file = path,
-        row.names = FALSE,
-        na = "",
-        fileEncoding = "UTF-8")
+        na = "")
     }
   }
