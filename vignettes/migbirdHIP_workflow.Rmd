@@ -276,13 +276,6 @@ Note: This function replaces "." values with NA in non-permit species columns fo
 DL1301_fixed <- fixDuplicates(DL1301_clean)
 ```
 
-```
-## Error in `slice_sample()`:
-## ! Problem while computing indices.
-## Caused by error in `sample.int()`:
-## ! invalid first argument
-```
-
 ### strataCheck
 
 Running `strataCheck` ensures species "bag" values are in order. This function searches for values in species group columns that are not typical or expected by the FWS. If a value outside of the normal range is detected, an output tibble is created. Each row in the output contains the state, species, unusual stratum value, and a list of the normal values we would expect.
@@ -323,7 +316,7 @@ validate(DL1301_fixed, type = "horizontal")
 ```
 
 ```
-## # A tibble: 47 × 5
+## # A tibble: 49 × 5
 ##    source_file    h_value h_rep h_total prop_repeat
 ##    <chr>          <chr>   <int>   <int>       <dbl>
 ##  1 IA20211215.txt 0        2841    3175       0.895
@@ -332,11 +325,11 @@ validate(DL1301_fixed, type = "horizontal")
 ##  4 MO20211229.txt 1        2697    3604       0.748
 ##  5 ME20211229.txt 1         112     151       0.742
 ##  6 NM20211229.txt 1         208     295       0.705
-##  7 ID20211229.txt 1        1763    2588       0.681
+##  7 ID20211229.txt 1        1761    2588       0.680
 ##  8 ND20211215.txt 1         130     204       0.637
 ##  9 CA20211229.txt 1        2003    3211       0.624
 ## 10 IN20211229.txt 1         416     690       0.603
-## # … with 37 more rows
+## # … with 39 more rows
 ```
 
 <b>Vertically.</b> The vertical check searches within each column for repetition. Any species group column with the same value in all rows will be detected. *Coming soon:* States that do not have a hunting season for one or more species groups (e.g. seaducks) will not be returned using this function for reporting all zero values. The default version of this function (`all = FALSE`) only checks duck bags. If the parameter is set to `all = TRUE`, every species group will be checked.
@@ -413,11 +406,11 @@ The year of the Harvest Information Program must be supplied as a parameter. Thi
 
 ### correct
 
-After the download data are proofed, the next step is to fix the data to the best of our ability. Data can be corrected by running the `correct` function on the proofed tibble. You must specify whether the function should return original state bag values (`data = "bag"`) or FWS strata values (`data = "strata"`). The year of the Harvest Information Program must be supplied as a parameter as well. Since the "errors" column is re-created using `correct`, supplying the year is necessary for the same reasons it is required by `proof`.
+After the download data are proofed, the next step is to fix the data to the best of our ability. Data can be corrected by running the `correct` function on the proofed tibble. The year of the Harvest Information Program must be supplied as a parameter. Since the "errors" column is re-created using `correct`, supplying the year is necessary for the same reasons it is required by `proof`.
 
 
 ```r
-DL1301_corrected <- correct(DL1301_proofed, year = 2021, data = "bag")
+DL1301_corrected <- correct(DL1301_proofed, year = 2021)
 ```
 
 ```
@@ -472,9 +465,7 @@ The following changes are made by the `correct` function:
 * *Birth date* is not changed, but remains flagged if the birth year was > 100 or < 16 years ago
 * *Issue date* is not changed, but remains flagged if it is not equal to or +/- 1 year from the HIP data collection year
 * *Hunt migratory birds* is not changed, and remains flagged if it is not equal to 1 or 2
-* *Bag values*
-    * If `data = "strata"`, state strata that do not meet expected values are compared to a master list and corrected to standard FWS strata
-    * Any stratum that can't be converted is changed to NA
+* *Bag values* remain unchanged
 * *Registration year* is not changed, but remains flagged if it is not equal to or +/- 1 year from the HIP data collection year
 * *Email* is corrected by:
     * Removing spaces, commas, and/or forward slash symbols

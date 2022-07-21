@@ -289,10 +289,10 @@ The year of the Harvest Information Program must be supplied as a parameter. Thi
 
 ### correct
 
-After the download data are proofed, the next step is to fix the data to the best of our ability. Data can be corrected by running the `correct` function on the proofed tibble. You must specify whether the function should return original state bag values (`data = "bag"`) or FWS strata values (`data = "strata"`). The year of the Harvest Information Program must be supplied as a parameter as well. Since the "errors" column is re-created using `correct`, supplying the year is necessary for the same reasons it is required by `proof`.
+After the download data are proofed, the next step is to fix the data to the best of our ability. Data can be corrected by running the `correct` function on the proofed tibble. The year of the Harvest Information Program must be supplied as a parameter. Since the "errors" column is re-created using `correct`, supplying the year is necessary for the same reasons it is required by `proof`.
 
 ```{r correct}
-DL1301_corrected <- correct(DL1301_proofed, year = 2021, data = "bag")
+DL1301_corrected <- correct(DL1301_proofed, year = 2021)
 ```
 
 The following changes are made by the `correct` function:
@@ -326,9 +326,7 @@ The following changes are made by the `correct` function:
 * *Birth date* is not changed, but remains flagged if the birth year was > 100 or < 16 years ago
 * *Issue date* is not changed, but remains flagged if it is not equal to or +/- 1 year from the HIP data collection year
 * *Hunt migratory birds* is not changed, and remains flagged if it is not equal to 1 or 2
-* *Bag values*
-    * If `data = "strata"`, state strata that do not meet expected values are compared to a master list and corrected to standard FWS strata
-    * Any stratum that can't be converted is changed to NA
+* *Bag values* remain unchanged
 * *Registration year* is not changed, but remains flagged if it is not equal to or +/- 1 year from the HIP data collection year
 * *Email* is corrected by:
     * Removing spaces, commas, and/or forward slash symbols

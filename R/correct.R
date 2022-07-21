@@ -19,7 +19,6 @@
 #'
 #' @param x The object created after error flagging data with \code{\link{proof}}
 #' @param year The year in which the Harvest Information Program data were collected
-#' @param data Do you want the frame to include original state `bag` values or FWS `strata`?
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}
@@ -27,7 +26,7 @@
 #' @export
 
 correct <-
-  function(x, year, data){
+  function(x, year){
 
     corrected_x <-
       x %>%
@@ -121,193 +120,39 @@ correct <-
           )
       )
 
-    if(data == "bag"){
+    # Re-run the proof script to get an updated errors column
+    corrproof_bag_x <-
+      proof(corrected_x, year = year) %>%
+      # Proof the zip codes -- are they associated with the correct states?
+      # Make a zipPrefix to join by; pull the first 3 zip digits
+      mutate(zipPrefix = str_extract(zip, "^[0-9]{3}")) %>%
+      left_join(
+        zip_code_ref %>%
+          select(zipPrefix, zipState = state),
+        by = "zipPrefix") %>%
+      # Add an error if the state doesn't match zipState
+      mutate(
+        errors =
+          case_when(
+            state != zipState & is.na(errors) ~ "zip",
+            state != zipState & !is.na(errors) & !str_detect(errors, "zip") ~
+              paste0(errors, "-zip"),
+            TRUE ~ errors)
+      )
 
-      # Re-run the proof script to get an updated errors column
-      corrproof_bag_x <-
-        proof(corrected_x, year = year) %>%
-        # Proof the zip codes -- are they associated with the correct states?
-        # Make a zipPrefix to join by; pull the first 3 zip digits
-        mutate(zipPrefix = str_extract(zip, "^[0-9]{3}")) %>%
-        left_join(
-          zip_code_ref %>%
-            select(zipPrefix, zipState = state),
-          by = "zipPrefix") %>%
-        # Add an error if the state doesn't match zipState
-        mutate(
-          errors =
-            case_when(
-              state != zipState & is.na(errors) ~ "zip",
-              state != zipState & !is.na(errors) & !str_detect(errors, "zip") ~
-                paste0(errors, "-zip"),
-              TRUE ~ errors)
-        )
+    # Error check: are any zip codes wrong?
+    if(TRUE %in% (corrproof_bag_x$state != corrproof_bag_x$zipState)){
+      message(
+        paste0("Warning: Zip codes detected that do not correspond to ",
+               "provided state of residence."))
+      print(
+        corrproof_bag_x %>%
+          select(record_key, zip, state, zipState) %>%
+          filter(state != zipState))
+    }
 
-      # Error check: are any zip codes wrong?
-      if(TRUE %in% (corrproof_bag_x$state != corrproof_bag_x$zipState)){
-        message(
-          paste0("Warning: Zip codes detected that do not correspond to ",
-                 "provided state of residence."))
-        print(
-          corrproof_bag_x %>%
-            select(record_key, zip, state, zipState) %>%
-            filter(state != zipState))
-      }
-
-      corrproof_bag_x %<>%
-        select(-c("zipPrefix", "zipState"))
-
+    corrproof_bag_x %<>%
+      select(-c("zipPrefix", "zipState"))
       return(corrproof_bag_x)
 
-    }
-    else if(data == "strata"){
-
-      corrected_strata_x <-
-        corrected_x %>%
-        # Species group bag corrections:
-        # Use internal data from hip_bags_ref to join correct FWS strata,
-        # replacing the variable state strata
-        # Bag correction: ducks
-        left_join(
-          hip_bags_ref %>%
-            mutate(ducks_bag = as.character(stateBagValue)) %>%
-            filter(spp == "ducks_bag") %>%
-            select(-c("stateBagValue", "spp")),
-          by = c("state", "ducks_bag")
-        ) %>%
-        mutate(ducks_bag = FWSstratum) %>%
-        select(-FWSstratum) %>%
-        # Bag correction: geese
-        left_join(
-          hip_bags_ref %>%
-            mutate(geese_bag = as.character(stateBagValue)) %>%
-            filter(spp == "geese_bag") %>%
-            select(-c("stateBagValue", "spp")),
-          by = c("state", "geese_bag")
-        ) %>%
-        mutate(geese_bag = FWSstratum) %>%
-        select(-FWSstratum) %>%
-        # Bag correction: dove
-        left_join(
-          hip_bags_ref %>%
-            mutate(dove_bag = as.character(stateBagValue)) %>%
-            filter(spp == "dove_bag") %>%
-            select(-c("stateBagValue", "spp")),
-          by = c("state", "dove_bag")
-        ) %>%
-        mutate(dove_bag = FWSstratum) %>%
-        select(-FWSstratum) %>%
-        # Bag correction: woodcock
-        left_join(
-          hip_bags_ref %>%
-            mutate(woodcock_bag = as.character(stateBagValue)) %>%
-            filter(spp == "woodcock_bag") %>%
-            select(-c("stateBagValue", "spp")),
-          by = c("state", "woodcock_bag")
-        ) %>%
-        mutate(woodcock_bag = FWSstratum) %>%
-        select(-FWSstratum) %>%
-        # Bag correction: coots and snipe
-        left_join(
-          hip_bags_ref %>%
-            mutate(coots_snipe = as.character(stateBagValue)) %>%
-            filter(spp == "coots_snipe_bag") %>%
-            select(-c("stateBagValue", "spp")),
-          by = c("state", "coots_snipe")
-        ) %>%
-        mutate(coots_snipe = FWSstratum) %>%
-        select(-FWSstratum) %>%
-        # Bag correction: rails and gallinules
-        left_join(
-          hip_bags_ref %>%
-            mutate(rails_gallinules = as.character(stateBagValue)) %>%
-            filter(spp == "rails_gallinules_bag") %>%
-            select(-c("stateBagValue", "spp")),
-          by = c("state", "rails_gallinules")
-        ) %>%
-        mutate(rails_gallinules = FWSstratum) %>%
-        select(-FWSstratum) %>%
-        # Bag correction: cranes
-        left_join(
-          hip_bags_ref %>%
-            mutate(cranes = as.character(stateBagValue)) %>%
-            filter(spp == "cranes") %>%
-            select(-c("stateBagValue", "spp")),
-          by = c("state", "cranes")
-        ) %>%
-        mutate(cranes = FWSstratum) %>%
-        select(-FWSstratum) %>%
-        # Bag correction: band-tailed pigeon
-        left_join(
-          hip_bags_ref %>%
-            mutate(band_tailed_pigeon = as.character(stateBagValue)) %>%
-            filter(spp == "band_tailed_pigeon") %>%
-            select(-c("stateBagValue", "spp")),
-          by = c("state", "band_tailed_pigeon")
-        ) %>%
-        mutate(band_tailed_pigeon = FWSstratum) %>%
-        select(-FWSstratum) %>%
-        # Bag correction: brant
-        left_join(
-          hip_bags_ref %>%
-            mutate(brant = as.character(stateBagValue)) %>%
-            filter(spp == "brant") %>%
-            select(-c("stateBagValue", "spp")),
-          by = c("state", "brant")
-        ) %>%
-        mutate(brant = FWSstratum) %>%
-        select(-FWSstratum) %>%
-        # Bag correction: seaducks
-        left_join(
-          hip_bags_ref %>%
-            mutate(seaducks = as.character(stateBagValue)) %>%
-            filter(spp == "seaducks") %>%
-            select(-c("stateBagValue", "spp")),
-          by = c("state", "seaducks")
-        ) %>%
-        mutate(seaducks = FWSstratum) %>%
-        select(-FWSstratum)
-
-      # Re-run the proof script to get an updated errors column
-
-      corrproof_strata_x <-
-        proof(corrected_x, year = year) %>%
-        # Proof the zip codes -- are they associated with the correct states?
-        # Make a zipPrefix to join by; pull the first 3 zip digits
-        mutate(zipPrefix = str_extract(zip, "^[0-9]{3}")) %>%
-        left_join(
-          zip_code_ref %>%
-            select(zipPrefix, zipState = state),
-          by = "zipPrefix") %>%
-        # Add an error if the state doesn't match zipState
-        mutate(
-          errors =
-            case_when(
-              state != zipState & is.na(errors) ~ "zip",
-              state != zipState & !is.na(errors) & !str_detect(errors, "zip") ~
-                paste0(errors, "-zip"),
-              TRUE ~ errors)
-        ) %>%
-        select(-c("zipPrefix", "zipState")) %>%
-        # Rename _bag to _strata
-        rename_at(
-          vars(contains("_bag")),
-          ~str_replace(., "_bag", "_strata"))
-
-      # Error check: are any zip codes wrong?
-      if(TRUE %in% (corrproof_strata_x$state != corrproof_strata_x$zipState)){
-        message(
-          paste0("Warning: Zip codes detected that do not correspond to ",
-                 "provided state of residence."))
-        print(
-          corrproof_strata_x %>%
-            select(record_key, zip, state, zipState) %>%
-            filter(state != zipState))
-      }
-
-      corrproof_strata_x %<>%
-        select(-c("zipPrefix", "zipState"))
-
-      return(corrproof_strata_x)
-    }
   }
