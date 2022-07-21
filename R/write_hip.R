@@ -6,9 +6,10 @@
 #' @importFrom dplyr select
 #' @importFrom dplyr rename
 #' @importFrom dplyr mutate
+#' @importFrom dplyr left_join
+#' @importFrom dplyr filter
 #' @importFrom stringr str_detect
 #' @importFrom stringr str_remove
-#' @importFrom lubridate ymd
 #' @importFrom readr write_csv
 #'
 #' @param x The object created after correcting data with \code{\link{correct}}
@@ -26,6 +27,97 @@ write_hip <-
       x %>%
       # Exclude unwanted columns
       select(-c("dl_cycle", "dl_date", "dl_key", "record_key", "errors")) %>%
+      # Use internal data from hip_bags_ref to join FWS strata,
+      # Add strata: ducks
+      left_join(
+        hip_bags_ref %>%
+          mutate(ducks_bag = as.character(stateBagValue)) %>%
+          filter(spp == "ducks_bag") %>%
+          select(-c("stateBagValue", "spp")),
+        by = c("state", "ducks_bag")
+      ) %>%
+      rename(ducks_strat = FWSstratum) %>%
+      # Add strata: geese
+      left_join(
+        hip_bags_ref %>%
+          mutate(geese_bag = as.character(stateBagValue)) %>%
+          filter(spp == "geese_bag") %>%
+          select(-c("stateBagValue", "spp")),
+        by = c("state", "geese_bag")
+      ) %>%
+      rename(geese_strat = FWSstratum) %>%
+      # Add strata: dove
+      left_join(
+        hip_bags_ref %>%
+          mutate(dove_bag = as.character(stateBagValue)) %>%
+          filter(spp == "dove_bag") %>%
+          select(-c("stateBagValue", "spp")),
+        by = c("state", "dove_bag")
+      ) %>%
+      rename(dove_strat = FWSstratum) %>%
+      # Add strata: woodcock
+      left_join(
+        hip_bags_ref %>%
+          mutate(woodcock_bag = as.character(stateBagValue)) %>%
+          filter(spp == "woodcock_bag") %>%
+          select(-c("stateBagValue", "spp")),
+        by = c("state", "woodcock_bag")
+      ) %>%
+      rename(woodcock_strat = FWSstratum) %>%
+      # Add strata: coots and snipe
+      left_join(
+        hip_bags_ref %>%
+          mutate(coots_snipe = as.character(stateBagValue)) %>%
+          filter(spp == "coots_snipe_bag") %>%
+          select(-c("stateBagValue", "spp")),
+        by = c("state", "coots_snipe")
+      ) %>%
+      rename(coots_snipe_strat = FWSstratum) %>%
+      # Add strata: rails and gallinules
+      left_join(
+        hip_bags_ref %>%
+          mutate(rails_gallinules = as.character(stateBagValue)) %>%
+          filter(spp == "rails_gallinules_bag") %>%
+          select(-c("stateBagValue", "spp")),
+        by = c("state", "rails_gallinules")
+      ) %>%
+      rename(rails_gallinules_strat = FWSstratum) %>%
+      # Add strata: cranes
+      left_join(
+        hip_bags_ref %>%
+          mutate(cranes = as.character(stateBagValue)) %>%
+          filter(spp == "cranes") %>%
+          select(-c("stateBagValue", "spp")),
+        by = c("state", "cranes")
+      ) %>%
+      rename(cranes_strat = FWSstratum) %>%
+      # Add strata: band-tailed pigeon
+      left_join(
+        hip_bags_ref %>%
+          mutate(band_tailed_pigeon = as.character(stateBagValue)) %>%
+          filter(spp == "band_tailed_pigeon") %>%
+          select(-c("stateBagValue", "spp")),
+        by = c("state", "band_tailed_pigeon")
+      ) %>%
+      rename(band_tailed_pigeon_strat = FWSstratum) %>%
+      # Add strata: brant
+      left_join(
+        hip_bags_ref %>%
+          mutate(brant = as.character(stateBagValue)) %>%
+          filter(spp == "brant") %>%
+          select(-c("stateBagValue", "spp")),
+        by = c("state", "brant")
+      ) %>%
+      rename(brant_strat = FWSstratum) %>%
+      # Add strata: seaducks
+      left_join(
+        hip_bags_ref %>%
+          mutate(seaducks = as.character(stateBagValue)) %>%
+          filter(spp == "seaducks") %>%
+          select(-c("stateBagValue", "spp")),
+        by = c("state", "seaducks")
+      ) %>%
+      rename(seaducks_strat = FWSstratum) %>%
       # Rename columns to desired output
       rename(
         postal_code = zip,
@@ -54,22 +146,10 @@ write_hip <-
         # pipe a dot above
         source_file = str_remove(source_file, "\\/"))
 
-    # Check to see if there are bags or strata in the table
-    if("strata" %in% names(x)){
+    # Write data to csv
+    write_csv(
+      final_table,
+      file = path,
+      na = "")
 
-      # Check to see if the data contains strata values or bag values
-      # If strata values, return a message
-
-      message(
-        paste0("Strata values in table. Re-run correct function with option",
-               " set to preserve bag values."))
-    }
-    else{
-
-      # Write data to csv
-      write_csv(
-        final_table,
-        file = path,
-        na = "")
-    }
   }
