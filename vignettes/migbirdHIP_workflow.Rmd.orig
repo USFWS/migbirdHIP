@@ -370,7 +370,7 @@ manualFix(DL1301_corrected, field = "state", error_value = "GS", correct_value =
 
 ### write_hip
 
-After the data have been processed with `correct`, the table is ready to be written for the database. Use `write_hip` to do final processing to the table, which includes dropping some columns and setting NAs to blank strings. The final table will be saved as a csv to your specified path.
+After the data have been processed with `correct`, the table is ready to be written for the database. Use `write_hip` to do final processing to the table, which includes adding in FWS strata and setting NAs to blank strings. If `split = FALSE`, the final table will be saved as a single .csv to your specified path. If `split = TRUE` (default), one .csv file per each input .txt source file will be written to the specified directory.
 
 ```{r, writecsv, eval = FALSE}
 

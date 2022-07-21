@@ -4,12 +4,14 @@
 \alias{write_hip}
 \title{Modify corrected data table format and write as csv}
 \usage{
-write_hip(x, path)
+write_hip(x, path, split = TRUE)
 }
 \arguments{
 \item{x}{The object created after correcting data with \code{\link{correct}}}
 
 \item{path}{The file path and file name to write the final table}
+
+\item{split}{Split the output into one .csv file per .txt file? Default is TRUE.}
 }
 \description{
 After correcting errors in the data with \code{\link{correct}}, this final step will shape up the dataframe into a format ready for the database, and write the data to csv.

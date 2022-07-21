@@ -8,12 +8,18 @@
 #' @importFrom dplyr mutate
 #' @importFrom dplyr left_join
 #' @importFrom dplyr filter
+#' @importFrom dplyr distinct
+#' @importFrom dplyr pull
 #' @importFrom stringr str_detect
 #' @importFrom stringr str_remove
+#' @importFrom stringr str_replace
 #' @importFrom readr write_csv
+#' @importFrom purrr walk
+#' @importFrom data.table fwrite
 #'
 #' @param x The object created after correcting data with \code{\link{correct}}
 #' @param path The file path and file name to write the final table
+#' @param split Split the output into one .csv file per .txt file? Default is TRUE.
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}
@@ -21,7 +27,7 @@
 #' @export
 
 write_hip <-
-  function(x, path){
+  function(x, path, split = TRUE){
 
     final_table <-
       x %>%
@@ -146,10 +152,30 @@ write_hip <-
         # pipe a dot above
         source_file = str_remove(source_file, "\\/"))
 
-    # Write data to csv
-    write_csv(
-      final_table,
-      file = path,
-      na = "")
+    if(split == TRUE){
+      # Split data and write each input file to its own output file
+      final_list <- split(final_table, f = final_table$source_file)
+      rm(final_table)
+
+      walk(
+        1:length(final_list),
+        ~fwrite(
+          final_list[[.x]],
+          file = str_replace(
+            paste0(path,
+                   final_list[[.x]] %>%
+                     select(source_file) %>%
+                     distinct() %>%
+                     pull()),
+            ".txt$",
+            ".csv"),
+          na = ""))
+    }else{
+      # Write data to csv
+      fwrite(
+        final_table,
+        file = path,
+        na = "")
+    }
 
   }
