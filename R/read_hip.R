@@ -4,8 +4,7 @@
 #'
 #' @importFrom magrittr %<>%
 #' @importFrom dplyr %>%
-#' @importFrom dplyr as_tibble
-#' @importFrom dplyr transmute
+#' @importFrom dplyr as_tibble_col
 #' @importFrom dplyr mutate
 #' @importFrom dplyr mutate_at
 #' @importFrom dplyr across
@@ -61,16 +60,13 @@ read_hip <-
     files <-
       # Read data for a specific state from a download cycle
       if(!is.na(state) & season == FALSE){
-        list.files(path, recursive = FALSE)  %>%
-          as_tibble() %>%
-          transmute(filepath = as.character(value)) %>%
+        list.files(
+          path, recursive = FALSE, pattern = "*\\.txt$", ignore.case = TRUE,
+          full.names = TRUE) %>%
+          as_tibble_col(column_name = "filepath") %>%
           mutate(filepath = str_replace(filepath, "TXT", "txt")) %>%
-          # Keep only txt files
-          filter(str_detect(filepath, "(?<=\\.)txt$")) %>%
           # Keep only files from the specified state
           filter(str_detect(filepath, state)) %>%
-          # Create new complete file paths
-          mutate(filepath = paste0(path, filepath)) %>%
           # Filter out blank files
           mutate(
             check =
@@ -80,20 +76,17 @@ read_hip <-
                 filepath))
       }else if(!is.na(state) & season == TRUE){
         # Read data for a specific state across the whole season
-        list.files(path, recursive = TRUE)  %>%
-          as_tibble() %>%
-          transmute(filepath = as.character(value)) %>%
+        list.files(
+          path, recursive = TRUE, pattern = "*\\.txt$", ignore.case = TRUE,
+          full.names = TRUE) %>%
+          as_tibble_col(column_name = "filepath") %>%
           mutate(filepath = str_replace(filepath, "TXT", "txt")) %>%
-          # Keep only txt files
-          filter(str_detect(filepath, "(?<=\\.)txt$")) %>%
           # Keep only files from the specified state
           filter(str_detect(filepath, state)) %>%
           # Don't process permit files
           filter(!str_detect(filepath, "permit")) %>%
           # Don't process removed files
           filter(!str_detect(filepath, "removed")) %>%
-          # Create new complete file paths
-          mutate(filepath = paste0(path, filepath)) %>%
           # Filter out blank files
           mutate(
             check =
@@ -103,14 +96,11 @@ read_hip <-
                 filepath))
       }else if(is.na(state) & season == FALSE){
         # Read data from a download cycle for all states
-        list.files(path, recursive = FALSE)  %>%
-          as_tibble() %>%
-          transmute(filepath = as.character(value)) %>%
+        list.files(
+          path, recursive = FALSE, pattern = "*\\.txt$", ignore.case = TRUE,
+          full.names = TRUE) %>%
+          as_tibble_col(column_name = "filepath") %>%
           mutate(filepath = str_replace(filepath, "TXT", "txt")) %>%
-          # Keep only txt files
-          filter(str_detect(filepath, "(?<=\\.)txt$")) %>%
-          # Create new complete file paths
-          mutate(filepath = paste0(path, filepath)) %>%
           # Filter out blank files
           mutate(
             check =
@@ -120,18 +110,15 @@ read_hip <-
                 filepath))
       }else if(is.na(state) & season == TRUE){
         # Read in all data from the season
-        list.files(path, recursive = TRUE)  %>%
-          as_tibble() %>%
-          transmute(filepath = as.character(value)) %>%
+        list.files(
+          path, recursive = TRUE, pattern = "*\\.txt$", ignore.case = TRUE,
+          full.names = TRUE) %>%
+          as_tibble_col(column_name = "filepath") %>%
           mutate(filepath = str_replace(filepath, "TXT", "txt")) %>%
-          # Keep only txt files
-          filter(str_detect(filepath, "(?<=\\.)txt$")) %>%
           # Don't process permit files
           filter(!str_detect(filepath, "permit")) %>%
           # Don't process removed files
           filter(!str_detect(filepath, "removed")) %>%
-          # Create new complete file paths
-          mutate(filepath = paste0(path, filepath)) %>%
           # Filter out blank files
           mutate(
             check =
