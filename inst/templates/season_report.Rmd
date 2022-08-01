@@ -144,7 +144,7 @@ canada_records <-
 
 # Introduction
 
-This is a summary report of the `r params$year`-`r params$year+1` season of Harvest Information Program (HIP) data. This year, `r sum(season_lines) %>% as.character()` total records and `r nrow(dl_data)` unique records were submitted in `r length(list.files(params$comp_path, recursive = TRUE) %>% as_tibble() %>% transmute(filepath = as.character(value)) %>% mutate(filepath = str_replace(filepath, "TXT", "txt")) %>% filter(str_detect(filepath, "(?<=\\.)txt$")) %>% filter(!str_detect(filepath, "permit")) %>% filter(!str_detect(filepath, "removed")) %>% pull())` files from `r proofed_data %>% select(dl_state) %>% distinct %>% nrow()` states. A total of `r nrow(canada_records)` registered hunters were from Canada.
+This is a summary report of the `r params$year`-`r params$year+1` season of Harvest Information Program (HIP) data. This year, `r sum(season_lines) %>% as.character()` total records and `r nrow(dl_data)` unique records were submitted in `r length(list.files(params$comp_path, recursive = T, pattern = "*\\.txt$", ignore.case = TRUE) %>% as_tibble_col(column_name = "filepath") %>% filter(!str_detect(filepath, "permit")) %>% filter(!str_detect(filepath, "removed")) %>% pull())` files from `r proofed_data %>% select(dl_state) %>% distinct %>% nrow()` states. A total of `r nrow(canada_records)` registered hunters were from Canada.
 
 Below is a table summarizing the total of number of records per download state in the corrected data.
 
