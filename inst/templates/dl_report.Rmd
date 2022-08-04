@@ -10,6 +10,8 @@ output:
 params:
   comp_path:
     value: x
+  final_path:
+    value: x
   dl:
     value: x
   year:
@@ -18,20 +20,13 @@ params:
 
 ```{r libs, include = FALSE}
 library(tidyverse)
+library(data.table)
 library(DT)
 library(shiny)
 library(stringi)
 ```
 
 ```{r import, include = FALSE}
-
-acceptable_residences <-
-        c("AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "ID",
-          "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN",
-          "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND",
-          "OH", "OK", "OR","PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT",
-          "VA", "WA", "WV", "WI", "WY", "DC", "HI", "AS", "GU", "MP", "PR", 
-          "VI", "UM", "AA", "AE","AP")
 
 dl_data <- read_hip(params$comp_path) %>% mutate(dl_cycle = params$dl)
 
@@ -98,22 +93,46 @@ rm(unshifted)
 
 cleaned_data <- clean(unshifted_data)
 
+rm(unshifted_data)
+
 fixed_data <- fixDuplicates(cleaned_data)
 
 proofed_data <- proof(fixed_data, year = params$year)
 
-corrected_data <- correct(proofed_data, year = params$year)
+# Read in the completed download data (for better/more accurate figures and tables)
+final_data <-
+  map_df(
+    1:length(list.files(params$final_path)),
+    ~fread(
+      paste0(params$final_path, list.files(params$final_path)[.x]),
+      colClasses = rep("character", 37),
+      na.strings = "") %>% 
+      select(1:27) %>% 
+      rename(
+        zip = postal_code,
+        ducks_bag = Q_ducks,
+        geese_bag = Q_geese,
+        dove_bag = Q_doves,
+        woodcock_bag = Q_woodcock,
+        coots_snipe = Q_coot_snipe,
+        rails_gallinules = Q_rail_gallinule,
+        cranes = Q_cranes,
+        band_tailed_pigeon = Q_bt_pigeons,
+        brant = Q_brant,
+        seaducks = Q_seaducks)) %>% 
+  proof(., year = params$year)
 
 # Summarize number of records from Canada
 canada_records <-
-  fixed_data %>% 
+  final_data %>% 
   select(state) %>% 
   filter(state %in% c("AB", "BC", "MB", "NB", "NL", "NT", "NS", "NU", "ON", "PE", "QC", "SK", "YT")) %>% 
   nrow()
 
 # Summarize number of bad zip codes
 zip_check <-
-  fixed_data %>% 
+  final_data %>% 
+  filter(!state %in% c("AB", "BC", "MB", "NB", "NL", "NT", "NS", "NU", "ON", "PE", "QC", "SK", "YT"))
   mutate(zipPrefix = str_extract(zip, "^[0-9]{3}")) %>%
   left_join(
     zip_code_ref %>%
@@ -126,14 +145,21 @@ zip_check <-
 
 # Introduction
 
-This is a report of download cycle `r proofed_data %>% select(dl_cycle) %>% distinct %>% pull`. This cycle, `r sumLines(params$comp_path)` lines of data (`r nrow(fixed_data)` unique records) were submitted in `r length(list.files(params$comp_path, recursive = F, pattern = "*\\.txt$", ignore.case = TRUE))` files from `r proofed_data %>% select(dl_state) %>% distinct %>% nrow()` states. 
+This is a report of download cycle `r proofed_data %>% select(dl_cycle) %>% distinct %>% pull`. This cycle, `r sumLines(params$comp_path)` lines of data (`r nrow(final_data)` unique records) were submitted in `r length(list.files(params$comp_path, recursive = F, pattern = "*\\.txt$", ignore.case = TRUE))` files from `r proofed_data %>% select(dl_state) %>% distinct %>% nrow()` states. A total of `r canada_records` records were received from Canada, and `r zip_check` records did not have a zip code that matched the address state.
+
+```{r data_sweep, include = FALSE}
+
+rm(canada_records)
+rm(zip_check)
+```
+
 
 Below is a table summarizing the total of number of records per download state.
 
 ```{r sum_per_state, echo = FALSE, message = FALSE}
 
 DT::datatable(
-  fixed_data %>% 
+  final_data %>% 
     select(dl_state) %>% 
     group_by(dl_state) %>% 
     summarize(sum = n()) %>% 
@@ -147,7 +173,7 @@ DT::datatable(
 
 ```{r reg_yr_check, echo = FALSE}
 DT::datatable(
-  fixed_data %>% 
+  final_data %>% 
     select(registration_yr, dl_state) %>% 
     group_by(registration_yr, dl_state) %>% 
     summarize(n = n()) %>% 
@@ -159,7 +185,7 @@ DT::datatable(
 
 ```{r hunty_check, echo = FALSE}
 huntcheck <-
-  fixed_data %>% 
+  final_data %>% 
   select(hunt_mig_birds, dl_state) %>% 
   group_by(hunt_mig_birds, dl_state) %>% 
   summarize(n = n()) %>% 
@@ -191,7 +217,6 @@ record_check <-
       is.na(address)|
       (is.na(city)&is.na(zip)))
   
-
 if(nrow(record_check) > 0){
   missing_plot <-
     record_check %>%
@@ -249,6 +274,8 @@ rm(dl_data)
 
 ```{r b_fd, echo = FALSE, fig.align = "center"}
 findDuplicates(cleaned_data)
+
+rm(cleaned_data)
 ```
 
 ### After fixDuplicates (all 49 states)
@@ -257,12 +284,14 @@ findDuplicates(cleaned_data)
 findDuplicates(fixed_data)
 
 DT::datatable(findDuplicates(fixed_data, return = "table"))
+
+rm(fixed_data)
 ```
 
 ## Strata
 
 ```{r stratacheck, echo = FALSE}
-DT::datatable(strataCheck(fixed_data))
+DT::datatable(strataCheck(final_data))
 ```
 
 ## Repeated values
@@ -271,21 +300,14 @@ DT::datatable(strataCheck(fixed_data))
 
 ```{r h_validate, echo = FALSE}
 DT::datatable(
-  migbirdHIP::validate(fixed_data, type = "horizontal") %>% 
+  migbirdHIP::validate(final_data, type = "horizontal") %>% 
     mutate(prop_repeat = round(prop_repeat, digits = 2)))
 ```
 
 ### Repeated values within duck bag code
 
 ```{r v_validate, echo = FALSE}
-DT::datatable(migbirdHIP::validate(fixed_data, type = "vertical"))
-```
-
-```{r data_sweep, include = FALSE}
-
-# Remove data objects to improve memory use
-rm(cleaned_data)
-rm(fixed_data)
+DT::datatable(migbirdHIP::validate(final_data, type = "vertical"))
 ```
 
 # Error Visualizations
@@ -326,7 +348,7 @@ left_join(
   x_order %>% 
     mutate(order = row_number()) %>% 
     select(errors, order), 
-  corrected_data %>%
+  final_data %>%
     select(errors) %>%
     # Pull errors apart, delimited by hyphens
     separate(errors, into = as.character(c(1:25)), sep = "-") %>%
@@ -342,8 +364,8 @@ left_join(
   mutate(count_errors = ifelse(is.na(count_errors), 0, count_errors)) %>% 
   # Calculate error proportion
   mutate(
-    total = nrow(corrected_data),
-    proportion = count_errors / nrow(corrected_data)) %>%
+    total = nrow(final_data),
+    proportion = count_errors / nrow(final_data)) %>%
   # Plot
   ggplot() +
   geom_bar(
@@ -373,9 +395,9 @@ errorPlot_states(proofed_data)
 ### After correction
 
 ```{r erps_c, echo = FALSE, fig.align = "center"}
-errorPlot_states(corrected_data)
+errorPlot_states(final_data)
 
-rm(corrected_data)
+rm(final_data)
 ```
 
 # Error Exploration
