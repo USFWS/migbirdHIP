@@ -102,7 +102,7 @@ fixed_data <- fixDuplicates(cleaned_data)
 
 proofed_data <- proof(fixed_data, year = params$year)
 
-corrected_data <- correct(proofed_data, year = params$year, data = "bag")
+corrected_data <- correct(proofed_data, year = params$year)
 
 # Summarize number of records from Canada
 canada_records <-
