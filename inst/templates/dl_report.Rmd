@@ -132,7 +132,7 @@ canada_records <-
 # Summarize number of bad zip codes
 zip_check <-
   final_data %>% 
-  filter(!state %in% c("AB", "BC", "MB", "NB", "NL", "NT", "NS", "NU", "ON", "PE", "QC", "SK", "YT"))
+  filter(!state %in% c("AB", "BC", "MB", "NB", "NL", "NT", "NS", "NU", "ON", "PE", "QC", "SK", "YT")) %>% 
   mutate(zipPrefix = str_extract(zip, "^[0-9]{3}")) %>%
   left_join(
     zip_code_ref %>%
