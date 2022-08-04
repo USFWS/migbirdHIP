@@ -4,7 +4,7 @@
 #'
 #' @importFrom magrittr %<>%
 #' @importFrom dplyr %>%
-#' @importFrom dplyr as_tibble_col
+#' @importFrom tibble as_tibble_col
 #' @importFrom dplyr mutate
 #' @importFrom dplyr mutate_at
 #' @importFrom dplyr across
