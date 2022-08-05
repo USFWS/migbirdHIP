@@ -297,7 +297,14 @@ rm(fixed_data)
 ## Strata
 
 ```{r stratacheck, echo = FALSE}
-DT::datatable(strataCheck(final_data))
+DT::datatable(
+  strataCheck(final_data),
+  extensions = "Buttons",
+  options = 
+    list(
+      dom = "Bfrti",
+      buttons = c("csv", "excel", "pdf"))
+  )
 ```
 
 ## Repeated values
