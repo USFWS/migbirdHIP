@@ -124,11 +124,9 @@ final_data <-
   mutate(
     # Add the download date as a column
     dl_date =
-      str_extract(
-        pull(files[i, ]), "(?<=[A-Z]{2})[0-9]{8}(?=\\.txt)"),
+      str_extract(source_file, "(?<=[A-Z]{2})[0-9]{8}(?=\\.txt)"),
     # Add the download cycle as a column
-    dl_cycle =
-      str_extract(pull(files[i, ]), "(?<=DL).+(?=\\/)"))
+    dl_cycle = params$dl)
 
 # Summarize number of records from Canada
 canada_records <-
