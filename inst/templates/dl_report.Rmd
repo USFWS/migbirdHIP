@@ -120,7 +120,15 @@ final_data <-
         band_tailed_pigeon = Q_bt_pigeons,
         brant = Q_brant,
         seaducks = Q_seaducks)) %>% 
-  proof(., year = params$year)
+  proof(., year = params$year) %>% 
+  mutate(
+    # Add the download date as a column
+    dl_date =
+      str_extract(
+        pull(files[i, ]), "(?<=[A-Z]{2})[0-9]{8}(?=\\.txt)"),
+    # Add the download cycle as a column
+    dl_cycle =
+      str_extract(pull(files[i, ]), "(?<=DL).+(?=\\/)"))
 
 # Summarize number of records from Canada
 canada_records <-
