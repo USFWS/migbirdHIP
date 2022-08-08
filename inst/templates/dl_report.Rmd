@@ -302,7 +302,7 @@ DT::datatable(
   extensions = "Buttons",
   options = 
     list(
-      dom = "Bfrti",
+      dom = "Bfrtip",
       buttons = c("csv", "excel", "pdf"))
   )
 ```
