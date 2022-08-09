@@ -7,10 +7,10 @@
 strataCheck(x)
 }
 \arguments{
-\item{x}{The object created after cleaning data with \code{\link{clean}}}
+\item{x}{The object created after fixing data with \code{\link{fixDuplicates}}}
 }
 \description{
-After cleaning the data with \code{\link{clean}}, ensure there are no new strata that have been introduced by a state to the species groups.
+After fixing the data with \code{\link{fixDuplicates}}, ensure there are no new strata that have been introduced by a state to the species groups.
 }
 \references{
 \url{https://github.com/USFWS/migbirdHIP}

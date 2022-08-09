@@ -1,6 +1,6 @@
 #' Check state strata
 #'
-#' After cleaning the data with \code{\link{clean}}, ensure there are no new strata that have been introduced by a state to the species groups.
+#' After fixing the data with \code{\link{fixDuplicates}}, ensure there are no new strata that have been introduced by a state to the species groups.
 #'
 #' @importFrom dplyr %>%
 #' @importFrom dplyr select
@@ -15,7 +15,7 @@
 #' @importFrom dplyr desc
 #' @importFrom tidyr pivot_longer
 #'
-#' @param x The object created after cleaning data with \code{\link{clean}}
+#' @param x The object created after fixing data with \code{\link{fixDuplicates}}
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}
