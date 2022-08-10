@@ -188,10 +188,12 @@ Other quick fixes include:
 Sometimes we receive HIP records that should be processed in a future season. We also sometiems receive records that should be processed in both this season and a future one, since some states have license years that encompass two seasons. The `issueCheck` function evaluates issue_date and registration_yr for two-season states (ME, MA, ID, CT, WV, VT, NH, IA, ND, and TN) as well as a 365-day state (MS).
 
 For ME, MA, ID, CT, WV, VT, NH, IA, ND, and TN:
+
 * If a record's issue_date is between issue_start and last day of hunting season, AND registration_yr is for next season, (1) COPY the record for next year and (2) CHANGE registration_yr for this year (subtract 1) so it's includable in the sample.
 * If a record's issue_date is after the end of hunting season, SET IT ASIDE for next year.
 
 For MS:
+
 * If a record's issue_date is between the first day of the hunting season and the last day of the hunting season in Mississippi, keep a copy for this year (with registration_yr as the current year) and copy one for next year (registration_yr + 1).
 
 ```{r, issuecheck}
