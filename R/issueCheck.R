@@ -68,7 +68,7 @@ issueCheck <-
             registration_yr)) %>%
       select(-issue_id)
 
-    if(nrow(current_data %>% filter(issue_id == "copy")) == 0){
+    if(nrow(issue_assignments %>% filter(issue_id == "copy")) == 0){
       message(
         paste0(
           "CURRENT DATA is nrow == 0.\nNo records need to be modified (regist",
