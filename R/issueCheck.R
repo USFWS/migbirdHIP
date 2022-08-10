@@ -12,6 +12,7 @@
 #' @importFrom dplyr case_when
 #' @importFrom lubridate mdy
 #' @importFrom lubridate interval
+#' @importFrom lubridate %within%
 #' @importFrom stringr str_detect
 #' @importFrom utils write.csv
 #'
