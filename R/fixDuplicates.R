@@ -22,7 +22,7 @@
 #' @importFrom lubridate mdy
 #' @importFrom purrr pmap_chr
 #'
-#' @param x A cleaned data table created by \code{\link{clean}}
+#' @param x A current data table created by \code{\link{issueCheck}}
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}

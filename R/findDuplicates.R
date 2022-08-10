@@ -33,7 +33,7 @@
 #' @importFrom dplyr count
 #' @importFrom dplyr summarize
 #'
-#' @param x A cleaned data table created by \code{\link{clean}}
+#' @param x A current data table created by \code{\link{issueCheck}}
 #' @param return Option to return either a plot or a table; default value is "plot"
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}

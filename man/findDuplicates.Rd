@@ -7,7 +7,7 @@
 findDuplicates(x, return = "plot")
 }
 \arguments{
-\item{x}{A cleaned data table created by \code{\link{clean}}}
+\item{x}{A current data table created by \code{\link{issueCheck}}}
 
 \item{return}{Option to return either a plot or a table; default value is "plot"}
 }

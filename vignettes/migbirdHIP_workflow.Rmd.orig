@@ -19,6 +19,7 @@ vignette: >
     - [renameFiles](#renamefiles)
     - [shiftFix](#shiftFix)
     - [clean](#clean)
+    - [issueCheck](#issueCheck)
     - [findDuplicates](#findduplicates)
     - [fixDuplicates](#fixduplicates)
     - [strataCheck](#stratacheck)
@@ -182,16 +183,38 @@ Other quick fixes include:
     * Attempt at PO Box standardization, by changing "P.O.BOX" to "PO BOX" and "P.O. BOX" to "PO BOX"
 * Trims whitespace on all values (again)
 
+### issueCheck
+
+Sometimes we receive HIP records that should be processed in a future season. We also sometiems receive records that should be processed in both this season and a future one, since some states have license years that encompass two seasons. The `issueCheck` function evaluates issue_date and registration_yr for two-season states (ME, MA, ID, CT, WV, VT, NH, IA, ND, and TN) as well as a 365-day state (MS).
+
+For ME, MA, ID, CT, WV, VT, NH, IA, ND, and TN:
+* If a record's issue_date is between issue_start and last day of hunting season, AND registration_yr is for next season, (1) COPY the record for next year and (2) CHANGE registration_yr for this year (subtract 1) so it's includable in the sample.
+* If a record's issue_date is after the end of hunting season, SET IT ASIDE for next year.
+
+For MS:
+* If a record's issue_date is between the first day of the hunting season and the last day of the hunting season in Mississippi, keep a copy for this year (with registration_yr as the current year) and copy one for next year (registration_yr + 1).
+
+```{r, issuecheck}
+DL1301_current <- issueCheck(DL1301_clean, year = 2021, write = F)
+```
+
+To export a table of records to process in a future season, specify the outpath where the .csv should be written and specify `write = TRUE`.
+
+```{r, issuecheck2, eval = FALSE}
+DL1301_current <- issueCheck(DL1301_clean, year = 2021, path = "C:/HIP/future_data/", write = T)
+
+```
+
 ### findDuplicates
 
 The `findDuplicates` function finds hunters that have more than one registration. Records are grouped by first name, last name, state, birth date, registration year, and download state to identify unique hunters. If the same hunter has 2 or more registrations, the fields that are not identical are counted and summarized. A plot is returned by default, but the type of output can be specified using `return = "plot"` for plot, or `return = "table"` for table and summary message.
 
 ```{r findDuplicates, fig.cap = "Figure 1. Plot of types of duplicates.", fig.width = 6, fig.height = 3.5, dpi = 300, out.width = 500, fig.align = "center"}
-findDuplicates(DL1301_clean)
+findDuplicates(DL1301_current)
 ```
 
 ```{r findDuplicates_tbl}
-findDuplicates(DL1301_clean, return = "table")
+findDuplicates(DL1301_current, return = "table")
 ```
 
 ### fixDuplicates
@@ -212,7 +235,7 @@ Note: This function replaces "." values with NA in non-permit species columns fo
 
 
 ```{r, fixduplicates}
-DL1301_fixed <- fixDuplicates(DL1301_clean)
+DL1301_fixed <- fixDuplicates(DL1301_current)
 ```
 
 ### strataCheck

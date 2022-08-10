@@ -95,7 +95,9 @@ cleaned_data <- clean(unshifted_data)
 
 rm(unshifted_data)
 
-fixed_data <- fixDuplicates(cleaned_data)
+current_data <- issueCheck(cleaned_data, params$year, write = F)
+
+fixed_data <- fixDuplicates(current_data)
 
 proofed_data <- proof(fixed_data, year = params$year)
 
@@ -177,13 +179,100 @@ DT::datatable(
 
 ## Registration year checking
 
+### Summary of registration_yr
+
 ```{r reg_yr_check, echo = FALSE}
 DT::datatable(
-  final_data %>% 
+  current_data %>% 
     select(registration_yr, dl_state) %>% 
     group_by(registration_yr, dl_state) %>% 
     summarize(n = n()) %>% 
     ungroup())
+
+```
+
+### Records changed for this season and copied for next season
+
+Records below had their registration_yr edited to be compatible for this HIP season and were also copied and exported for next HIP season.
+
+```{r reg_yr_check2, echo = FALSE}
+twoseasonstates <-
+  licenses_ref %>%
+  filter(category == "2 season") %>%
+  select(state) %>%
+  pull()
+
+issue_assignments <-
+  cleaned_data %>%
+  left_join(
+    licenses_ref %>%
+      rename(dl_state = state),
+    by = "dl_state") %>%
+  mutate(
+    issue_id =
+      case_when(
+        dl_state %in% twoseasonstates &
+          registration_yr == as.character(year + 1) &
+          mdy(issue_date) %within%
+          interval(issue_start, last_day_migbird_hunting) ~ "copy",
+        dl_state %in% twoseasonstates &
+          registration_yr == as.character(year) &
+          mdy(issue_date) > last_day_migbird_hunting ~ "postpone",
+        dl_state == "MS" &
+          mdy(issue_date) %within%
+          interval(MS_firstday, last_day_migbird_hunting) ~ "copy",
+        TRUE ~ NA_character_)) %>%
+  select(-c("hunting_season", "issue_start", "issue_end",
+            "last_day_migbird_hunting", "category"))
+
+current_data <-
+  issue_assignments %>%
+  mutate(
+    registration_yr =
+      ifelse(
+        issue_id == "copy",
+        as.character(as.numeric(registration_yr)-1),
+        registration_yr)) %>%
+  filter(issue_id == "copy") %>% 
+  select(-issue_id) 
+
+if(nrow(current_data) > 0){
+  current_summary <- 
+    current_data %>% 
+    group_by(dl_state, registration_yr) %>% 
+    summarize(n = n()) %>% 
+    ungroup()
+}
+
+datatable::DT(current_summary)
+
+rm(current_data)
+
+```
+
+### Records set aside for next season
+
+Records below have an issue_date after the end of migratory bird hunting for that state and where thus set aside for next year.
+
+```{r reg_yr_check3, echo = FALSE}
+
+future_data <-
+  issue_assignments %>%
+  filter(issue_id %in% c("copy", "postpone"))
+
+if(nrow(future_data) > 0){
+  future_summary <- 
+    future_data %>% 
+    group_by(dl_state, registration_yr, issue_id) %>% 
+    summarize(n = n()) %>% 
+    ungroup()
+}
+
+datatable::DT(future_summary)
+
+rm(future_data)
+rm(issue_assignments)
+rm(twoseasonstates)
 
 ```
 
@@ -279,9 +368,9 @@ rm(dl_data)
 ### Before fixDuplicates (all 49 states)
 
 ```{r b_fd, echo = FALSE, fig.align = "center"}
-findDuplicates(cleaned_data)
+findDuplicates(current_data)
 
-rm(cleaned_data)
+rm(current_data)
 ```
 
 ### After fixDuplicates (all 49 states)

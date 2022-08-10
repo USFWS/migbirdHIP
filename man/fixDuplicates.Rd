@@ -7,7 +7,7 @@
 fixDuplicates(x)
 }
 \arguments{
-\item{x}{A cleaned data table created by \code{\link{clean}}}
+\item{x}{A current data table created by \code{\link{issueCheck}}}
 }
 \description{
 Resolve duplicate HIP records.

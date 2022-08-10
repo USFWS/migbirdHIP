@@ -114,4 +114,7 @@ utils::globalVariables(
     "zipState",
     "check",
     "prop",
-    "mean_prop"))
+    "mean_prop",
+    "x_sdbrs",
+    "issue_id",
+    "category"))

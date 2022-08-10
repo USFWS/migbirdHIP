@@ -16,6 +16,7 @@ Tasks that can be accomplished with this package include:
 -   `strataCheck` identifies any new strata
 -   `validate` checks for table-wide repetition
 -   `clean` does basic reorganization tasks
+-   `issueCheck` looks for records that should be processed later
 -   `findDuplicates` identifies duplicate HIP records
 -   `fixDuplicates` resolves duplicate HIP records
 -   `investigate` reports details on repeated values
