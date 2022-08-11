@@ -222,7 +222,7 @@ Other quick fixes include:
 
 ### issueCheck
 
-Sometimes we receive HIP records that should be processed in a future season. We also sometiems receive records that should be processed in both this season and a future one, since some states have license years that encompass two seasons. The `issueCheck` function evaluates issue_date and registration_yr for two-season states (ME, MA, ID, CT, WV, VT, NH, IA, ND, and TN) as well as a 365-day state (MS).
+Sometimes we receive HIP records that should be processed in a future season. We also sometiems receive records that should be processed in both this season and a future one, since some states have license years that encompass two seasons. The `issueCheck` function evaluates issue_date and registration_yr for two-season states (ME, MA, ID, CT, WV, VT, NH, IA, ND, and TN) as well as a 365-day state (MS). It also postpones any records from any state that have future registration_yr value.
 
 For ME, MA, ID, CT, WV, VT, NH, IA, ND, and TN:
 
@@ -233,13 +233,18 @@ For MS:
 
 * If a record's issue_date is between the first day of the hunting season and the last day of the hunting season in Mississippi, keep a copy for this year (with registration_yr as the current year) and copy one for next year (registration_yr + 1).
 
+For all states:
+
+* If a record's registration_yr is in the future, SET IT ASIDE for next year.
+
+
 
 ```r
 DL1301_current <- issueCheck(DL1301_clean, year = 2021, write = F)
 ```
 
 ```
-## 49000 records from two-season states have been modified to have registration_yr - 1. They will be copied for next season with their original registration_yr.
+## 709 records from two-season states have been modified to have registration_yr - 1. They will be copied for next season with their original registration_yr.
 ```
 
 To export a table of records to process in a future season, specify the outpath where the .csv should be written and specify `write = TRUE`.
@@ -266,22 +271,21 @@ findDuplicates(DL1301_current, return = "table")
 ```
 
 ```
-## # A tibble: 13 × 2
+## # A tibble: 12 × 2
 ##    dupl                                         count
 ##    <chr>                                        <int>
-##  1 address                                          2
-##  2 address-city                                     1
-##  3 address-email                                    2
-##  4 address-zip-email                                1
-##  5 address-zip-issue_date                           1
-##  6 bag                                            480
-##  7 email                                            2
-##  8 issue_date                                      25
+##  1 address                                          1
+##  2 address-email                                    1
+##  3 address-zip-email                                1
+##  4 address-zip-issue_date                           1
+##  5 bag                                            483
+##  6 email                                            1
+##  7 hunt_mig_birds                                   1
+##  8 issue_date                                      13
 ##  9 issue_date-dl_date                               1
-## 10 issue_date-hunt_mig_birds-dl_date                3
-## 11 middle                                           5
+## 10 issue_date-email                                 1
+## 11 issue_date-hunt_mig_birds-dl_date                3
 ## 12 middle-address-city-zip-hunt_mig_birds-email     1
-## 13 suffix-issue_date-email                          1
 ```
 
 ### fixDuplicates
@@ -318,7 +322,7 @@ strataCheck(DL1301_fixed)
 ```
 
 ```
-## # A tibble: 230 × 4
+## # A tibble: 214 × 4
 ##    dl_state spp                state_strata normal_strata
 ##    <chr>    <chr>              <chr>        <chr>        
 ##  1 ND       woodcock_bag       0            1, 2, 3, 5   
@@ -331,7 +335,7 @@ strataCheck(DL1301_fixed)
 ##  8 OR       brant              0            1, 2         
 ##  9 OR       seaducks           0            1, 2         
 ## 10 CO       seaducks           0            1            
-## # … with 220 more rows
+## # … with 204 more rows
 ```
 
 ### validate
@@ -346,20 +350,20 @@ validate(DL1301_fixed, type = "horizontal")
 ```
 
 ```
-## # A tibble: 49 × 5
+## # A tibble: 43 × 5
 ##    source_file    h_value h_rep h_total prop_repeat
 ##    <chr>          <chr>   <int>   <int>       <dbl>
 ##  1 IA20211215.txt 0        2841    3175       0.895
-##  2 AL20211229.txt 1        4223    4790       0.882
-##  3 WI20211229.txt 1         273     323       0.845
-##  4 MO20211229.txt 1        2697    3604       0.748
-##  5 ME20211229.txt 1         112     151       0.742
-##  6 NM20211229.txt 1         208     295       0.705
-##  7 ID20211229.txt 1        1763    2588       0.681
-##  8 ND20211215.txt 1         130     204       0.637
-##  9 CA20211229.txt 1        2003    3211       0.624
-## 10 IN20211229.txt 1         416     690       0.603
-## # … with 39 more rows
+##  2 WI20211229.txt 1         273     323       0.845
+##  3 MO20211229.txt 1        2697    3604       0.748
+##  4 ME20211229.txt 1         112     151       0.742
+##  5 NM20211229.txt 1         208     295       0.705
+##  6 ID20211229.txt 1        1762    2588       0.681
+##  7 ND20211215.txt 1         130     204       0.637
+##  8 CA20211229.txt 1        2003    3211       0.624
+##  9 IN20211229.txt 1         416     690       0.603
+## 10 GA20211229.txt 1        2199    3821       0.576
+## # … with 33 more rows
 ```
 
 <b>Vertically.</b> The vertical check searches within each column for repetition. Any species group column with the same value in all rows will be detected. *Coming soon:* States that do not have a hunting season for one or more species groups (e.g. seaducks) will not be returned using this function for reporting all zero values. The default version of this function (`all = FALSE`) only checks duck bags. If the parameter is set to `all = TRUE`, every species group will be checked.
@@ -448,20 +452,20 @@ DL1301_corrected <- correct(DL1301_proofed, year = 2021)
 ```
 
 ```
-## # A tibble: 129 × 4
-##    record_key  zip        state zipState
-##    <chr>       <chr>      <chr> <chr>   
-##  1 record_892  71646      AZ    AR      
-##  2 record_1214 53473      AL    WI      
-##  3 record_1334 30152-4158 AL    GA      
-##  4 record_1706 25652      AL    WV      
-##  5 record_2217 35959      GA    AL      
-##  6 record_3432 32567      AL    FL      
-##  7 record_3448 30456      AL    GA      
-##  8 record_3825 36005      FL    AL      
-##  9 record_4202 20097      NC    DC      
-## 10 record_4706 29744      NC    SC      
-## # … with 119 more rows
+## # A tibble: 112 × 4
+##    record_key   zip        state zipState
+##    <chr>        <chr>      <chr> <chr>   
+##  1 record_8188  20589      CO    DC      
+##  2 record_9556  32578-2725 OH    FL      
+##  3 record_10308 32428-6908 VA    FL      
+##  4 record_12168 85034      GA    AZ      
+##  5 record_14484 32435-6458 GA    FL      
+##  6 record_16247 2034       GA    DC      
+##  7 record_16261 2034       GA    DC      
+##  8 record_18352 35213-3909 GA    AL      
+##  9 record_18432 30161-4073 WY    GA      
+## 10 record_19442 98409      IA    WA      
+## # … with 102 more rows
 ```
 
 The following changes are made by the `correct` function:
@@ -611,6 +615,11 @@ errorPlot_fields(DL1301_proofed, loc = "all", year = 2021)
 errorPlot_fields(DL1301_proofed, loc = "LA", year = 2021)
 ```
 
+```
+## Error in `check_aesthetics()`:
+## ! Aesthetics must be either length 1 or the same as the data (1): x, y and label
+```
+
 <img src="figure/errorfieldsplotsc-1.png" title="Figure 3. Plot of all North Carolina's errors by field name." alt="Figure 3. Plot of all North Carolina's errors by field name." width="500" style="display: block; margin: auto;" />
 
 The `youth` parameter can be set to TRUE for `errorPlot_fields` to view the proportion of "errors" created by youth hunters. Youth hunters are not included in the error plot if `youth = FALSE` (set as default).
@@ -668,20 +677,20 @@ errorTable(DL1301_proofed)
 ```
 
 ```
-## # A tibble: 91 × 3
-##    dl_state error      error_count
-##    <chr>    <chr>            <dbl>
-##  1 AK       issue_date           1
-##  2 AL       birth_date         157
-##  3 AL       email                3
-##  4 AL       firstname            5
-##  5 AL       suffix               5
-##  6 AL       zip                 10
-##  7 CA       birth_date         212
-##  8 CA       title                2
-##  9 CO       birth_date          76
-## 10 CO       zip                  1
-## # … with 81 more rows
+## # A tibble: 84 × 3
+##    dl_state error           error_count
+##    <chr>    <chr>                 <dbl>
+##  1 AK       issue_date                1
+##  2 AK       registration_yr           1
+##  3 CA       birth_date              212
+##  4 CA       title                     2
+##  5 CO       birth_date               76
+##  6 CO       zip                       1
+##  7 CT       birth_date                8
+##  8 CT       email                   248
+##  9 CT       firstname                 1
+## 10 FL       birth_date               92
+## # … with 74 more rows
 ```
 
 Errors can be reported by only location by turning off the `field` parameter.
@@ -692,20 +701,20 @@ errorTable(DL1301_proofed, field = "none")
 ```
 
 ```
-## # A tibble: 28 × 2
+## # A tibble: 26 × 2
 ##    dl_state error_count
 ##    <chr>          <dbl>
-##  1 AK                 1
-##  2 AL               180
-##  3 CA               214
-##  4 CO                77
-##  5 CT               260
-##  6 FL               104
-##  7 GA               122
-##  8 IA               147
-##  9 ID               222
-## 10 IN                71
-## # … with 18 more rows
+##  1 AK                 2
+##  2 CA               214
+##  3 CO                77
+##  4 CT               257
+##  5 FL               104
+##  6 GA               122
+##  7 IA               147
+##  8 ID               222
+##  9 IN                71
+## 10 KY                70
+## # … with 16 more rows
 ```
 
 Errors can be reported by only field by turning off the `loc` parameter.
@@ -716,20 +725,21 @@ errorTable(DL1301_proofed, loc = "none")
 ```
 
 ```
-## # A tibble: 11 × 2
-##    error          error_count
-##    <chr>                <dbl>
-##  1 birth_date            2348
-##  2 city                     1
-##  3 email                  277
-##  4 firstname               49
-##  5 hunt_mig_birds          11
-##  6 issue_date               1
-##  7 lastname                 5
-##  8 state                    1
-##  9 suffix                  40
-## 10 title                    3
-## 11 zip                    132
+## # A tibble: 12 × 2
+##    error           error_count
+##    <chr>                 <dbl>
+##  1 birth_date             2157
+##  2 city                      1
+##  3 email                   271
+##  4 firstname                42
+##  5 hunt_mig_birds           11
+##  6 issue_date                1
+##  7 lastname                  5
+##  8 registration_yr           1
+##  9 state                     1
+## 10 suffix                   35
+## 11 title                     3
+## 12 zip                     115
 ```
 
 Location can be specified.
@@ -758,7 +768,7 @@ errorTable(DL1301_proofed, field = "suffix")
 ## # A tibble: 1 × 2
 ##   error  error_count
 ##   <chr>        <dbl>
-## 1 suffix          40
+## 1 suffix          35
 ```
 
 Total errors for a location can be pulled.
@@ -801,7 +811,7 @@ redFlags(DL1301_proofed, type = "state", threshold = 0.03)
 ## # A tibble: 1 × 5
 ##   dl_state count_errors count_correct proportion flag        
 ##   <chr>           <int>         <int>      <dbl> <chr>       
-## 1 CT                260          6015     0.0414 error > 0.03
+## 1 CT                257          5943     0.0415 error > 0.03
 ```
 
 <b>By field.</b>
@@ -816,7 +826,7 @@ redFlags(DL1301_proofed, type = "field", threshold = 0.01)
 ## # A tibble: 1 × 5
 ##   errors     count_errors count_correct proportion flag        
 ##   <chr>             <int>         <int>      <dbl> <chr>       
-## 1 birth_date         2348         46111     0.0485 error > 0.01
+## 1 birth_date         2157         39705     0.0515 error > 0.01
 ```
 
 ## Troubleshooting

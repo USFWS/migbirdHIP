@@ -185,7 +185,7 @@ Other quick fixes include:
 
 ### issueCheck
 
-Sometimes we receive HIP records that should be processed in a future season. We also sometiems receive records that should be processed in both this season and a future one, since some states have license years that encompass two seasons. The `issueCheck` function evaluates issue_date and registration_yr for two-season states (ME, MA, ID, CT, WV, VT, NH, IA, ND, and TN) as well as a 365-day state (MS).
+Sometimes we receive HIP records that should be processed in a future season. We also sometiems receive records that should be processed in both this season and a future one, since some states have license years that encompass two seasons. The `issueCheck` function evaluates issue_date and registration_yr for two-season states (ME, MA, ID, CT, WV, VT, NH, IA, ND, and TN) as well as a 365-day state (MS). It also postpones any records from any state that have future registration_yr value.
 
 For ME, MA, ID, CT, WV, VT, NH, IA, ND, and TN:
 
@@ -195,6 +195,11 @@ For ME, MA, ID, CT, WV, VT, NH, IA, ND, and TN:
 For MS:
 
 * If a record's issue_date is between the first day of the hunting season and the last day of the hunting season in Mississippi, keep a copy for this year (with registration_yr as the current year) and copy one for next year (registration_yr + 1).
+
+For all states:
+
+* If a record's registration_yr is in the future, SET IT ASIDE for next year.
+
 
 ```{r, issuecheck}
 DL1301_current <- issueCheck(DL1301_clean, year = 2021, write = F)

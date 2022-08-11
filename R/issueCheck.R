@@ -46,27 +46,39 @@ issueCheck <-
       mutate(
         issue_id =
           case_when(
+            # For records from two-season states with a future registration year
+            # and issue_date before the last day of hunting, copy them for next
+            # year (and count them for this year)
             dl_state %in% twoseasonstates &
               registration_yr == as.character(year + 1) &
               mdy(issue_date) %within%
               interval(issue_start, last_day_migbird_hunting) ~ "copy",
+            # For records from two-season states with a current registration
+            # year and issue date after the last day of hunting, postpone
+            # sampling them until next year
             dl_state %in% twoseasonstates &
               registration_yr == as.character(year) &
               mdy(issue_date) > last_day_migbird_hunting ~ "postpone",
+            # For records from Mississippi, if the issue_date is within
+            # Mississippi's hunting season, copy them for next year (and count
+            # them for this year)
             dl_state == "MS" &
               mdy(issue_date) %within%
               interval(MS_firstday, last_day_migbird_hunting) ~ "copy",
+            # Postpone all other future registration_yr values, for all states
+            registration_yr == as.character(year + 1) ~ "postpone",
             TRUE ~ "nochange")) %>%
       select(-c("hunting_season", "issue_start", "issue_end",
                 "last_day_migbird_hunting", "category"))
 
     current_data <-
       issue_assignments %>%
+      filter(issue_id != "postpone") %>%
       mutate(
         registration_yr =
           ifelse(
             issue_id == "copy",
-            as.character(as.numeric(registration_yr)-1),
+            as.character(as.numeric(registration_yr) - 1),
             registration_yr)) %>%
       select(-issue_id)
 
@@ -78,9 +90,10 @@ issueCheck <-
     }else{
       message(
         paste0(
-          nrow(current_data), " records from two-season states have been modif",
-          "ied to have registration_yr - 1. They will be copied for next seaso",
-          "n with their original registration_yr."))
+          nrow(issue_assignments %>% filter(issue_id == "copy")), " records fr",
+          "om two-season states have been modified to have registration_yr - 1",
+          ". They will be copied for next season with their original registrat",
+          "ion_yr."))
     }
 
     future_data <-
