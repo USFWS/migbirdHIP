@@ -212,11 +212,11 @@ issue_assignments <-
     issue_id =
       case_when(
         dl_state %in% twoseasonstates &
-          registration_yr == as.character(year + 1) &
+          registration_yr == as.character(params$year + 1) &
           mdy(issue_date) %within%
           interval(issue_start, last_day_migbird_hunting) ~ "copy",
         dl_state %in% twoseasonstates &
-          registration_yr == as.character(year) &
+          registration_yr == as.character(params$year) &
           mdy(issue_date) > last_day_migbird_hunting ~ "postpone",
         dl_state == "MS" &
           mdy(issue_date) %within%
