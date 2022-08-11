@@ -64,7 +64,7 @@ issueCheck <-
             # them for this year)
             dl_state == "MS" &
               mdy(issue_date) %within%
-              interval(MS_firstday, last_day_migbird_hunting) ~ "copy",
+              interval(MS_firstday, MS_lastday) ~ "copy",
             # Postpone all other future registration_yr values, for all states
             registration_yr == as.character(year + 1) ~ "postpone",
             TRUE ~ "nochange")) %>%
