@@ -183,7 +183,7 @@ DT::datatable(
 
 ```{r reg_yr_check, echo = FALSE}
 DT::datatable(
-  current_data %>% 
+  final_data %>% 
     select(registration_yr, dl_state) %>% 
     group_by(registration_yr, dl_state) %>% 
     summarize(n = n()) %>% 
@@ -208,6 +208,8 @@ issue_assignments <-
     licenses_ref %>%
       rename(dl_state = state),
     by = "dl_state") %>%
+  # Filter out bad issue_date values
+  filter(issue_date != "00/00/0000") %>%
   mutate(
     issue_id =
       case_when(
