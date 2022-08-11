@@ -246,7 +246,11 @@ DL1301_current <- issueCheck(DL1301_clean, year = 2021, write = F)
 ```
 
 ```
-## 709 records from two-season states have been modified to have registration_yr - 1. They will be copied for next season with their original registration_yr.
+## 709 records have been modified to have registration_yr - 1. They have been copied and saved for next season in the future data .csv with their original registration_yr.
+```
+
+```
+## 6615 records have been postponed for next year. They will be filtered out from this download and saved in the future data .csv with their original registration_yr.
 ```
 
 To export a table of records to process in a future season, specify the outpath where the .csv should be written and specify `write = TRUE`.

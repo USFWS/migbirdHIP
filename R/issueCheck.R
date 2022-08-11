@@ -85,15 +85,28 @@ issueCheck <-
     if(nrow(issue_assignments %>% filter(issue_id == "copy")) == 0){
       message(
         paste0(
-          "CURRENT DATA is nrow == 0.\nNo records need to be modified (regist",
-          "ration_yr - 1) and copied for next year."))
+          "No records need to be modified (registration_yr - 1) and copied for",
+          " next year."))
     }else{
       message(
         paste0(
-          nrow(issue_assignments %>% filter(issue_id == "copy")), " records fr",
-          "om two-season states have been modified to have registration_yr - 1",
-          ". They will be copied for next season with their original registrat",
-          "ion_yr."))
+          nrow(issue_assignments %>% filter(issue_id == "copy")), " records ha",
+          "ve been modified to have registration_yr - 1. They have been copied",
+          " and saved for next season in the future data .csv with their origi",
+          "nal registration_yr."))
+    }
+
+    if(nrow(issue_assignments %>% filter(issue_id == "postpone")) == 0){
+      message(
+        paste0(
+          "No records need to be postponed for next year."))
+    }else{
+      message(
+        paste0(
+          nrow(issue_assignments %>% filter(issue_id == "postpone")), " record",
+          "s have been postponed for next year. They will be filtered out from",
+          " this download and saved in the future data .csv with their origina",
+          "l registration_yr."))
     }
 
     future_data <-
@@ -104,8 +117,7 @@ issueCheck <-
     if(nrow(future_data) == 0){
       message(
         paste0(
-          "FUTURE DATA is nrow == 0.\nNo records need to be saved for next yea",
-          "r."))
+          "No records need to be saved for next year."))
     }else{
       if(write == TRUE){
         if(!str_detect(outpath, "/$")){
