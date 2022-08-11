@@ -56,7 +56,7 @@ issueCheck <-
             dl_state == "MS" &
               mdy(issue_date) %within%
               interval(MS_firstday, last_day_migbird_hunting) ~ "copy",
-            TRUE ~ NA_character_)) %>%
+            TRUE ~ "nochange")) %>%
       select(-c("hunting_season", "issue_start", "issue_end",
                 "last_day_migbird_hunting", "category"))
 
