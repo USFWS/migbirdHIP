@@ -242,9 +242,11 @@ if(nrow(current_data) > 0){
     group_by(dl_state, registration_yr) %>% 
     summarize(n = n()) %>% 
     ungroup()
+  
+  DT::datatable(current_summary)
+}else{
+  message("No records to change/copy.")
 }
-
-DT::datatable(current_summary)
 
 rm(current_data)
 
@@ -266,9 +268,11 @@ if(nrow(future_data) > 0){
     group_by(dl_state, registration_yr, issue_id) %>% 
     summarize(n = n()) %>% 
     ungroup()
+  
+  DT::datatable(future_summary)
+}else{
+  message("No records to postpone.")
 }
-
-DT::datatable(future_summary)
 
 rm(future_data)
 rm(issue_assignments)
