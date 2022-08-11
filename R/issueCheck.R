@@ -41,6 +41,8 @@ issueCheck <-
         licenses_ref %>%
           rename(dl_state = state),
         by = "dl_state") %>%
+      # Filter out bad issue_date values
+      filter(issue_date != "00/00/0000") %>%
       mutate(
         issue_id =
           case_when(
