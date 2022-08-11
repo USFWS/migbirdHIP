@@ -225,7 +225,7 @@ issue_assignments <-
   select(-c("hunting_season", "issue_start", "issue_end",
             "last_day_migbird_hunting", "category"))
 
-current_data <-
+current_records <-
   issue_assignments %>%
   mutate(
     registration_yr =
@@ -236,9 +236,9 @@ current_data <-
   filter(issue_id == "copy") %>% 
   select(-issue_id) 
 
-if(nrow(current_data) > 0){
+if(nrow(current_records) > 0){
   current_summary <- 
-    current_data %>% 
+    current_records %>% 
     group_by(dl_state, registration_yr) %>% 
     summarize(n = n()) %>% 
     ungroup()
@@ -248,7 +248,7 @@ if(nrow(current_data) > 0){
   message("No records to change/copy.")
 }
 
-rm(current_data)
+rm(current_records)
 
 ```
 
