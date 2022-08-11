@@ -224,7 +224,7 @@ issue_assignments <-
               mdy(issue_date) %within%
               interval(MS_firstday, MS_lastday) ~ "copy",
         # Postpone all other future registration_yr values, for all states
-        registration_yr == as.character(year + 1) ~ "postpone",
+        registration_yr == as.character(params$year + 1) ~ "postpone",
         TRUE ~ "nochange")) %>%
   select(-c("hunting_season", "issue_start", "issue_end",
             "last_day_migbird_hunting", "category"))
