@@ -185,7 +185,9 @@ Other quick fixes include:
 
 ### issueCheck
 
-Sometimes we receive HIP records that should be processed in a future season. We also sometiems receive records that should be processed in both this season and a future one, since some states have license years that encompass two seasons. The `issueCheck` function evaluates issue_date and registration_yr for two-season states (ME, MA, ID, CT, WV, VT, NH, IA, ND, and TN) as well as a 365-day state (MS). It also postpones any records from any state that have future registration_yr value.
+Sometimes we receive HIP records that should be processed in a future season. We also sometiems receive records that should be processed in both this season and a future one, since some states have license years that encompass two seasons. The `issueCheck` function evaluates issue_date and registration_yr for two-season states (ME, MA, ID, CT, WV, VT, NH, IA, ND, and TN) as well as a 365-day state (MS). It also sets aside records from any state that have future registration_yr value.
+
+Note: Records "set aside" will be filtered out of the current data and written to a future data .csv file to be accessed in the next HIP season.
 
 For ME, MA, ID, CT, WV, VT, NH, IA, ND, and TN:
 
