@@ -244,7 +244,7 @@ if(nrow(current_data) > 0){
     ungroup()
 }
 
-datatable::DT(current_summary)
+DT::datatable(current_summary)
 
 rm(current_data)
 
@@ -268,7 +268,7 @@ if(nrow(future_data) > 0){
     ungroup()
 }
 
-datatable::DT(future_summary)
+DT::datatable(future_summary)
 
 rm(future_data)
 rm(issue_assignments)
