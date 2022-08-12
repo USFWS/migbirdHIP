@@ -488,7 +488,7 @@ left_join(
       birth_year = str_extract(birth_date, "(?<=\\/)[0-9]{4}$"),
       special =
         ifelse(
-          birth_year > year - 16,
+          birth_year > params$year - 16,
           "Youth Hunter",
           NA)) %>%
     select(errors, special) %>%
