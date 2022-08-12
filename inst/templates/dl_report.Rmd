@@ -308,7 +308,8 @@ huntcheck <-
   summarize(
     n = n(),
     prop = round(n()/total_state_n, 2)) %>% 
-  ungroup() 
+  ungroup() %>% 
+  distinct()
 
 if(nrow(huntcheck) > 0){
   DT::datatable(huntcheck)
@@ -483,14 +484,22 @@ left_join(
     mutate(order = row_number()) %>% 
     select(errors, order), 
   final_data %>%
-    select(errors) %>%
+    mutate(
+      birth_year = str_extract(birth_date, "(?<=\\/)[0-9]{4}$"),
+      special =
+        ifelse(
+          birth_year > year - 16,
+          "Youth Hunter",
+          NA)) %>%
+    select(errors, special) %>%
     # Pull errors apart, delimited by hyphens
     separate(errors, into = as.character(c(1:25)), sep = "-") %>%
     # Transform errors into a single column
     pivot_longer(1:25, names_to = "name") %>%
-    select(errors = value) %>%
+    select(errors = value, special) %>%
     filter(!is.na(errors)) %>%
-    group_by(errors) %>%
+    mutate(special = ifelse(errors != "birth_date", NA, special)) %>% 
+    group_by(errors, special) %>%
     # Count number of correct values
     summarize(count_errors = sum(!is.na(errors))) %>%
     ungroup(),
@@ -503,18 +512,81 @@ left_join(
   # Plot
   ggplot() +
   geom_bar(
-    aes(x = reorder(errors, order), y = proportion),
+    aes(x = reorder(errors, proportion), y = proportion, fill = special),
     stat = "identity") +
   geom_text(
-    aes(x = errors, y = proportion, label = count_errors, angle = 90),
+    aes(x = barlabels$errors,
+        y = barlabels$proportion,
+        label = barlabels$count_errors,
+        angle = 90),
     vjust = 0.2, hjust = -0.2) +
   labs(
     x = "Field",
     y = "Error proportion",
-    title = "Error proportion per field") +
+    title = "Error proportion per field",
+    fill = "Specifics") +
   scale_y_continuous(expand = expansion(mult = c(-0, 0.25))) +
   theme_classic() +
-  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1)) +
+  scale_fill_discrete(labels = "Youth Hunter", breaks = "Youth Hunter")
+
+# # Get the order of the fields so that they match the plot above
+# x_order <-
+#   proofed_data %>%
+#   select(errors) %>%
+#   # Pull errors apart, delimited by hyphens
+#   separate(errors, into = as.character(c(1:25)), sep = "-") %>%
+#   # Transform errors into a single column
+#   pivot_longer(1:25, names_to = "name") %>%
+#   select(errors = value) %>%
+#   filter(!is.na(errors)) %>%
+#   group_by(errors) %>%
+#   # Count number of correct values
+#   summarize(count_errors = sum(!is.na(errors))) %>%
+#   ungroup() %>%
+#   # Calculate error proportion
+#   mutate(
+#     total = nrow(proofed_data),
+#     proportion = count_errors / nrow(proofed_data)) %>%
+#   arrange(proportion)
+# 
+# left_join(
+#   x_order %>% 
+#     mutate(order = row_number()) %>% 
+#     select(errors, order), 
+#   final_data %>%
+#     select(errors) %>%
+#     # Pull errors apart, delimited by hyphens
+#     separate(errors, into = as.character(c(1:25)), sep = "-") %>%
+#     # Transform errors into a single column
+#     pivot_longer(1:25, names_to = "name") %>%
+#     select(errors = value) %>%
+#     filter(!is.na(errors)) %>%
+#     group_by(errors) %>%
+#     # Count number of correct values
+#     summarize(count_errors = sum(!is.na(errors))) %>%
+#     ungroup(),
+#   by = "errors") %>%
+#   mutate(count_errors = ifelse(is.na(count_errors), 0, count_errors)) %>% 
+#   # Calculate error proportion
+#   mutate(
+#     total = nrow(final_data),
+#     proportion = count_errors / nrow(final_data)) %>%
+#   # Plot
+#   ggplot() +
+#   geom_bar(
+#     aes(x = reorder(errors, order), y = proportion),
+#     stat = "identity") +
+#   geom_text(
+#     aes(x = errors, y = proportion, label = count_errors, angle = 90),
+#     vjust = 0.2, hjust = -0.2) +
+#   labs(
+#     x = "Field",
+#     y = "Error proportion",
+#     title = "Error proportion per field") +
+#   scale_y_continuous(expand = expansion(mult = c(-0, 0.25))) +
+#   theme_classic() +
+#   theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
 
 ```
 
