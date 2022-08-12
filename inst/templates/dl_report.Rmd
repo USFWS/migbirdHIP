@@ -479,6 +479,17 @@ x_order <-
     proportion = count_errors / nrow(proofed_data)) %>%
   arrange(proportion)
 
+# Labels for bar plot (birth_date color stack doesn't cooperate with
+# positioning 2 labels, so we only label that field once at the top of
+# the bar)
+barlabels <-
+  x_order %>%
+  select(-total) %>% 
+  bind_rows(
+    x_order %>%
+      select(-total) %>% 
+      filter(errors == "birth_date"))
+
 left_join(
   x_order %>% 
     mutate(order = row_number()) %>% 
