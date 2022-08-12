@@ -182,13 +182,22 @@ DT::datatable(
 ### Summary of registration_yr
 
 ```{r reg_yr_check, echo = FALSE}
-DT::datatable(
+reg_yr_summary <-
   final_data %>% 
     select(registration_yr, dl_state) %>% 
+    # Filter out records from this year since we know they are good
+    filter(registration_yr != as.character(params$year)) %>% 
     group_by(registration_yr, dl_state) %>% 
     summarize(n = n()) %>% 
-    ungroup())
+    ungroup()
 
+if(nrow(reg_yr_summary) > 0){
+  DT::datatable(reg_yr_summary)
+}else{
+  message(paste0("All registration years = ", as.character(params$year), "."))
+}
+
+rm(reg_yr_summary)
 ```
 
 ### Records changed for this season and copied for next season
@@ -291,11 +300,21 @@ rm(twoseasonstates)
 huntcheck <-
   final_data %>% 
   select(hunt_mig_birds, dl_state) %>% 
+  group_by(dl_state) %>% 
+  mutate(total_state_n = n()) %>% 
+  ungroup() %>% 
+  filter(hunt_mig_birds != 2) %>% 
   group_by(hunt_mig_birds, dl_state) %>% 
-  summarize(n = n()) %>% 
+  summarize(
+    n = n(),
+    prop = round(n()/total_state_n, 2)) %>% 
   ungroup() 
 
-DT::datatable(huntcheck)
+if(nrow(huntcheck) > 0){
+  DT::datatable(huntcheck)
+  }else{
+  message("All HuntY = 2.")
+}
 
 rm(huntcheck)
 ```
@@ -409,6 +428,8 @@ DT::datatable(
 
 ### Repeated values across duck, goose, and snipe_coot bag codes
 
+The table below shows how many records had horizontal repetition across the duck, goose, and snipe_coot columns. For each source file, the value repeated is indicated (h_value), the number of records with horizontal repetition in the file are reported (h_rep), the total number of records per file are reported (h_total), and the proportion of the file with horizontal repetition is indicated (prop_repeat).
+
 ```{r h_validate, echo = FALSE}
 DT::datatable(
   migbirdHIP::validate(final_data, type = "horizontal") %>% 
@@ -416,6 +437,8 @@ DT::datatable(
 ```
 
 ### Repeated values within duck bag code
+
+The table below shows how many records per file had the same value for all rows of the ducks_bag column. The v_repeated field indicates total count.
 
 ```{r v_validate, echo = FALSE}
 DT::datatable(migbirdHIP::validate(final_data, type = "vertical"))
@@ -428,7 +451,7 @@ DT::datatable(migbirdHIP::validate(final_data, type = "vertical"))
 ### Before correction
 
 ```{r erpf, echo = FALSE, fig.align = "center"}
-errorPlot_fields(proofed_data, year = params$year)
+errorPlot_fields(proofed_data, year = params$year, youth = T)
 ```
 
 ### After correction
