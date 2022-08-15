@@ -234,7 +234,7 @@ Records are kept when they meet the below criteria (in order of importance):
 
 1. The record in the group has the most recent issue date.
 2. Records do not contain all 1s or all 0s in bag columns.
-3. For duplicates from sea duck states (AK, CA, CT, DE, MA, MD, ME, NH, NJ, NY, RI, VA), keep records with a 2 in seaduck.
+3. For duplicates from sea duck states (AK, CA, CT, DE, MA, MD, ME, NC, NH, NJ, NY, RI, VA), keep records with a 2 in seaduck.
 4.  For duplicates from brant states (AK, CA, CT, DE, MA, MD, NH, NJ, NY, NC, RI, VA), keep records with a 2 in brant.
 4. If records are tied, one is chosen randomly.
 
