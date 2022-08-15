@@ -277,14 +277,17 @@ Records below have an issue_date after the end of migratory bird hunting for tha
 
 ```{r reg_yr_check3, echo = FALSE}
 
-if(str_detect(params$future_path, "\\/$") == FALSE){
-  params$future_path <- paste0(params$future_path, "/")}
+if(!str_detect(params$future_path, "\\/$")){
+  future_path <- paste0(params$future_path, "/")
+}else{
+  future_path <- params$future_path
+}
 
 future_file <- paste0("DL", params$dl, "_future_data.csv")
 
-if(future_file %in% list.files(params$future_path) == TRUE){
+if(future_file %in% list.files(future_path)){
   future_data <-
-    read_csv(paste0(params$future_path, future_file))
+    read_csv(paste0(future_path, future_file))
   
   future_summary <- 
     future_data %>% 
@@ -299,6 +302,7 @@ if(future_file %in% list.files(params$future_path) == TRUE){
 }
 
 rm(future_data)
+rm(future_path)
 rm(future_summary)
 rm(future_file)
 
