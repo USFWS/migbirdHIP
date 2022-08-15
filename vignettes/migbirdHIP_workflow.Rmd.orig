@@ -422,7 +422,10 @@ memory.limit(size = 55000)
 writeReport(
   path = "C:/HIP/DL1301",
   type = "dl_report",
+  corrected_path = "C:/HIP/corrected_data",
+  future_path = "C:/HIP/future_data",
   yr = 2019,
+  dl = "1301",
   dir = "C:/HIP/dl_reports",
   file = "DL1301_report")
 

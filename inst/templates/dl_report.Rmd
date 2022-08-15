@@ -12,6 +12,8 @@ params:
     value: x
   final_path:
     value: x
+  future_path:
+    value: x
   dl:
     value: x
   year:
@@ -255,7 +257,8 @@ if(nrow(current_records) > 0){
     current_records %>% 
     group_by(dl_state, registration_yr) %>% 
     summarize(n = n()) %>% 
-    ungroup()
+    ungroup() %>% 
+    arrange(desc(n))
   
   DT::datatable(current_summary)
 }else{
@@ -263,6 +266,8 @@ if(nrow(current_records) > 0){
 }
 
 rm(current_records)
+rm(issue_assignments)
+rm(twoseasonstates)
 
 ```
 
@@ -272,16 +277,21 @@ Records below have an issue_date after the end of migratory bird hunting for tha
 
 ```{r reg_yr_check3, echo = FALSE}
 
-future_data <-
-  issue_assignments %>%
-  filter(issue_id %in% c("copy", "postpone"))
+if(!str_detect(params$future_path, "\\/$")){
+  params$future_path <- paste0(params$future_path, "/")}
 
-if(nrow(future_data) > 0){
+future_file <- paste0("DL", params$dl, "_future_data.csv")
+
+if(future_file %in% list.files(params$future_path)){
+  future_data <-
+    read_csv(paste0(params$future_path, future_file))
+  
   future_summary <- 
     future_data %>% 
     group_by(dl_state, registration_yr, issue_id) %>% 
     summarize(n = n()) %>% 
-    ungroup()
+    ungroup() %>% 
+    arrange(desc(n))
   
   DT::datatable(future_summary)
 }else{
@@ -289,8 +299,8 @@ if(nrow(future_data) > 0){
 }
 
 rm(future_data)
-rm(issue_assignments)
-rm(twoseasonstates)
+rm(future_summary)
+rm(future_file)
 
 ```
 
@@ -309,7 +319,8 @@ huntcheck <-
     n = n(),
     prop = round(n()/total_state_n, 2)) %>% 
   ungroup() %>% 
-  distinct()
+  distinct() %>% 
+  arrange(desc(prop))
 
 if(nrow(huntcheck) > 0){
   DT::datatable(huntcheck)
@@ -586,7 +597,7 @@ rm(final_data)
 
 # Error Exploration
 
-A closer look at common errors and issues within this download's HIP data.
+The tables below show a closer look at errors and issues within this download's HIP data. Note that some of these values may have been corrected; what is being displayed are the errors that were caught.
 
 ## High error counts
 
