@@ -240,7 +240,9 @@ issue_assignments <-
   select(-c("hunting_season", "issue_start", "issue_end",
             "last_day_migbird_hunting", "category"))
 
-current_records <-
+if(nrow(issue_assignments %>% filter(issue_id == "copy")) > 0){
+  
+  current_records <-
   issue_assignments %>%
   filter(issue_id != "postpone") %>%
   mutate(
@@ -251,8 +253,7 @@ current_records <-
         registration_yr)) %>%
   filter(issue_id == "copy") %>% 
   select(-issue_id) 
-
-if(nrow(current_records) > 0){
+  
   current_summary <- 
     current_records %>% 
     group_by(dl_state, registration_yr) %>% 
@@ -261,11 +262,13 @@ if(nrow(current_records) > 0){
     arrange(desc(n))
   
   DT::datatable(current_summary)
+  
+  rm(current_records)
+  rm(current_summary)
 }else{
   message("No records to change/copy.")
 }
 
-rm(current_records)
 rm(issue_assignments)
 rm(twoseasonstates)
 
@@ -297,13 +300,14 @@ if(future_file %in% list.files(future_path)){
     arrange(desc(n))
   
   DT::datatable(future_summary)
+  
+  rm(future_data)
+  rm(future_summary)
 }else{
   message("No records to postpone.")
 }
 
-rm(future_data)
 rm(future_path)
-rm(future_summary)
 rm(future_file)
 
 ```
