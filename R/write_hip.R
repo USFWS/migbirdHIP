@@ -42,7 +42,9 @@ write_hip <-
           select(-c("stateBagValue", "spp")),
         by = c("state", "ducks_bag")
       ) %>%
-      rename(ducks_strat = FWSstratum) %>%
+      rename(
+        ducks_strat = FWSstratum,
+        dl = dl_cycle) %>%
       # Add strata: geese
       left_join(
         hip_bags_ref %>%
@@ -127,16 +129,16 @@ write_hip <-
       # Rename columns to desired output
       rename(
         postal_code = zip,
-        Q_ducks = ducks_bag,
-        Q_geese = geese_bag,
-        Q_doves = dove_bag,
-        Q_woodcock = woodcock_bag,
-        Q_coot_snipe = coots_snipe,
-        Q_rail_gallinule = rails_gallinules,
-        Q_cranes = cranes,
-        Q_bt_pigeons = band_tailed_pigeon,
-        Q_brant = brant,
-        Q_seaducks = seaducks) %>%
+        S_ducks = ducks_bag,
+        S_geese = geese_bag,
+        S_doves = dove_bag,
+        S_woodcock = woodcock_bag,
+        S_coot_snipe = coots_snipe,
+        S_rail_gallinule = rails_gallinules,
+        S_cranes = cranes,
+        S_bt_pigeons = band_tailed_pigeon,
+        S_brant = brant,
+        S_seaducks = seaducks) %>%
       mutate(
         # Only include file names in the "source_file" field, not folder names.
         # The field theoretically shouldn't include DL folder names if the
