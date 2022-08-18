@@ -43,7 +43,7 @@ write_hip <-
         by = c("state", "ducks_bag")
       ) %>%
       rename(
-        ducks_strat = FWSstratum,
+        S_ducks = FWSstratum,
         dl = dl_cycle) %>%
       # Add strata: geese
       left_join(
@@ -53,7 +53,7 @@ write_hip <-
           select(-c("stateBagValue", "spp")),
         by = c("state", "geese_bag")
       ) %>%
-      rename(geese_strat = FWSstratum) %>%
+      rename(S_geese = FWSstratum) %>%
       # Add strata: dove
       left_join(
         hip_bags_ref %>%
@@ -62,7 +62,7 @@ write_hip <-
           select(-c("stateBagValue", "spp")),
         by = c("state", "dove_bag")
       ) %>%
-      rename(dove_strat = FWSstratum) %>%
+      rename(S_doves = FWSstratum) %>%
       # Add strata: woodcock
       left_join(
         hip_bags_ref %>%
@@ -71,7 +71,7 @@ write_hip <-
           select(-c("stateBagValue", "spp")),
         by = c("state", "woodcock_bag")
       ) %>%
-      rename(woodcock_strat = FWSstratum) %>%
+      rename(S_woodcock = FWSstratum) %>%
       # Add strata: coots and snipe
       left_join(
         hip_bags_ref %>%
@@ -80,7 +80,7 @@ write_hip <-
           select(-c("stateBagValue", "spp")),
         by = c("state", "coots_snipe")
       ) %>%
-      rename(coots_snipe_strat = FWSstratum) %>%
+      rename(S_coot_snipe = FWSstratum) %>%
       # Add strata: rails and gallinules
       left_join(
         hip_bags_ref %>%
@@ -89,7 +89,7 @@ write_hip <-
           select(-c("stateBagValue", "spp")),
         by = c("state", "rails_gallinules")
       ) %>%
-      rename(rails_gallinules_strat = FWSstratum) %>%
+      rename(S_rail_gallinule = FWSstratum) %>%
       # Add strata: cranes
       left_join(
         hip_bags_ref %>%
@@ -98,7 +98,7 @@ write_hip <-
           select(-c("stateBagValue", "spp")),
         by = c("state", "cranes")
       ) %>%
-      rename(cranes_strat = FWSstratum) %>%
+      rename(S_cranes = FWSstratum) %>%
       # Add strata: band-tailed pigeon
       left_join(
         hip_bags_ref %>%
@@ -107,7 +107,7 @@ write_hip <-
           select(-c("stateBagValue", "spp")),
         by = c("state", "band_tailed_pigeon")
       ) %>%
-      rename(band_tailed_pigeon_strat = FWSstratum) %>%
+      rename(S_bt_pigeons = FWSstratum) %>%
       # Add strata: brant
       left_join(
         hip_bags_ref %>%
@@ -116,7 +116,7 @@ write_hip <-
           select(-c("stateBagValue", "spp")),
         by = c("state", "brant")
       ) %>%
-      rename(brant_strat = FWSstratum) %>%
+      rename(S_brant = FWSstratum) %>%
       # Add strata: seaducks
       left_join(
         hip_bags_ref %>%
@@ -125,20 +125,20 @@ write_hip <-
           select(-c("stateBagValue", "spp")),
         by = c("state", "seaducks")
       ) %>%
-      rename(seaducks_strat = FWSstratum) %>%
+      rename(S_seaducks = FWSstratum) %>%
       # Rename columns to desired output
       rename(
         postal_code = zip,
-        S_ducks = ducks_bag,
-        S_geese = geese_bag,
-        S_doves = dove_bag,
-        S_woodcock = woodcock_bag,
-        S_coot_snipe = coots_snipe,
-        S_rail_gallinule = rails_gallinules,
-        S_cranes = cranes,
-        S_bt_pigeons = band_tailed_pigeon,
-        S_brant = brant,
-        S_seaducks = seaducks) %>%
+        Q_ducks = ducks_bag,
+        Q_geese = geese_bag,
+        Q_doves = dove_bag,
+        Q_woodcock = woodcock_bag,
+        Q_coot_snipe = coots_snipe,
+        Q_rail_gallinule = rails_gallinules,
+        Q_cranes = cranes,
+        Q_bt_pigeons = band_tailed_pigeon,
+        Q_brant = brant,
+        Q_seaducks = seaducks) %>%
       mutate(
         # Only include file names in the "source_file" field, not folder names.
         # The field theoretically shouldn't include DL folder names if the

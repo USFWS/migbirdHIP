@@ -114,16 +114,16 @@ final_data <-
       select(1:27) %>% 
       rename(
         zip = postal_code,
-        ducks_bag = S_ducks,
-        geese_bag = S_geese,
-        dove_bag = S_doves,
-        woodcock_bag = S_woodcock,
-        coots_snipe = S_coot_snipe,
-        rails_gallinules = S_rail_gallinule,
-        cranes = S_cranes,
-        band_tailed_pigeon = S_bt_pigeons,
-        brant = S_brant,
-        seaducks = S_seaducks,
+        ducks_bag = Q_ducks,
+        geese_bag = Q_geese,
+        dove_bag = Q_doves,
+        woodcock_bag = Q_woodcock,
+        coots_snipe = Q_coot_snipe,
+        rails_gallinules = Q_rail_gallinule,
+        cranes = Q_cranes,
+        band_tailed_pigeon = Q_bt_pigeons,
+        brant = Q_brant,
+        seaducks = Q_seaducks,
         dl_cycle = dl)) %>% 
   proof(., year = params$year) %>% 
   mutate(
