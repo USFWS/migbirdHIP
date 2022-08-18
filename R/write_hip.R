@@ -37,10 +37,11 @@ write_hip <-
       # Add strata: ducks
       left_join(
         hip_bags_ref %>%
+          rename(dl_state = state) %>%
           mutate(ducks_bag = as.character(stateBagValue)) %>%
           filter(spp == "ducks_bag") %>%
           select(-c("stateBagValue", "spp")),
-        by = c("state", "ducks_bag")
+        by = c("dl_state", "ducks_bag")
       ) %>%
       rename(
         S_ducks = FWSstratum,
@@ -48,82 +49,91 @@ write_hip <-
       # Add strata: geese
       left_join(
         hip_bags_ref %>%
+          rename(dl_state = state) %>%
           mutate(geese_bag = as.character(stateBagValue)) %>%
           filter(spp == "geese_bag") %>%
           select(-c("stateBagValue", "spp")),
-        by = c("state", "geese_bag")
+        by = c("dl_state", "geese_bag")
       ) %>%
       rename(S_geese = FWSstratum) %>%
       # Add strata: dove
       left_join(
         hip_bags_ref %>%
+          rename(dl_state = state) %>%
           mutate(dove_bag = as.character(stateBagValue)) %>%
           filter(spp == "dove_bag") %>%
           select(-c("stateBagValue", "spp")),
-        by = c("state", "dove_bag")
+        by = c("dl_state", "dove_bag")
       ) %>%
       rename(S_doves = FWSstratum) %>%
       # Add strata: woodcock
       left_join(
         hip_bags_ref %>%
+          rename(dl_state = state) %>%
           mutate(woodcock_bag = as.character(stateBagValue)) %>%
           filter(spp == "woodcock_bag") %>%
           select(-c("stateBagValue", "spp")),
-        by = c("state", "woodcock_bag")
+        by = c("dl_state", "woodcock_bag")
       ) %>%
       rename(S_woodcock = FWSstratum) %>%
       # Add strata: coots and snipe
       left_join(
         hip_bags_ref %>%
+          rename(dl_state = state) %>%
           mutate(coots_snipe = as.character(stateBagValue)) %>%
           filter(spp == "coots_snipe_bag") %>%
           select(-c("stateBagValue", "spp")),
-        by = c("state", "coots_snipe")
+        by = c("dl_state", "coots_snipe")
       ) %>%
       rename(S_coot_snipe = FWSstratum) %>%
       # Add strata: rails and gallinules
       left_join(
         hip_bags_ref %>%
+          rename(dl_state = state) %>%
           mutate(rails_gallinules = as.character(stateBagValue)) %>%
           filter(spp == "rails_gallinules_bag") %>%
           select(-c("stateBagValue", "spp")),
-        by = c("state", "rails_gallinules")
+        by = c("dl_state", "rails_gallinules")
       ) %>%
       rename(S_rail_gallinule = FWSstratum) %>%
       # Add strata: cranes
       left_join(
         hip_bags_ref %>%
+          rename(dl_state = state) %>%
           mutate(cranes = as.character(stateBagValue)) %>%
           filter(spp == "cranes") %>%
           select(-c("stateBagValue", "spp")),
-        by = c("state", "cranes")
+        by = c("dl_state", "cranes")
       ) %>%
       rename(S_cranes = FWSstratum) %>%
       # Add strata: band-tailed pigeon
       left_join(
         hip_bags_ref %>%
+          rename(dl_state = state) %>%
           mutate(band_tailed_pigeon = as.character(stateBagValue)) %>%
           filter(spp == "band_tailed_pigeon") %>%
           select(-c("stateBagValue", "spp")),
-        by = c("state", "band_tailed_pigeon")
+        by = c("dl_state", "band_tailed_pigeon")
       ) %>%
       rename(S_bt_pigeons = FWSstratum) %>%
       # Add strata: brant
       left_join(
         hip_bags_ref %>%
+          rename(dl_state = state) %>%
           mutate(brant = as.character(stateBagValue)) %>%
           filter(spp == "brant") %>%
           select(-c("stateBagValue", "spp")),
-        by = c("state", "brant")
+        by = c("dl_state", "brant")
       ) %>%
       rename(S_brant = FWSstratum) %>%
       # Add strata: seaducks
       left_join(
         hip_bags_ref %>%
+          rename(dl_state = state) %>%
           mutate(seaducks = as.character(stateBagValue)) %>%
           filter(spp == "seaducks") %>%
           select(-c("stateBagValue", "spp")),
-        by = c("state", "seaducks")
+        by = c("dl_state", "seaducks")
       ) %>%
       rename(S_seaducks = FWSstratum) %>%
       # Rename columns to desired output
