@@ -32,7 +32,7 @@ write_hip <-
     final_table <-
       x %>%
       # Exclude unwanted columns
-      select(-c("dl_cycle", "dl_date", "dl_key", "record_key", "errors")) %>%
+      select(-c("dl_date", "dl_key", "record_key", "errors")) %>%
       # Use internal data from hip_bags_ref to join FWS strata,
       # Add strata: ducks
       left_join(
