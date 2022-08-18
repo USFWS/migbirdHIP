@@ -109,9 +109,9 @@ final_data <-
     1:length(list.files(params$final_path)),
     ~fread(
       paste0(params$final_path, list.files(params$final_path)[.x]),
-      colClasses = rep("character", 37),
+      colClasses = rep("character", 38),
       na.strings = "") %>% 
-      select(1:27) %>% 
+      select(1:28) %>% 
       rename(
         zip = postal_code,
         ducks_bag = Q_ducks,
