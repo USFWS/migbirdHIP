@@ -81,7 +81,7 @@ write_hip <-
         hip_bags_ref %>%
           rename(dl_state = state) %>%
           mutate(coots_snipe = as.character(stateBagValue)) %>%
-          filter(spp == "coots_snipe_bag") %>%
+          filter(spp == "coots_snipe") %>%
           select(-c("stateBagValue", "spp")),
         by = c("dl_state", "coots_snipe")
       ) %>%
@@ -91,7 +91,7 @@ write_hip <-
         hip_bags_ref %>%
           rename(dl_state = state) %>%
           mutate(rails_gallinules = as.character(stateBagValue)) %>%
-          filter(spp == "rails_gallinules_bag") %>%
+          filter(spp == "rails_gallinules") %>%
           select(-c("stateBagValue", "spp")),
         by = c("dl_state", "rails_gallinules")
       ) %>%

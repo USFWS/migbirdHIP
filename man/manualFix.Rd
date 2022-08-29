@@ -11,7 +11,7 @@ manualFix(x, field, error_value, correct_value)
 
 \item{field}{Field that contains value(s) to be corrected
 \itemize{
-\item title, firstname, middle, lastname, suffix, address, city, state, zip, birth_date, issue_date, hunt_mig_birds, ducks_bag, geese_bag, dove_bag, woodcock_bag, coots_snipe_bag, rails_gallinules_bag, cranes, band_tailed_pigeon, brant, seaducks, registration_year, email}}
+\item title, firstname, middle, lastname, suffix, address, city, state, zip, birth_date, issue_date, hunt_mig_birds, ducks_bag, geese_bag, dove_bag, woodcock_bag, coots_snipe, rails_gallinules, cranes, band_tailed_pigeon, brant, seaducks, registration_year, email}}
 
 \item{error_value}{Verbatim cell contents of value to be corrected}
 
