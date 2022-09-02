@@ -91,6 +91,8 @@ proof <-
                 str_detect(lastname, "^[INAUDIBLE]$") ~ "lastname",
                 TRUE ~ NA_character_)),
         # Suffix
+        # Allows 1-20 in Roman numerals and numeric, excluding XVIII since the
+        # limit is 4 characters)
         keyed_x %>%
           filter(
             str_detect(
