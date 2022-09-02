@@ -117,4 +117,5 @@ utils::globalVariables(
     "mean_prop",
     "x_sdbrs",
     "issue_id",
-    "category"))
+    "category",
+    "n_emails"))
