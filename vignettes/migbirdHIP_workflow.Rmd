@@ -303,8 +303,8 @@ Records are kept when they meet the below criteria (in order of importance):
 1. The record in the group has the most recent issue date.
 2. Records do not contain all 1s or all 0s in bag columns.
 3. For duplicates from sea duck and brant states (AK, CA, CT, DE, MA, MD, NC, NH, NJ, NY, RI, VA), keep records with a 2 in seaduck or brant.
-4.  For duplicates from seaduck-only state (ME), keep records with a 2 in seaduck.
-4. If records are tied, one is chosen randomly.
+4. For duplicates from seaduck-only state (ME), keep records with a 2 in seaduck.
+5. If records are tied, one is chosen randomly.
 
 A new field called "record_type" is added to the data after the above deduplicating process. Every HIP record is labeled "HIP". Permit states WA, OR, CO, and SD send HIP and permit records separately, which are labeled "HIP" and "PMT" respectively.
 
@@ -364,7 +364,7 @@ validate(DL1301_fixed, type = "horizontal")
 ##  3 MO20211229.txt 1        2697    3604       0.748
 ##  4 ME20211229.txt 1         112     151       0.742
 ##  5 NM20211229.txt 1         208     295       0.705
-##  6 ID20211229.txt 1        1762    2588       0.681
+##  6 ID20211229.txt 1        1763    2588       0.681
 ##  7 ND20211215.txt 1         130     204       0.637
 ##  8 CA20211229.txt 1        2003    3211       0.624
 ##  9 IN20211229.txt 1         416     690       0.603

@@ -185,11 +185,11 @@ Other quick fixes include:
 
 ### issueCheck
 
-Sometimes we receive HIP records that should be processed in a future season. We also sometiems receive records that should be processed in both this season and a future one, since some states have license years that encompass two seasons. The `issueCheck` function evaluates issue_date and registration_yr for two-season states (ME, MA, ID, CT, WV, VT, NH, IA, ND, and TN) as well as a 365-day state (MS). It also sets aside records from any state that have future registration_yr value.
+Sometimes we receive HIP records that should be processed in a future season. We also sometiems receive records that should be processed in both this season and a future one, since some states have license years that encompass two seasons. The `issueCheck` function evaluates issue_date and registration_yr for two-season states (ME, MA, ID, CT, WV, VT, NH, IA, ND, SD, and TN) as well as a 365-day state (MS). It also sets aside records from any state that have future registration_yr value.
 
 Note: Records "set aside" will be filtered out of the current data and written to a future data .csv file to be accessed in the next HIP season.
 
-For ME, MA, ID, CT, WV, VT, NH, IA, ND, and TN:
+For ME, MA, ID, CT, WV, VT, NH, IA, ND, SD, and TN:
 
 * If a record's issue_date is between issue_start and last day of hunting season, AND registration_yr is for next season, (1) COPY the record for next year and (2) CHANGE registration_yr for this year (subtract 1) so it's includable in the sample.
 * If a record's issue_date is after the end of hunting season, SET IT ASIDE for next year.
@@ -235,8 +235,8 @@ Records are kept when they meet the below criteria (in order of importance):
 1. The record in the group has the most recent issue date.
 2. Records do not contain all 1s or all 0s in bag columns.
 3. For duplicates from sea duck and brant states (AK, CA, CT, DE, MA, MD, NC, NH, NJ, NY, RI, VA), keep records with a 2 in seaduck or brant.
-4.  For duplicates from seaduck-only state (ME), keep records with a 2 in seaduck.
-4. If records are tied, one is chosen randomly.
+4. For duplicates from seaduck-only state (ME), keep records with a 2 in seaduck.
+5. If records are tied, one is chosen randomly.
 
 A new field called "record_type" is added to the data after the above deduplicating process. Every HIP record is labeled "HIP". Permit states WA, OR, CO, and SD send HIP and permit records separately, which are labeled "HIP" and "PMT" respectively.
 
