@@ -38,11 +38,10 @@ clean <-
       filter(!is.na(lastname)) %>%
       filter(!is.na(state)) %>%
       filter(!is.na(birth_date)) %>%
-      # Discard additional records if they are missing elements of an address
-      # and we have no way to resolve it from remaining information (i.e. zip
-      # from city)
-      filter(!is.na(address)) %>%
-      filter(!is.na(city) & !is.na(zip)) %>%
+      # Discard additional records if they are missing a value for email AND
+      # elements of a physical address that are required to determine where
+      filter(!is.na(address) & !is.na(email)) %>%
+      filter(!is.na(city) & !is.na(zip) & !is.na(email)) %>%
       mutate(
         # Names to uppercase for easier stringr
         firstname = str_to_upper(firstname),

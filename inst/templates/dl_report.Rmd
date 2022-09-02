@@ -349,25 +349,24 @@ record_check <-
   # Filter out records if firstname, lastname, city of residence, state of
   # residence, or date of birth are missing -- records discarded because
   # these are needed to identify individuals
-  # Discard additional records if they are missing elements of an address
-  # and we have no way to resolve it from remaining information (i.e. state
-  # from zip)
+  # Discard additional records if they are missing elements of an address AND email
   filter(
     is.na(firstname)|
       is.na(lastname)|
       is.na(state)|
       is.na(birth_date)|
-      is.na(address)|
-      (is.na(city)&is.na(zip)))
+      (is.na(address)&is.na(email))|
+      (is.na(city)&is.na(zip)&is.na(email))
+    )
   
 if(nrow(record_check) > 0){
   missing_plot <-
     record_check %>%
-    select(firstname, lastname, birth_date, state, address, city, zip) %>%
+    select(firstname, lastname, birth_date, state, address, city, zip, email) %>%
     # Add an ID per row
     mutate(hunter_id = row_number()) %>%
     # Pivot the field names to long format
-    pivot_longer(firstname:zip, names_to = "field") %>%
+    pivot_longer(firstname:email, names_to = "field") %>%
     # Only keep hunters' fields with NA values
     filter(is.na(value)) %>%
     # Set NA to 1 for plotting
