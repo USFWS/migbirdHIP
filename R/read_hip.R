@@ -295,6 +295,24 @@ read_hip <-
             filter(is.na(dl_date)) %>%
             distinct())}
 
+      # Return a message if all emails are missing from a file
+      if(nrow(
+           pulled_data %>%
+             group_by(source_file) %>%
+             summarize(n_emails = length(unique(email))) %>%
+             ungroup() %>%
+             filter(n_emails == 1)) > 0){
+        message(
+          paste0("Error: One or more files are missing 100% of emails."))
+
+        print(
+          pulled_data %>%
+            group_by(source_file) %>%
+            summarize(n_emails = length(unique(email))) %>%
+            ungroup() %>%
+            filter(n_emails == 1) %>%
+            select(source_file))}
+
       # Check if all dl_states are acceptable
 
       # String of 49 continental US states
