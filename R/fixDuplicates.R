@@ -68,11 +68,9 @@ fixDuplicates <-
 
     # For sea duck AND brant states, we handle duplicates by:
     # 1. Keep record(s) with the most recent issue date.
-    # 2. From the remaining records, keep the ones with a most recent
-    #    (aka hopefully current) registration year.
-    # 3. Exclude records with all 1s or all 0s in bag columns from consideration.
-    # 4. Keep any records that have a 2 for either brant or sea duck.
-    # 5. If more than one record remains, choose to keep one randomly.
+    # 2. Exclude records with all 1s or all 0s in bag columns from consideration.
+    # 3. Keep any records that have a 2 for either brant or sea duck.
+    # 4. If more than one record remains, choose to keep one randomly.
 
     sdbr_dupes <-
       duplicates %>%
@@ -258,11 +256,9 @@ fixDuplicates <-
 
     # For sea duck states, we handle duplicates by:
     # 1. Keep record(s) with the most recent issue date.
-    # 2. From the remaining records, keep the ones with a most recent
-    #    (aka hopefully current) registration year.
-    # 3. Exclude records with all 1s or all 0s in bag columns from consideration.
-    # 4. Keep any records that have a 2 for sea duck.
-    # 5. If more than one record remains, choose to keep one randomly.
+    # 2. Exclude records with all 1s or all 0s in bag columns from consideration.
+    # 3. Keep any records that have a 2 for sea duck.
+    # 4. If more than one record remains, choose to keep one randomly.
 
     seaduck_dupes <-
       duplicates %>%
