@@ -166,7 +166,7 @@ After data are read and unshifted, we `clean`:
 DL1301_clean <- clean(DL1301_unshifted)
 ```
 
-This function does simple data cleaning. Importantly, records are discarded if first name, last name, birth date, address, state of residence, OR city AND zip are missing.
+This function does simple data cleaning. Importantly, records are discarded if first name, last name, birth date, state of residence, address AND email, OR city AND zip AND email are missing.
 
 Other quick fixes include:
 
@@ -267,7 +267,7 @@ The `validate` function looks for repeated values in two dimensions, both horizo
 validate(DL1301_fixed, type = "horizontal")
 ```
 
-<b>Vertically.</b> The vertical check searches within each column for repetition. Any species group column with the same value in all rows will be detected. *Coming soon:* States that do not have a hunting season for one or more species groups (e.g. seaducks) will not be returned using this function for reporting all zero values. The default version of this function (`all = FALSE`) only checks duck bags. If the parameter is set to `all = TRUE`, every species group will be checked.
+<b>Vertically.</b> The vertical check searches within each column for repetition. Any species group column with the same value in all rows will be detected. The default version of this function (`all = FALSE`) only checks duck bags. If the parameter is set to `all = TRUE`, every species group will be checked.
 
 The two time period options to assess vertical repetition are `period = "dl_date"` (used automatically)...
 
@@ -384,9 +384,15 @@ All functions in [Part C](#part-c-data-visualization-and-tabulation) will run on
 
 ### pullErrors
 
-The `pullErrors` function can be used to view all of the actual values that were flagged as errors in a particular field. In this example, we find that the "dove_bag" field contains entries of "4" and "9", when the only values permissible are 0, 1, 2, 3, and 5.
+The `pullErrors` function can be used to view all of the actual values that were flagged as errors in a particular field. In this example, we find that the "suffix" field contains several values that are not accepted.
 
 ```{r pullerrors}
+pullErrors(DL1301_proofed, error = "suffix")
+```
+
+Running `pullErrors` on a field that has no errors will return a message.
+
+```{r pullerrors2}
 pullErrors(DL1301_proofed, error = "dove_bag")
 ```
 
@@ -459,7 +465,7 @@ errorPlot_fields(DL1301_proofed, loc = "all", year = 2021)
 
 ... or it can be limited to just one.
 
-```{r errorfieldsplotsc, fig.cap = "Figure 3. Plot of all North Carolina's errors by field name.", fig.width = 6, fig.height = 3.6, dpi = 300, out.width = 500, fig.align = "center"}
+```{r errorfieldsplotsc, fig.cap = "Figure 3. Plot of Louisiana's errors by field name.", fig.width = 6, fig.height = 3.6, dpi = 300, out.width = 500, fig.align = "center"}
 errorPlot_fields(DL1301_proofed, loc = "LA", year = 2021)
 ```
 
