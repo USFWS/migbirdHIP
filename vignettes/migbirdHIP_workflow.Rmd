@@ -246,11 +246,11 @@ DL1301_current <- issueCheck(DL1301_clean, year = 2021, write = F)
 ```
 
 ```
-## 695 records have been modified to have registration_yr - 1. They have been copied and saved for next season in the future data .csv with their original registration_yr.
+## 709 records have been modified to have registration_yr - 1. They have been copied and saved for next season in the future data .csv with their original registration_yr.
 ```
 
 ```
-## 5672 records have been postponed for next year. They will be filtered out from this download and saved in the future data .csv with their original registration_yr.
+## 6615 records have been postponed for next year. They will be filtered out from this download and saved in the future data .csv with their original registration_yr.
 ```
 
 To export a table of records to process in a future season, specify the outpath where the .csv should be written and specify `write = TRUE`.
@@ -277,19 +277,21 @@ findDuplicates(DL1301_current, return = "table")
 ```
 
 ```
-## # A tibble: 10 × 2
-##    dupl                              count
-##    <chr>                             <int>
-##  1 address                               1
-##  2 address-email                         1
-##  3 address-zip-issue_date                1
-##  4 bag                                 432
-##  5 email                                 1
-##  6 hunt_mig_birds                        1
-##  7 issue_date                           10
-##  8 issue_date-dl_date                    1
-##  9 issue_date-email                      1
-## 10 issue_date-hunt_mig_birds-dl_date     2
+## # A tibble: 12 × 2
+##    dupl                                         count
+##    <chr>                                        <int>
+##  1 address                                          1
+##  2 address-email                                    1
+##  3 address-zip-email                                1
+##  4 address-zip-issue_date                           1
+##  5 bag                                            483
+##  6 email                                            1
+##  7 hunt_mig_birds                                   1
+##  8 issue_date                                      13
+##  9 issue_date-dl_date                               1
+## 10 issue_date-email                                 1
+## 11 issue_date-hunt_mig_birds-dl_date                3
+## 12 middle-address-city-zip-hunt_mig_birds-email     1
 ```
 
 ### fixDuplicates
@@ -354,20 +356,20 @@ validate(DL1301_fixed, type = "horizontal")
 ```
 
 ```
-## # A tibble: 42 × 5
+## # A tibble: 43 × 5
 ##    source_file    h_value h_rep h_total prop_repeat
 ##    <chr>          <chr>   <int>   <int>       <dbl>
-##  1 WI20211229.txt 1         230     275       0.836
-##  2 IA20211215.txt 0        1376    1647       0.835
-##  3 ME20211229.txt 1          91     119       0.765
-##  4 MO20211229.txt 1        2275    3150       0.722
-##  5 NM20211229.txt 1         164     240       0.683
-##  6 ID20211229.txt 1        1390    2110       0.659
-##  7 CA20211229.txt 1        1341    2191       0.612
-##  8 ND20211215.txt 1         115     188       0.612
-##  9 IN20211229.txt 1         371     630       0.589
-## 10 KY20211228.txt 1         486     844       0.576
-## # … with 32 more rows
+##  1 IA20211215.txt 0        2841    3175       0.895
+##  2 WI20211229.txt 1         273     323       0.845
+##  3 MO20211229.txt 1        2697    3604       0.748
+##  4 ME20211229.txt 1         112     151       0.742
+##  5 NM20211229.txt 1         208     295       0.705
+##  6 ID20211229.txt 1        1762    2588       0.681
+##  7 ND20211215.txt 1         130     204       0.637
+##  8 CA20211229.txt 1        2003    3211       0.624
+##  9 IN20211229.txt 1         416     690       0.603
+## 10 GA20211229.txt 1        2199    3821       0.576
+## # … with 33 more rows
 ```
 
 <b>Vertically.</b> The vertical check searches within each column for repetition. Any species group column with the same value in all rows will be detected. The default version of this function (`all = FALSE`) only checks duck bags. If the parameter is set to `all = TRUE`, every species group will be checked.
@@ -385,7 +387,7 @@ validate(DL1301_fixed, type = "vertical")
 ## # A tibble: 1 × 4
 ##   dl_state dl_date  species_grp v_repeated
 ##   <chr>    <chr>    <chr>            <int>
-## 1 AK       20211228 ducks_bag           36
+## 1 AK       20211228 ducks_bag           65
 ```
 
 ... and `period = "dl_cycle"`.
@@ -399,7 +401,7 @@ validate(DL1301_fixed, type = "vertical", period = "dl_cycle")
 ## # A tibble: 1 × 4
 ##   dl_state dl_cycle species_grp v_repeated
 ##   <chr>    <chr>    <chr>            <int>
-## 1 AK       1301     ducks_bag           36
+## 1 AK       1301     ducks_bag           65
 ```
 
 It is not possible to include as much detail in the vertical output as in the horizontal output without being specific about which state, species, and time scale you wish to assess. Vertical repetition returned in the output from this function can be looked at more closely using `investigate`.
@@ -456,7 +458,7 @@ DL1301_corrected <- correct(DL1301_proofed, year = 2021)
 ```
 
 ```
-## # A tibble: 87 × 4
+## # A tibble: 112 × 4
 ##    record_key   zip        state zipState
 ##    <chr>        <chr>      <chr> <chr>   
 ##  1 record_8188  20589      CO    DC      
@@ -468,8 +470,8 @@ DL1301_corrected <- correct(DL1301_proofed, year = 2021)
 ##  7 record_16261 2034       GA    DC      
 ##  8 record_18352 35213-3909 GA    AL      
 ##  9 record_18432 30161-4073 WY    GA      
-## 10 record_23614 93639      ID    CA      
-## # … with 77 more rows
+## 10 record_19442 98409      IA    WA      
+## # … with 102 more rows
 ```
 
 The following changes are made by the `correct` function:
@@ -695,20 +697,20 @@ errorTable(DL1301_proofed)
 ```
 
 ```
-## # A tibble: 76 × 3
-##    dl_state error      error_count
-##    <chr>    <chr>            <dbl>
-##  1 CA       birth_date         171
-##  2 CA       title                2
-##  3 CO       birth_date          47
-##  4 CO       zip                  1
-##  5 CT       birth_date           8
-##  6 CT       email              248
-##  7 CT       firstname            1
-##  8 FL       birth_date          84
-##  9 FL       email                1
-## 10 FL       firstname            5
-## # … with 66 more rows
+## # A tibble: 82 × 3
+##    dl_state error           error_count
+##    <chr>    <chr>                 <dbl>
+##  1 AK       issue_date                1
+##  2 AK       registration_yr           1
+##  3 CA       birth_date              212
+##  4 CA       title                     2
+##  5 CO       birth_date               76
+##  6 CO       zip                       1
+##  7 CT       birth_date                8
+##  8 CT       email                   248
+##  9 CT       firstname                 1
+## 10 FL       birth_date               92
+## # … with 72 more rows
 ```
 
 Errors can be reported by only location by turning off the `field` parameter.
@@ -719,20 +721,20 @@ errorTable(DL1301_proofed, field = "none")
 ```
 
 ```
-## # A tibble: 25 × 2
+## # A tibble: 26 × 2
 ##    dl_state error_count
 ##    <chr>          <dbl>
-##  1 CA               173
-##  2 CO                48
-##  3 CT               257
-##  4 FL                95
-##  5 GA               117
-##  6 IA                71
-##  7 ID               153
-##  8 IN                44
-##  9 KY                62
-## 10 ME                 2
-## # … with 15 more rows
+##  1 AK                 2
+##  2 CA               214
+##  3 CO                77
+##  4 CT               257
+##  5 FL               103
+##  6 GA               122
+##  7 IA               147
+##  8 ID               222
+##  9 IN                71
+## 10 KY                70
+## # … with 16 more rows
 ```
 
 Errors can be reported by only field by turning off the `loc` parameter.
@@ -743,19 +745,21 @@ errorTable(DL1301_proofed, loc = "none")
 ```
 
 ```
-## # A tibble: 10 × 2
-##    error          error_count
-##    <chr>                <dbl>
-##  1 birth_date            1687
-##  2 city                     1
-##  3 email                  271
-##  4 firstname               36
-##  5 hunt_mig_birds          10
-##  6 lastname                 5
-##  7 state                    1
-##  8 suffix                  32
-##  9 title                    2
-## 10 zip                     89
+## # A tibble: 12 × 2
+##    error           error_count
+##    <chr>                 <dbl>
+##  1 birth_date             2157
+##  2 city                      1
+##  3 email                   271
+##  4 firstname                42
+##  5 hunt_mig_birds           11
+##  6 issue_date                1
+##  7 lastname                  5
+##  8 registration_yr           1
+##  9 state                     1
+## 10 suffix                   32
+## 11 title                     3
+## 12 zip                     115
 ```
 
 Location can be specified.
@@ -769,7 +773,7 @@ errorTable(DL1301_proofed, loc = "CA")
 ## # A tibble: 2 × 3
 ##   dl_state error      error_count
 ##   <chr>    <chr>            <dbl>
-## 1 CA       birth_date         171
+## 1 CA       birth_date         212
 ## 2 CA       title                2
 ```
 
@@ -798,7 +802,7 @@ errorTable(DL1301_proofed, loc = "CA", field = "none")
 ## # A tibble: 1 × 2
 ##   dl_state total_errors
 ##   <chr>           <dbl>
-## 1 CA                173
+## 1 CA                214
 ```
 
 Total errors for a field in a particular location can be pulled.
@@ -842,7 +846,7 @@ redFlags(DL1301_proofed, type = "field", threshold = 0.01)
 ## # A tibble: 1 × 5
 ##   errors     count_errors count_correct proportion flag        
 ##   <chr>             <int>         <int>      <dbl> <chr>       
-## 1 birth_date         1687         33418     0.0481 error > 0.01
+## 1 birth_date         2157         39706     0.0515 error > 0.01
 ```
 
 ## Troubleshooting

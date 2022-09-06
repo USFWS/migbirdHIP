@@ -9,6 +9,8 @@
 #' @importFrom dplyr case_when
 #' @importFrom dplyr mutate_all
 #' @importFrom dplyr filter
+#' @importFrom dplyr if_all
+#' @importFrom dplyr if_any
 #' @importFrom dplyr select
 #' @importFrom stringr str_to_upper
 #' @importFrom stringr str_detect
@@ -34,14 +36,11 @@ clean <-
       # Filter out records if firstname, lastname, city of residence, state of
       # residence, or date of birth are missing -- records discarded because
       # these are needed to identify individuals
-      filter(!is.na(firstname)) %>%
-      filter(!is.na(lastname)) %>%
-      filter(!is.na(state)) %>%
-      filter(!is.na(birth_date)) %>%
+      filter(!if_any(c("firstname", "lastname", "state", "birth_date"), ~is.na(.x))) %>%
       # Discard additional records if they are missing a value for email AND
       # elements of a physical address that are required to determine where
-      filter(!is.na(address) & !is.na(email)) %>%
-      filter(!is.na(city) & !is.na(zip) & !is.na(email)) %>%
+      filter(!if_all(c("address", "email"), ~is.na(.x))) %>%
+      filter(!if_all(c("city", "zip", "email"), ~is.na(.x))) %>%
       mutate(
         # Names to uppercase for easier stringr
         firstname = str_to_upper(firstname),
