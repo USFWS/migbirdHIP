@@ -146,12 +146,9 @@ proof <-
         keyed_x %>%
           filter(!str_detect(hunt_mig_birds, "1|2")) %>%
           mutate(error = "hunt_mig_birds"),
-        # Registration year should = survey year +/- 1
+        # Registration year should = survey year
         keyed_x %>%
-          filter(
-            registration_yr != year &
-              registration_yr != year + 1 &
-              registration_yr != year - 1) %>%
+          filter(registration_yr != year) %>%
           mutate(error = "registration_yr"),
         # Email
         keyed_x %>%
@@ -161,6 +158,37 @@ proof <-
           mutate(error = "email")
       ) %>%
       select(temp_key, error)
+
+    # Registration_yr + 1 error
+    # Return a message if registration_yr is yr +/- 1; these values should have
+    # been handled in issueCheck
+    if(year + 1 %in% keyed_x$registration_yr){
+      message(paste0("Error: Records detected with registration_yr = yr + 1."))
+      print(
+        keyed_x %>%
+          group_by(source_file) %>%
+          mutate(total_n = n()) %>%
+          ungroup() %>%
+          filter(registration_yr == year + 1) %>%
+          group_by(source_file) %>%
+          summarize(
+            n = n(),
+            prop = round(n()/total_n, 2)) %>%
+          ungroup())
+    }else if(year - 1 %in% keyed_x$registration_yr){
+      message(paste0("Error: Records detected with registration_yr = yr - 1."))
+      print(
+        keyed_x %>%
+          group_by(source_file) %>%
+          mutate(total_n = n()) %>%
+          ungroup() %>%
+          filter(registration_yr == year - 1) %>%
+          group_by(source_file) %>%
+          summarize(
+            n = n(),
+            prop = round(n()/total_n, 2)) %>%
+          ungroup())
+    }
 
     graded_x <-
       keyed_x %>%
