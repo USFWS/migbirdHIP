@@ -174,7 +174,8 @@ proof <-
           summarize(
             n = n(),
             prop = round(n()/total_n, 2)) %>%
-          ungroup())
+          ungroup() %>%
+          distinct())
     }else if(year - 1 %in% keyed_x$registration_yr){
       message(paste0("Error: Records detected with registration_yr = yr - 1."))
       print(
@@ -187,7 +188,8 @@ proof <-
           summarize(
             n = n(),
             prop = round(n()/total_n, 2)) %>%
-          ungroup())
+          ungroup() %>%
+          distinct())
     }
 
     graded_x <-
