@@ -235,7 +235,7 @@ issueCheck <-
           alpha = 0.3, inherit.aes = F) +
         geom_boxplot(
           aes(x = mdy(issue_date), y = dl_state, color = registration_yr),
-          fill = "#FFFFFF", width = 0, size = 3) +
+          fill = "#FFFFFF", width = 0, size = 3, position = "identity") +
         geom_point(
           aes(x = last_day_migbird_hunting, y = dl_state,
               shape = "Last day of hunting")) +
