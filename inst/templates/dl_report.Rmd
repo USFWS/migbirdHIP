@@ -216,7 +216,7 @@ twoseasonstates <-
   pull()
 
 issue_assignments <-
-  data %>%
+  cleaned_data %>%
   left_join(
     licenses_ref %>%
       rename(dl_state = state),
