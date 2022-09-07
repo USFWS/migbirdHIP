@@ -216,7 +216,7 @@ twoseasonstates <-
   pull()
 
 issue_assignments <-
-  cleaned_data %>%
+  data %>%
   left_join(
     licenses_ref %>%
       rename(dl_state = state),
@@ -224,37 +224,83 @@ issue_assignments <-
   # Filter out bad issue_date values
   filter(issue_date != "00/00/0000") %>%
   mutate(
-    issue_id =
+    # Calculate registration_yr for all one-season states
+    # (does not include MS)
+    issue_eval =
+      ifelse(
+        !dl_state %in% c(twoseasonstates, "MS"),
+        case_when(
+          mdy(issue_date) %within%
+            interval(issue_start, last_day_migbird_hunting) ~ "current",
+          mdy(issue_date) < issue_start ~ "past",
+          mdy(issue_date) > last_day_migbird_hunting ~ "future",
+          TRUE ~ "bad issue dates"),
+        "two season state"),
+    reg_yr_eval =
       case_when(
+        # For records from two-season states with a future registration year
+        # and issue_date before the last day of hunting, copy them for next
+        # year (and count them for this year)
         dl_state %in% twoseasonstates &
           registration_yr == as.character(params$year + 1) &
           mdy(issue_date) %within%
           interval(issue_start, last_day_migbird_hunting) ~ "copy",
+        # For records from two-season states with a current registration
+        # year and issue date after the last day of hunting, postpone
+        # sampling them until next year
         dl_state %in% twoseasonstates &
           registration_yr == as.character(params$year) &
           mdy(issue_date) > last_day_migbird_hunting ~ "postpone",
+        # For records from Mississippi, if the issue_date is within
+        # Mississippi's hunting season, copy them for next year (and count
+        # them for this year)
         dl_state == "MS" &
-              mdy(issue_date) %within%
-              interval(MS_firstday, MS_lastday) ~ "copy",
+          mdy(issue_date) %within%
+          interval(MS_firstday, MS_lastday) ~ "copy",
         # Postpone all other future registration_yr values, for all states
         registration_yr == as.character(params$year + 1) ~ "postpone",
-        TRUE ~ "nochange")) %>%
+        # Check for yr-1 registration_yr values for all states
+        registration_yr == as.character(params$year - 1) ~ "past",
+        TRUE ~ "nochange"),
+    # Assign destination of each record to decision
+    decision =
+      case_when(
+        issue_eval == "current" & reg_yr_eval == "nochange" ~ "nochange",
+        issue_eval == "current" & reg_yr_eval == "past" ~ "bad",
+        issue_eval == "current" & reg_yr_eval == "copy" ~ "copy",
+        issue_eval == "current" & reg_yr_eval == "postpone" ~ "postpone",
+        issue_eval == "past" & reg_yr_eval == "nochange" ~ "bad",
+        issue_eval == "past" & reg_yr_eval == "past" ~ "past",
+        issue_eval == "past" & reg_yr_eval == "copy" ~ "bad",
+        issue_eval == "past" & reg_yr_eval == "postpone" ~ "bad",
+        issue_eval == "future" & reg_yr_eval == "nochange" ~ "bad",
+        issue_eval == "future" & reg_yr_eval == "past" ~ "bad",
+        issue_eval == "future" & reg_yr_eval == "copy" ~ "copy",
+        issue_eval == "future" & reg_yr_eval == "postpone" ~ "postpone",
+        issue_eval == "two season state" & reg_yr_eval == "nochange" ~
+          "nochange",
+        issue_eval == "two season state" & reg_yr_eval == "past" ~ "past",
+        issue_eval == "two season state" & reg_yr_eval == "copy" ~ "copy",
+        issue_eval == "two season state" & reg_yr_eval == "postpone" ~
+          "postpone",
+        TRUE ~ NA_character_)
+  ) %>%
   select(-c("hunting_season", "issue_start", "issue_end",
             "last_day_migbird_hunting", "category"))
 
-if(nrow(issue_assignments %>% filter(issue_id == "copy")) > 0){
+if(nrow(issue_assignments %>% filter(decision == "copy")) > 0){
   
   current_records <-
-  issue_assignments %>%
-  filter(issue_id != "postpone") %>%
-  mutate(
-    registration_yr =
-      ifelse(
-        issue_id == "copy",
-        as.character(as.numeric(registration_yr)-1),
-        registration_yr)) %>%
-  filter(issue_id == "copy") %>% 
-  select(-issue_id) 
+    issue_assignments %>%
+    filter(decision != "postpone") %>%
+    mutate(
+      registration_yr =
+        ifelse(
+          decision == "copy",
+          as.character(as.numeric(registration_yr)-1),
+          registration_yr)) %>%
+    filter(decision == "copy") %>% 
+    select(-decision) 
   
   current_summary <- 
     current_records %>% 
@@ -271,14 +317,11 @@ if(nrow(issue_assignments %>% filter(issue_id == "copy")) > 0){
   message("No records to change/copy.")
 }
 
-rm(issue_assignments)
-rm(twoseasonstates)
-
 ```
 
-### Records set aside for next season
+### Future records
 
-Records below have an issue_date after the end of migratory bird hunting for that state and where thus set aside for next year.
+Records below have an issue_date and registration_yr indicating they should be set aside for next year.
 
 ```{r reg_yr_check3, echo = FALSE}
 
@@ -296,7 +339,7 @@ if(future_file %in% list.files(future_path)){
   
   future_summary <- 
     future_data %>% 
-    group_by(dl_state, registration_yr, issue_id) %>% 
+    group_by(dl_state, registration_yr, decision) %>% 
     summarize(n = n()) %>% 
     ungroup() %>% 
     arrange(desc(n))
@@ -313,6 +356,134 @@ rm(future_path)
 rm(future_file)
 
 ```
+
+### Past records
+
+Records below have an issue_date and registration_yr indicating they qualify for a previous HIP season; these records were set aside and are not be elibigle to be sampled.
+
+```{r reg_yr_check4, echo = FALSE}
+
+if(!str_detect(params$past_path, "\\/$")){
+  past_path <- paste0(params$past_path, "/")
+}else{
+  past_path <- params$past_path
+}
+
+past_file <- paste0("DL", params$dl, "_past_data.csv")
+
+if(past_file %in% list.files(past_path)){
+  past_data <-
+    read_csv(paste0(past_path, past_file))
+  
+  past_summary <- 
+    past_data %>% 
+    group_by(dl_state, registration_yr, decision) %>% 
+    summarize(n = n()) %>% 
+    ungroup() %>% 
+    arrange(desc(n))
+  
+  DT::datatable(past_summary)
+  
+  rm(past_data)
+  rm(past_summary)
+}else{
+  message("No records to postpone.")
+}
+
+rm(past_path)
+rm(past_file)
+
+```
+
+### Irreconcilable records
+
+Records below did not have an issue_date and registration_yr that were in agreement.
+
+```{r reg_yr_check5, echo = FALSE, fig.align = "center"}
+
+rectangles <-
+  tibble(
+    season = c(paste(params$year-1, params$year, sep = "-"),
+               paste(params$year, params$year+1, sep = "-"),
+               paste(params$year+1, params$year+2, sep = "-")),
+    values = c("#F0E442", "#56B4E9", "#0072B2"),
+    xmin = c(as.Date(paste(params$year-1, "09-01", sep = "-")),
+             as.Date(paste(params$year, "09-01", sep = "-")),
+             as.Date(paste(params$year+1, "09-01", sep = "-"))),
+    xmax = c(as.Date(paste(params$year, "03-11", sep = "-")),
+             as.Date(paste(params$year+1, "03-11", sep = "-")),
+             as.Date(paste(params$year+2, "03-11", sep = "-"))),
+    ymin = -Inf,
+    ymax = Inf)
+
+issue_assignments %>%
+  filter(decision == "bad") %>%
+  select(dl_state, source_file, issue_date, registration_yr, decision) %>%
+  left_join(
+    licenses_ref %>%
+    rename(dl_state = state),
+    by = "dl_state") %>%
+  distinct() %>%
+  ggplot() +
+  geom_rect(
+    data = rectangles,
+    aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax,
+        fill = season),
+    alpha = 0.3, inherit.aes = F) +
+  geom_boxplot(
+    aes(x = mdy(issue_date), y = dl_state, color = registration_yr),
+    fill = "#FFFFFF", width = 0, size = 3, position = "identity") +
+  geom_point(
+    aes(x = last_day_migbird_hunting, y = dl_state,
+        shape = "Last day of hunting")) +
+  geom_point(
+    aes(x = issue_start, y = dl_state,
+        shape = "Issue start")) +
+  geom_point(
+    aes(x = issue_end, y = dl_state,
+        shape = "Issue end")) +
+  labs(x = "Date", y = "State",
+       title = "Bad issue_date/registration_yr combinations") +
+  scale_fill_manual("Seasons",
+                    labels = c(paste(params$year-1, params$year, sep = "-"),
+                               paste(params$year, params$year+1, sep = "-"),
+                               paste(params$year+1, params$year+2, sep = "-")),
+                    values = c("#F0E442", "#56B4E9", "#0072B2")) +
+  scale_shape_manual(name = "", values = c(4, 1, 2)) +
+  scale_x_date(breaks = c(rectangles$xmin[1], rectangles$xmax[1],
+                          rectangles$xmin[2], rectangles$xmax[2],
+                          rectangles$xmin[3], rectangles$xmax[3])) +
+  theme_classic() +
+  theme(axis.text = element_text(size = 11),
+        axis.title = element_text(size = 14),
+        panel.background = element_rect(color = "white"),
+        panel.grid.major.y =
+          element_line(color = "#666666", linetype = "dotted"))
+```
+
+```{r reg_yr_check6, echo = FALSE}
+DT::datatable(
+  issue_assignments %>%
+    filter(decision == "bad") %>%
+    select(dl_state, source_file, issue_date, registration_yr) %>%
+    left_join(
+      licenses_ref %>%
+        select(-c("hunting_season", "last_day_migbird_hunting", "category")) %>% 
+        rename(dl_state = state),
+      by = "dl_state") %>%
+    distinct() %>% 
+    group_by(dl_state, source_file, registration_yr, issue_start, issue_end) %>% 
+    summarize(
+      min_issue_date = min(mdy(issue_date)),
+      max_issue_date = max(mdy(issue_date))) %>% 
+    ungroup() %>% 
+    relocate(min_issue_date:max_issue_date, .before = "registration_yr")
+  )
+
+rm(issue_assignments)
+rm(twoseasonstates)
+```
+
 
 ## HuntY response checking
 
