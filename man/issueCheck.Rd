@@ -4,14 +4,25 @@
 \alias{issueCheck}
 \title{Check issue dates and license years}
 \usage{
-issueCheck(data, year, outpath = NA, write = TRUE)
+issueCheck(
+  data,
+  year,
+  future_outpath = NA,
+  past_outpath = NA,
+  plot = FALSE,
+  write = TRUE
+)
 }
 \arguments{
 \item{data}{The object created after cleaning data with \code{\link{clean}}}
 
 \item{year}{The year of the HIP season (e.g. 2022 for the 2022-2023 season)}
 
-\item{outpath}{Directory where future data should be saved as .csv}
+\item{future_outpath}{Directory where future data should be saved as .csv}
+
+\item{past_outpath}{Directory where past data should be saved as .csv}
+
+\item{plot}{Create a plot? Default is FALSE}
 
 \item{write}{Defaults to TRUE; should future data be written as .csv?}
 }

@@ -11,6 +11,7 @@ writeReport(
   dl = NA,
   corrected_path,
   future_path = NA,
+  past_path = NA,
   dir,
   file
 )
@@ -30,6 +31,8 @@ writeReport(
 \item{corrected_path}{Path to directory that contains output .csv files}
 
 \item{future_path}{Path to directory that contains future data .csv files}
+
+\item{past_path}{Path to directory that contains past data .csv files}
 
 \item{dir}{Folder in which to save the completed report}
 

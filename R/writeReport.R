@@ -13,6 +13,7 @@
 #' @param dl Download cycle (when running a download report)
 #' @param corrected_path Path to directory that contains output .csv files
 #' @param future_path Path to directory that contains future data .csv files
+#' @param past_path Path to directory that contains past data .csv files
 #' @param dir Folder in which to save the completed report
 #' @param file What the report file should be named
 #'
@@ -22,7 +23,7 @@
 #' @export
 
 writeReport <-
-  function(path, type, yr, dl = NA, corrected_path, future_path = NA, dir, file){
+  function(path, type, yr, dl = NA, corrected_path, future_path = NA, past_path = NA, dir, file){
 
     # Create Rmd for download
     if(type == "dl_report"){
@@ -39,6 +40,7 @@ writeReport <-
             comp_path = path,
             final_path = corrected_path,
             future_path = future_path,
+            past_path = past_path,
             dl = dl,
             year = yr),
         output_file = file,

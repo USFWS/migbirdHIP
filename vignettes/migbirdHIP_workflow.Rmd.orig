@@ -185,14 +185,13 @@ Other quick fixes include:
 
 ### issueCheck
 
-Sometimes we receive HIP records that should be processed in a future season. We also sometiems receive records that should be processed in both this season and a future one, since some states have license years that encompass two seasons. The `issueCheck` function evaluates issue_date and registration_yr for two-season states (ME, MA, ID, CT, WV, VT, NH, IA, ND, SD, and TN) as well as a 365-day state (MS). It also sets aside records from any state that have future registration_yr value.
-
-Note: Records "set aside" will be filtered out of the current data and written to a future data .csv file to be accessed in the next HIP season.
+Sometimes we receive HIP records that should be processed in a future season. We also sometiems receive records that should be processed in both this season and a future one, since some states have license years that encompass two seasons. The `issueCheck` function evaluates issue_date and registration_yr for two-season states (ME, MA, ID, CT, WV, VT, NH, IA, ND, SD, and TN) as well as a 365-day state (MS). It sets aside future records and past records in separate .csv files to be evaluated later. Only the current registrations are returned.
 
 For ME, MA, ID, CT, WV, VT, NH, IA, ND, SD, and TN:
 
 * If a record's issue_date is between issue_start and last day of hunting season, AND registration_yr is for next season, (1) COPY the record for next year and (2) CHANGE registration_yr for this year (subtract 1) so it's includable in the sample.
 * If a record's issue_date is after the end of hunting season, SET IT ASIDE for next year.
+* If a record's registration_yr is yr-1, SET IT ASIDE as past data.
 
 For MS:
 
@@ -204,14 +203,19 @@ For all states:
 
 
 ```{r, issuecheck}
-DL1301_current <- issueCheck(DL1301_clean, year = 2021, write = F)
+DL1301_current <- issueCheck(DL1301_clean, year = 2021, plot = F, write = F)
 ```
 
-To export a table of records to process in a future season, specify the outpath where the .csv should be written and specify `write = TRUE`.
+To export a table of records to process in a future season and to set aside records from past seasons to include in the download report, specify the outpaths where the .csv files should be written and specify `write = TRUE`.
 
 ```{r, issuecheck2, eval = FALSE}
-DL1301_current <- issueCheck(DL1301_clean, year = 2021, path = "C:/HIP/future_data/", write = T)
+DL1301_current <- issueCheck(DL1301_clean, year = 2021, future_outpath = "C:/HIP/future_data/", past_outpath = "C:/HIP/past_data/", plot = F, write = T)
+```
 
+To print a plot of bad records in which the registration_yr and issue_date do not agree, use `plot = T`.
+
+```{r, issuecheck3, eval = FALSE}
+DL1301_current <- issueCheck(DL1301_clean, year = 2021, plot = T, write = F)
 ```
 
 ### findDuplicates
@@ -311,7 +315,7 @@ investigate(
 
 After data are cleaned and checked for any important issues that would require manual attention, we `proof`:
 
-```{r, proof}
+```{r, proof, message = F}
 DL1301_proofed <- proof(DL1301_fixed, year = 2021)
 ```
 
@@ -323,7 +327,7 @@ The year of the Harvest Information Program must be supplied as a parameter. Thi
 
 After the download data are proofed, the next step is to fix the data to the best of our ability. Data can be corrected by running the `correct` function on the proofed tibble. The year of the Harvest Information Program must be supplied as a parameter. Since the "errors" column is re-created using `correct`, supplying the year is necessary for the same reasons it is required by `proof`.
 
-```{r correct}
+```{r correct, message = F}
 DL1301_corrected <- correct(DL1301_proofed, year = 2021)
 ```
 
@@ -418,7 +422,7 @@ write_hip(DL1301_corrected, path = "C:/HIP/processed_data/")
 
 ### writeReport
 
-The `writeReport` function can be used to automatically generate an R markdown document with figures, tables, and summary statistics. This can be done at the end of a download cycle (using `type = "dl_report"`) or the entire HIP season (with `type = "season_report"`). You should expect this function to run for ~1 minute for a download cycle, or ~30 minutes for a total season (containing approximately 4 million records). Writing a total season report is a memory intensive process, so for this option, we recommend [increasing your memory](#memory-problems) allocated to R.
+The `writeReport` function can be used to automatically generate an R markdown document with figures, tables, and summary statistics. This can be done at the end of a download cycle (using `type = "dl_report"`) or the entire HIP season (with `type = "season_report"`).  Writing a total season report is a memory intensive process, so for this option, we recommend [increasing your memory](#memory-problems) allocated to R.
 
 ```{r, writerpt, eval = FALSE}
 
@@ -430,6 +434,7 @@ writeReport(
   type = "dl_report",
   corrected_path = "C:/HIP/corrected_data",
   future_path = "C:/HIP/future_data",
+  past_path = "C:/HIP/past_data",
   yr = 2019,
   dl = "1301",
   dir = "C:/HIP/dl_reports",

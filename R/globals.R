@@ -118,4 +118,17 @@ utils::globalVariables(
     "x_sdbrs",
     "issue_id",
     "category",
-    "n_emails"))
+    "n_emails",
+    "issue_eval",
+    "reg_yr_eval",
+    "last_day_migbird_hunting",
+    "issue_start",
+    "issue_end",
+    "total_n",
+    "season",
+    "xmin",
+    "xmax",
+    "ymin",
+    "ymax",
+    "issue_start",
+    "issue_end"))
