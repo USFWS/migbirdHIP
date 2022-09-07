@@ -387,7 +387,7 @@ if(past_file %in% list.files(past_path)){
   rm(past_data)
   rm(past_summary)
 }else{
-  message("No records to postpone.")
+  message("No past records.")
 }
 
 rm(past_path)
