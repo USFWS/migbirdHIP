@@ -218,7 +218,7 @@ issueCheck <-
           ymin = -Inf,
           ymax = Inf)
 
-      badplot <-
+      badplot_data <-
         issue_assignments %>%
         filter(decision == "bad") %>%
         select(dl_state, source_file, issue_date, registration_yr, decision) %>%
@@ -226,44 +226,51 @@ issueCheck <-
           licenses_ref %>%
             rename(dl_state = state),
           by = "dl_state") %>%
-        distinct() %>%
-        ggplot() +
-        geom_rect(
-          data = rectangles,
-          aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax,
-              fill = season),
-          alpha = 0.3, inherit.aes = F) +
-        geom_boxplot(
-          aes(x = mdy(issue_date), y = dl_state, color = registration_yr),
-          fill = "#FFFFFF", width = 0, size = 3, position = "identity") +
-        geom_point(
-          aes(x = last_day_migbird_hunting, y = dl_state,
-              shape = "Last day of hunting")) +
-        geom_point(
-          aes(x = issue_start, y = dl_state,
-              shape = "Issue start")) +
-        geom_point(
-          aes(x = issue_end, y = dl_state,
-              shape = "Issue end")) +
-        labs(x = "Date", y = "State",
-             title = "Bad issue_date/registration_yr combinations") +
-        scale_fill_manual("Seasons",
-                          labels = c(paste(year-1, year, sep = "-"),
-                                     paste(year, year+1, sep = "-"),
-                                     paste(year+1, year+2, sep = "-")),
-                          values = c("#F0E442", "#56B4E9", "#0072B2")) +
-        scale_shape_manual(name = "", values = c(4, 1, 2)) +
-        scale_x_date(breaks = c(rectangles$xmin[1], rectangles$xmax[1],
-                                rectangles$xmin[2], rectangles$xmax[2],
-                                rectangles$xmin[3], rectangles$xmax[3])) +
-        theme_classic() +
-        theme(axis.text = element_text(size = 11),
-              axis.title = element_text(size = 14),
-              panel.background = element_rect(color = "white"),
-              panel.grid.major.y =
-                element_line(color = "#666666", linetype = "dotted"))
+        distinct()
 
-      print(badplot)
+      if(nrow(badplot_data > 0)){
+        badplot <-
+          badplot_data %>%
+          ggplot() +
+          geom_rect(
+            data = rectangles,
+            aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax,
+                fill = season),
+            alpha = 0.3, inherit.aes = F) +
+          geom_boxplot(
+            aes(x = mdy(issue_date), y = dl_state, color = registration_yr),
+            fill = "#FFFFFF", width = 0, size = 3, position = "identity") +
+          geom_point(
+            aes(x = last_day_migbird_hunting, y = dl_state,
+                shape = "Last day of hunting")) +
+          geom_point(
+            aes(x = issue_start, y = dl_state,
+                shape = "Issue start")) +
+          geom_point(
+            aes(x = issue_end, y = dl_state,
+                shape = "Issue end")) +
+          labs(x = "Date", y = "State",
+               title = "Bad issue_date/registration_yr combinations") +
+          scale_fill_manual("Seasons",
+                            labels = c(paste(year-1, year, sep = "-"),
+                                       paste(year, year+1, sep = "-"),
+                                       paste(year+1, year+2, sep = "-")),
+                            values = c("#F0E442", "#56B4E9", "#0072B2")) +
+          scale_shape_manual(name = "", values = c(4, 1, 2)) +
+          scale_x_date(breaks = c(rectangles$xmin[1], rectangles$xmax[1],
+                                  rectangles$xmin[2], rectangles$xmax[2],
+                                  rectangles$xmin[3], rectangles$xmax[3])) +
+          theme_classic() +
+          theme(axis.text = element_text(size = 11),
+                axis.title = element_text(size = 14),
+                panel.background = element_rect(color = "white"),
+                panel.grid.major.y =
+                  element_line(color = "#666666", linetype = "dotted"))
+
+        print(badplot)
+      }else{
+        message("* No bad data to plot.")
+      }
     }
 
     # Create future data frame
@@ -292,6 +299,13 @@ issueCheck <-
         paste0(
           "FUTURE DATA written to path:\n",
           future_outpath, "DL", future_data$dl_cycle[1], "_future_data.csv"))
+      print(
+        future_data %>%
+          group_by(source_file) %>%
+          summarize(n = n()) %>%
+          ungroup())
+    }else{
+      message("* Future data write-out skipped; no data.")
     }
 
     # Write out past data if needed
@@ -306,6 +320,13 @@ issueCheck <-
       message(
         paste0("PAST DATA written to path:\n",
                past_outpath, "DL", past_data$dl_cycle[1], "_past_data.csv"))
+      print(
+        past_data %>%
+          group_by(source_file) %>%
+          summarize(n = n()) %>%
+          ungroup())
+    }else{
+      message("* Past data write-out skipped; no data.")
     }
     return(current_data)
   }
