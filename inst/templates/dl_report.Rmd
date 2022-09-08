@@ -339,7 +339,7 @@ if(future_file %in% list.files(future_path)){
   
   future_summary <- 
     future_data %>% 
-    group_by(dl_state, registration_yr, decision) %>% 
+    group_by(dl_state, registration_yr) %>% 
     summarize(n = n()) %>% 
     ungroup() %>% 
     arrange(desc(n))
@@ -377,7 +377,7 @@ if(past_file %in% list.files(past_path)){
   
   past_summary <- 
     past_data %>% 
-    group_by(dl_state, registration_yr, decision) %>% 
+    group_by(dl_state, registration_yr) %>% 
     summarize(n = n()) %>% 
     ungroup() %>% 
     arrange(desc(n))
