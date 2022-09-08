@@ -401,64 +401,68 @@ Records below did not have an issue_date and registration_yr that were in agreem
 
 ```{r reg_yr_check5, echo = FALSE, fig.align = "center"}
 
-rectangles <-
-  tibble(
-    season = c(paste(params$year-1, params$year, sep = "-"),
-               paste(params$year, params$year+1, sep = "-"),
-               paste(params$year+1, params$year+2, sep = "-")),
-    values = c("#F0E442", "#56B4E9", "#0072B2"),
-    xmin = c(as.Date(paste(params$year-1, "09-01", sep = "-")),
-             as.Date(paste(params$year, "09-01", sep = "-")),
-             as.Date(paste(params$year+1, "09-01", sep = "-"))),
-    xmax = c(as.Date(paste(params$year, "03-11", sep = "-")),
-             as.Date(paste(params$year+1, "03-11", sep = "-")),
-             as.Date(paste(params$year+2, "03-11", sep = "-"))),
-    ymin = -Inf,
-    ymax = Inf)
-
-issue_assignments %>%
-  filter(decision == "bad") %>%
-  select(dl_state, source_file, issue_date, registration_yr, decision) %>%
-  left_join(
-    licenses_ref %>%
-    rename(dl_state = state),
-    by = "dl_state") %>%
-  distinct() %>%
-  ggplot() +
-  geom_rect(
-    data = rectangles,
-    aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax,
-        fill = season),
-    alpha = 0.3, inherit.aes = F) +
-  geom_boxplot(
-    aes(x = mdy(issue_date), y = dl_state, color = registration_yr),
-    fill = "#FFFFFF", width = 0, size = 3, position = "identity") +
-  geom_point(
-    aes(x = last_day_migbird_hunting, y = dl_state,
-        shape = "Last day of hunting")) +
-  geom_point(
-    aes(x = issue_start, y = dl_state,
-        shape = "Issue start")) +
-  geom_point(
-    aes(x = issue_end, y = dl_state,
-        shape = "Issue end")) +
-  labs(x = "Date", y = "State",
-       title = "Bad issue_date/registration_yr combinations") +
-  scale_fill_manual("Seasons",
-                    labels = c(paste(params$year-1, params$year, sep = "-"),
-                               paste(params$year, params$year+1, sep = "-"),
-                               paste(params$year+1, params$year+2, sep = "-")),
-                    values = c("#F0E442", "#56B4E9", "#0072B2")) +
-  scale_shape_manual(name = "", values = c(4, 1, 2)) +
-  scale_x_date(breaks = c(rectangles$xmin[1], rectangles$xmax[1],
-                          rectangles$xmin[2], rectangles$xmax[2],
-                          rectangles$xmin[3], rectangles$xmax[3])) +
-  theme_classic() +
-  theme(axis.text = element_text(size = 11),
-        axis.title = element_text(size = 14),
-        panel.background = element_rect(color = "white"),
-        panel.grid.major.y =
-          element_line(color = "#666666", linetype = "dotted"))
+if(nrow(issue_assignments %>% filter(decision == "bad")) > 0){
+  rectangles <-
+    tibble(
+      season = c(paste(params$year-1, params$year, sep = "-"),
+                 paste(params$year, params$year+1, sep = "-"),
+                 paste(params$year+1, params$year+2, sep = "-")),
+      values = c("#F0E442", "#56B4E9", "#0072B2"),
+      xmin = c(as.Date(paste(params$year-1, "09-01", sep = "-")),
+               as.Date(paste(params$year, "09-01", sep = "-")),
+               as.Date(paste(params$year+1, "09-01", sep = "-"))),
+      xmax = c(as.Date(paste(params$year, "03-11", sep = "-")),
+               as.Date(paste(params$year+1, "03-11", sep = "-")),
+               as.Date(paste(params$year+2, "03-11", sep = "-"))),
+      ymin = -Inf,
+      ymax = Inf)
+  
+  issue_assignments %>%
+    filter(decision == "bad") %>%
+    select(dl_state, source_file, issue_date, registration_yr, decision) %>%
+    left_join(
+      licenses_ref %>%
+      rename(dl_state = state),
+      by = "dl_state") %>%
+    distinct() %>%
+    ggplot() +
+    geom_rect(
+      data = rectangles,
+      aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax,
+          fill = season),
+      alpha = 0.3, inherit.aes = F) +
+    geom_boxplot(
+      aes(x = mdy(issue_date), y = dl_state, color = registration_yr),
+      fill = "#FFFFFF", width = 0, size = 3, position = "identity") +
+    geom_point(
+      aes(x = last_day_migbird_hunting, y = dl_state,
+          shape = "Last day of hunting")) +
+    geom_point(
+      aes(x = issue_start, y = dl_state,
+          shape = "Issue start")) +
+    geom_point(
+      aes(x = issue_end, y = dl_state,
+          shape = "Issue end")) +
+    labs(x = "Date", y = "State",
+         title = "Bad issue_date/registration_yr combinations") +
+    scale_fill_manual("Seasons",
+                      labels = c(paste(params$year-1, params$year, sep = "-"),
+                                 paste(params$year, params$year+1, sep = "-"),
+                                 paste(params$year+1, params$year+2, sep = "-")),
+                      values = c("#F0E442", "#56B4E9", "#0072B2")) +
+    scale_shape_manual(name = "", values = c(4, 1, 2)) +
+    scale_x_date(breaks = c(rectangles$xmin[1], rectangles$xmax[1],
+                            rectangles$xmin[2], rectangles$xmax[2],
+                            rectangles$xmin[3], rectangles$xmax[3])) +
+    theme_classic() +
+    theme(axis.text = element_text(size = 11),
+          axis.title = element_text(size = 14),
+          panel.background = element_rect(color = "white"),
+          panel.grid.major.y =
+            element_line(color = "#666666", linetype = "dotted"))
+}else{
+  message("No bad data to plot.")
+}
 ```
 
 ```{r reg_yr_check6, echo = FALSE}
