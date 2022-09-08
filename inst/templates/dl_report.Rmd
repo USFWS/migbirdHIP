@@ -528,18 +528,14 @@ The following records are missing first name, last name, date of birth, address,
 ```{r record_check, echo = FALSE, fig.align = "center"}
 record_check <- 
   dl_data %>%
-  # Filter out records if firstname, lastname, city of residence, state of
-  # residence, or date of birth are missing -- records discarded because
+  # Filter out records if firstname, lastname, state, birth date, OR address AND 
+  # email, OR city, zip AND email are missing -- records discarded because
   # these are needed to identify individuals
   # Discard additional records if they are missing elements of an address AND email
-  filter(
-    is.na(firstname)|
-      is.na(lastname)|
-      is.na(state)|
-      is.na(birth_date)|
-      (is.na(address)&is.na(email))|
-      (is.na(city)&is.na(zip)&is.na(email))
-    )
+  filter(!if_any(c("firstname", "lastname", "state", "birth_date"), ~is.na(.x))) %>%
+  filter(!if_all(c("address", "email"), ~is.na(.x))) %>%
+  filter(!if_all(c("city", "zip", "email"), ~is.na(.x)))
+    
   
 if(nrow(record_check) > 0){
   missing_plot <-
