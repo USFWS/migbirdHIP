@@ -523,7 +523,7 @@ rm(huntcheck)
 
 ## PII checking
 
-The following records are missing first name, last name, date of birth, OR address AND email, OR city, zip AND email. They are not included in the final output table.
+The following records are missing first name, last name, date of birth, address AND email, OR city AND zip AND email. They are not included in the final output table.
 
 ```{r record_check, echo = FALSE, fig.align = "center"}
 record_check <- 
