@@ -335,14 +335,15 @@ future_file <- paste0("DL", params$dl, "_future_data.csv")
 
 if(future_file %in% list.files(future_path)){
   future_data <-
-    read_csv(paste0(future_path, future_file))
+    read_csv(paste0(future_path, future_file), show_col_types = F)
   
-  future_summary <- 
-    future_data %>% 
-    group_by(dl_state, registration_yr) %>% 
-    summarize(n = n()) %>% 
-    ungroup() %>% 
-    arrange(desc(n))
+  suppressMessages(
+    future_summary <- 
+      future_data %>% 
+      group_by(dl_state, registration_yr) %>% 
+      summarize(n = n()) %>% 
+      ungroup() %>% 
+      arrange(desc(n)))
   
   DT::datatable(future_summary)
   
@@ -373,14 +374,15 @@ past_file <- paste0("DL", params$dl, "_past_data.csv")
 
 if(past_file %in% list.files(past_path)){
   past_data <-
-    read_csv(paste0(past_path, past_file))
+    read_csv(paste0(past_path, past_file), show_col_types = F)
   
-  past_summary <- 
-    past_data %>% 
-    group_by(dl_state, registration_yr) %>% 
-    summarize(n = n()) %>% 
-    ungroup() %>% 
-    arrange(desc(n))
+  suppressMessages(
+    past_summary <- 
+      past_data %>% 
+      group_by(dl_state, registration_yr) %>% 
+      summarize(n = n()) %>% 
+      ungroup() %>% 
+      arrange(desc(n)))
   
   DT::datatable(past_summary)
   
@@ -466,23 +468,26 @@ if(nrow(issue_assignments %>% filter(decision == "bad")) > 0){
 ```
 
 ```{r reg_yr_check6, echo = FALSE}
-DT::datatable(
-  issue_assignments %>%
-    filter(decision == "bad") %>%
-    select(dl_state, source_file, issue_date, registration_yr) %>%
-    left_join(
-      licenses_ref %>%
-        select(-c("hunting_season", "last_day_migbird_hunting", "category")) %>% 
-        rename(dl_state = state),
-      by = "dl_state") %>%
-    distinct() %>% 
-    group_by(dl_state, source_file, registration_yr, issue_start, issue_end) %>% 
-    summarize(
-      min_issue_date = min(mdy(issue_date)),
-      max_issue_date = max(mdy(issue_date))) %>% 
-    ungroup() %>% 
-    relocate(min_issue_date:max_issue_date, .before = "registration_yr")
-  )
+
+if(nrow(issue_assignments %>% filter(decision == "bad")) > 0){
+  DT::datatable(
+    issue_assignments %>%
+      filter(decision == "bad") %>%
+      select(dl_state, source_file, issue_date, registration_yr) %>%
+      left_join(
+        licenses_ref %>%
+          select(-c("hunting_season", "last_day_migbird_hunting", "category")) %>% 
+          rename(dl_state = state),
+        by = "dl_state") %>%
+      distinct() %>% 
+      group_by(dl_state, source_file, registration_yr, issue_start, issue_end) %>% 
+      summarize(
+        min_issue_date = min(mdy(issue_date)),
+        max_issue_date = max(mdy(issue_date))) %>% 
+      ungroup() %>% 
+      relocate(min_issue_date:max_issue_date, .before = "registration_yr")
+    )
+}
 
 rm(issue_assignments)
 rm(twoseasonstates)
