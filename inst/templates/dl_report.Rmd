@@ -523,7 +523,7 @@ rm(huntcheck)
 
 ## PII checking
 
-The following records are missing first name, last name, date of birth, address, state, and/or city AND zip. They are not included in the final output table.
+The following records are missing first name, last name, date of birth, OR address AND email, OR city, zip AND email. They are not included in the final output table.
 
 ```{r record_check, echo = FALSE, fig.align = "center"}
 record_check <- 
@@ -532,11 +532,11 @@ record_check <-
   # email, OR city, zip AND email are missing -- records discarded because
   # these are needed to identify individuals
   # Discard additional records if they are missing elements of an address AND email
-  filter(!if_any(c("firstname", "lastname", "state", "birth_date"), ~is.na(.x))) %>%
-  filter(!if_all(c("address", "email"), ~is.na(.x))) %>%
-  filter(!if_all(c("city", "zip", "email"), ~is.na(.x)))
+  filter(
+    if_any(c("firstname", "lastname", "state", "birth_date"), ~is.na(.x))|
+      if_all(c("address", "email"), ~is.na(.x))|
+      if_all(c("city", "zip", "email"), ~is.na(.x)))
     
-  
 if(nrow(record_check) > 0){
   missing_plot <-
     record_check %>%
