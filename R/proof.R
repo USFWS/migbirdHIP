@@ -130,7 +130,7 @@ proof <-
             as.numeric(
               str_extract(birth_date, "(?<=\\/)[0-9]{4}")) < 1920 |
               as.numeric(
-                str_extract(birth_date, "(?<=\\/)[0-9]{4}")) >= year - 16) %>%
+                str_extract(birth_date, "(?<=\\/)[0-9]{4}")) > year - 16) %>%
           mutate(error = "birth_date"),
         # Issue date should only ever be the year +/- 1 of the HIP survey
         keyed_x %>%
