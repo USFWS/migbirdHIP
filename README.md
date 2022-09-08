@@ -24,6 +24,7 @@ Tasks that can be accomplished with this package include:
 -   `correct` systematically fixes erroneous values
 -   `shiftFix` corrects line shift errors
 -   `manualFix` lets the user fix any remaining unsatisfactory values
+-   `glyphFinder` identifies non-UTF-8 characters in any given field
 -   Error visualization with `errorPlot_dl`, `errorPlot_fields`, and
     `errorPlot_states`
 -   Exploration of specific errors with `youthHunters` and

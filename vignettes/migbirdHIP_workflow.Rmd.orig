@@ -17,9 +17,10 @@ vignette: >
 - [Part A: Data Import and Cleaning](#part-a-data-import-and-cleaning)
     - [read_hip](#read_hip)
     - [renameFiles](#renamefiles)
-    - [shiftFix](#shiftFix)
+    - [glyphFinder](#glyphfinder)
+    - [shiftFix](#shiftfix)
     - [clean](#clean)
-    - [issueCheck](#issueCheck)
+    - [issueCheck](#issuecheck)
     - [findDuplicates](#findduplicates)
     - [fixDuplicates](#fixduplicates)
     - [strataCheck](#stratacheck)
@@ -103,6 +104,14 @@ The `renameFiles` function was incorporated into this package for special cases.
 
 ```{r rename, eval = FALSE}
 renameFiles(path = "C:/HIP/DL1301")
+```
+
+### glyphFinder
+
+During pre-processing, R may throw an error like "invalid UTF-8 byte sequence detected". The error usually includes a field name but no other helpful information. The `glyphFinder` function identifies values containing non-UTF-8 glyphs/characters and returns them with the source file so they can be edited.
+
+```{r glyphFinder, eval = FALSE}
+glyphFinder(DL1301, email)
 ```
 
 ### shiftFix

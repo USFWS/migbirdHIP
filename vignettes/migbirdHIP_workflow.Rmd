@@ -17,9 +17,10 @@ vignette: >
 - [Part A: Data Import and Cleaning](#part-a-data-import-and-cleaning)
     - [read_hip](#read_hip)
     - [renameFiles](#renamefiles)
-    - [shiftFix](#shiftFix)
+    - [glyphFinder](#glyphfinder)
+    - [shiftFix](#shiftfix)
     - [clean](#clean)
-    - [issueCheck](#issueCheck)
+    - [issueCheck](#issuecheck)
     - [findDuplicates](#findduplicates)
     - [fixDuplicates](#fixduplicates)
     - [strataCheck](#stratacheck)
@@ -130,6 +131,15 @@ The `renameFiles` function was incorporated into this package for special cases.
 
 ```r
 renameFiles(path = "C:/HIP/DL1301")
+```
+
+### glyphFinder
+
+During pre-processing, R may throw an error like "invalid UTF-8 byte sequence detected". The error usually includes a field name but no other helpful information. The `glyphFinder` function identifies values containing non-UTF-8 glyphs/characters and returns them with the source file so they can be edited.
+
+
+```r
+glyphFinder(DL1301, email)
 ```
 
 ### shiftFix
@@ -257,13 +267,22 @@ DL1301_current <- issueCheck(DL1301_clean, year = 2021, plot = F, write = F)
 ```
 
 ```
-## # A tibble: 4 × 4
+## # A tibble: 5 × 4
 ##   reg_yr_eval issue_eval       decision sum_n
 ##   <chr>       <chr>            <chr>    <int>
 ## 1 copy        two season state copy       709
-## 2 nochange    past             bad      33225
-## 3 nochange    two season state nochange  8452
-## 4 postpone    past             bad       6615
+## 2 nochange    current          nochange  3203
+## 3 nochange    past             bad      30022
+## 4 nochange    two season state nochange  8452
+## 5 postpone    past             bad       6615
+```
+
+```
+## * Future data write-out skipped; no data.
+```
+
+```
+## * Past data write-out skipped; no data.
 ```
 
 To export a table of records to process in a future season and to set aside records from past seasons to include in the download report, specify the outpaths where the .csv files should be written and specify `write = TRUE`.
@@ -388,7 +407,7 @@ validate(DL1301_fixed, type = "horizontal")
 ##  4 MO20211229.txt 1        2697    3604       0.748
 ##  5 ME20211229.txt 1         112     151       0.742
 ##  6 NM20211229.txt 1         208     295       0.705
-##  7 ID20211229.txt 1        1762    2588       0.681
+##  7 ID20211229.txt 1        1759    2588       0.680
 ##  8 ND20211215.txt 1         130     204       0.637
 ##  9 CA20211229.txt 1        2003    3211       0.624
 ## 10 IN20211229.txt 1         416     690       0.603
@@ -573,7 +592,8 @@ pullErrors(DL1301_proofed, error = "suffix")
 ```
 
 ```
-##  [1] "MD"  "ESQ" "MAL" "MR"  "W"   "CJS" "CME" "M"   "SMI" "I�M" "MO"  "MS"  "MRS" "-"
+##  [1] "MD"  "ESQ" "MAL" "MR"  "W"   "CJS" "CME" "M"   "SMI" "I�M" "MO"  "MS" 
+## [13] "MRS" "-"
 ```
 
 Running `pullErrors` on a field that has no errors will return a message.
@@ -727,20 +747,20 @@ errorTable(DL1301_proofed)
 ```
 
 ```
-## # A tibble: 92 × 3
+## # A tibble: 89 × 3
 ##    dl_state error           error_count
 ##    <chr>    <chr>                 <dbl>
 ##  1 AK       issue_date                1
 ##  2 AK       registration_yr           1
-##  3 AL       birth_date              157
+##  3 AL       birth_date                2
 ##  4 AL       email                     3
 ##  5 AL       firstname                 5
 ##  6 AL       registration_yr        4790
 ##  7 AL       suffix                    5
 ##  8 AL       zip                      10
-##  9 CA       birth_date              212
+##  9 CA       birth_date              173
 ## 10 CA       title                     2
-## # … with 82 more rows
+## # … with 79 more rows
 ```
 
 Errors can be reported by only location by turning off the `field` parameter.
@@ -755,15 +775,15 @@ errorTable(DL1301_proofed, field = "none")
 ##    dl_state error_count
 ##    <chr>          <dbl>
 ##  1 AK                 2
-##  2 AL              4970
-##  3 CA               214
-##  4 CO                77
-##  5 CT               257
-##  6 FL               103
-##  7 GA               122
-##  8 IA               147
-##  9 ID               222
-## 10 IN                71
+##  2 AL              4815
+##  3 CA               175
+##  4 CO                68
+##  5 CT               252
+##  6 FL                11
+##  7 GA                22
+##  8 IA                60
+##  9 ID               175
+## 10 IN                54
 ## # … with 18 more rows
 ```
 
@@ -778,7 +798,7 @@ errorTable(DL1301_proofed, loc = "none")
 ## # A tibble: 12 × 2
 ##    error           error_count
 ##    <chr>                 <dbl>
-##  1 birth_date             2347
+##  1 birth_date             1307
 ##  2 city                      1
 ##  3 email                   274
 ##  4 firstname                49
@@ -803,7 +823,7 @@ errorTable(DL1301_proofed, loc = "CA")
 ## # A tibble: 2 × 3
 ##   dl_state error      error_count
 ##   <chr>    <chr>            <dbl>
-## 1 CA       birth_date         212
+## 1 CA       birth_date         173
 ## 2 CA       title                2
 ```
 
@@ -832,7 +852,7 @@ errorTable(DL1301_proofed, loc = "CA", field = "none")
 ## # A tibble: 1 × 2
 ##   dl_state total_errors
 ##   <chr>           <dbl>
-## 1 CA                214
+## 1 CA                175
 ```
 
 Total errors for a field in a particular location can be pulled.
@@ -861,9 +881,9 @@ redFlags(DL1301_proofed, type = "state", threshold = 0.03)
 ## # A tibble: 3 × 5
 ##   dl_state count_errors count_correct proportion flag        
 ##   <chr>           <int>         <int>      <dbl> <chr>       
-## 1 AL               4970        114780     0.0415 error > 0.03
-## 2 CT                257          5943     0.0415 error > 0.03
-## 3 LA               1842         43158     0.0409 error > 0.03
+## 1 CT                252          5948     0.0406 error > 0.03
+## 2 LA               1810         43190     0.0402 error > 0.03
+## 3 AL               4815        114935     0.0402 error > 0.03
 ```
 
 <b>By field.</b>
@@ -879,7 +899,7 @@ redFlags(DL1301_proofed, type = "field", threshold = 0.01)
 ##   errors          count_errors count_correct proportion flag        
 ##   <chr>                  <int>         <int>      <dbl> <chr>       
 ## 1 registration_yr         6591         41862     0.136  error > 0.01
-## 2 birth_date              2347         46106     0.0484 error > 0.01
+## 2 birth_date              1307         47146     0.0270 error > 0.01
 ```
 
 ## Troubleshooting
