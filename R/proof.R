@@ -162,7 +162,7 @@ proof <-
     # Registration_yr + 1 error
     # Return a message if registration_yr is yr +/- 1; these values should have
     # been handled in issueCheck
-    if(year + 1 %in% keyed_x$registration_yr){
+    if((year + 1) %in% keyed_x$registration_yr){
       message(paste0("Error: Records detected with registration_yr = yr + 1."))
       print(
         keyed_x %>%
@@ -176,7 +176,7 @@ proof <-
             prop = round(n()/total_n, 2)) %>%
           ungroup() %>%
           distinct())
-    }else if(year - 1 %in% keyed_x$registration_yr){
+    }else if((year - 1) %in% keyed_x$registration_yr){
       message(paste0("Error: Records detected with registration_yr = yr - 1."))
       print(
         keyed_x %>%
