@@ -137,7 +137,7 @@ issueCheck <-
     # Create a frame of current data
     current_data <-
       issue_assignments %>%
-      filter(decision != "postpone") %>%
+      filter(!decision %in% c("past", "postpone")) %>%
       mutate(
         registration_yr =
           ifelse(
