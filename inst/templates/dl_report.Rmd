@@ -588,6 +588,64 @@ rm(pii_summary)
 rm(dl_data)
 ```
 
+## Missing email checking
+
+Emails missing or detected to be incorrect are shown below. Values are sourced from the corrected data.
+
+```{r missingemail, echo = FALSE, fig.align = "center"}
+
+final_data %>% 
+  select(dl_state, email, errors) %>% 
+  mutate(
+    errors = ifelse(is.na(errors), "na", errors),
+    Category = 
+      case_when(
+        !is.na(email) & !str_detect(errors, "email") ~ "Good",
+        !is.na(email) & str_detect(errors, "email") ~ "Incorrect",
+        is.na(email) ~ "Missing",
+        TRUE ~ NA_character_)) %>% 
+  select(-c("email", "errors")) %>% 
+  filter(Category != "Good") %>% 
+  group_by(dl_state) %>% 
+  mutate(total_rows = n()) %>% 
+  ungroup() %>% 
+  group_by(dl_state, Category) %>% 
+  mutate(proportion = n()/nrow(final_data)) %>% 
+  ungroup() %>% 
+  distinct() %>% 
+  group_by(dl_state) %>% 
+  mutate(label = ifelse(row_number() == 1, total_rows, NA)) %>% 
+  ungroup() %>% 
+  # Plot
+  ggplot() +
+  geom_bar(
+    aes(
+      y = proportion,
+      x = reorder(dl_state, total_rows),
+      fill = Category),
+    stat = "identity") +
+  geom_text(
+    aes(
+      y = proportion,
+      x = reorder(dl_state, total_rows),
+      label = label,
+      angle = 90),
+    vjust = 0.2, hjust = -0.2) +
+  labs(
+    x = "State",
+    y = "Emails (proportion)",
+    title = "Erroneous emails by state") +
+  scale_y_continuous(expand = expansion(mult = c(-0, 0.3))) +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1)) +
+  scale_fill_manual(
+    "Category", 
+    labels = c("Incorrect", "Missing"), 
+    values = c("#F8766D", "grey35"))
+
+```
+
+
 ## Duplicates
 
 ### Before fixDuplicates (all 49 states)
