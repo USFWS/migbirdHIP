@@ -4,10 +4,12 @@
 \alias{renameFiles}
 \title{Raw HIP file name correction}
 \usage{
-renameFiles(path)
+renameFiles(path, year)
 }
 \arguments{
 \item{path}{Directory to download folder containing new HIP files}
+
+\item{year}{The year in which the Harvest Information Program data were collected}
 }
 \description{
 This function overwrites HIP filenames. Files in the supplied directory are renamed by converting the Julian date to YYYYMMDD format. State abbreviations that are in lowercase format are capitalized.

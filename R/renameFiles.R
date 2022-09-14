@@ -16,6 +16,7 @@
 #' @importFrom tidyr unite
 #'
 #' @param path Directory to download folder containing new HIP files
+#' @param year The year in which the Harvest Information Program data were collected
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}
@@ -23,7 +24,7 @@
 #' @export
 
 renameFiles <-
-  function(path){
+  function(path, year){
 
     # Add a final "/" if not included already
     if(!str_detect(path, "\\/$")){
@@ -54,7 +55,7 @@ renameFiles <-
               as.character(
                 as.Date(
                   as.numeric(jdate),
-                  origin = structure("2021-01-01")) - 1),
+                  origin = structure(paste0(as.character(year),"-01-01"))) - 1),
               "-")) %>%
         unite(value, 1:3, sep = "") %>%
         mutate(value = paste0(x, value)) %>%
@@ -67,7 +68,10 @@ renameFiles <-
       file.rename(from = names5, to = names10)
 
       message("Success: Julian dates changed to standard format.")
-      print(bind_cols(old = names5, new = names10))
+      print(
+        bind_cols(
+          old = str_extract(names5, "(?<=\\/)[A-Z|a-z]{2}[0-9]{1,5}\\.txt"),
+          new = str_extract(names10, "(?<=\\/)[A-Z]{2}[0-9]{8}\\.txt")))
     }
 
     # Run if there's a lowercase letter in the state abbreviation

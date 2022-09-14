@@ -100,10 +100,10 @@ Did you get a warning or three? Read an explanation of common `read_hip` warning
 
 ### renameFiles
 
-The `renameFiles` function was incorporated into this package for special cases. Some states submit .txt  files using a 5-digit file name format, containing 2 letters for the state abbreviation followed by a 3-digit Julian date (representing the date the file was uploaded). To convert these 5-digit filenames to the standard 10-digit format (a requirement to read data properly with [read_hip](#read_hip)), supply the `renameFiles` with the directory containing HIP data. File names will be automatically overwritten with the YYYYMMDD format date corresponding to the submitted Julian date. This function also converts lowercase state abbreviations to uppercase.
+The `renameFiles` function was incorporated into this package for special cases. Some states submit .txt  files using a 5-digit file name format, containing 2 letters for the state abbreviation followed by a 3-digit Julian date (representing the date the file was uploaded). To convert these 5-digit filenames to the standard 10-digit format (a requirement to read data properly with [read_hip](#read_hip)), supply the `renameFiles` with the directory containing HIP data. File names will be automatically overwritten with the YYYYMMDD format date corresponding to the submitted Julian date. This function also converts lowercase state abbreviations to uppercase. The year of the Harvest Information Program must be supplied as a parameter to accurately convert dates.
 
 ```{r rename, eval = FALSE}
-renameFiles(path = "C:/HIP/DL1301")
+renameFiles(path = "C:/HIP/DL1301", year = 2021)
 ```
 
 ### glyphFinder
