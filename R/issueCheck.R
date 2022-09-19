@@ -150,7 +150,7 @@ issueCheck <-
     if(nrow(issue_assignments %>% filter(decision == "copy")) == 0){
       message(
         paste0(
-          "* No records need to be modified (registration_yr - 1) and copied f",
+          "* 0 records need to be modified (registration_yr - 1) and copied f",
           "or next year."))
     }else{
       message(
@@ -165,7 +165,7 @@ issueCheck <-
     if(nrow(issue_assignments %>% filter(decision == "postpone")) == 0){
       message(
         paste0(
-          "* No records need to be postponed for next year."))
+          "* 0 records need to be postponed for next year."))
     }else{
       message(
         paste0(
@@ -179,7 +179,7 @@ issueCheck <-
     if(nrow(issue_assignments %>% filter(decision == "past")) == 0){
       message(
         paste0(
-          "* No past records detected."))
+          "* 0 past records detected."))
     }else{
       message(
         paste0(
