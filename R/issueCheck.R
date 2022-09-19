@@ -91,6 +91,7 @@ issueCheck <-
             # Mississippi's hunting season, copy them for next year (and count
             # them for this year)
             dl_state == "MS" &
+              !str_detect(source_file, "future") &
               mdy(issue_date) %within%
               interval(MS_firstday, MS_lastday) ~ "copy",
             # Postpone all other future registration_yr values, for all states
