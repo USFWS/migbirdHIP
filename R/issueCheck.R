@@ -304,7 +304,9 @@ issueCheck <-
           group_by(source_file) %>%
           summarize(n = n()) %>%
           ungroup())
-    }else{
+    }else if(nrow(future_data) > 0 & write == FALSE){
+      message("* Future data write-out skipped.")
+    }else if(nrow(future_data) == 0 & write == TRUE){
       message("* Future data write-out skipped; no data.")
     }
 
@@ -325,7 +327,9 @@ issueCheck <-
           group_by(source_file) %>%
           summarize(n = n()) %>%
           ungroup())
-    }else{
+    }else if(nrow(past_data) > 0 & write == FALSE){
+      message("* Past data write-out skipped.")
+    }else if(nrow(past_data) == 0 & write == TRUE){
       message("* Past data write-out skipped; no data.")
     }
     return(current_data)
