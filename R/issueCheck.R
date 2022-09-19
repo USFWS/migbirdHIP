@@ -142,24 +142,88 @@ issueCheck <-
       mutate(
         registration_yr =
           ifelse(
-            decision == "copy",
+            decision == "copy" & dl_state != "MS",
             as.character(as.numeric(registration_yr) - 1),
             registration_yr)) %>%
       select(-c("decision", "reg_yr_eval", "issue_eval"))
 
     # Return messages for how many records have been copied
-    if(nrow(issue_assignments %>% filter(decision == "copy")) == 0){
+    # Message for NOT copied non-MS records
+    if(
+      nrow(
+        issue_assignments %>%
+          filter(decision == "copy" & dl_state != "MS")) == 0){
       message(
         paste0(
-          "* 0 records need to be modified (registration_yr - 1) and copied f",
-          "or next year."))
-    }else{
+          "* 0 future records need to be modified (registration_yr - 1) and co",
+          "pied for next year."))
+      }
+
+    # Message for NOT copied MS records
+    if(
+      nrow(
+        issue_assignments %>%
+          filter(decision == "copy" & dl_state == "MS")) == 0){
       message(
         paste0(
-          "* ", nrow(issue_assignments %>% filter(decision == "copy")), " reco",
-          "rds have been modified to have registration_yr - 1. They have been ",
-          "copied and saved for next season in the future data .csv with their",
-          " original registration_yr."))
+          "* 0 future Mississippi records need to be copied for next year."))
+      }
+
+    # Message for copied non-MS records
+    if(
+      nrow(
+        issue_assignments %>%
+          filter(decision == "copy" & dl_state != "MS")) > 0){
+      message(
+        paste0(
+          "* ",
+          nrow(
+            issue_assignments %>%
+              filter(decision == "copy" & dl_state != "MS")),
+          " future records have been modified to have registration_yr - 1. The",
+          "y have been copied and saved for next season in the future data .cs",
+          "v with their original registration_yr."))
+    }
+
+    # Message for copied MS records with registration_yr change
+    if(
+      nrow(
+        issue_assignments %>%
+        filter(
+          decision == "copy" &
+          dl_state == "MS" &
+          as.numeric(registration_yr) > year)) > 0){
+      message(
+        paste0(
+          "* ",
+          nrow(
+            issue_assignments %>%
+              filter(
+                decision == "copy" &
+                  dl_state == "MS" &
+                  as.numeric(registration_yr) > year)), " Mississippi records ",
+          "detected with registration_yr + 1. Please fix."))
+    }
+
+    # Message for copied MS records without registration_yr change
+    if(
+      nrow(
+        issue_assignments %>%
+        filter(
+          decision == "copy" &
+          dl_state == "MS" &
+          as.numeric(registration_yr) == year)) > 0){
+      message(
+        paste0(
+          "* ",
+          nrow(
+            issue_assignments %>%
+              filter(
+                decision == "copy" &
+                  dl_state == "MS" &
+                  as.numeric(registration_yr) == year)), " future Mississippi ",
+          "records have been copied and saved for next season. Copied records ",
+          "have been modified to have registration_yr + 1."))
     }
 
     # Return messages for how many records have been postponed
@@ -171,9 +235,9 @@ issueCheck <-
       message(
         paste0(
           "* ", nrow(issue_assignments %>% filter(decision == "postpone")), " ",
-          "records have been postponed for next year. They will be filtered ou",
-          "t from this download and saved in the future data .csv with their o",
-          "riginal registration_yr."))
+          "future records have been postponed for next year. They will be filt",
+          "ered out from this download and saved in the future data .csv with ",
+          "their original registration_yr."))
     }
 
     # Return messages for how many past records have been set aside
@@ -278,6 +342,12 @@ issueCheck <-
     future_data <-
       issue_assignments %>%
       filter(decision %in% c("copy", "postpone")) %>%
+      mutate(
+        registration_yr =
+          ifelse(
+            dl_state == "MS" & as.numeric(registration_yr) == year,
+            as.character(as.numeric(registration_yr) + 1),
+            registration_yr)) %>%
       select(-c("decision", "reg_yr_eval", "issue_eval"))
 
     # Create past data frame
