@@ -294,12 +294,14 @@ issueCheck <-
       write.csv(
         future_data,
         paste0(
-          future_outpath, "DL", future_data$dl_cycle[1], "_future_data.csv"),
+          future_outpath,
+          "2022-2023_DL", future_data$dl_cycle[1], "_future_data.csv"),
         row.names = FALSE)
       message(
         paste0(
           "FUTURE DATA written to path:\n",
-          future_outpath, "DL", future_data$dl_cycle[1], "_future_data.csv"))
+          future_outpath,
+          "2022-2023_DL", future_data$dl_cycle[1], "_future_data.csv"))
       print(
         future_data %>%
           group_by(source_file) %>%
@@ -318,11 +320,13 @@ issueCheck <-
       }
       write.csv(
         past_data,
-        paste0(past_outpath, "DL", past_data$dl_cycle[1], "_past_data.csv"),
+        paste0(past_outpath,
+               "2022-2023_DL", past_data$dl_cycle[1], "_past_data.csv"),
         row.names = FALSE)
       message(
         paste0("PAST DATA written to path:\n",
-               past_outpath, "DL", past_data$dl_cycle[1], "_past_data.csv"))
+               past_outpath,
+               "2022-2023_DL", past_data$dl_cycle[1], "_past_data.csv"))
       print(
         past_data %>%
           group_by(source_file) %>%
