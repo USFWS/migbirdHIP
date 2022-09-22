@@ -131,4 +131,5 @@ utils::globalVariables(
     "ymin",
     "ymax",
     "issue_start",
-    "issue_end"))
+    "issue_end",
+    "bad_zip"))
