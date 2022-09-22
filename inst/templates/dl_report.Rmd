@@ -681,17 +681,61 @@ DT::datatable(
 
 ## Repeated values
 
-### Repeated values across duck, goose, and snipe_coot bag codes
+### Horizontally repeated values across duck, goose, and snipe_coot bag fields
 
 The table below shows how many records had horizontal repetition across the duck, goose, and snipe_coot columns. For each source file, the value repeated is indicated (h_value), the number of records with horizontal repetition in the file are reported (h_rep), the total number of records per file are reported (h_total), and the proportion of the file with horizontal repetition is indicated (prop_repeat).
 
-```{r h_validate, echo = FALSE}
+```{r h_validateA1, echo = FALSE}
+h_valid <- migbirdHIP::validate(final_data, type = "horizontal")
+
 DT::datatable(
-  migbirdHIP::validate(final_data, type = "horizontal") %>% 
+  h_valid %>% 
     mutate(prop_repeat = round(prop_repeat, digits = 2)))
 ```
 
-### Repeated values within duck bag code
+#### Summary table
+
+```{r h_validateA2, echo = FALSE}
+DT::datatable(
+  h_valid %>% 
+    filter(prop_repeat > 0.001) %>% 
+    mutate(
+      dl_state = str_extract(source_file, "^[A-Z]{2}"),
+      binned_proportion = 
+        paste0(as.numeric(str_extract(as.character(prop_repeat), "(?<=0\\.)[0-9]{1}"))*10, "%")
+    ) %>% 
+    group_by(binned_proportion) %>% 
+    summarize(states = paste(dl_state, collapse = ", ")) %>% 
+    filter(binned_proportion != "0%"))
+```
+
+### Horizontally repeated values across all bag fields
+
+```{r h_validateB1, echo = FALSE}
+all_h_valid <- validate(DL0902_fixed, type = "horizontal", all = T)
+
+DT::datatable(
+  all_h_valid %>% 
+    mutate(prop_repeat = round(prop_repeat, digits = 2)))
+```
+
+#### Summary table
+
+```{r h_validateB1, echo = FALSE}
+DT::datatable(
+  all_h_valid %>% 
+    filter(prop_repeat > 0.001) %>% 
+    mutate(
+      dl_state = str_extract(source_file, "^[A-Z]{2}"),
+      binned_proportion = 
+        paste0(as.numeric(str_extract(as.character(prop_repeat), "(?<=0\\.)[0-9]{1}"))*10, "%")
+    ) %>% 
+    group_by(binned_proportion) %>% 
+    summarize(states = paste(dl_state, collapse = ", ")) %>% 
+    filter(binned_proportion != "0%"))
+```
+
+### Vertically repeated values within ducks_bag
 
 The table below shows how many records per file had the same value for all rows of the ducks_bag column. The v_repeated field indicates total count.
 
