@@ -712,7 +712,7 @@ DT::datatable(
 ### Horizontally repeated values across all bag fields
 
 ```{r h_validateB1, echo = FALSE}
-all_h_valid <- validate(DL0902_fixed, type = "horizontal", all = T)
+all_h_valid <- validate(final_data, type = "horizontal", all = T)
 
 DT::datatable(
   all_h_valid %>% 
