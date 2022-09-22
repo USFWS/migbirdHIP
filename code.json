@@ -3,7 +3,7 @@
     "name": "migbirdHIP",
     "organization": "U.S. Fish and Wildlife",
     "description": "An R package designed to process, clean, and visualize Harvest Information Program (HIP) data",
-    "version": "v1.2.6",
+    "version": "v1.2.7",
     "status": "Operational",
 
     "permissions": {
