@@ -721,7 +721,7 @@ DT::datatable(
 
 #### Summary table
 
-```{r h_validateB1, echo = FALSE}
+```{r h_validateB2, echo = FALSE}
 DT::datatable(
   all_h_valid %>% 
     filter(prop_repeat > 0.001) %>% 
