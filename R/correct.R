@@ -12,6 +12,12 @@
 #' @importFrom dplyr rename_at
 #' @importFrom dplyr vars
 #' @importFrom dplyr contains
+#' @importFrom dplyr group_by
+#' @importFrom dplyr summarize
+#' @importFrom dplyr n
+#' @importFrom dplyr ungroup
+#' @importFrom dplyr arrange
+#' @importFrom dplyr desc
 #' @importFrom stringr str_detect
 #' @importFrom stringr str_extract
 #' @importFrom stringr str_replace
@@ -145,10 +151,16 @@ correct <-
       message(
         paste0("Warning: Zip codes detected that do not correspond to ",
                "provided state of residence."))
-      print(
-        corrproof_bag_x %>%
-          select(record_key, zip, state, zipState) %>%
-          filter(state != zipState))
+      suppressMessages(
+        print(
+          corrproof_bag_x %>%
+            select(source_file, record_key, zip, state, zipState) %>%
+            filter(state != zipState) %>%
+            group_by(source_file, state) %>%
+            summarize(bad_zip = n()) %>%
+            ungroup() %>%
+            arrange(desc(bad_zip))
+          ))
     }
 
     corrproof_bag_x %<>%
