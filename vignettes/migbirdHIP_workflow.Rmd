@@ -255,15 +255,19 @@ DL1301_current <- issueCheck(DL1301_clean, year = 2021, plot = F, write = F)
 ```
 
 ```
-## * 709 records have been modified to have registration_yr - 1. They have been copied and saved for next season in the future data .csv with their original registration_yr.
+## * 0 future Mississippi records need to be copied for next year.
 ```
 
 ```
-## * No records need to be postponed for next year.
+## * 709 future records have been modified to have registration_yr - 1. They have been copied and saved for next season in the future data .csv with their original registration_yr.
 ```
 
 ```
-## * No past records detected.
+## * 0 records need to be postponed for next year.
+```
+
+```
+## * 0 past records detected.
 ```
 
 ```
@@ -278,11 +282,7 @@ DL1301_current <- issueCheck(DL1301_clean, year = 2021, plot = F, write = F)
 ```
 
 ```
-## * Future data write-out skipped; no data.
-```
-
-```
-## * Past data write-out skipped; no data.
+## * Future data write-out skipped.
 ```
 
 To export a table of records to process in a future season and to set aside records from past seasons to include in the download report, specify the outpaths where the .csv files should be written and specify `write = TRUE`.
@@ -370,20 +370,20 @@ strataCheck(DL1301_fixed)
 ```
 
 ```
-## # A tibble: 35 × 4
+## # A tibble: 34 × 4
 ##    dl_state spp          state_strata normal_strata
 ##    <chr>    <chr>        <chr>        <chr>        
-##  1 AL       woodcock_bag 3            1, 2, 4, 5   
-##  2 FL       dove_bag     0            1, 2, 3, 5   
-##  3 IA       dove_bag     0            1, 2, 3, 5   
-##  4 OR       dove_bag     0            1, 2, 3, 5   
-##  5 TN       dove_bag     0            1, 2, 3, 5   
-##  6 TN       woodcock_bag 0            1, 2, 3, 5   
-##  7 IA       ducks_bag    0            1, 2, 3, 4   
-##  8 IA       geese_bag    0            1, 2, 3, 4   
-##  9 OR       ducks_bag    0            1, 2, 3, 4   
-## 10 OR       geese_bag    0            1, 2, 3, 4   
-## # … with 25 more rows
+##  1 FL       dove_bag     0            1, 2, 3, 5   
+##  2 IA       dove_bag     0            1, 2, 3, 5   
+##  3 OR       dove_bag     0            1, 2, 3, 5   
+##  4 TN       dove_bag     0            1, 2, 3, 5   
+##  5 TN       woodcock_bag 0            1, 2, 3, 5   
+##  6 IA       ducks_bag    0            1, 2, 3, 4   
+##  7 IA       geese_bag    0            1, 2, 3, 4   
+##  8 OR       ducks_bag    0            1, 2, 3, 4   
+##  9 OR       geese_bag    0            1, 2, 3, 4   
+## 10 TN       ducks_bag    0            1, 2, 3, 4   
+## # … with 24 more rows
 ```
 
 ### validate
@@ -407,7 +407,7 @@ validate(DL1301_fixed, type = "horizontal")
 ##  4 MO20211229.txt 1        2697    3604       0.748
 ##  5 ME20211229.txt 1         112     151       0.742
 ##  6 NM20211229.txt 1         208     295       0.705
-##  7 ID20211229.txt 1        1762    2588       0.681
+##  7 ID20211229.txt 1        1761    2588       0.680
 ##  8 ND20211215.txt 1         130     204       0.637
 ##  9 CA20211229.txt 1        2003    3211       0.624
 ## 10 IN20211229.txt 1         416     690       0.603
@@ -511,20 +511,20 @@ DL1301_corrected <- correct(DL1301_proofed, year = 2021)
 ## 1 AL20211229.txt  4790     1
 ## 2 LA20211217.txt   608     1
 ## 3 LA20211220.txt  1192     1
-## # A tibble: 129 × 4
-##    record_key  zip        state zipState
-##    <chr>       <chr>      <chr> <chr>   
-##  1 record_892  71646      AZ    AR      
-##  2 record_1214 53473      AL    WI      
-##  3 record_1334 30152-4158 AL    GA      
-##  4 record_1706 25652      AL    WV      
-##  5 record_2217 35959      GA    AL      
-##  6 record_3432 32567      AL    FL      
-##  7 record_3448 30456      AL    GA      
-##  8 record_3825 36005      FL    AL      
-##  9 record_4202 20097      NC    DC      
-## 10 record_4706 29744      NC    SC      
-## # … with 119 more rows
+## # A tibble: 55 × 3
+##    source_file    state bad_zip
+##    <chr>          <chr>   <int>
+##  1 MO20211229.txt MO         36
+##  2 NE20211217.txt NE         14
+##  3 NE20211222.txt NE          6
+##  4 AL20211229.txt AL          5
+##  5 LA20211217.txt LA          5
+##  6 GA20211229.txt GA          3
+##  7 IA20211215.txt IA          3
+##  8 UT20211229.txt UT          3
+##  9 AL20211229.txt NC          2
+## 10 FL20211229.txt GA          2
+## # … with 45 more rows
 ```
 
 The following changes are made by the `correct` function:
