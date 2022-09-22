@@ -696,17 +696,25 @@ DT::datatable(
 #### Summary table
 
 ```{r h_validateA2, echo = FALSE}
-DT::datatable(
-  h_valid %>% 
-    filter(prop_repeat > 0.001) %>% 
-    mutate(
-      dl_state = str_extract(source_file, "^[A-Z]{2}"),
-      binned_proportion = 
-        paste0(as.numeric(str_extract(as.character(prop_repeat), "(?<=0\\.)[0-9]{1}"))*10, "%")
-    ) %>% 
-    group_by(binned_proportion) %>% 
-    summarize(states = paste(dl_state, collapse = ", ")) %>% 
-    filter(binned_proportion != "0%"))
+if(nrow(h_valid) == 0){
+  message("No horizontal repetition to summarize.")
+}else{
+  kableExtra::kbl(
+    h_valid %>% 
+      filter(prop_repeat > 0.001) %>% 
+      mutate(
+        dl_state = str_extract(source_file, "^[A-Z]{2}"),
+        binned_proportion = 
+          paste0(as.numeric(str_extract(as.character(prop_repeat), "(?<=0\\.)[0-9]{1}"))*10, "%")
+      ) %>% 
+      group_by(binned_proportion) %>% 
+      summarize(States = paste(dl_state, collapse = ", ")) %>% 
+      filter(binned_proportion != "0%") %>% 
+      rename(`Binned proportion` = binned_proportion)) %>%
+    kableExtra::kable_styling(
+      bootstrap_options = "striped",
+      full_width = F)
+}
 ```
 
 ### Horizontally repeated values across all bag fields
@@ -722,17 +730,25 @@ DT::datatable(
 #### Summary table
 
 ```{r h_validateB2, echo = FALSE}
-DT::datatable(
-  all_h_valid %>% 
-    filter(prop_repeat > 0.001) %>% 
-    mutate(
-      dl_state = str_extract(source_file, "^[A-Z]{2}"),
-      binned_proportion = 
-        paste0(as.numeric(str_extract(as.character(prop_repeat), "(?<=0\\.)[0-9]{1}"))*10, "%")
-    ) %>% 
-    group_by(binned_proportion) %>% 
-    summarize(states = paste(dl_state, collapse = ", ")) %>% 
-    filter(binned_proportion != "0%"))
+if(nrow(h_valid) == 0){
+  message("No horizontal repetition to summarize.")
+}else{
+  kableExtra::kbl(
+    all_h_valid %>% 
+      filter(prop_repeat > 0.001) %>% 
+      mutate(
+        dl_state = str_extract(source_file, "^[A-Z]{2}"),
+        binned_proportion = 
+          paste0(as.numeric(str_extract(as.character(prop_repeat), "(?<=0\\.)[0-9]{1}"))*10, "%")
+      ) %>% 
+      group_by(binned_proportion) %>% 
+      summarize(States = paste(dl_state, collapse = ", ")) %>% 
+      filter(binned_proportion != "0%") %>% 
+      rename(`Binned proportion` = binned_proportion)) %>%
+    kableExtra::kable_styling(
+      bootstrap_options = "striped",
+      full_width = F)
+}
 ```
 
 ### Vertically repeated values within ducks_bag
