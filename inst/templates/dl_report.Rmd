@@ -710,6 +710,7 @@ if(nrow(h_valid) == 0){
       group_by(binned_proportion) %>% 
       summarize(States = paste(dl_state, collapse = ", ")) %>% 
       filter(binned_proportion != "0%") %>% 
+      arrange(desc(binned_proportion)) %>% 
       rename(`Binned proportion` = binned_proportion)) %>%
     kableExtra::kable_styling(
       bootstrap_options = "striped",
@@ -744,6 +745,7 @@ if(nrow(h_valid) == 0){
       group_by(binned_proportion) %>% 
       summarize(States = paste(dl_state, collapse = ", ")) %>% 
       filter(binned_proportion != "0%") %>% 
+      arrange(desc(binned_proportion)) %>% 
       rename(`Binned proportion` = binned_proportion)) %>%
     kableExtra::kable_styling(
       bootstrap_options = "striped",
