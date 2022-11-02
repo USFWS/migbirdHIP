@@ -1004,11 +1004,11 @@ Q: What states and fields had a proportion of error that exceeded an acceptable 
 States with more than 1% error
 
 ```{r rfs, echo = FALSE}
-redFlags(proofed_data, type = "state", threshold = 0.1)
+redFlags(proofed_data, type = "state", threshold = 0.01)
 ```
 
 Fields with more than 1% error
 
 ```{r rff, echo = FALSE}
-redFlags(proofed_data, type = "field", threshold = 0.1)
+redFlags(proofed_data, type = "field", threshold = 0.01)
 ```
