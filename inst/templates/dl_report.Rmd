@@ -310,9 +310,6 @@ if(nrow(issue_assignments %>% filter(decision == "copy")) > 0){
     arrange(desc(n))
   
   DT::datatable(current_summary)
-  
-  rm(current_records)
-  rm(current_summary)
 }else{
   message("No records to change/copy.")
 }
