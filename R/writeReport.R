@@ -2,6 +2,7 @@
 #'
 #' Create documentation with figures and tables that summarizes HIP download data at a download cycle or season total scale.
 #'
+#' @importFrom quarto quarto_render
 #' @importFrom rmarkdown render
 #'
 #' @param path File path to the folder containing HIP .txt files
@@ -27,7 +28,7 @@ writeReport <-
 
     # Create qmd for download
     if(type == "dl_report"){
-      render(
+      quarto_render(
         input =
           # Use the specified template
           system.file(
@@ -35,7 +36,7 @@ writeReport <-
             paste0(type, ".qmd"),
             package = "migbirdHIP"),
         # Include the specified parameters so the functions can run
-        params =
+        execute_params =
           list(
             comp_path = path,
             final_path = corrected_path,
@@ -44,7 +45,6 @@ writeReport <-
             dl = dl,
             year = yr),
         output_file = file,
-        output_dir = dir,
         # Don't show lengthy knitting status text in console
         quiet = TRUE)
     }
