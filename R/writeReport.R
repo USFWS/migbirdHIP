@@ -25,14 +25,14 @@
 writeReport <-
   function(path, type, yr, dl = NA, corrected_path, future_path = NA, past_path = NA, dir, file){
 
-    # Create Rmd for download
+    # Create qmd for download
     if(type == "dl_report"){
       render(
         input =
           # Use the specified template
           system.file(
             "templates",
-            paste0(type, ".Rmd"),
+            paste0(type, ".qmd"),
             package = "migbirdHIP"),
         # Include the specified parameters so the functions can run
         params =

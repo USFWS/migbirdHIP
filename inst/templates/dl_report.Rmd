@@ -31,7 +31,8 @@ library(stringi)
 library(lubridate)
 ```
 
-```{r import, include = FALSE}
+```{r import}
+#| include:false
 
 dl_data <- read_hip(params$comp_path) %>% mutate(dl_cycle = params$dl)
 
@@ -159,7 +160,8 @@ zip_check <-
 
 This is a report of download cycle `r proofed_data %>% select(dl_cycle) %>% distinct %>% pull`. This cycle, `r sumLines(params$comp_path)` lines of data (`r nrow(final_data)` unique records) were submitted in `r length(list.files(params$comp_path, recursive = F, pattern = "*\\.txt$", ignore.case = TRUE))` files from `r proofed_data %>% select(dl_state) %>% distinct %>% nrow()` states. A total of `r canada_records` records were received from Canada, and `r zip_check` records did not have a zip code that matched the address state.
 
-```{r data_sweep, include = FALSE}
+```{r data_sweep}
+#| include:false
 
 rm(canada_records)
 rm(zip_check)
