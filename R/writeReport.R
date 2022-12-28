@@ -28,15 +28,17 @@ writeReport <-
 
     # Create qmd for download
     if(type == "dl_report"){
-      quarto_render(
+      #quarto_render(
+      render(
         input =
           # Use the specified template
           system.file(
             "templates",
-            paste0(type, ".qmd"),
+            paste0(type, ".Rmd"),
             package = "migbirdHIP"),
         # Include the specified parameters so the functions can run
-        execute_params =
+        #execute_params =
+        params =
           list(
             comp_path = path,
             final_path = corrected_path,
@@ -44,6 +46,7 @@ writeReport <-
             past_path = past_path,
             dl = dl,
             year = yr),
+        output_dir = dir,
         output_file = file,
         # Don't show lengthy knitting status text in console
         quiet = TRUE)
