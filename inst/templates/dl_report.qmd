@@ -132,7 +132,7 @@ final_data <-
         brant = Q_brant,
         seaducks = Q_seaducks,
         dl_cycle = dl)) |> 
-  proof(., year = params$year) |> 
+  proof(year = params$year) |> 
   dplyr::mutate(
     # Add the download date as a column
     dl_date =
@@ -154,7 +154,7 @@ zip_check <-
   dplyr::filter(!state %in% can) |> 
   dplyr::mutate(zipPrefix = stringr::str_extract(zip, "^[0-9]{3}")) |>
   dplyr::left_join(
-    zip_code_ref |>
+    migbirdHIP:::zip_code_ref |>
       dplyr::select(zipPrefix, zipState = state),
     by = "zipPrefix") |>
   dplyr::filter(state != zipState) |> 
@@ -270,7 +270,8 @@ issue_assignments <-
         # them for this year)
         dl_state == "MS" &
           lubridate::mdy(issue_date) %within% 
-            lubridate::interval(MS_firstday, MS_lastday) ~ "copy",
+            lubridate::interval(
+              migbirdHIP:::MS_firstday, migbirdHIP:::MS_lastday) ~ "copy",
         # Postpone all other future registration_yr values, for all states
         registration_yr == as.character(params$year + 1) ~ "postpone",
         # Check for yr-1 registration_yr values for all states
