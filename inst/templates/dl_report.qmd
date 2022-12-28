@@ -164,7 +164,7 @@ zip_check <-
 
 # Introduction
 
-This is a report of download cycle `r proofed_data |> dplyr::select(dl_cycle) |> dplyr::distinct() |> dplyr::pull()`. This cycle, `r sumLines(params$comp_path)` lines of data (`r nrow(final_data)` unique records) were submitted in `r length(list.files(params$comp_path, recursive = F, pattern = "*\\.txt$", ignore.case = TRUE))` files from `r proofed_data |> dplyr::select(dl_state) |> dplyr::distinct() |> nrow()` states. A total of `r canada_records` records were received from Canada, and `r zip_check` records did not have a zip code that matched the address state.
+This is a report of download cycle `r proofed_data |> dplyr::select(dl_cycle) |> dplyr::distinct() |> dplyr::pull()`. This cycle, `r migbirdHIP::sumLines(params$comp_path)` lines of data (`r nrow(final_data)` unique records) were submitted in `r length(list.files(params$comp_path, recursive = F, pattern = "*\\.txt$", ignore.case = TRUE))` files from `r proofed_data |> dplyr::select(dl_state) |> dplyr::distinct() |> nrow()` states. A total of `r canada_records` records were received from Canada, and `r zip_check` records did not have a zip code that matched the address state.
 
 ```{r data_sweep}
 #| include: false
