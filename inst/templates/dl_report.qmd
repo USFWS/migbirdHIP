@@ -36,7 +36,7 @@ params:
 #| include: false
 
 dl_data <- 
-  read_hip(params$comp_path) |> 
+  migbirdHIP::read_hip(params$comp_path) |> 
   dplyr::mutate(dl_cycle = params$dl)
 
 # Standardize birth date format
@@ -100,15 +100,15 @@ unshifted_data <-
 rm(fixed_dates_data)
 rm(unshifted)
 
-cleaned_data <- clean(unshifted_data)
+cleaned_data <- migbirdHIP::clean(unshifted_data)
 
 rm(unshifted_data)
 
-current_data <- issueCheck(cleaned_data, params$year, write = F)
+current_data <- migbirdHIP::issueCheck(cleaned_data, params$year, write = F)
 
-fixed_data <- fixDuplicates(current_data)
+fixed_data <- migbirdHIP::fixDuplicates(current_data)
 
-proofed_data <- proof(fixed_data, year = params$year)
+proofed_data <- migbirdHIP::proof(fixed_data, year = params$year)
 
 # Read in the completed download data (for better/more accurate figures and tables)
 final_data <-
@@ -132,7 +132,7 @@ final_data <-
         brant = Q_brant,
         seaducks = Q_seaducks,
         dl_cycle = dl)) |> 
-  proof(year = params$year) |> 
+  migbirdHIP::proof(year = params$year) |> 
   dplyr::mutate(
     # Add the download date as a column
     dl_date =
@@ -701,7 +701,7 @@ final_data |>
 #| fig.align: center
 #| echo: false
 
-findDuplicates(current_data)
+migbirdHIP::findDuplicates(current_data)
 
 rm(current_data)
 ```
@@ -712,9 +712,9 @@ rm(current_data)
 #| echo: false
 #| fig.align: center
 
-findDuplicates(fixed_data)
+migbirdHIP::findDuplicates(fixed_data)
 
-DT::datatable(findDuplicates(fixed_data, return = "table"))
+DT::datatable(migbirdHIP::findDuplicates(fixed_data, return = "table"))
 
 rm(fixed_data)
 ```
@@ -725,7 +725,7 @@ rm(fixed_data)
 #| echo: false
 
 DT::datatable(
-  strataCheck(final_data),
+  migbirdHIP::strataCheck(final_data),
   extensions = "Buttons",
   options = 
     list(
@@ -786,7 +786,7 @@ if(nrow(h_valid) == 0){
 ```{r h_validateB1}
 #| echo: false
 
-all_h_valid <- validate(final_data, type = "horizontal", all = T)
+all_h_valid <- migbirdHIP::validate(final_data, type = "horizontal", all = T)
 
 DT::datatable(
   all_h_valid |> 
@@ -844,7 +844,7 @@ DT::datatable(migbirdHIP::validate(final_data, type = "vertical"))
 #| echo: false
 #| fig.align: center
 
-errorPlot_fields(proofed_data, year = params$year, youth = T)
+migbirdHIP::errorPlot_fields(proofed_data, year = params$year, youth = T)
 ```
 
 ### After correction
@@ -977,7 +977,7 @@ rm(barlabels)
 #| echo: false
 #| fig.align: center
 
-errorPlot_states(proofed_data)
+migbirdHIP::errorPlot_states(proofed_data)
 ```
 
 ### After correction
@@ -986,7 +986,7 @@ errorPlot_states(proofed_data)
 #| echo: false
 #| fig.align: center
 
-errorPlot_states(final_data)
+migbirdHIP::errorPlot_states(final_data)
 
 rm(final_data)
 ```
@@ -1004,7 +1004,7 @@ Most common error fields...
 ```{r et}
 #| echo: false
 
-et <- errorTable(proofed_data, loc = "none") |> dplyr::arrange(dplyr::desc(error_count))
+et <- migbirdHIP::errorTable(proofed_data, loc = "none") |> dplyr::arrange(dplyr::desc(error_count))
 
 DT::datatable(et)
 ```
@@ -1016,7 +1016,8 @@ Values associated with error in `r et$error[1]`
 
 if(et$error[1] != "birth_date"){
   err1 <- 
-    pullErrors(proofed_data, error = et$error[1], distinct = FALSE) |> 
+    migbirdHIP::pullErrors(
+      proofed_data, error = et$error[1], distinct = FALSE) |> 
     tibble::as_tibble() |> 
     dplyr::mutate(
       value = stringi::stri_enc_toutf8(value, is_unknown_8bit = T, validate = T)) |>
@@ -1026,7 +1027,8 @@ if(et$error[1] != "birth_date"){
     dplyr::arrange(dplyr::desc(count))
   }else{
   err1 <- 
-    pullErrors(proofed_data, error = et$error[1], distinct = FALSE) |> 
+    migbirdHIP::pullErrors(
+      proofed_data, error = et$error[1], distinct = FALSE) |> 
     tibble::as_tibble() |> 
     dplyr::mutate(value = stringr::str_extract(value, ".{4}$")) |> 
     dplyr::group_by(value) |> 
@@ -1045,7 +1047,8 @@ Values associated with error in `r et$error[2]`
 
 if(et$error[2] != "birth_date"){
   err2 <- 
-    pullErrors(proofed_data, error = et$error[2], distinct = FALSE) |> 
+    migbirdHIP::pullErrors(
+      proofed_data, error = et$error[2], distinct = FALSE) |> 
     tibble::as_tibble() |> 
     dplyr::mutate(
       value = 
@@ -1056,7 +1059,8 @@ if(et$error[2] != "birth_date"){
     dplyr::arrange(dplyr::desc(count))
   }else{
   err2 <- 
-    pullErrors(proofed_data, error = et$error[2], distinct = FALSE) |> 
+    migbirdHIP::pullErrors(
+      proofed_data, error = et$error[2], distinct = FALSE) |> 
     tibble::as_tibble() |> 
     dplyr::mutate(value = stringr::str_extract(value, ".{4}$")) |> 
     dplyr::group_by(value) |> 
@@ -1075,7 +1079,8 @@ Values associated with error in `r et$error[3]`
 
 if(et$error[3] != "birth_date"){
   err3 <- 
-    pullErrors(proofed_data, error = et$error[3], distinct = FALSE) |> 
+    migbirdHIP::pullErrors(
+      proofed_data, error = et$error[3], distinct = FALSE) |> 
     tibble::as_tibble() |> 
     dplyr::mutate(
       value = 
@@ -1086,7 +1091,8 @@ if(et$error[3] != "birth_date"){
     dplyr::arrange(dplyr::desc(count))
   }else{
   err3 <- 
-    pullErrors(proofed_data, error = et$error[3], distinct = FALSE) |> 
+    migbirdHIP::pullErrors(
+      proofed_data, error = et$error[3], distinct = FALSE) |> 
     tibble::as_tibble() |>  
     dplyr::mutate(value = stringr::str_extract(value, ".{4}$")) |> 
     dplyr::group_by(value) |> 
@@ -1107,7 +1113,7 @@ States with more than 1% error
 ```{r rfs}
 #| echo: false
 
-redFlags(proofed_data, type = "state", threshold = 0.01)
+migbirdHIP::redFlags(proofed_data, type = "state", threshold = 0.01)
 ```
 
 Fields with more than 1% error
@@ -1115,5 +1121,5 @@ Fields with more than 1% error
 ```{r rff}
 #| echo: false
 
-redFlags(proofed_data, type = "field", threshold = 0.01)
+migbirdHIP::redFlags(proofed_data, type = "field", threshold = 0.01)
 ```
