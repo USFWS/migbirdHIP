@@ -96,8 +96,23 @@ unshifted_data <-
 rm(fixed_dates_data)
 rm(unshifted)
 
-cleaned_data <- clean(unshifted_data)
+twoseasonstates <- 
+  migbirdHIP:::licenses_ref %>% 
+  filter(category == "2 season") %>% 
+  pull(state)
 
+cleaned_data <- 
+  clean(unshifted_data) %>% 
+  # Edit the persistent issue of one-season states sending yr+1 when it should just be yr
+  mutate(
+    registration_yr =
+      ifelse(
+        registration_yr == as.character(params$year + 1) & 
+          dl_state %in% twoseasonstates, 
+        registration_yr, 
+        as.character(params$year)))
+
+rm(twoseasonstates)
 rm(unshifted_data)
 
 current_data <- issueCheck(cleaned_data, params$year, write = F)
