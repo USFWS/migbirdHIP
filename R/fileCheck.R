@@ -22,7 +22,7 @@
 #' @export
 
 fileCheck <-
-  function() {
+  function(raw_path, processed_path) {
     if(TRUE %in%
        (str_replace(list.files(raw_path, recursive = F), "TXT", "txt") %in%
         str_replace(list.files(processed_path, recursive = F), "csv", "txt"))) {
