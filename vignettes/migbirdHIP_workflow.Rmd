@@ -370,7 +370,7 @@ strataCheck(DL1301_fixed)
 ```
 
 ```
-## # A tibble: 34 × 4
+## # A tibble: 35 × 4
 ##    dl_state spp          state_strata normal_strata
 ##    <chr>    <chr>        <chr>        <chr>        
 ##  1 FL       dove_bag     0            1, 2, 3, 5   
@@ -383,7 +383,7 @@ strataCheck(DL1301_fixed)
 ##  8 OR       ducks_bag    0            1, 2, 3, 4   
 ##  9 OR       geese_bag    0            1, 2, 3, 4   
 ## 10 TN       ducks_bag    0            1, 2, 3, 4   
-## # … with 24 more rows
+## # … with 25 more rows
 ```
 
 ### validate
@@ -407,7 +407,7 @@ validate(DL1301_fixed, type = "horizontal")
 ##  4 MO20211229.txt 1        2697    3604       0.748
 ##  5 ME20211229.txt 1         112     151       0.742
 ##  6 NM20211229.txt 1         208     295       0.705
-##  7 ID20211229.txt 1        1761    2588       0.680
+##  7 ID20211229.txt 1        1762    2588       0.681
 ##  8 ND20211215.txt 1         130     204       0.637
 ##  9 CA20211229.txt 1        2003    3211       0.624
 ## 10 IN20211229.txt 1         416     690       0.603
