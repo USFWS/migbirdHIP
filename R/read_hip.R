@@ -183,10 +183,7 @@ read_hip <-
                 state = X8,
                 zip = X9,
                 birth_date = X10,
-                # Edited X11 to specific .data$X11 to avoid error:
-                # "Found an obsolete/platform-specific call in: 'tidy'"
-                # "Found the platform-specific device: 'X11'"
-                issue_date = .data$X11,
+                issue_date = X11,
                 hunt_mig_birds = X12,
                 ducks_bag = X13,
                 geese_bag = X14,
