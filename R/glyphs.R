@@ -1,4 +1,4 @@
-#' Find non-UTF-8 glyphs/character
+#' Find non-UTF-8 glyphs/characters in a field
 #'
 #' Pull and view non-UTF-8 characters in a field when R throws error 'invalid UTF-8 byte sequence detected'.
 #'
@@ -28,3 +28,45 @@ glyphFinder <-
       arrange(!!sym(field)) %>%
       select(-check)
   }
+
+#' Find non-UTF-8 glyphs/characters in any field
+#'
+#' Pull and view any non-UTF-8 characters in the raw data. This function iterates \code{\link{glypphFinder}} over the entire tibble.
+#'
+#' @importFrom purrr map_dfr
+#' @importFrom dplyr rename
+#' @importFrom dplyr mutate
+#' @importFrom dplyr relocate
+#' @importFrom dplyr filter
+#' @importFrom dplyr arrange
+#'
+#' @param data The tibble created after reading in data with \code{\link{read_hip}}
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @export
+
+glyphCheck <-
+  function(data) {
+
+    checked <-
+      map_dfr(
+        names(data),
+        ~glyphFinder(data, .x) %>%
+          rename(value = !!sym(.x)) %>%
+          mutate(field = .x) %>%
+          relocate(field, .before = "value")
+      ) %>%
+      filter(!is.na(value)) %>%
+      arrange(source_file)
+
+    if(nrow(checked) > 0) {
+      message("Non-UTF8 characters detected.")
+      return(checked)
+    } else {
+      message("All characters are UTF-8")
+    }
+
+  }
+

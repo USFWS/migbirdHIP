@@ -4,7 +4,7 @@
 \alias{fileCheck}
 \title{Check for repeat files}
 \usage{
-fileCheck()
+fileCheck(raw_path, processed_path)
 }
 \arguments{
 \item{raw_path}{Directory of the download folder containing HIP .txt files}
