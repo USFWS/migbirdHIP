@@ -2,20 +2,20 @@ Package: migbirdHIP
 Title: Process USFWS Migratory Bird Harvest Information Program Data in R
 Version: 1.2.7
 Imports: 
-    data.table,
-    dplyr,
-    ggplot2,
-    lubridate,
-    magrittr,
-    purrr,
-    readr,
-    rlang,
-    rmarkdown,
-    stats,
-    stringr,
-    tibble,
-    tidyr,
-    utils
+    data.table (>= 1.14.2),
+    dplyr (>= 1.1.1),
+    ggplot2 (>= 3.4.2),
+    lubridate (>= 1.8.0),
+    magrittr (>= 2.0.3),
+    purrr (>= 0.3.4),
+    readr (>= 2.1.4),
+    rlang (>= 1.0.6),
+    rmarkdown (>= 2.14),
+    stats (>= 4.2.1),
+    stringr (>= 1.5.0),
+    tibble (>= 3.2.1),
+    tidyr (>= 1.3.0),
+    utils (>= 4.2.1)
 Suggests:
     DT,
     kableExtra,
@@ -32,10 +32,10 @@ Description: Easy-to-use functions specifically designed to handle biweekly HIP
     download data. A sequential process organizes state files into a tidy format
     and flags errors that should be inspected. Errors can be visualized in 
     simple plots and summarized in bite-sized tables.
-License: CC0
+License: Public Domain
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.1
+RoxygenNote: 7.2.3
 Depends: 
-    R (>= 2.10)
+    R (>= 4.2)
