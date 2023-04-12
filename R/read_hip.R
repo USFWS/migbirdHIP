@@ -20,7 +20,6 @@
 #' @importFrom dplyr distinct
 #' @importFrom dplyr rename
 #' @importFrom dplyr mutate_all
-#' @importFrom dplyr na_if
 #' @importFrom dplyr cur_group_id
 #' @importFrom dplyr row_number
 #' @importFrom purrr map_dfr
@@ -171,7 +170,8 @@ read_hip <-
               pull(files[i,]),
               fwf_widths(c(1, 15, 1, 20, 3, 60, 20, 2, 10, 10, 10,
                            1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4, NA)),
-              col_types = "cccccccccccccccccccccccc") %>%
+              col_types = "cccccccccccccccccccccccc",
+              na = "N/A") %>%
               rename(
                 title = X1,
                 firstname = X2,
@@ -197,10 +197,6 @@ read_hip <-
                 seaducks = X22,
                 registration_yr = X23,
                 email = X24) %>%
-              # Delete white space around strings
-              # mutate_all(str_trim) %>%
-              # Convert N/A strings to NA
-              na_if("N/A") %>%
               mutate(
                 # Add the download state as a column
                 dl_state =
