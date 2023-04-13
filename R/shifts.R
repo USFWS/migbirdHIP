@@ -17,7 +17,7 @@
 #' @importFrom tidyr pivot_wider
 #' @importFrom tidyr pivot_wider
 #'
-#' @param x A cleaned data table created by \code{\link{clean}}
+#' @param data A cleaned data table created by \code{\link{clean}}
 #' @param record_id The ID of the line to be adjusted
 #' @param first_col First (leftmost) column affected by frame shift
 #' @param last_col Last (rightmost) column affected by frame shift
@@ -29,18 +29,18 @@
 #' @export
 
 shiftFix <-
-  function(x, record_id, first_col, last_col, n_shift){
+  function(data, record_id, first_col, last_col, n_shift){
 
     # List of columns to be corrected
     col_list <-
-      x %>%
+      data %>%
       slice(1) %>%
       select(!!sym(first_col):!!sym(last_col)) %>%
       names()
 
     # Shift correction for first and last columns
     firstlastfix <-
-      x %>%
+      data %>%
       filter(record_key == record_id) %>%
       select(!!sym(first_col):!!sym(last_col))
 
@@ -64,12 +64,12 @@ shiftFix <-
       # Bind the cleaned up record back together
       bind_cols(
         # All cols left of the first shifted column
-        x %>%
+        data %>%
           filter(record_key == record_id) %>%
           select(title:!!sym(first_col)) %>%
           select(-!!sym(first_col)),
         # Middle cols
-        x %>%
+        data %>%
           filter(record_key == record_id) %>%
           select(!!sym(first_col):!!sym(last_col)) %>%
           # Fix the middle columns
@@ -88,7 +88,7 @@ shiftFix <-
             !!sym(first_col) := firstlastfix[[1]],
             !!sym(last_col) := firstlastfix[[2]]),
         # All cols right of the last shifted column
-        x %>%
+        data %>%
           filter(record_key == record_id) %>%
           select(!!sym(last_col):record_key) %>%
           select(-!!sym(last_col))
@@ -99,3 +99,34 @@ shiftFix <-
   }
 
 utils::globalVariables("everything")
+
+#' Check for frame shifts
+#'
+#' Find and print any rows that have a line shift error.
+#'
+#' @importFrom dplyr filter
+#' @importFrom stringr str_detect
+#' @importFrom dplyr glimpse
+#'
+#' @param data A raw data table created by \code{\link{read_hip}}
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @export
+
+shiftCheck <-
+  function(data){
+
+    shifted_data <-
+      data |>
+      filter(
+        !str_detect(birth_date, "^[0-9]{2}\\/[0-9]{2}\\/[0-9]{4}$"))
+
+    if(nrow(shifted_data) > 0){
+      glimpse(shifted_data)
+      message("Please address these line shifts by editing the files manually.")
+    } else {
+      message("No line shifts detected.")
+    }
+  }
