@@ -171,7 +171,7 @@ read_hip <-
               fwf_widths(c(1, 15, 1, 20, 3, 60, 20, 2, 10, 10, 10,
                            1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4, NA)),
               col_types = "cccccccccccccccccccccccc",
-              na = "N/A") %>%
+              na = c("N/A", "")) %>%
               rename(
                 title = X1,
                 firstname = X2,
