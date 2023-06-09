@@ -2,7 +2,6 @@
 #'
 #' After reading the data with \code{\link{read_hip}}, do basic data cleaning.
 #'
-#' @importFrom dplyr %>%
 #' @importFrom dplyr group_by
 #' @importFrom dplyr mutate
 #' @importFrom dplyr ungroup
@@ -32,15 +31,15 @@ clean <-
   function(x){
 
     cleaned_x <-
-      x %>%
+      x |>
       # Filter out records if firstname, lastname, city of residence, state of
       # residence, or date of birth are missing -- records discarded because
       # these are needed to identify individuals
-      filter(!if_any(c("firstname", "lastname", "state", "birth_date"), ~is.na(.x))) %>%
+      filter(!if_any(c("firstname", "lastname", "state", "birth_date"), ~is.na(.x))) |>
       # Discard additional records if they are missing a value for email AND
       # elements of a physical address that are required to determine where
-      filter(!if_all(c("address", "email"), ~is.na(.x))) %>%
-      filter(!if_all(c("city", "zip", "email"), ~is.na(.x))) %>%
+      filter(!if_all(c("address", "email"), ~is.na(.x))) |>
+      filter(!if_all(c("city", "zip", "email"), ~is.na(.x))) |>
       mutate(
         # Names to uppercase for easier stringr
         firstname = str_to_upper(firstname),
@@ -117,7 +116,7 @@ clean <-
           ifelse(
             str_detect(zip, "\\-\\_+"),
             str_remove(zip, "\\-\\_+"),
-            zip)) %>%
+            zip)) |>
       # Delete white space around strings again
       mutate_all(str_trim)
 
