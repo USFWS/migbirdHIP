@@ -2,8 +2,6 @@
 #'
 #' Compile data from state-exported text files by providing a path to the download directory.
 #'
-#' @importFrom magrittr %<>%
-#' @importFrom dplyr %>%
 #' @importFrom tibble as_tibble_col
 #' @importFrom dplyr mutate
 #' @importFrom dplyr mutate_at
@@ -61,11 +59,11 @@ read_hip <-
       if(!is.na(state) & season == FALSE){
         list.files(
           path, recursive = FALSE, pattern = "*\\.txt$", ignore.case = TRUE,
-          full.names = TRUE) %>%
-          as_tibble_col(column_name = "filepath") %>%
-          mutate(filepath = str_replace(filepath, "TXT", "txt")) %>%
+          full.names = TRUE) |>
+          as_tibble_col(column_name = "filepath") |>
+          mutate(filepath = str_replace(filepath, "TXT", "txt")) |>
           # Keep only files from the specified state
-          filter(str_detect(filepath, state)) %>%
+          filter(str_detect(filepath, state)) |>
           # Filter out blank files
           mutate(
             check =
@@ -77,15 +75,15 @@ read_hip <-
         # Read data for a specific state across the whole season
         list.files(
           path, recursive = TRUE, pattern = "*\\.txt$", ignore.case = TRUE,
-          full.names = TRUE) %>%
-          as_tibble_col(column_name = "filepath") %>%
-          mutate(filepath = str_replace(filepath, "TXT", "txt")) %>%
+          full.names = TRUE) |>
+          as_tibble_col(column_name = "filepath") |>
+          mutate(filepath = str_replace(filepath, "TXT", "txt")) |>
           # Keep only files from the specified state
-          filter(str_detect(filepath, state)) %>%
+          filter(str_detect(filepath, state)) |>
           # Don't process permit files
-          filter(!str_detect(filepath, "permit")) %>%
+          filter(!str_detect(filepath, "permit")) |>
           # Don't process removed files
-          filter(!str_detect(filepath, "removed")) %>%
+          filter(!str_detect(filepath, "removed")) |>
           # Filter out blank files
           mutate(
             check =
@@ -97,9 +95,9 @@ read_hip <-
         # Read data from a download cycle for all states
         list.files(
           path, recursive = FALSE, pattern = "*\\.txt$", ignore.case = TRUE,
-          full.names = TRUE) %>%
-          as_tibble_col(column_name = "filepath") %>%
-          mutate(filepath = str_replace(filepath, "TXT", "txt")) %>%
+          full.names = TRUE) |>
+          as_tibble_col(column_name = "filepath") |>
+          mutate(filepath = str_replace(filepath, "TXT", "txt")) |>
           # Filter out blank files
           mutate(
             check =
@@ -111,13 +109,13 @@ read_hip <-
         # Read in all data from the season
         list.files(
           path, recursive = TRUE, pattern = "*\\.txt$", ignore.case = TRUE,
-          full.names = TRUE) %>%
-          as_tibble_col(column_name = "filepath") %>%
-          mutate(filepath = str_replace(filepath, "TXT", "txt")) %>%
+          full.names = TRUE) |>
+          as_tibble_col(column_name = "filepath") |>
+          mutate(filepath = str_replace(filepath, "TXT", "txt")) |>
           # Don't process permit files
-          filter(!str_detect(filepath, "permit")) %>%
+          filter(!str_detect(filepath, "permit")) |>
           # Don't process removed files
-          filter(!str_detect(filepath, "removed")) %>%
+          filter(!str_detect(filepath, "removed")) |>
           # Filter out blank files
           mutate(
             check =
@@ -131,13 +129,13 @@ read_hip <-
                  "son` must be TRUE or FALSE."))
       }
 
-    if(nrow(files %>% filter(check == "blank")) > 0){
+    if(nrow(files |> filter(check == "blank")) > 0){
       message("Warning: One or more files are blank in the directory.")
-      print(files %>% filter(check == "blank"))
+      print(files |> filter(check == "blank"))
     }
 
     files %<>%
-      filter(check != "blank") %>%
+      filter(check != "blank") |>
       select(-check)
 
     if(nrow(files) == 0){
@@ -149,14 +147,14 @@ read_hip <-
       checked_encodings <-
         map_dfr(1:nrow(files),
                 function(i) {
-                  guess_encoding(pull(files[i, ])) %>%
+                  guess_encoding(pull(files[i, ])) |>
                     mutate(filepath = pull(files[i, ]))
-                }) %>%
-        group_by(filepath) %>%
+                }) |>
+        group_by(filepath) |>
         filter(str_detect(encoding, "UTF\\-16") |
-                 confidence < 1 | n() > 1) %>%
-        ungroup() %>%
-        filter(encoding != "UTF-8") %>%
+                 confidence < 1 | n() > 1) |>
+        ungroup() |>
+        filter(encoding != "UTF-8") |>
         select(filepath, encoding, confidence)
       print(checked_encodings)
 
@@ -171,7 +169,7 @@ read_hip <-
               fwf_widths(c(1, 15, 1, 20, 3, 60, 20, 2, 10, 10, 10,
                            1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4, NA)),
               col_types = "cccccccccccccccccccccccc",
-              na = c("N/A", "")) %>%
+              na = c("N/A", "")) |>
               rename(
                 title = X1,
                 firstname = X2,
@@ -196,7 +194,7 @@ read_hip <-
                 brant = X21,
                 seaducks = X22,
                 registration_yr = X23,
-                email = X24) %>%
+                email = X24) |>
               mutate(
                 # Add the download state as a column
                 dl_state =
@@ -216,18 +214,19 @@ read_hip <-
                   str_extract(pull(files[i, ]), "(?<=DL).+(?=\\/)"))
           })
 
-      pulled_data %<>%
+      pulled_data <-
+        pulled_data |>
         # Add a download key
-        group_by(dl_date, dl_state) %>%
-        mutate(dl_key = paste0("dl_", cur_group_id())) %>%
-        ungroup() %>%
+        group_by(dl_date, dl_state) |>
+        mutate(dl_key = paste0("dl_", cur_group_id())) |>
+        ungroup() |>
         # Add a record key
         mutate(record_key = paste0("record_", row_number()))
 
       # Remove duplicates (or not)
       if(unique == TRUE){
         pulled_data <-
-          pulled_data %>%
+          pulled_data |>
           distinct()}
 
       # Return a message for records with blank or NA values in firstname,
@@ -241,29 +240,29 @@ read_hip <-
                  "(firstname, lastname, state, birth date)."))
 
         print(
-          pulled_data %>%
+          pulled_data |>
             filter(
               is.na(firstname)|
                 is.na(lastname)|
                 is.na(state)|
-                is.na(birth_date)) %>%
-            select(dl_state, firstname, lastname, state, birth_date) %>%
-            rename(X = state) %>%
+                is.na(birth_date)) |>
+            select(dl_state, firstname, lastname, state, birth_date) |>
+            rename(X = state) |>
             mutate_at(
               vars(matches("firstname|lastname|X|birth_date")),
-              ~ifelse(is.na(.), "1", NA) %>% as.numeric(.)) %>%
+              ~ifelse(is.na(.), "1", NA) |> as.numeric(.)) |>
             mutate(
               sum =
                 rowSums(
                   across(matches("firstname|lastname|X|birth_date")),
                   na.rm = T),
-              prop = sum/4) %>%
-            group_by(dl_state) %>%
+              prop = sum/4) |>
+            group_by(dl_state) |>
             summarize(
               mean_prop = mean(prop),
               n = n()
-            ) %>%
-            ungroup() %>%
+            ) |>
+            ungroup() |>
             arrange(desc(mean_prop)))}
 
       # Return a message if there is an NA in dl_state
@@ -272,9 +271,9 @@ read_hip <-
           paste0("Error: One or more more NA values detected in dl_state."))
 
         print(
-          pulled_data %>%
-            select(dl_state, source_file) %>%
-            filter(is.na(dl_state)) %>%
+          pulled_data |>
+            select(dl_state, source_file) |>
+            filter(is.na(dl_state)) |>
             distinct())}
 
       # Return a message if there is an NA in dl_date
@@ -283,27 +282,27 @@ read_hip <-
           paste0("Error: One or more more NA values detected in dl_date."))
 
         print(
-          pulled_data %>%
-            select(dl_date, source_file) %>%
-            filter(is.na(dl_date)) %>%
+          pulled_data |>
+            select(dl_date, source_file) |>
+            filter(is.na(dl_date)) |>
             distinct())}
 
       # Return a message if all emails are missing from a file
       if(nrow(
-           pulled_data %>%
-             group_by(source_file) %>%
-             summarize(n_emails = length(unique(email))) %>%
-             ungroup() %>%
+           pulled_data |>
+             group_by(source_file) |>
+             summarize(n_emails = length(unique(email))) |>
+             ungroup() |>
              filter(n_emails == 1)) > 0){
         message(
           paste0("Error: One or more files are missing 100% of emails."))
 
         print(
-          pulled_data %>%
-            group_by(source_file) %>%
-            summarize(n_emails = length(unique(email))) %>%
-            ungroup() %>%
-            filter(n_emails == 1) %>%
+          pulled_data |>
+            group_by(source_file) |>
+            summarize(n_emails = length(unique(email))) |>
+            ungroup() |>
+            filter(n_emails == 1) |>
             select(source_file))}
 
       # Check if all dl_states are acceptable
@@ -318,9 +317,9 @@ read_hip <-
 
       # String of states in the data
       dl_states_in_data <-
-        pulled_data %>%
-        select(dl_state) %>%
-        distinct() %>%
+        pulled_data |>
+        select(dl_state) |>
+        distinct() |>
         pull()
 
       # Return a message if there is a dl_state not found in the list of 49
