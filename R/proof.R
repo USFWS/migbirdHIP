@@ -2,8 +2,6 @@
 #'
 #' After cleaning the data with \code{\link{clean}}, compare each field to an expected range of values and flag non-conforming values in a new "errors" column.
 #'
-#' @importFrom magrittr %<>%
-#' @importFrom dplyr %>%
 #' @importFrom dplyr mutate
 #' @importFrom dplyr row_number
 #' @importFrom dplyr bind_rows
@@ -39,17 +37,17 @@ proof <-
 
     # Create a record key so that the errors can be joined in later
     keyed_x <-
-      x %>%
+      x |>
       mutate(temp_key = paste0("row_", row_number()))
 
     markup <-
       bind_rows(
         # Title should be 1 or 2, no other values
-        keyed_x %>%
-          filter(!str_detect(title, "1|2")) %>%
+        keyed_x |>
+          filter(!str_detect(title, "1|2")) |>
           mutate(error = "title"),
         # First name
-        keyed_x %>%
+        keyed_x |>
           mutate(
             error =
               case_when(
@@ -71,11 +69,11 @@ proof <-
                   "firstname",
                 TRUE ~ NA_character_)),
         # Middle name should only be 1 letter of the alphabet
-        keyed_x %>%
-          filter(str_detect(middle, "[^A-Z]{1}")) %>%
+        keyed_x |>
+          filter(str_detect(middle, "[^A-Z]{1}")) |>
           mutate(error = "middle"),
         # Last name
-        keyed_x %>%
+        keyed_x |>
           mutate(
             error =
               case_when(
@@ -93,29 +91,29 @@ proof <-
         # Suffix
         # Allows 1-20 in Roman numerals and numeric, excluding XVIII since the
         # limit is 4 characters)
-        keyed_x %>%
+        keyed_x |>
           filter(
             str_detect(
               suffix,
-              "[^JR|SR|I{1,3}|IV|VI{0,3}|I{0,1}X|XI{1,3}|XI{0,1}V|XVI{1,2}|XI{0,1}X|1ST|2ND|3RD|[4-9]TH|1[0-9]TH|20TH]")) %>%
+              "[^JR|SR|I{1,3}|IV|VI{0,3}|I{0,1}X|XI{1,3}|XI{0,1}V|XVI{1,2}|XI{0,1}X|1ST|2ND|3RD|[4-9]TH|1[0-9]TH|20TH]")) |>
           mutate(error = "suffix"),
         # Address does not contain |, tab or non-UTF8 characters
         # Any further address verification isn't really possible
-        keyed_x %>%
+        keyed_x |>
           filter(
             str_detect(
-              address, "\\||\\t|\\x00-\\x7F")) %>%
+              address, "\\||\\t|\\x00-\\x7F")) |>
           mutate(error = "address"),
         # City should only contain letters
-        keyed_x %>%
-          filter(!str_detect(city, "[A-Z|a-z]")) %>%
+        keyed_x |>
+          filter(!str_detect(city, "[A-Z|a-z]")) |>
           mutate(error = "city"),
         # State should only contain a specific list of states/provinces/etc
-        keyed_x %>%
-          filter(!str_detect(state, states_provinces_and_canada)) %>%
+        keyed_x |>
+          filter(!str_detect(state, states_provinces_and_canada)) |>
           mutate(error = "state"),
         # Zip code should contain 5 digits or 5 digits-4 digits
-        keyed_x %>%
+        keyed_x |>
           mutate(
             error =
               case_when(
@@ -125,38 +123,38 @@ proof <-
                 TRUE ~ NA_character_)),
         # Birth date should only ever be 100 - 16 years go, since hunter do not
         # have to register if less than 16 years of age
-        keyed_x %>%
+        keyed_x |>
           filter(
             as.numeric(
               str_extract(birth_date, "(?<=\\/)[0-9]{4}")) < 1920 |
               as.numeric(
-                str_extract(birth_date, "(?<=\\/)[0-9]{4}")) > year - 16) %>%
+                str_extract(birth_date, "(?<=\\/)[0-9]{4}")) > year - 16) |>
           mutate(error = "birth_date"),
         # Issue date should only ever be the year +/- 1 of the HIP survey
-        keyed_x %>%
+        keyed_x |>
           filter(
             as.numeric(
               str_extract(issue_date, "(?<=\\/)[0-9]{4}")) != year &
               as.numeric(
                 str_extract(issue_date, "(?<=\\/)[0-9]{4}")) != year + 1 &
               as.numeric(
-                str_extract(issue_date, "(?<=\\/)[0-9]{4}")) != year - 1) %>%
+                str_extract(issue_date, "(?<=\\/)[0-9]{4}")) != year - 1) |>
           mutate(error = "issue_date"),
         # Hunting migratory birds should only be = 1 or 2
-        keyed_x %>%
-          filter(!str_detect(hunt_mig_birds, "1|2")) %>%
+        keyed_x |>
+          filter(!str_detect(hunt_mig_birds, "1|2")) |>
           mutate(error = "hunt_mig_birds"),
         # Registration year should = survey year
-        keyed_x %>%
-          filter(registration_yr != year) %>%
+        keyed_x |>
+          filter(registration_yr != year) |>
           mutate(error = "registration_yr"),
         # Email
-        keyed_x %>%
+        keyed_x |>
           filter(
             !str_detect(
-              email, "^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+$")) %>%
+              email, "^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+$")) |>
           mutate(error = "email")
-      ) %>%
+      ) |>
       select(temp_key, error)
 
     # Registration_yr + 1 error
@@ -165,62 +163,63 @@ proof <-
     if((year + 1) %in% keyed_x$registration_yr){
       message(paste0("Error: Records detected with registration_yr = yr + 1."))
       print(
-        keyed_x %>%
-          group_by(source_file) %>%
-          mutate(total_n = n()) %>%
-          ungroup() %>%
-          filter(registration_yr == year + 1) %>%
-          group_by(source_file) %>%
+        keyed_x |>
+          group_by(source_file) |>
+          mutate(total_n = n()) |>
+          ungroup() |>
+          filter(registration_yr == year + 1) |>
+          group_by(source_file) |>
           summarize(
             n = n(),
-            prop = round(n()/total_n, 2)) %>%
-          ungroup() %>%
+            prop = round(n()/total_n, 2)) |>
+          ungroup() |>
           distinct())
     }else if((year - 1) %in% keyed_x$registration_yr){
       message(paste0("Error: Records detected with registration_yr = yr - 1."))
       print(
-        keyed_x %>%
-          group_by(source_file) %>%
-          mutate(total_n = n()) %>%
-          ungroup() %>%
-          filter(registration_yr == year - 1) %>%
-          group_by(source_file) %>%
+        keyed_x |>
+          group_by(source_file) |>
+          mutate(total_n = n()) |>
+          ungroup() |>
+          filter(registration_yr == year - 1) |>
+          group_by(source_file) |>
           summarize(
             n = n(),
-            prop = round(n()/total_n, 2)) %>%
-          ungroup() %>%
+            prop = round(n()/total_n, 2)) |>
+          ungroup() |>
           distinct())
     }
 
     graded_x <-
-      keyed_x %>%
+      keyed_x |>
       # Join in the error report
-      left_join(markup, by = "temp_key") %>%
-      group_by(temp_key) %>%
+      left_join(markup, by = "temp_key") |>
+      group_by(temp_key) |>
       # Paste errors together (some records might have more than one!)
-      mutate(errors = paste(error, collapse = "-")) %>%
-      ungroup() %>%
-      select(-c(temp_key, error)) %>%
-      distinct() %>%
+      mutate(errors = paste(error, collapse = "-")) |>
+      ungroup() |>
+      select(-c(temp_key, error)) |>
+      distinct() |>
       # Make the NAs "real NAs" not just strings
       mutate(
         errors =
           ifelse(
             str_detect(errors, "NA\\-|\\-NA"),
             str_remove_all(errors, "NA\\-|\\-NA"),
-            errors)) %>%
+            errors)) |>
       # Add a second mutate here because we cannot pipe '.'
-      mutate(errors = ifelse(str_detect(errors, "^NA$"), NA, errors)) %>%
+      mutate(errors = ifelse(str_detect(errors, "^NA$"), NA, errors)) |>
       as_tibble()
 
     # Proof the zip codes -- are they associated with the correct states?
-    graded_x %<>%
+    graded_x <-
+      graded_x |>
       # Make a zipPrefix to join by; pull the first 3 zip digits
-      mutate(zipPrefix = str_extract(zip, "^[0-9]{3}")) %>%
+      mutate(zipPrefix = str_extract(zip, "^[0-9]{3}")) |>
       left_join(
-        zip_code_ref %>%
+        zip_code_ref |>
           select(zipPrefix, zipState = state),
-        by = "zipPrefix") %>%
+        by = "zipPrefix") |>
       # Add an error if the state doesn't match zipState
       mutate(
         errors =
@@ -229,7 +228,7 @@ proof <-
             state != zipState & !is.na(errors) & !str_detect(errors, "zip") ~
               paste0(errors, "-zip"),
             TRUE ~ errors)
-      ) %>%
+      ) |>
       select(-c("zipPrefix", "zipState"))
 
     return(graded_x)
