@@ -2,8 +2,6 @@
 #'
 #' After flagging errors in the data with \code{\link{proof}}, attempt corrections in all fields. Errors that cannot be programmatically corrected will be reported for manual correction.
 #'
-#' @importFrom magrittr %<>%
-#' @importFrom dplyr %>%
 #' @importFrom dplyr mutate
 #' @importFrom dplyr case_when
 #' @importFrom dplyr left_join
@@ -35,7 +33,7 @@ correct <-
   function(x, year){
 
     corrected_x <-
-      x %>%
+      x |>
       mutate(
         # Change NAs in errors col to "none" so that str_detect functions work
         errors =
@@ -128,14 +126,14 @@ correct <-
 
     # Re-run the proof script to get an updated errors column
     corrproof_bag_x <-
-      proof(corrected_x, year = year) %>%
+      proof(corrected_x, year = year) |>
       # Proof the zip codes -- are they associated with the correct states?
       # Make a zipPrefix to join by; pull the first 3 zip digits
-      mutate(zipPrefix = str_extract(zip, "^[0-9]{3}")) %>%
+      mutate(zipPrefix = str_extract(zip, "^[0-9]{3}")) |>
       left_join(
-        zip_code_ref %>%
+        zip_code_ref |>
           select(zipPrefix, zipState = state),
-        by = "zipPrefix") %>%
+        by = "zipPrefix") |>
       # Add an error if the state doesn't match zipState
       mutate(
         errors =
@@ -153,17 +151,18 @@ correct <-
                "provided state of residence."))
       suppressMessages(
         print(
-          corrproof_bag_x %>%
-            select(source_file, record_key, zip, state, zipState) %>%
-            filter(state != zipState) %>%
-            group_by(source_file, state) %>%
-            summarize(bad_zip = n()) %>%
-            ungroup() %>%
+          corrproof_bag_x |>
+            select(source_file, record_key, zip, state, zipState) |>
+            filter(state != zipState) |>
+            group_by(source_file, state) |>
+            summarize(bad_zip = n()) |>
+            ungroup() |>
             arrange(desc(bad_zip))
           ))
     }
 
-    corrproof_bag_x %<>%
+    corrproof_bag_x <-
+      corrproof_bag_x |>
       select(-c("zipPrefix", "zipState"))
       return(corrproof_bag_x)
 
