@@ -9,6 +9,7 @@
 #' @importFrom dplyr vars
 #' @importFrom dplyr matches
 #' @importFrom dplyr arrange
+#' @importFrom dplyr desc
 #' @importFrom dplyr filter
 #' @importFrom dplyr pull
 #' @importFrom dplyr group_by
@@ -17,14 +18,11 @@
 #' @importFrom dplyr select
 #' @importFrom dplyr distinct
 #' @importFrom dplyr rename
-#' @importFrom dplyr mutate_all
 #' @importFrom dplyr cur_group_id
 #' @importFrom dplyr row_number
-#' @importFrom purrr map_dfr
 #' @importFrom purrr map_df
 #' @importFrom readr read_fwf
 #' @importFrom readr fwf_widths
-#' @importFrom readr guess_encoding
 #' @importFrom stringr str_detect
 #' @importFrom stringr str_replace
 #' @importFrom stringr str_extract
@@ -143,20 +141,6 @@ read_hip <-
         paste0("No file(s) to read in. Did you specify a state that did not",
                " submit data?"))
       }else{
-      # Check encodings of the files that will be read
-      checked_encodings <-
-        map_dfr(1:nrow(files),
-                function(i) {
-                  guess_encoding(pull(files[i, ])) |>
-                    mutate(filepath = pull(files[i, ]))
-                }) |>
-        group_by(filepath) |>
-        filter(str_detect(encoding, "UTF\\-16") |
-                 confidence < 1 | n() > 1) |>
-        ungroup() |>
-        filter(encoding != "UTF-8") |>
-        select(filepath, encoding, confidence)
-      print(checked_encodings)
 
       # Read data from filepaths
       pulled_data <-
