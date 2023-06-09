@@ -2,7 +2,6 @@
 #'
 #' Resolve duplicate HIP records.
 #'
-#' @importFrom dplyr %>%
 #' @importFrom dplyr group_by
 #' @importFrom dplyr mutate
 #' @importFrom dplyr mutate_at
@@ -17,7 +16,6 @@
 #' @importFrom dplyr anti_join
 #' @importFrom dplyr slice_sample
 #' @importFrom dplyr n_distinct
-#' @importFrom magrittr %<>%
 #' @importFrom stringr str_replace
 #' @importFrom lubridate mdy
 #' @importFrom purrr pmap_chr
@@ -36,11 +34,11 @@ fixDuplicates <-
     # PART 1: Identify duplicate records
 
     duplicates <-
-      x %>%
+      x |>
       # Group by firstname, lastname, state, birth date, download state, and
       # registration year to determine each unique hunter
       group_by(
-        firstname, lastname, state, birth_date, dl_state, registration_yr) %>%
+        firstname, lastname, state, birth_date, dl_state, registration_yr) |>
       # Identify duplicates, aka records in groups of n > 1 that belong to the
       # same individual
       mutate(
@@ -48,8 +46,8 @@ fixDuplicates <-
           ifelse(
             n() > 1,
             paste0("duplicate_", cur_group_id()),
-            "single")) %>%
-      ungroup() %>%
+            "single")) |>
+      ungroup() |>
       # Filter out non-duplicate records
       filter(str_detect(duplicate, "duplicate"))
 
@@ -73,10 +71,10 @@ fixDuplicates <-
     # 4. If more than one record remains, choose to keep one randomly.
 
     sdbr_dupes <-
-      duplicates %>%
+      duplicates |>
       # Filter to sea duck AND brant states
-      filter(dl_state %in% sdbr_states) %>%
-      group_by(duplicate) %>%
+      filter(dl_state %in% sdbr_states) |>
+      group_by(duplicate) |>
       mutate(
         # Check for most recent issue date
         x_issue_date =
@@ -90,26 +88,26 @@ fixDuplicates <-
                   max(mdy(issue_date), na.rm = TRUE), format = "%m/%d/%Y"),
               "keeper",
               NA),
-            "bad_issue_date_format")) %>%
-      ungroup() %>%
+            "bad_issue_date_format")) |>
+      ungroup() |>
       # If the issue date was in the right format, keep the record(s) from each
       # group that were the most recent; if the issue date was in the wrong
       # format, keep those too for future evaluation
-      filter(!is.na(x_issue_date)) %>%
+      filter(!is.na(x_issue_date)) |>
       select(-x_issue_date)
 
     # Quick-check variables
     sdbr1 <-
-      duplicates %>%
-      filter(dl_state %in% sdbr_states) %>% select(duplicate) %>% distinct()
-    sdbr2 <- sdbr_dupes %>% select(duplicate) %>% distinct()
+      duplicates |>
+      filter(dl_state %in% sdbr_states) |> select(duplicate) |> distinct()
+    sdbr2 <- sdbr_dupes |> select(duplicate) |> distinct()
 
     # Error checker #1a
     # Thrown when the filter above for sdbr_dupes removes too many records.
     if(nrow(sdbr2) != nrow(sdbr1)){
       message("Error 1a: Internal data issue. Is there a frame shift?")
       print(
-        duplicates %>%
+        duplicates |>
           filter(duplicate %in% pull(anti_join(sdbr1, sdbr2, by = "duplicate"))))}
 
     # Error checker #1b
@@ -117,17 +115,18 @@ fixDuplicates <-
     if(nrow(sdbr2) != nrow(sdbr1)){
       message("Error 1b: Internal data issue. Is there a frame shift?")
       print(
-        sdbr_dupes %>%
+        sdbr_dupes |>
           mutate(
             x_issue_date =
               ifelse(
                 str_detect(issue_date, "^[0-9]{2}\\/[0-9]{2}\\/[0-9]{4}$"),
                 "good",
-                "bad_issue_date_format")) %>%
-          filter(x_issue_date == "bad_issue_date_format") %>%
+                "bad_issue_date_format")) |>
+          filter(x_issue_date == "bad_issue_date_format") |>
           select(birth_date:dove_bag, record_key))}
 
-    sdbr_dupes %<>%
+    sdbr_dupes <-
+      sdbr_dupes |>
       mutate(
         # Check records for all 0s or all 1s
         x_bags =
@@ -143,21 +142,21 @@ fixDuplicates <-
               # Otherwise, the record passes this test
               TRUE ~ "keeper")),
         # Check records for 2 in brant or seaduck field
-        x_sdbrs = ifelse(brant == "2"|seaducks == "2", "keeper", NA)) %>%
+        x_sdbrs = ifelse(brant == "2"|seaducks == "2", "keeper", NA)) |>
       # Convert x_bags if "keeper" to the number of records in the group with
       # the "keeper" value; otherwise, indicate 0s or 1s
-      group_by(duplicate, x_bags) %>%
-      mutate(x_bags = ifelse(x_bags == "keeper", as.character(n()), x_bags)) %>%
-      ungroup() %>%
+      group_by(duplicate, x_bags) |>
+      mutate(x_bags = ifelse(x_bags == "keeper", as.character(n()), x_bags)) |>
+      ungroup() |>
       # Convert x_sdbrs that passed the check above to equal the number of
       # records in the group that count as "keeper"
-      group_by(duplicate, x_sdbrs) %>%
+      group_by(duplicate, x_sdbrs) |>
       mutate(
         x_sdbrs =
-          ifelse(!is.na(x_sdbrs), as.character(n()), x_sdbrs)) %>%
-      ungroup() %>%
+          ifelse(!is.na(x_sdbrs), as.character(n()), x_sdbrs)) |>
+      ungroup() |>
       # Make decisions on which record to keep for each group
-      group_by(duplicate) %>%
+      group_by(duplicate) |>
       mutate(
         decision =
           case_when(
@@ -176,25 +175,25 @@ fixDuplicates <-
             # For rare cases that have two records: keep the record with the not
             # all 1s bag values (unsure if needed)
             x_bags == 1 ~ "keeper",
-            TRUE ~ NA_character_)) %>%
+            TRUE ~ NA_character_)) |>
       # If NA records have another qualifying record in their group, drop them
       mutate(
         decision =
           ifelse(
             n() > 1 & length(unique(decision)) > 1 & is.na(decision),
             "drop",
-            decision)) %>%
-      ungroup() %>%
+            decision)) |>
+      ungroup() |>
       filter(decision != "drop")
 
     # Error checker #2
     # Thrown when there are still NAs in the decision column (which means some
     # cases in the data were not addressed in the case_when above)
-    if(nrow(sdbr_dupes %>% filter(is.na(decision))) > 0){
+    if(nrow(sdbr_dupes |> filter(is.na(decision))) > 0){
       message("Error 2: Internal data issue. NAs left over after processing.")
       print(
-        sdbr_dupes %>%
-          filter(is.na(decision)) %>%
+        sdbr_dupes |>
+          filter(is.na(decision)) |>
           select(duplicate:decision))}
 
     # Error checker #3
@@ -202,14 +201,14 @@ fixDuplicates <-
     # one record per hunter as a "keeper"
     if(
       nrow(
-        sdbr_dupes %>%
-        filter(decision == "keeper") %>%
-        group_by(duplicate, decision) %>%
+        sdbr_dupes |>
+        filter(decision == "keeper") |>
+        group_by(duplicate, decision) |>
         filter(n() > 1)) != 0){
       message("Error 3: More than one record marked to keep per hunter.")
       print(
-        sdbr_dupes %>%
-          group_by(duplicate, decision) %>%
+        sdbr_dupes |>
+          group_by(duplicate, decision) |>
           filter(n() > 1))}
 
     # Get the final frame with 1 record per hunter
@@ -217,24 +216,24 @@ fixDuplicates <-
       sdbr_dupes <-
         bind_rows(
           # Handle "dupl"s; randomly keep one per group using slice_sample()
-          sdbr_dupes %>%
-            filter(decision == "dupl") %>%
-            group_by(duplicate) %>%
-            slice_sample(n = 1) %>%
+          sdbr_dupes |>
+            filter(decision == "dupl") |>
+            group_by(duplicate) |>
+            slice_sample(n = 1) |>
             ungroup(),
           # Row bind in the "keepers" (should already be 1 per hunter)
-          sdbr_dupes %>%
-            filter(decision == "keeper")) %>%
+          sdbr_dupes |>
+            filter(decision == "keeper")) |>
         # Drop unneeded columns
-        select(-c(x_bags:decision)) %>%
+        select(-c(x_bags:decision)) |>
         # Designate record type
         mutate(record_type = "HIP")
     }else{
       sdbr_dupes <-
-        sdbr_dupes %>%
-        filter(decision == "keeper") %>%
+        sdbr_dupes |>
+        filter(decision == "keeper") |>
         # Drop unneeded columns
-        select(-c(x_bags:decision)) %>%
+        select(-c(x_bags:decision)) |>
         # Designate record type
         mutate(record_type = "HIP")}
 
@@ -246,7 +245,7 @@ fixDuplicates <-
       message("Error 4: Not all duplicate hunters were handled.")
       print(
         anti_join(
-          duplicates %>% filter(dl_state %in% sdbr_states),
+          duplicates |> filter(dl_state %in% sdbr_states),
           sdbr_dupes,
           by = c("duplicate"))
       )}
@@ -261,10 +260,10 @@ fixDuplicates <-
     # 4. If more than one record remains, choose to keep one randomly.
 
     seaduck_dupes <-
-      duplicates %>%
+      duplicates |>
       # Filter to seaduck states
-      filter(dl_state %in% seaduck_states) %>%
-      group_by(duplicate) %>%
+      filter(dl_state %in% seaduck_states) |>
+      group_by(duplicate) |>
       mutate(
         # Check for most recent issue date
         x_issue_date =
@@ -278,26 +277,26 @@ fixDuplicates <-
                   max(mdy(issue_date), na.rm = TRUE), format = "%m/%d/%Y"),
               "keeper",
               NA),
-            "bad_issue_date_format")) %>%
-      ungroup() %>%
+            "bad_issue_date_format")) |>
+      ungroup() |>
       # If the issue date was in the right format, keep the record(s) from each
       # group that were the most recent; if the issue date was in the wrong
       # format, keep those too for future evaluation
-      filter(!is.na(x_issue_date)) %>%
+      filter(!is.na(x_issue_date)) |>
       select(-x_issue_date)
 
     # Quick-check variables
     sd1 <-
-      duplicates %>%
-      filter(dl_state %in% seaduck_states) %>% select(duplicate) %>% distinct()
-    sd2 <- seaduck_dupes %>% select(duplicate) %>% distinct()
+      duplicates |>
+      filter(dl_state %in% seaduck_states) |> select(duplicate) |> distinct()
+    sd2 <- seaduck_dupes |> select(duplicate) |> distinct()
 
     # Error checker #1a
     # Thrown when the filter above for seaduck_dupes removes too many records.
     if(nrow(sd2) != nrow(sd1)){
       message("Error 1a: Internal data issue. Is there a frame shift?")
       print(
-        duplicates %>%
+        duplicates |>
           filter(duplicate %in% pull(anti_join(sd1, sd2, by = "duplicate"))))}
 
     # Error checker #1b
@@ -305,17 +304,18 @@ fixDuplicates <-
     if(nrow(sd2) != nrow(sd1)){
       message("Error 1b: Internal data issue. Is there a frame shift?")
       print(
-        seaduck_dupes %>%
+        seaduck_dupes |>
           mutate(
             x_issue_date =
               ifelse(
                 str_detect(issue_date, "^[0-9]{2}\\/[0-9]{2}\\/[0-9]{4}$"),
                 "good",
-                "bad_issue_date_format")) %>%
-          filter(x_issue_date == "bad_issue_date_format") %>%
+                "bad_issue_date_format")) |>
+          filter(x_issue_date == "bad_issue_date_format") |>
           select(birth_date:dove_bag, record_key))}
 
-    seaduck_dupes %<>%
+    seaduck_dupes <-
+      seaduck_dupes |>
       mutate(
         # Check records for all 0s or all 1s
         x_bags =
@@ -331,21 +331,21 @@ fixDuplicates <-
               # Otherwise, the record passes this test
               TRUE ~ "keeper")),
         # Check records for 2 in seaduck field
-        x_seaducks = ifelse(seaducks == "2", "keeper", NA)) %>%
+        x_seaducks = ifelse(seaducks == "2", "keeper", NA)) |>
       # Convert x_bags if "keeper" to the number of records in the group with
       # the "keeper" value; otherwise, indicate 0s or 1s
-      group_by(duplicate, x_bags) %>%
-      mutate(x_bags = ifelse(x_bags == "keeper", as.character(n()), x_bags)) %>%
-      ungroup() %>%
+      group_by(duplicate, x_bags) |>
+      mutate(x_bags = ifelse(x_bags == "keeper", as.character(n()), x_bags)) |>
+      ungroup() |>
       # Convert x_seaducks that passed the check above to equal the number of
       # records in the group that count as "keeper"
-      group_by(duplicate, x_seaducks) %>%
+      group_by(duplicate, x_seaducks) |>
       mutate(
         x_seaducks =
-          ifelse(!is.na(x_seaducks), as.character(n()), x_seaducks)) %>%
-      ungroup() %>%
+          ifelse(!is.na(x_seaducks), as.character(n()), x_seaducks)) |>
+      ungroup() |>
       # Make decisions on which record to keep for each group
-      group_by(duplicate) %>%
+      group_by(duplicate) |>
       mutate(
         decision =
           case_when(
@@ -364,25 +364,25 @@ fixDuplicates <-
             # For rare cases that have two records: keep the record with the not
             # all 1s bag values (unsure if needed)
             x_bags == 1 ~ "keeper",
-            TRUE ~ NA_character_)) %>%
+            TRUE ~ NA_character_)) |>
       # If NA records have another qualifying record in their group, drop them
       mutate(
         decision =
           ifelse(
             n() > 1 & length(unique(decision)) > 1 & is.na(decision),
             "drop",
-            decision)) %>%
-      ungroup() %>%
+            decision)) |>
+      ungroup() |>
       filter(decision != "drop")
 
     # Error checker #2
     # Thrown when there are still NAs in the decision column (which means some
     # cases in the data were not addressed in the case_when above)
-    if(nrow(seaduck_dupes %>% filter(is.na(decision))) > 0){
+    if(nrow(seaduck_dupes |> filter(is.na(decision))) > 0){
       message("Error 2: Internal data issue. NAs left over after processing.")
       print(
-        seaduck_dupes %>%
-          filter(is.na(decision)) %>%
+        seaduck_dupes |>
+          filter(is.na(decision)) |>
           select(duplicate:decision))}
 
     # Error checker #3
@@ -390,14 +390,14 @@ fixDuplicates <-
     # one record per hunter as a "keeper"
     if(
       nrow(
-        seaduck_dupes %>%
-        filter(decision == "keeper") %>%
-        group_by(duplicate, decision) %>%
+        seaduck_dupes |>
+        filter(decision == "keeper") |>
+        group_by(duplicate, decision) |>
         filter(n() > 1)) != 0){
       message("Error 3: More than one record marked to keep per hunter.")
       print(
-        seaduck_dupes %>%
-          group_by(duplicate, decision) %>%
+        seaduck_dupes |>
+          group_by(duplicate, decision) |>
           filter(n() > 1))}
 
     # Get the final frame with 1 record per hunter
@@ -405,24 +405,24 @@ fixDuplicates <-
       seaduck_dupes <-
         bind_rows(
           # Handle "dupl"s; randomly keep one per group using slice_sample()
-          seaduck_dupes %>%
-            filter(decision == "dupl") %>%
-            group_by(duplicate) %>%
-            slice_sample(n = 1) %>%
+          seaduck_dupes |>
+            filter(decision == "dupl") |>
+            group_by(duplicate) |>
+            slice_sample(n = 1) |>
             ungroup(),
           # Row bind in the "keepers" (should already be 1 per hunter)
-          seaduck_dupes %>%
-            filter(decision == "keeper")) %>%
+          seaduck_dupes |>
+            filter(decision == "keeper")) |>
         # Drop unneeded columns
-        select(-c(x_bags:decision)) %>%
+        select(-c(x_bags:decision)) |>
         # Designate record type
         mutate(record_type = "HIP")
     }else{
       seaduck_dupes <-
-        seaduck_dupes %>%
-        filter(decision == "keeper") %>%
+        seaduck_dupes |>
+        filter(decision == "keeper") |>
         # Drop unneeded columns
-        select(-c(x_bags:decision)) %>%
+        select(-c(x_bags:decision)) |>
         # Designate record type
         mutate(record_type = "HIP")}
 
@@ -434,7 +434,7 @@ fixDuplicates <-
       message("Error 4: Not all duplicate hunters were handled.")
       print(
         anti_join(
-          duplicates %>% filter(dl_state %in% seaduck_states),
+          duplicates |> filter(dl_state %in% seaduck_states),
           seaduck_dupes,
           by = c("duplicate"))
       )}
@@ -443,14 +443,14 @@ fixDuplicates <-
     # PART 4: Non-permit, non-seaduck, non-brant record duplicate resolution
 
     other_dupes <-
-      duplicates %>%
+      duplicates |>
       # Record not from seaduck, brant, or permit state
       filter(
         !(dl_state %in% sdbr_states) &
         !(dl_state %in% seaduck_states) &
-        !(dl_state %in% permit_states)) %>%
+        !(dl_state %in% permit_states)) |>
       # Repeat duplicate checking
-      group_by(duplicate) %>%
+      group_by(duplicate) |>
       mutate(
         # Check for most recent issue date
         x_issue_date =
@@ -464,26 +464,26 @@ fixDuplicates <-
                   max(mdy(issue_date), na.rm = TRUE), format = "%m/%d/%Y"),
               "keeper",
               NA),
-            "bad_issue_date_format")) %>%
-      ungroup() %>%
-      filter(!is.na(x_issue_date)) %>%
+            "bad_issue_date_format")) |>
+      ungroup() |>
+      filter(!is.na(x_issue_date)) |>
       select(-x_issue_date)
 
     # Quick-check variables
     o1 <-
-      duplicates %>%
+      duplicates |>
       filter(
         !(dl_state %in% sdbr_states) &
         !(dl_state %in% seaduck_states) &
-          !(dl_state %in% permit_states)) %>% select(duplicate) %>% distinct()
-    o2 <- other_dupes %>% select(duplicate) %>% distinct()
+          !(dl_state %in% permit_states)) |> select(duplicate) |> distinct()
+    o2 <- other_dupes |> select(duplicate) |> distinct()
 
     # Error checker #5a
     # Thrown when the filter above for other_dupes removes too many records.
     if(nrow(o2) != nrow(o1)){
       message("Error 5a: Internal data issue. Is there a frame shift?")
       print(
-        duplicates %>%
+        duplicates |>
           filter(duplicate %in% pull(anti_join(o1, o2, by = "duplicate"))))}
 
     # Error checker #5b
@@ -491,17 +491,18 @@ fixDuplicates <-
     if(nrow(o2) != nrow(o1)){
       message("Error 5b: Internal data issue. Is there a frame shift?")
       print(
-        other_dupes %>%
+        other_dupes |>
           mutate(
             x_issue_date =
               ifelse(
                 str_detect(issue_date, "^[0-9]{2}\\/[0-9]{2}\\/[0-9]{4}$"),
                 "good",
-                "bad_issue_date_format")) %>%
-          filter(x_issue_date == "bad_issue_date_format") %>%
+                "bad_issue_date_format")) |>
+          filter(x_issue_date == "bad_issue_date_format") |>
           select(birth_date:dove_bag, record_key))}
 
-    other_dupes %<>%
+    other_dupes <-
+      other_dupes |>
       mutate(
         # Check records for all 0s or all 1s
         x_bags =
@@ -515,14 +516,14 @@ fixDuplicates <-
               # Look for 1s in every species column
               all(c(...) == "1") ~ "ones",
               # Otherwise, the record passes this test
-              TRUE ~ "keeper"))) %>%
+              TRUE ~ "keeper"))) |>
       # Convert x_bags if "keeper" to the number of records in the group with
       # the "keeper" value; otherwise, indicate 0s or 1s
-      group_by(duplicate, x_bags) %>%
-      mutate(x_bags = ifelse(x_bags == "keeper", as.character(n()), x_bags)) %>%
-      ungroup() %>%
+      group_by(duplicate, x_bags) |>
+      mutate(x_bags = ifelse(x_bags == "keeper", as.character(n()), x_bags)) |>
+      ungroup() |>
       # Make decisions on which record to keep for each group
-      group_by(duplicate) %>%
+      group_by(duplicate) |>
       mutate(
         decision =
           case_when(
@@ -538,25 +539,25 @@ fixDuplicates <-
             # For rare cases that have two records: keep the record with not all
             # 1s (unsure if needed)
             x_bags == 1 ~ "keeper",
-            TRUE ~ NA_character_)) %>%
+            TRUE ~ NA_character_)) |>
       # If NA records have another qualifying record in their group, drop them
       mutate(
         decision =
           ifelse(
             n() > 1 & length(unique(decision)) > 1 & is.na(decision),
             "drop",
-            decision)) %>%
-      ungroup() %>%
+            decision)) |>
+      ungroup() |>
       filter(decision != "drop")
 
     # Error checker #6
     # Thrown when there are still NAs in the decision column (which means some
     # cases in the data were not addressed in the case_when above)
-    if(nrow(other_dupes %>% filter(is.na(decision))) > 0){
+    if(nrow(other_dupes |> filter(is.na(decision))) > 0){
       message("Error 6: Internal data issue. NAs left over after processing.")
       print(
-        other_dupes %>%
-          filter(is.na(decision)) %>%
+        other_dupes |>
+          filter(is.na(decision)) |>
           select(duplicate:decision))}
 
     # Error checker #7
@@ -564,14 +565,14 @@ fixDuplicates <-
     # one record per hunter as a "keeper"
     if(
       nrow(
-        other_dupes %>%
-        filter(decision == "keeper") %>%
-        group_by(duplicate, decision) %>%
+        other_dupes |>
+        filter(decision == "keeper") |>
+        group_by(duplicate, decision) |>
         filter(n() > 1)) != 0){
       message("Error 7: More than one record marked to keep per hunter.")
       print(
-        other_dupes %>%
-          group_by(duplicate, decision) %>%
+        other_dupes |>
+          group_by(duplicate, decision) |>
           filter(n() > 1))}
 
     # Get the final frame with 1 record per hunter
@@ -579,24 +580,24 @@ fixDuplicates <-
       other_dupes <-
         bind_rows(
           # Handle "dupl"s; randomly keep one per group using slice_sample()
-          other_dupes %>%
-            filter(decision == "dupl") %>%
-            group_by(duplicate) %>%
-            slice_sample(n = 1) %>%
+          other_dupes |>
+            filter(decision == "dupl") |>
+            group_by(duplicate) |>
+            slice_sample(n = 1) |>
             ungroup(),
           # Row bind in the "keepers" (should already be 1 per hunter)
-          other_dupes %>%
-            filter(decision == "keeper")) %>%
+          other_dupes |>
+            filter(decision == "keeper")) |>
         # Drop unneeded columns
-        select(-c(x_bags:decision)) %>%
+        select(-c(x_bags:decision)) |>
         # Designate record type
         mutate(record_type = "HIP")
     }else{
       other_dupes <-
-        other_dupes %>%
-        filter(decision == "keeper") %>%
+        other_dupes |>
+        filter(decision == "keeper") |>
         # Drop unneeded columns
-        select(-c(x_bags:decision)) %>%
+        select(-c(x_bags:decision)) |>
         # Designate record type
         mutate(record_type = "HIP")}
 
@@ -607,7 +608,7 @@ fixDuplicates <-
       message("Error 12: Not all duplicate hunters were handled.")
       print(
         anti_join(
-          duplicates %>%
+          duplicates |>
             filter(!(dl_state %in% seaduck_states) &
                      !(dl_state %in% permit_states)),
           other_dupes,
@@ -625,14 +626,14 @@ fixDuplicates <-
     # - Permit records always have 0s in "regular spp" columns
 
     permit_dupes <-
-      duplicates %>%
+      duplicates |>
       # Filter the duplicates to those that occur in permit states
-      filter(dl_state %in% permit_states) %>%
+      filter(dl_state %in% permit_states) |>
       # Set "." to NA in take fields & make those fields numeric
       mutate_at(
         vars(matches("bag|coots|rails")),
-        ~str_replace(., "\\.", NA_character_) %>%
-          as.numeric(.)) %>%
+        ~str_replace(., "\\.", NA_character_) |>
+          as.numeric(.)) |>
       # Calculate sum of values in the non-permit species columns to use as a
       # proxy.
       # Note: We can no longer use "special_sum" == 0 because the value for
@@ -641,9 +642,9 @@ fixDuplicates <-
       # band_tailed_pigeon, and cranes. Using only the "regular" HIP species sum
       # is relatively reliable instead.
       mutate(
-        other_sum = rowSums(across(matches("bag|coots|rails")), na.rm = T)) %>%
+        other_sum = rowSums(across(matches("bag|coots|rails")), na.rm = T)) |>
       # Reset bags to character for row bind later
-      mutate_at(vars(matches("bag|coots|rails")), ~as.character(.)) %>%
+      mutate_at(vars(matches("bag|coots|rails")), ~as.character(.)) |>
       mutate(
         record_type =
           case_when(
@@ -660,17 +661,17 @@ fixDuplicates <-
     if((TRUE %in% is.na(permit_dupes$record_type)) == TRUE){
       message("Error 8: Some permit duplicates not identified as HIP or PMT.")
       print(
-        permit_dupes %>%
-          filter(is.na(record_type)) %>%
-          select(duplicate) %>%
+        permit_dupes |>
+          filter(is.na(record_type)) |>
+          select(duplicate) |>
           distinct()
       )}
 
     # If there is more than one HIP record per person, decide which one to keep
     hip_dupes <-
-      permit_dupes %>%
-      filter(record_type == "HIP") %>%
-      group_by(duplicate) %>%
+      permit_dupes |>
+      filter(record_type == "HIP") |>
+      group_by(duplicate) |>
       mutate(
         # Check for most recent issue date
         x_issue_date =
@@ -684,15 +685,16 @@ fixDuplicates <-
                   max(mdy(issue_date), na.rm = TRUE), format = "%m/%d/%Y"),
               "keeper",
               NA),
-            "bad_issue_date_format")) %>%
-      ungroup() %>%
+            "bad_issue_date_format")) |>
+      ungroup() |>
       # If the issue date was in the right format, keep the record(s) from each
       # group that were the most recent; if the issue date was in the wrong
       # format, keep those too for future evaluation
-      filter(!is.na(x_issue_date)) %>%
+      filter(!is.na(x_issue_date)) |>
       select(-x_issue_date)
 
-    hip_dupes %<>%
+    hip_dupes <-
+      hip_dupes |>
       mutate(
         # Check records for all 0s or all 1s
         x_bags =
@@ -706,14 +708,14 @@ fixDuplicates <-
               # Look for 1s in every species column
               all(c(...) == "1") ~ "ones",
               # Otherwise, the record passes this test
-              TRUE ~ "keeper"))) %>%
+              TRUE ~ "keeper"))) |>
       # Convert x_bags if "keeper" to the number of records in the group with
       # the "keeper" value; otherwise, indicate 0s or 1s
-      group_by(duplicate, x_bags) %>%
-      mutate(x_bags = ifelse(x_bags == "keeper", as.character(n()), x_bags)) %>%
-      ungroup() %>%
+      group_by(duplicate, x_bags) |>
+      mutate(x_bags = ifelse(x_bags == "keeper", as.character(n()), x_bags)) |>
+      ungroup() |>
       # Make decisions on which record to keep for each group
-      group_by(duplicate) %>%
+      group_by(duplicate) |>
       mutate(
         decision =
           case_when(
@@ -729,26 +731,26 @@ fixDuplicates <-
             # For rare cases that have two records: keep the record with the not
             # all 1s bag values (unsure if needed)
             x_bags == 1 ~ "keeper",
-            TRUE ~ NA_character_)) %>%
+            TRUE ~ NA_character_)) |>
       # If NA records have another qualifying record in their group, drop them
       mutate(
         decision =
           ifelse(
             n() > 1 & length(unique(decision)) > 1 & is.na(decision),
             "drop",
-            decision)) %>%
-      ungroup() %>%
-      filter(decision != "drop") %>%
+            decision)) |>
+      ungroup() |>
+      filter(decision != "drop") |>
       # Remove unneeded rows
       select(-c("other_sum", "x_bags"))
 
     # Error checker #9
     # Thrown when there are still NAs in the decision column (which means some
     # cases in the data were not addressed in the case_when above)
-    if(nrow(hip_dupes %>% filter(is.na(decision))) > 0){
+    if(nrow(hip_dupes |> filter(is.na(decision))) > 0){
       message("Error 9: Internal data issue. NAs left over after processing.")
       print(
-        hip_dupes %>%
+        hip_dupes |>
           filter(is.na(decision)))}
 
     # Error checker #10
@@ -756,14 +758,14 @@ fixDuplicates <-
     # one record per hunter as a "keeper"
     if(
       nrow(
-        hip_dupes %>%
-        filter(decision == "keeper") %>%
-        group_by(duplicate, decision) %>%
+        hip_dupes |>
+        filter(decision == "keeper") |>
+        group_by(duplicate, decision) |>
         filter(n() > 1)) != 0){
       message("Error 10: More than one record marked to keep per hunter.")
       print(
-        hip_dupes %>%
-          group_by(duplicate, decision) %>%
+        hip_dupes |>
+          group_by(duplicate, decision) |>
           filter(n() > 1))}
 
     # Error checker #11
@@ -771,14 +773,14 @@ fixDuplicates <-
     # are not equal to the initial number of distinct hunters initially
     if(n_distinct(hip_dupes$duplicate) !=
        n_distinct(
-         permit_dupes %>%
-         filter(record_type == "HIP") %>%
+         permit_dupes |>
+         filter(record_type == "HIP") |>
          select(duplicate))
     ){
       message("Error 11: Not all duplicate hunters were handled.")
       print(
         anti_join(
-          duplicates %>%
+          duplicates |>
             filter(dl_state %in% permit_states),
           hip_dupes,
           by = c("duplicate"))
@@ -789,22 +791,23 @@ fixDuplicates <-
       hip_dupes <-
         bind_rows(
           # Handle "dupl"s; randomly keep one per group using slice_sample()
-          hip_dupes %>%
-            filter(decision == "dupl") %>%
-            group_by(duplicate) %>%
-            slice_sample(n = 1) %>%
+          hip_dupes |>
+            filter(decision == "dupl") |>
+            group_by(duplicate) |>
+            slice_sample(n = 1) |>
             ungroup(),
           # Row bind in the "keepers" (should already be 1 per hunter)
-          hip_dupes %>%
+          hip_dupes |>
             filter(decision == "keeper"))
     }else{
       hip_dupes <-
         # Keep the "keepers" (should already be 1 per hunter)
-        hip_dupes %>%
+        hip_dupes |>
         filter(decision == "keeper")}
 
     # Get table of just permits
-    permit_dupes %<>%
+    permit_dupes <-
+      permit_dupes |>
       filter(record_type == "PMT")
 
     # --------------------------------------------------------------------------
@@ -812,56 +815,56 @@ fixDuplicates <-
 
     resolved_duplicates <-
       # Remove duplicates from the input frame
-      x %>%
+      x |>
       group_by(
-        firstname, lastname, state, birth_date, dl_state, registration_yr) %>%
+        firstname, lastname, state, birth_date, dl_state, registration_yr) |>
       mutate(
         duplicate =
           ifelse(
             n() > 1,
             paste0("duplicate_", cur_group_id()),
-            "single")) %>%
-      ungroup() %>%
-      filter(!str_detect(duplicate, "duplicate")) %>%
-      select(-duplicate) %>%
+            "single")) |>
+      ungroup() |>
+      filter(!str_detect(duplicate, "duplicate")) |>
+      select(-duplicate) |>
       # These records should all be HIP
-      mutate(record_type = "HIP") %>%
+      mutate(record_type = "HIP") |>
       # Classify solo permit records as PMT
       mutate_at(
         vars(matches("bag|coots|rails|band|brant|seaducks")),
-        ~as.numeric(.)) %>%
+        ~as.numeric(.)) |>
       mutate(
         other_sum =
           rowSums(across(matches("bag|coots|rails")), na.rm = T),
         special_sum =
-          rowSums(across(matches("band|brant|seaducks")), na.rm = T)) %>%
+          rowSums(across(matches("band|brant|seaducks")), na.rm = T)) |>
       mutate_at(
         vars(matches("bag|coots|rails|band|brant|seaducks")),
-        ~as.character(.)) %>%
+        ~as.character(.)) |>
       mutate(
         record_type =
           ifelse(
             other_sum == 0 & special_sum > 0 & dl_state %in% permit_states,
             "PMT",
-            record_type)) %>%
-      select(-c(other_sum, special_sum)) %>%
+            record_type)) |>
+      select(-c(other_sum, special_sum)) |>
       # Add back in the resolved duplicates
       bind_rows(
-        sdbr_dupes %>% select(-duplicate),
-        seaduck_dupes %>% select(-duplicate),
-        other_dupes %>% select(-duplicate),
-        permit_dupes %>% select(-c("duplicate", "other_sum")),
-        hip_dupes %>% select(-c("duplicate", "decision"))) %>%
+        sdbr_dupes |> select(-duplicate),
+        seaduck_dupes |> select(-duplicate),
+        other_dupes |> select(-duplicate),
+        permit_dupes |> select(-c("duplicate", "other_sum")),
+        hip_dupes |> select(-c("duplicate", "decision"))) |>
       distinct()
 
     # Error checker #12
     if(
       n_distinct(
-        x %>%
+        x |>
         select(
           firstname, lastname, state, birth_date, dl_state, registration_yr)) !=
       n_distinct(
-        resolved_duplicates %>%
+        resolved_duplicates |>
         select(
           firstname, lastname, state, birth_date, dl_state, registration_yr))
     ){
@@ -871,16 +874,16 @@ fixDuplicates <-
           " process."))
       print(
         anti_join(
-          x %>%
+          x |>
             select(
               firstname,
               lastname,
               state,
               birth_date,
               dl_state,
-              registration_yr) %>%
+              registration_yr) |>
             distinct(),
-          resolved_duplicates %>%
+          resolved_duplicates |>
             select(
               firstname,
               lastname,
