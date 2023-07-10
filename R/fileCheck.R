@@ -33,18 +33,18 @@ fileCheck <-
         tibble(
           filename =
             str_replace(list.files(raw_path, recursive = F), "TXT", "txt"),
-          origin = "input") %>%
+          origin = "input") |>
         bind_rows(
           tibble(
             filename =
               str_replace(
                 list.files(processed_path, recursive = F), "csv", "txt"),
             origin = "processed")
-        ) %>%
-        group_by(filename) %>%
-        filter(n() > 1) %>%
-        ungroup() %>%
-        select(filename) %>%
+        ) |>
+        group_by(filename) |>
+        filter(n() > 1) |>
+        ungroup() |>
+        select(filename) |>
         distinct()
 
       print(repeated)
