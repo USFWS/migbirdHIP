@@ -2,14 +2,13 @@
 #'
 #' Create a plot of errors per download cycle, either by all states in the data set or a specific state, province, or territory.
 #'
-#' @importFrom dplyr %>%
 #' @importFrom dplyr select
 #' @importFrom dplyr group_by
 #' @importFrom dplyr summarize
 #' @importFrom dplyr ungroup
 #' @importFrom dplyr mutate
 #' @importFrom dplyr filter
-#' @importFrom tidyr separate
+#' @importFrom tidyr separate_wider_delim
 #' @importFrom tidyr pivot_longer
 #' @importFrom ggplot2 ggplot
 #' @importFrom ggplot2 aes
@@ -37,83 +36,91 @@
 #' @export
 
 errorPlot_dl <-
-  function(x, loc = "all"){
+  function(x, loc = "all") {
+    if(!loc %in% c(unique(x$dl_state), "all")) {
 
-    # Plot for all states
-
-    dl_plot <-
-      # Suppress warning: "Expected 25 pieces. Missing pieces filled with `NA`
-      # in ... rows". We start by splitting errors for plotting purposes; if
-      # there are less than the full amount of errors in a row, the warning
-      # happens.
-      suppressWarnings(
-        if(loc == "all") {
-          x %>%
-            select(errors, dl_cycle) %>%
-            # Pull errors apart, delimited by hyphens
-            separate(errors, into = as.character(c(1:25)), sep = "-") %>%
-            # Transform errors into a single column
-            pivot_longer(1:25, names_to = "name") %>%
-            select(-name) %>%
-            group_by(dl_cycle) %>%
-            summarize(
-              errors = sum(!is.na(value)),
-              total = n(),
-              .groups = "keep") %>%
-            ungroup() %>%
-            mutate(proportion = errors/total) %>%
-            # Plot
-            ggplot() +
-            geom_bar(aes(x = dl_cycle, y = proportion), stat = "identity") +
-            geom_text(
-              stat = "identity",
-              aes(x = dl_cycle, y = proportion, label = errors, angle = 90),
-              vjust = 0.2, hjust = -0.2) +
-            labs(
-              x = "Download Cycle",
-              y = "Error Proportion",
-              title = "Errors per download cycle") +
-            scale_y_continuous(expand = expansion(mult = c(-0, 0.25))) +
-            theme_classic() +
-            theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
-        }
-        else{
-
-          # Plot for specified state
-
-          x %>%
-            # Keep data only for specified state
-            filter(dl_state == loc) %>%
-            select(errors, dl_cycle) %>%
-            # Pull errors apart, delimited by hyphens
-            separate(errors, into = as.character(c(1:25)), sep = "-") %>%
-            # Transform errors into a single column
-            pivot_longer(1:25, names_to = "name") %>%
-            select(-name) %>%
-            group_by(dl_cycle) %>%
-            summarize(
-              errors = sum(!is.na(value)),
-              total = n(),
-              .groups = "keep") %>%
-            ungroup() %>%
-            mutate(proportion = errors/total) %>%
-            # Plot
-            ggplot() +
-            geom_bar(aes(x = dl_cycle, y = proportion), stat = "identity") +
-            geom_text(
-              stat = "identity",
-              aes(x = dl_cycle, y = proportion, label = errors, angle = 90),
-              vjust = 0.2, hjust = -0.2) +
-            labs(
-              x = "Download Cycle",
-              y = "Error Proportion",
-              title = paste0("Errors per download cycle in ", loc)) +
-            scale_y_continuous(expand = expansion(mult = c(-0, 0.25))) +
-            theme_classic() +
-            theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
-        }
+      message(
+        paste0(
+          "Error! The value you supplied to the `loc` parameter is incorrect.",
+          " Please supply a two-letter state abbreviation for the `loc`",
+          " parameter, or `loc = 'all'` to plot all available states. States",
+          " that submitted data for this download include:\n",
+          paste(unique(x$dl_state), collapse = ", "))
       )
+    }
+    else {
+      if(loc == "all") {
 
-    return(dl_plot)
+        # Plot for all states
+
+        dl_plot <-
+          x |>
+          select(errors, dl_cycle) |>
+          # Pull errors apart, delimited by hyphens
+          separate_wider_delim(
+            errors, delim = "-", names_sep = "_", too_few = "align_start") |>
+          # Transform errors into a single column
+          pivot_longer(starts_with("errors"), names_to = "name") |>
+          select(-name) |>
+          group_by(dl_cycle) |>
+          summarize(
+            errors = sum(!is.na(value)),
+            total = n()) |>
+          ungroup() |>
+          mutate(proportion = errors/total) |>
+          # Plot
+          ggplot() +
+          geom_bar(aes(x = dl_cycle, y = proportion), stat = "identity") +
+          geom_text(
+            stat = "identity",
+            aes(x = dl_cycle, y = proportion, label = errors, angle = 90),
+            vjust = 0.2, hjust = -0.2) +
+          labs(
+            x = "Download Cycle",
+            y = "Error Proportion",
+            title = "Errors per download cycle") +
+          scale_y_continuous(expand = expansion(mult = c(-0, 0.25))) +
+          theme_classic() +
+          theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
+
+      } else {
+
+        # Plot for specified state
+
+        dl_plot <-
+          x |>
+          # Keep data only for specified state
+          filter(dl_state == loc) |>
+          select(errors, dl_cycle) |>
+          # Pull errors apart, delimited by hyphens
+          separate_wider_delim(
+            errors, delim = "-", names_sep = "_", too_few = "align_start") |>
+          # Transform errors into a single column
+          pivot_longer(starts_with("errors"), names_to = "name") |>
+          select(-name) |>
+          group_by(dl_cycle) |>
+          summarize(
+            errors = sum(!is.na(value)),
+            total = n()) |>
+          ungroup() |>
+          mutate(proportion = errors/total) |>
+          # Plot
+          ggplot() +
+          geom_bar(aes(x = dl_cycle, y = proportion), stat = "identity") +
+          geom_text(
+            stat = "identity",
+            aes(x = dl_cycle, y = proportion, label = errors, angle = 90),
+            vjust = 0.2, hjust = -0.2) +
+          labs(
+            x = "Download Cycle",
+            y = "Error Proportion",
+            title = paste0("Errors per download cycle in ", loc)) +
+          scale_y_continuous(expand = expansion(mult = c(-0, 0.25))) +
+          theme_classic() +
+          theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
+      }
+
+      return(dl_plot)
+    }
 
   }
