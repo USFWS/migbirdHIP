@@ -18,7 +18,7 @@ shiftFix(data, record_id, first_col, last_col, n_shift)
 \item{n_shift}{Number of characters that the line needs to be adjusted by}
 }
 \description{
-Shift record values by a designated number of characters.
+Shift record values to the left by a designated number of characters.
 }
 \references{
 \url{https://github.com/USFWS/migbirdHIP}
