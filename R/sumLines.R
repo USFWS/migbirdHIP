@@ -2,9 +2,7 @@
 #'
 #' Get the sum of the number of lines in new download files.
 #'
-#' @importFrom dplyr as_tibble
 #' @importFrom stringr str_detect
-#' @importFrom stringr str_replace
 #'
 #' @param path File path to the download folder containing HIP .txt files
 #'
@@ -19,20 +17,12 @@ sumLines <-
     # Add a final "/" if not included already
     if(!str_detect(path, "\\/$")){
       path <- paste0(path, "/")
-    }else{
-      path <- path
     }
 
-    # Create a tibble of the HIP .txt files to be read from the provided
+    # Create a vector of the HIP .txt files to be read from the provided
     # directory
     # For reading data from a download cycle for ALL states available
-    dl_files <-
-      list.files(path) %>%
-      as_tibble() %>%
-      mutate(value = str_replace(value, "TXT", "txt")) %>%
-      # Keep only txt files
-      filter(str_detect(value, "(?<=\\.)txt$")) %>%
-      pull()
+    dl_files <- list.files(path, pattern = "\\.txt|.TXT$")
 
     sum_lines <- c()
 
