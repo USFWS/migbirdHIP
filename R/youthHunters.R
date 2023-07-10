@@ -32,28 +32,28 @@ youthHunters <-
     total_hunters <-
       # Suppress group message from summarize function
       suppressMessages(
-        x %>%
-          group_by(dl_state) %>%
-          summarize(total_registered = n()) %>%
+        x |>
+          group_by(dl_state) |>
+          summarize(total_registered = n()) |>
           ungroup())
 
     # Count number and calculate proportion of youth hunters by state
     # Suppress group message from summarize function
     suppressMessages(
-      x %>%
-        select(dl_state, birth_date) %>%
-        mutate(birth_year = str_extract(birth_date, "(?<=\\/)[0-9]{4}$")) %>%
-        filter(birth_year > year - 16) %>%
-        group_by(dl_state) %>%
-        summarize(registered_youth = n()) %>%
-        ungroup() %>%
+      x |>
+        select(dl_state, birth_date) |>
+        mutate(birth_year = str_extract(birth_date, "(?<=\\/)[0-9]{4}$")) |>
+        filter(birth_year > year - 16) |>
+        group_by(dl_state) |>
+        summarize(registered_youth = n()) |>
+        ungroup() |>
         # Join in previous tibble of total hunters per state for proportion
         # calculation
-        left_join(total_hunters, by = "dl_state") %>%
-        filter(!is.na(dl_state)) %>%
+        left_join(total_hunters, by = "dl_state") |>
+        filter(!is.na(dl_state)) |>
         # Calculate proportion
-        mutate(youth_proportion = registered_youth/total_registered) %>%
-      filter(!is.na(dl_state)) %>%
+        mutate(youth_proportion = registered_youth/total_registered) |>
+      filter(!is.na(dl_state)) |>
       # Plot
       ggplot() +
       geom_bar(
