@@ -2,7 +2,6 @@
 #'
 #' Create a tibble or plot of hunters who have registered outside of their home state.
 #'
-#' @importFrom dplyr %>%
 #' @importFrom dplyr select
 #' @importFrom dplyr filter
 #' @importFrom dplyr group_by
@@ -40,13 +39,13 @@ outOfStateHunters <-
       suppressWarnings(
         # Suppress summarize groups message
         suppressMessages(
-          x %>%
-            select(state, dl_state) %>%
+          x |>
+            select(state, dl_state) |>
             # Filter to out-of-staters
-            filter(state != dl_state) %>%
+            filter(state != dl_state) |>
             # Count
-            group_by(dl_state) %>%
-            summarize(out_of_state = n()) %>%
+            group_by(dl_state) |>
+            summarize(out_of_state = n()) |>
             ungroup()
         )
       )
@@ -57,17 +56,17 @@ outOfStateHunters <-
       suppressWarnings(
         # Suppress summarize .groups message
         suppressMessages(
-          x %>%
-            select(dl_state) %>%
-            group_by(dl_state) %>%
-            summarize(n_total = n()) %>%
-            ungroup() %>%
-            left_join(out_of_staters, by = "dl_state") %>%
+          x |>
+            select(dl_state) |>
+            group_by(dl_state) |>
+            summarize(n_total = n()) |>
+            ungroup() |>
+            left_join(out_of_staters, by = "dl_state") |>
             mutate(
               outofstate_prop = out_of_state/n_total,
               outofstate_prop = round(outofstate_prop, digits = 2)
-            ) %>%
-            select(-out_of_state) %>%
+            ) |>
+            select(-out_of_state) |>
             filter(!is.na(outofstate_prop))
           )
         )
@@ -77,7 +76,7 @@ outOfStateHunters <-
     # Out of state hunter proportion plot
 
     oos_plot <-
-      oos_proportion %>%
+      oos_proportion |>
       ggplot(aes(x = reorder(dl_state, outofstate_prop))) +
       geom_bar(
         aes(
