@@ -2,7 +2,6 @@
 #'
 #' Pull and view non-UTF-8 characters in a field when R throws error 'invalid UTF-8 byte sequence detected'.
 #'
-#' @importFrom dplyr %>%
 #' @importFrom dplyr select
 #' @importFrom rlang sym
 #' @importFrom dplyr mutate
@@ -21,11 +20,11 @@
 
 glyphFinder <-
   function(data, field){
-    data %>%
-      select(source_file, record_key, !!sym(field)) %>%
-      mutate(check = is.na(iconv(!!sym(field), "UTF-8", "UTF-8"))) %>%
-      filter(check == TRUE) %>%
-      arrange(!!sym(field)) %>%
+    data |>
+      select(source_file, record_key, !!sym(field)) |>
+      mutate(check = is.na(iconv(!!sym(field), "UTF-8", "UTF-8"))) |>
+      filter(check == TRUE) |>
+      arrange(!!sym(field)) |>
       select(-check)
   }
 
@@ -53,12 +52,12 @@ glyphCheck <-
     checked <-
       map_dfr(
         names(data),
-        ~glyphFinder(data, .x) %>%
-          rename(value = !!sym(.x)) %>%
-          mutate(field = .x) %>%
+        ~glyphFinder(data, .x) |>
+          rename(value = !!sym(.x)) |>
+          mutate(field = .x) |>
           relocate(field, .before = "value")
-      ) %>%
-      filter(!is.na(value)) %>%
+      ) |>
+      filter(!is.na(value)) |>
       arrange(source_file)
 
     if(nrow(checked) > 0) {
