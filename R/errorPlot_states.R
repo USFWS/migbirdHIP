@@ -2,9 +2,8 @@
 #'
 #' Create a bar plot of errors by state, either by count or proportion.
 #'
-#' @importFrom dplyr %>%
 #' @importFrom dplyr select
-#' @importFrom tidyr separate
+#' @importFrom tidyr separate_wider_delim
 #' @importFrom tidyr pivot_longer
 #' @importFrom dplyr rename
 #' @importFrom dplyr filter
@@ -34,112 +33,77 @@
 errorPlot_states <-
   function(x, threshold = NA) {
 
-    if(is.na(threshold)){
+    # Generate a table of error proportions
+    state_tbl <-
+      x |>
+      select(errors, dl_state) |>
+      # Pull errors apart, delimited by hyphens
+      separate_wider_delim(
+        errors, delim = "-", names_sep = "_", too_few = "align_start") |>
+      # Transform errors into a single column
+      pivot_longer(starts_with("errors"), names_to = "name") |>
+      select(-name) |>
+      rename(errors = value) |>
+      filter(!is.na(dl_state)) |>
+      group_by(dl_state) |>
+      # Count number of correct and incorrect values
+      summarize(
+        count_errors = sum(!is.na(errors)),
+        count_correct = sum(is.na(errors))) |>
+      ungroup() |>
+      # Calculate the proportion
+      mutate(proportion = count_errors/(count_errors + count_correct))
+
+    if(is.na(threshold)) {
 
       # Proportion plot: no threshold specified
-
       state_plot <-
-        # Suppress warning: "Expected 25 pieces. Missing pieces filled with `NA`
-        # in ... rows". We start by splitting errors for plotting purposes; if
-        # there are less than the full amount of errors in a row, the warning
-        # happens.
-        suppressWarnings(
-          # Suppress message from summarize:
-          # "`summarise()` ungrouping output (override with `.groups` argument)"
-          suppressMessages(
-            x %>%
-              select(errors, dl_state) %>%
-              # Pull errors apart, delimited by hyphens
-              separate(errors, into = as.character(c(1:25)), sep = "-") %>%
-              # Transform errors into a single column
-              pivot_longer(1:25, names_to = "name") %>%
-              select(-name) %>%
-              rename(errors = value) %>%
-              filter(!is.na(dl_state)) %>%
-              group_by(dl_state) %>%
-              # Count number of correct and incorrect values
-              summarize(
-                count_errors = sum(!is.na(errors)),
-                count_correct = sum(is.na(errors))) %>%
-              ungroup() %>%
-              # Calculate the proportion
-              mutate(
-                proportion = count_errors / (count_errors + count_correct)) %>%
-              # Plot
-              ggplot() +
-              geom_bar(aes(
-                y = proportion,
-                x = reorder(dl_state, proportion)),
-                stat = "identity") +
-              geom_text(
-                aes(
-                  y = proportion,
-                  x = reorder(dl_state, proportion),
-                  label = count_errors,
-                  angle = 90),
-                vjust = 0.2, hjust = -0.2) +
-              labs(
-                x = "State",
-                y = "Errors (proportion)",
-                title = "Error proportion by state") +
-              scale_y_continuous(expand = expansion(mult = c(-0, 0.3))) +
-              theme_classic() +
-              theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
-          )
-        )
-        }
-    else{
+        state_tbl |>
+        # Plot
+        ggplot() +
+        geom_bar(
+          aes(y = proportion, x = reorder(dl_state, proportion)),
+          stat = "identity") +
+        geom_text(
+          aes(
+            y = proportion,
+            x = reorder(dl_state, proportion),
+            label = count_errors,
+            angle = 90),
+          vjust = 0.2, hjust = -0.2) +
+        labs(
+          x = "State",
+          y = "Errors (proportion)",
+          title = "Error proportion by state") +
+        scale_y_continuous(expand = expansion(mult = c(-0, 0.3))) +
+        theme_classic() +
+        theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
+
+    } else {
 
       # Proportion plot: threshold specified
-
       state_tbl <-
-        # Suppress warning: "Expected 25 pieces. Missing pieces filled with `NA`
-        # in ... rows". We start by splitting errors for plotting purposes; if
-        # there are less than the full amount of errors in a row, the warning
-        # happens.
-        suppressWarnings(
-          # Suppress message from summarize:
-          # "`summarise()` ungrouping output (override with `.groups` argument)"
-          suppressMessages(
-            x %>%
-              select(errors, dl_state) %>%
-              # Pull errors apart, delimited by hyphens
-              separate(errors, into = as.character(c(1:25)), sep = "-") %>%
-              # Transform errors into a single column
-              pivot_longer(1:25, names_to = "name") %>%
-              select(-name) %>%
-              rename(errors = value) %>%
-              filter(!is.na(dl_state)) %>%
-              group_by(dl_state) %>%
-              # Count number of correct and incorrect values
-              summarize(
-                count_errors = sum(!is.na(errors)),
-                count_correct = sum(is.na(errors))) %>%
-              ungroup() %>%
-              # Calculate the proportion
-              mutate(
-                proportion = count_errors / (count_errors + count_correct)) %>%
-              # Keep only the states with more than specified error percentage
-              filter(proportion >= threshold)
-            )
-          )
+        state_tbl |>
+        # Keep only the states with more than specified error percentage
+        filter(proportion >= threshold)
 
-      if(nrow(state_tbl == 0)){
+      if(nrow(state_tbl) == 0) {
 
         # If the threshold was set too high, return a message that says so
+        message(
+          paste0(
+            "Error! Threshold too great; no data to plot. Reduce threshold ",
+            "value.")
+        )
 
-        message("Threshold too great; no data to plot. Reduce threshold value.")}
-
-      else{
+      } else {
 
         # If the threshold wasn't set too high, make a plot
-
         state_plot <-
+          state_tbl |>
           ggplot() +
-          geom_bar(aes(
-            y = proportion,
-            x = reorder(dl_state, proportion)),
-            stat = "identity") +
+          geom_bar(aes(y = proportion, x = reorder(dl_state, proportion)),
+                   stat = "identity") +
           geom_text(
             aes(
               y = proportion,
@@ -157,10 +121,14 @@ errorPlot_states <-
                 ")")) +
           scale_y_continuous(expand = expansion(mult = c(-0, 0.3))) +
           theme_classic() +
-          theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
+          theme(
+            axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
+
       }
     }
 
-    return(state_plot)
+    if(exists("state_plot")) {
+      return(state_plot)
+    }
 
   }
