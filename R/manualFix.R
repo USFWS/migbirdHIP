@@ -3,7 +3,6 @@
 #' Replace incorrect cell contents with a desired value.
 #'
 #' @importFrom dplyr mutate
-#' @importFrom dplyr %>%
 #' @importFrom rlang :=
 #'
 #' @param x A corrected data table created by \code{\link{correct}}
@@ -22,7 +21,7 @@ manualFix <-
   function(x, field, error_value, correct_value){
 
     new_x <-
-      x %>%
+      x |>
         mutate(
           !!sym(field) :=
             ifelse(
