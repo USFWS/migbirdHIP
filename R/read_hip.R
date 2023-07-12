@@ -132,7 +132,8 @@ read_hip <-
       print(files |> filter(check == "blank"))
     }
 
-    files %<>%
+    files <-
+      files |>
       filter(check != "blank") |>
       select(-check)
 
@@ -165,7 +166,7 @@ read_hip <-
                 state = X8,
                 zip = X9,
                 birth_date = X10,
-                issue_date = X11,
+                issue_date = .data$X11,
                 hunt_mig_birds = X12,
                 ducks_bag = X13,
                 geese_bag = X14,
