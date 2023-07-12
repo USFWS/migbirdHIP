@@ -10,6 +10,7 @@
 #' @importFrom dplyr filter
 #' @importFrom tidyr separate_wider_delim
 #' @importFrom tidyr pivot_longer
+#' @importFrom tidyr starts_with
 #' @importFrom ggplot2 ggplot
 #' @importFrom ggplot2 aes
 #' @importFrom ggplot2 geom_bar
@@ -134,6 +135,7 @@ errorPlot_dl <-
 #' @importFrom dplyr select
 #' @importFrom tidyr separate_wider_delim
 #' @importFrom tidyr pivot_longer
+#' @importFrom tidyr starts_with
 #' @importFrom dplyr filter
 #' @importFrom dplyr group_by
 #' @importFrom dplyr summarize
@@ -323,6 +325,7 @@ errorPlot_fields <-
 #' @importFrom dplyr select
 #' @importFrom tidyr separate_wider_delim
 #' @importFrom tidyr pivot_longer
+#' @importFrom tidyr starts_with
 #' @importFrom dplyr rename
 #' @importFrom dplyr filter
 #' @importFrom dplyr group_by
