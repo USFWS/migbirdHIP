@@ -8,6 +8,7 @@
 #' @importFrom dplyr row_number
 #' @importFrom tidyr separate_wider_delim
 #' @importFrom tidyr pivot_longer
+#' @importFrom tidyr starts_with
 #' @importFrom dplyr rename
 #' @importFrom dplyr group_by
 #' @importFrom dplyr count
@@ -88,7 +89,6 @@ errorTable <-
             group_by(dl_state, errors) |>
             count() |>
             ungroup() |>
-            filter(dl_state %in% acceptable_49_dl_states) |>
             rename(error = errors, error_count = n)
 
         } else if(loc == "all" & field == "none") {
@@ -98,7 +98,6 @@ errorTable <-
             group_by(dl_state) |>
             count() |>
             ungroup() |>
-            filter(dl_state %in% acceptable_49_dl_states) |>
             rename(error_count = n)
 
         } else if(loc == "none" & field == "all") {
@@ -143,7 +142,7 @@ errorTable <-
         } else if(!str_detect(loc, "none|all") & !str_detect(field, "none|all")) {
 
           # Summary table for a particular state and particular field name
-          if(loc %in% acceptable_49_dl_states) {
+          if(loc %in% unique(x$dl_state)) {
 
             statefield <-
               initial_tbl |>
