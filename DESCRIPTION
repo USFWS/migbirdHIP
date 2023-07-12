@@ -32,10 +32,10 @@ Description: Easy-to-use functions specifically designed to handle biweekly HIP
     download data. A sequential process organizes state files into a tidy format
     and flags errors that should be inspected. Errors can be visualized in 
     simple plots and summarized in bite-sized tables.
-License: Public Domain
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
 Depends: 
     R (>= 4.2)
+License: CC0
