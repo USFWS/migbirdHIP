@@ -2,7 +2,6 @@
 #'
 #' After correcting errors in the data with \code{\link{correct}}, this final step will shape up the dataframe into a format ready for the database, and write the data to csv.
 #'
-#' @importFrom dplyr %>%
 #' @importFrom dplyr select
 #' @importFrom dplyr rename
 #' @importFrom dplyr mutate
@@ -10,11 +9,13 @@
 #' @importFrom dplyr filter
 #' @importFrom dplyr distinct
 #' @importFrom dplyr pull
+#' @importFrom rlang sym
+#' @importFrom rlang :=
 #' @importFrom stringr str_detect
 #' @importFrom stringr str_remove
 #' @importFrom stringr str_replace
-#' @importFrom readr write_csv
 #' @importFrom purrr walk
+#' @importFrom purrr map
 #' @importFrom data.table fwrite
 #'
 #' @param x The object created after correcting data with \code{\link{correct}}
@@ -29,115 +30,45 @@
 write_hip <-
   function(x, path, split = TRUE){
 
+    bagfields <-
+      names(x)[match("ducks_bag", names(x)):match("seaducks", names(x))]
+
+    stratanames <-
+      c("S_ducks", "S_geese", "S_doves", "S_woodcock", "S_coot_snipe",
+        "S_rail_gallinule", "S_cranes", "S_bt_pigeons", "S_brant", "S_seaducks")
+
+    # Generate a list of translated bags for each species/species group
+    bag_translations <-
+      map(
+        1:length(bagfields),
+        ~hip_bags_ref |>
+          filter(spp == bagfields[.x]) |>
+          mutate(!!sym(bagfields[.x]) := as.character(stateBagValue)) |>
+          select(-c("stateBagValue", "spp")) |>
+          rename(
+            dl_state = state,
+            !!sym(stratanames[.x]) := FWSstratum)
+      )
+
+    # Left join all the bag translations to the corrected data
+    for(i in 1:length(bagfields)) {
+
+      x <-
+        x |>
+        left_join(
+          bag_translations[[i]],
+          by = c("dl_state", bagfields[[i]])
+        )
+    }
+
+    # Generate the polished output table
     final_table <-
-      x %>%
+      x |>
       # Exclude unwanted columns
-      select(-c("dl_date", "dl_key", "record_key", "errors")) %>%
-      # Use internal data from hip_bags_ref to join FWS strata,
-      # Add strata: ducks
-      left_join(
-        hip_bags_ref %>%
-          rename(dl_state = state) %>%
-          mutate(ducks_bag = as.character(stateBagValue)) %>%
-          filter(spp == "ducks_bag") %>%
-          select(-c("stateBagValue", "spp")),
-        by = c("dl_state", "ducks_bag")
-      ) %>%
-      rename(
-        S_ducks = FWSstratum,
-        dl = dl_cycle) %>%
-      # Add strata: geese
-      left_join(
-        hip_bags_ref %>%
-          rename(dl_state = state) %>%
-          mutate(geese_bag = as.character(stateBagValue)) %>%
-          filter(spp == "geese_bag") %>%
-          select(-c("stateBagValue", "spp")),
-        by = c("dl_state", "geese_bag")
-      ) %>%
-      rename(S_geese = FWSstratum) %>%
-      # Add strata: dove
-      left_join(
-        hip_bags_ref %>%
-          rename(dl_state = state) %>%
-          mutate(dove_bag = as.character(stateBagValue)) %>%
-          filter(spp == "dove_bag") %>%
-          select(-c("stateBagValue", "spp")),
-        by = c("dl_state", "dove_bag")
-      ) %>%
-      rename(S_doves = FWSstratum) %>%
-      # Add strata: woodcock
-      left_join(
-        hip_bags_ref %>%
-          rename(dl_state = state) %>%
-          mutate(woodcock_bag = as.character(stateBagValue)) %>%
-          filter(spp == "woodcock_bag") %>%
-          select(-c("stateBagValue", "spp")),
-        by = c("dl_state", "woodcock_bag")
-      ) %>%
-      rename(S_woodcock = FWSstratum) %>%
-      # Add strata: coots and snipe
-      left_join(
-        hip_bags_ref %>%
-          rename(dl_state = state) %>%
-          mutate(coots_snipe = as.character(stateBagValue)) %>%
-          filter(spp == "coots_snipe") %>%
-          select(-c("stateBagValue", "spp")),
-        by = c("dl_state", "coots_snipe")
-      ) %>%
-      rename(S_coot_snipe = FWSstratum) %>%
-      # Add strata: rails and gallinules
-      left_join(
-        hip_bags_ref %>%
-          rename(dl_state = state) %>%
-          mutate(rails_gallinules = as.character(stateBagValue)) %>%
-          filter(spp == "rails_gallinules") %>%
-          select(-c("stateBagValue", "spp")),
-        by = c("dl_state", "rails_gallinules")
-      ) %>%
-      rename(S_rail_gallinule = FWSstratum) %>%
-      # Add strata: cranes
-      left_join(
-        hip_bags_ref %>%
-          rename(dl_state = state) %>%
-          mutate(cranes = as.character(stateBagValue)) %>%
-          filter(spp == "cranes") %>%
-          select(-c("stateBagValue", "spp")),
-        by = c("dl_state", "cranes")
-      ) %>%
-      rename(S_cranes = FWSstratum) %>%
-      # Add strata: band-tailed pigeon
-      left_join(
-        hip_bags_ref %>%
-          rename(dl_state = state) %>%
-          mutate(band_tailed_pigeon = as.character(stateBagValue)) %>%
-          filter(spp == "band_tailed_pigeon") %>%
-          select(-c("stateBagValue", "spp")),
-        by = c("dl_state", "band_tailed_pigeon")
-      ) %>%
-      rename(S_bt_pigeons = FWSstratum) %>%
-      # Add strata: brant
-      left_join(
-        hip_bags_ref %>%
-          rename(dl_state = state) %>%
-          mutate(brant = as.character(stateBagValue)) %>%
-          filter(spp == "brant") %>%
-          select(-c("stateBagValue", "spp")),
-        by = c("dl_state", "brant")
-      ) %>%
-      rename(S_brant = FWSstratum) %>%
-      # Add strata: seaducks
-      left_join(
-        hip_bags_ref %>%
-          rename(dl_state = state) %>%
-          mutate(seaducks = as.character(stateBagValue)) %>%
-          filter(spp == "seaducks") %>%
-          select(-c("stateBagValue", "spp")),
-        by = c("dl_state", "seaducks")
-      ) %>%
-      rename(S_seaducks = FWSstratum) %>%
+      select(-c("dl_date", "dl_key", "record_key", "errors")) |>
       # Rename columns to desired output
       rename(
+        dl = dl_cycle,
         postal_code = zip,
         Q_ducks = ducks_bag,
         Q_geese = geese_bag,
@@ -148,7 +79,7 @@ write_hip <-
         Q_cranes = cranes,
         Q_bt_pigeons = band_tailed_pigeon,
         Q_brant = brant,
-        Q_seaducks = seaducks) %>%
+        Q_seaducks = seaducks) |>
       mutate(
         # Only include file names in the "source_file" field, not folder names.
         # The field theoretically shouldn't include DL folder names if the
@@ -158,7 +89,7 @@ write_hip <-
           ifelse(
             str_detect(source_file, "\\/"),
             str_remove(source_file, "^.+(?=\\/)"),
-            source_file)) %>%
+            source_file)) |>
       mutate(
         # Do one last pass through source_file to remove the last "/", couldn't
         # pipe a dot above
@@ -175,15 +106,15 @@ write_hip <-
           final_list[[.x]],
           file = str_replace(
             paste0(path,
-                   final_list[[.x]] %>%
-                     select(source_file) %>%
-                     distinct() %>%
+                   final_list[[.x]] |>
+                     select(source_file) |>
+                     distinct() |>
                      pull()),
             ".txt$",
             ".csv"),
           na = ""))
     }else{
-      # Write data to csv
+      # Write data to a single csv
       fwrite(
         final_table,
         file = path,
