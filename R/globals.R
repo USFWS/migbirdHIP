@@ -132,4 +132,6 @@ utils::globalVariables(
     "ymax",
     "issue_start",
     "issue_end",
-    "bad_zip"))
+    "bad_zip",
+    "duplicate_total",
+    "type"))
