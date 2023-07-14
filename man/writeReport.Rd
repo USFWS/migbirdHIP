@@ -6,7 +6,6 @@
 \usage{
 writeReport(
   path,
-  type,
   yr,
   dl = NA,
   corrected_path,
@@ -18,11 +17,6 @@ writeReport(
 }
 \arguments{
 \item{path}{File path to the folder containing HIP .txt files}
-
-\item{type}{Type of report. One of the following options may be supplied:
-\itemize{
-\item dl_report - for a download cycle summary report
-\item season_report - for a summary of the entire HIP season}}
 
 \item{yr}{The year in which the Harvest Information Program data were collected}
 
@@ -39,7 +33,7 @@ writeReport(
 \item{file}{What the report file should be named}
 }
 \description{
-Create documentation with figures and tables that summarizes HIP download data at a download cycle or season total scale.
+Create documentation with figures and tables that summarizes HIP download data at a download cycle scale.
 }
 \references{
 \url{https://github.com/USFWS/migbirdHIP}
