@@ -134,4 +134,8 @@ utils::globalVariables(
     "issue_end",
     "bad_zip",
     "duplicate_total",
-    "type"))
+    "type",
+    "count_records_correct",
+    "count_records_w_error",
+    "errorLevel_errors_states",
+    "total_records_per_state"))
