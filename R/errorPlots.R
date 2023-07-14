@@ -273,23 +273,7 @@ errorPlot_fields <-
         # Plot all states without special legend colors
 
         fields_plot <-
-          x |>
-          select(errors) |>
-          # Pull errors apart, delimited by hyphens
-          separate_wider_delim(
-            errors, delim = "-", names_sep = "_", too_few = "align_start") |>
-          # Transform errors into a single column
-          pivot_longer(starts_with("errors"), names_to = "name") |>
-          select(errors = value) |>
-          filter(!is.na(errors)) |>
-          group_by(errors) |>
-          # Count number of correct values
-          summarize(count_errors = sum(!is.na(errors))) |>
-          ungroup() |>
-          # Calculate error proportion
-          mutate(
-            total = nrow(x),
-            proportion = count_errors / nrow(x)) |>
+          errorLevel_errors_field(x) |>
           # Plot
           ggplot() +
           geom_bar(
@@ -322,16 +306,7 @@ errorPlot_fields <-
 #'
 #' Create a bar plot of errors by state, either by count or proportion.
 #'
-#' @importFrom dplyr select
-#' @importFrom tidyr separate_wider_delim
-#' @importFrom tidyr pivot_longer
-#' @importFrom tidyr starts_with
-#' @importFrom dplyr rename
 #' @importFrom dplyr filter
-#' @importFrom dplyr group_by
-#' @importFrom dplyr summarize
-#' @importFrom dplyr ungroup
-#' @importFrom dplyr mutate
 #' @importFrom ggplot2 ggplot
 #' @importFrom ggplot2 aes
 #' @importFrom ggplot2 geom_bar
@@ -355,25 +330,7 @@ errorPlot_states <-
   function(x, threshold = NA) {
 
     # Generate a table of error proportions
-    state_tbl <-
-      x |>
-      select(errors, dl_state) |>
-      # Pull errors apart, delimited by hyphens
-      separate_wider_delim(
-        errors, delim = "-", names_sep = "_", too_few = "align_start") |>
-      # Transform errors into a single column
-      pivot_longer(starts_with("errors"), names_to = "name") |>
-      select(-name) |>
-      rename(errors = value) |>
-      filter(!is.na(dl_state)) |>
-      group_by(dl_state) |>
-      # Count number of correct and incorrect values
-      summarize(
-        count_errors = sum(!is.na(errors)),
-        count_correct = sum(is.na(errors))) |>
-      ungroup() |>
-      # Calculate the proportion
-      mutate(proportion = count_errors/(count_errors + count_correct))
+    state_tbl <- errorLevel_errors_state(x)
 
     if(is.na(threshold)) {
 
@@ -451,5 +408,119 @@ errorPlot_states <-
     if(exists("state_plot")) {
       return(state_plot)
     }
+
+  }
+
+#' Calculate error-level errors by state
+#'
+#' The internal \code{errorLevel_errors_state} function calculates a summary table of the count of errors, count of correct values, and proportion of erroneous values by state.
+#'
+#' @importFrom dplyr select
+#' @importFrom dplyr group_by
+#' @importFrom dplyr mutate
+#' @importFrom dplyr ungroup
+#' @importFrom tidyr separate_wider_delim
+#' @importFrom tidyr pivot_longer
+#' @importFrom tidyr starts_with
+#' @importFrom dplyr filter
+#' @importFrom dplyr reframe
+#' @importFrom dplyr n
+#' @importFrom dplyr distinct
+#'
+#' @param x A proofed data table created by \code{\link{proof}}
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
+
+errorLevel_errors_state <-
+  function(x){
+    x |>
+      select(errors, dl_state) |>
+      group_by(dl_state) |>
+      mutate(total_records_per_state = n()) |>
+      ungroup() |>
+      separate_wider_delim(
+        errors, delim = "-", names_sep = "_", too_few = "align_start") |>
+      # Transform errors into a single column
+      pivot_longer(starts_with("errors"), names_to = "name") |>
+      filter(!is.na(value)) |>
+      select(dl_state, total_records_per_state, errors = value) |>
+      group_by(dl_state) |>
+      reframe(
+        count_errors = n(),
+        # Possible errors assigned by proof = 14
+        # c("title", "firstname", "middle", "lastname", "suffix", "address",
+        #   "city", "state", "zip", "birth_date", "issue_date",
+        #   "hunt_mig_birds", "registration_yr", "email")
+        count_correct = (total_records_per_state*14) - count_errors,
+        proportion = count_errors/(total_records_per_state*14)) |>
+      distinct()
+  }
+
+#' Calculate error-level errors by field
+#'
+#' The internal \code{errorLevel_errors_field} function calculates a summary table of the count of errors and proportion of erroneous values by field.
+#'
+#' @importFrom dplyr select
+#' @importFrom tidyr separate_longer_delim
+#' @importFrom dplyr filter
+#' @importFrom dplyr group_by
+#' @importFrom dplyr summarize
+#' @importFrom dplyr ungroup
+#' @importFrom dplyr mutate
+#'
+#' @param x A proofed data table created by \code{\link{proof}}
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
+
+errorLevel_errors_field <-
+  function(x){
+    x |>
+      select(errors) |>
+      # Pull errors apart, delimited by hyphens
+      separate_longer_delim(errors, delim = "-") |>
+      filter(!is.na(errors)) |>
+      group_by(errors) |>
+      # Count number of correct values
+      summarize(count_errors = sum(!is.na(errors))) |>
+      ungroup() |>
+      # Calculate error proportion
+      mutate(
+        total = nrow(x),
+        proportion = count_errors / nrow(x))
+  }
+
+#' Calculate record-level errors by state
+#'
+#' The internal \code{recordLevel_errors_state} function calculates a summary table of the count of records with errors, count of records with no errors, and proportion of erroneous records by state.
+#'
+#' @importFrom dplyr select
+#' @importFrom dplyr group_by
+#' @importFrom dplyr mutate
+#' @importFrom dplyr ungroup
+#' @importFrom dplyr distinct
+#'
+#' @param x A proofed data table created by \code{\link{proof}}
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
+
+recordLevel_errors_state <-
+  function(x) {
+    x |>
+      select(errors, dl_state) |>
+      group_by(dl_state) |>
+      mutate(
+        count_records_w_error = sum(!is.na(errors)),
+        count_records_correct = sum(is.na(errors))
+      ) |>
+      ungroup() |>
+      select(-errors) |>
+      distinct() |>
+      # Calculate the proportion
+      mutate(
+        proportion =
+          count_records_w_error/(count_records_w_error + count_records_correct))
 
   }
