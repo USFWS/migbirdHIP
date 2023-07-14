@@ -42,11 +42,8 @@ errorTable <-
   function(x, loc = "all", field = "all"){
 
     acceptable_fields <-
-      c("title", "firstname", "middle", "lastname", "suffix", "address",
-        "city", "state", "zip", "birth_date", "issue_date", "hunt_mig_birds",
-        "ducks_bag", "geese_bag", "dove_bag", "woodcock_bag", "coots_snipe",
-        "rails_gallinules", "cranes", "band_tailed_pigeon", "brant", "seaducks",
-        "registration_year", "email", "all", "none")
+      c(names(x)[match("title", names(x)):match("email", names(x))],
+        "all", "none")
 
     if(!loc %in% c(unique(x$dl_state), "all", "none")) {
       message(

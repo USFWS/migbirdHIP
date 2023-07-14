@@ -24,11 +24,7 @@ pullErrors <-
   function(x, field, distinct = TRUE){
 
     acceptable_fields <-
-      c("title", "firstname", "middle", "lastname", "suffix", "address",
-        "city", "state", "zip", "birth_date", "issue_date", "hunt_mig_birds",
-        "ducks_bag", "geese_bag", "dove_bag", "woodcock_bag", "coots_snipe",
-        "rails_gallinules", "cranes", "band_tailed_pigeon", "brant", "seaducks",
-        "registration_year", "email")
+      names(x)[match("title", names(x)):match("email", names(x))]
 
     if(!field %in% acceptable_fields) {
       message(
