@@ -11,7 +11,7 @@
 #' @importFrom stringr str_to_upper
 #' @importFrom stringr str_replace
 #' @importFrom tibble as_tibble
-#' @importFrom tidyr separate
+#' @importFrom tidyr separate_wider_position
 #' @importFrom tidyr unite
 #'
 #' @param path Directory to download folder containing new HIP files
@@ -41,7 +41,8 @@ renameFiles <-
         names5 |>
         as_tibble() |>
         # Pull the file name apart so we can convert the date
-        separate(value, into = c("state", "jdate", "suffix"), sep = c(2, 5)) |>
+        separate_wider_position(
+          value, c("state" = 2, "jdate" = 3, "suffix" = 4)) |>
         # Convert Julian date to YYYYMMDD
         # The as.Date function calculates to the jdate + 1, so subtract a day
         # using - 1 to get the accurate date; str_remove wraps around the
