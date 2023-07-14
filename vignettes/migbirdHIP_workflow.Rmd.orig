@@ -128,13 +128,13 @@ library(tidyverse)
 
 # Snooping
 snoop <-
-  DL1301 %>%
+  DL1301 |>
   filter(
-    !str_detect(birth_date, "^[0-9]{2}\\/[0-9]{2}\\/[0-9]{4}$")) %>%
-  mutate(n_shift = stringr::str_length(str_extract(issue_date, "^[0-9]+(?=\\/)")) - 2) %>%
-  relocate(record_key, .before = "title") %>%
-  relocate(source_file, .before = "record_key") %>%
-  select(record_key, n_shift) %>%
+    !str_detect(birth_date, "^[0-9]{2}\\/[0-9]{2}\\/[0-9]{4}$")) |>
+  mutate(n_shift = stringr::str_length(str_extract(issue_date, "^[0-9]+(?=\\/)")) - 2) |>
+  relocate(record_key, .before = "title") |>
+  relocate(source_file, .before = "record_key") |>
+  select(record_key, n_shift) |>
   print()
 
 # Correct frame shift for x number of records
@@ -150,9 +150,9 @@ unshifted <-
       "state",
       "email",
       # Shift n number of characters
-      snoop$n_shift[.x])) %>%
+      snoop$n_shift[.x])) |>
   # Delete the 0s from end of zip
-  mutate(zip = str_remove(zip, "0$")) %>%
+  mutate(zip = str_remove(zip, "0$")) |>
   # Add 0s to the beginning of birth_date
   mutate(
     birth_date =
@@ -162,8 +162,8 @@ unshifted <-
         birth_date))
 
 DL1301_unshifted <-
-  DL1301 %>%
-  filter(!record_key %in% unshifted$record_key) %>%
+  DL1301 |>
+  filter(!record_key %in% unshifted$record_key) |>
   bind_rows(unshifted)
 ```
 
@@ -287,7 +287,7 @@ The two time period options to assess vertical repetition are `period = "dl_date
 ```{r, validate_make_bad_values, echo = F}
 # Make vertical repitition in the data (for example purposes) since there are none!
 DL1301_fixed <-
-  DL1301_fixed %>%
+  DL1301_fixed |>
   mutate(ducks_bag = ifelse(dl_state == "AK", 3, ducks_bag))
 ```
 
@@ -431,7 +431,7 @@ write_hip(DL1301_corrected, path = "C:/HIP/processed_data/")
 
 ### writeReport
 
-The `writeReport` function can be used to automatically generate an R markdown document with figures, tables, and summary statistics. This can be done at the end of a download cycle (using `type = "dl_report"`) or the entire HIP season (with `type = "season_report"`).  Writing a total season report is a memory intensive process, so for this option, we recommend [increasing your memory](#memory-problems) allocated to R.
+The `writeReport` function can be used to automatically generate an R markdown document with figures, tables, and summary statistics. This can be done at the end of a download cycle.
 
 ```{r, writerpt, eval = FALSE}
 
@@ -440,7 +440,6 @@ memory.limit(size = 55000)
 
 writeReport(
   path = "C:/HIP/DL1301",
-  type = "dl_report",
   corrected_path = "C:/HIP/corrected_data",
   future_path = "C:/HIP/future_data",
   past_path = "C:/HIP/past_data",
@@ -493,7 +492,7 @@ It is possible to add any `ggplot2` components to these plots. For season total 
 
 ```{r errorfieldsfacet, eval = FALSE}
 errorPlot_fields(
-  hipdata2020 %>%
+  hipdata2020 |>
     filter(str_detect(dl_cycle, "0800|0901|0902|1001")),
     year = 2021) +
   theme(

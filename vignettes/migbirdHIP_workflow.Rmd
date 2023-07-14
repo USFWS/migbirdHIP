@@ -67,7 +67,7 @@ devtools::install_github("USFWS/migbirdHIP", quiet = T, upgrade = F, , build_vig
 
 The flowchart below is a visual guide to the order in which functions are used. Some functions are only used situationally and some issues with the data cannot be solved using a function at all. The general process of handling HIP data is demonstrated here; every function in the *migbirdHIP* package is included.
 
-<img src="image/migbirdHIP_flowchart.svg" title="Overview of migbirdHIP functions in a flowchart format." alt="Overview of migbirdHIP functions in a flowchart format." width="100%" style="display: block; margin: auto;" />
+<img src="image/migbirdHIP_flowchart.svg" alt="Overview of migbirdHIP functions in a flowchart format." width="100%" style="display: block; margin: auto;" />
 
 ## Part A: Data Import and Cleaning
 
@@ -97,29 +97,21 @@ DL1301 <- read_hip("C:/HIP/DL1301")
 ```
 
 ```
-## # A tibble: 4 × 3
-##   filepath                     encoding   confidence
-##   <chr>                        <chr>           <dbl>
-## 1 C:/HIP/DL1301/GA20211229.txt ISO-8859-1       0.23
-## 2 C:/HIP/DL1301/MO20211229.txt ISO-8859-1       0.26
-## 3 C:/HIP/DL1301/NE20211217.txt ISO-8859-1       0.32
-## 4 C:/HIP/DL1301/NE20211217.txt ISO-8859-2       0.21
-## # A tibble: 13 × 3
+## # A tibble: 12 × 3
 ##    dl_state mean_prop     n
 ##    <chr>        <dbl> <int>
 ##  1 LA           1         1
 ##  2 WV           0.75      1
 ##  3 IN           0.667     3
-##  4 AL           0.25      1
-##  5 FL           0.25      5
-##  6 GA           0.25     11
-##  7 IA           0.25      4
-##  8 ID           0.25      1
-##  9 ME           0.25      1
-## 10 OK           0.25     25
-## 11 OR           0.25      1
-## 12 TN           0.25      9
-## 13 VA           0.25      7
+##  4 FL           0.25      5
+##  5 GA           0.25     11
+##  6 IA           0.25      4
+##  7 ID           0.25      1
+##  8 ME           0.25      1
+##  9 OK           0.25     25
+## 10 OR           0.25      1
+## 11 TN           0.25      9
+## 12 VA           0.25      7
 ```
 
 Did you get a warning or three? Read an explanation of common `read_hip` warnings, [below](#common-read_hip-warnings).
@@ -156,13 +148,13 @@ library(tidyverse)
 
 # Snooping
 snoop <-
-  DL1301 %>%
+  DL1301 |>
   filter(
-    !str_detect(birth_date, "^[0-9]{2}\\/[0-9]{2}\\/[0-9]{4}$")) %>%
-  mutate(n_shift = stringr::str_length(str_extract(issue_date, "^[0-9]+(?=\\/)")) - 2) %>%
-  relocate(record_key, .before = "title") %>%
-  relocate(source_file, .before = "record_key") %>%
-  select(record_key, n_shift) %>%
+    !str_detect(birth_date, "^[0-9]{2}\\/[0-9]{2}\\/[0-9]{4}$")) |>
+  mutate(n_shift = stringr::str_length(str_extract(issue_date, "^[0-9]+(?=\\/)")) - 2) |>
+  relocate(record_key, .before = "title") |>
+  relocate(source_file, .before = "record_key") |>
+  select(record_key, n_shift) |>
   print()
 ```
 
@@ -187,9 +179,9 @@ unshifted <-
       "state",
       "email",
       # Shift n number of characters
-      snoop$n_shift[.x])) %>%
+      snoop$n_shift[.x])) |>
   # Delete the 0s from end of zip
-  mutate(zip = str_remove(zip, "0$")) %>%
+  mutate(zip = str_remove(zip, "0$")) |>
   # Add 0s to the beginning of birth_date
   mutate(
     birth_date =
@@ -199,8 +191,8 @@ unshifted <-
         birth_date))
 
 DL1301_unshifted <-
-  DL1301 %>%
-  filter(!record_key %in% unshifted$record_key) %>%
+  DL1301 |>
+  filter(!record_key %in% unshifted$record_key) |>
   bind_rows(unshifted)
 ```
 
@@ -276,9 +268,9 @@ DL1301_current <- issueCheck(DL1301_clean, year = 2021, plot = F, write = F)
 ##   <chr>       <chr>            <chr>    <int>
 ## 1 copy        two season state copy       709
 ## 2 nochange    current          nochange  3203
-## 3 nochange    past             bad      30022
+## 3 nochange    past             bad      30023
 ## 4 nochange    two season state nochange  8452
-## 5 postpone    past             bad       6615
+## 5 postpone    past             bad       6616
 ```
 
 ```
@@ -308,7 +300,16 @@ The `findDuplicates` function finds hunters that have more than one registration
 findDuplicates(DL1301_current)
 ```
 
-<img src="figure/findDuplicates-1.png" title="Figure 1. Plot of types of duplicates." alt="Figure 1. Plot of types of duplicates." width="500" style="display: block; margin: auto;" />
+```
+## Warning: `stat(count)` was deprecated in ggplot2 3.4.0.
+## ℹ Please use `after_stat(count)` instead.
+## ℹ The deprecated feature was likely used in the migbirdHIP package.
+##   Please report the issue to the authors.
+## This warning is displayed once every 8 hours.
+## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated.
+```
+
+<img src="figure/findDuplicates-1.png" alt="Figure 1. Plot of types of duplicates." width="500" style="display: block; margin: auto;" />
 
 
 ```r
@@ -383,7 +384,7 @@ strataCheck(DL1301_fixed)
 ##  8 OR       ducks_bag    0            1, 2, 3, 4   
 ##  9 OR       geese_bag    0            1, 2, 3, 4   
 ## 10 TN       ducks_bag    0            1, 2, 3, 4   
-## # … with 25 more rows
+## # ℹ 25 more rows
 ```
 
 ### validate
@@ -402,16 +403,16 @@ validate(DL1301_fixed, type = "horizontal")
 ##    source_file    h_value h_rep h_total prop_repeat
 ##    <chr>          <chr>   <int>   <int>       <dbl>
 ##  1 IA20211215.txt 0        2841    3175       0.895
-##  2 AL20211229.txt 1        4223    4790       0.882
+##  2 AL20211229.txt 1        4224    4791       0.882
 ##  3 WI20211229.txt 1         273     323       0.845
 ##  4 MO20211229.txt 1        2697    3604       0.748
 ##  5 ME20211229.txt 1         112     151       0.742
 ##  6 NM20211229.txt 1         208     295       0.705
-##  7 ID20211229.txt 1        1762    2588       0.681
+##  7 ID20211229.txt 1        1761    2588       0.680
 ##  8 ND20211215.txt 1         130     204       0.637
 ##  9 CA20211229.txt 1        2003    3211       0.624
 ## 10 IN20211229.txt 1         416     690       0.603
-## # … with 39 more rows
+## # ℹ 39 more rows
 ```
 
 <b>Vertically.</b> The vertical check searches within each column for repetition. Any species group column with the same value in all rows will be detected. The default version of this function (`all = FALSE`) only checks duck bags. If the parameter is set to `all = TRUE`, every species group will be checked.
@@ -483,10 +484,21 @@ DL1301_proofed <- proof(DL1301_fixed, year = 2021)
 ```
 
 ```
+## Warning: Returning more (or less) than 1 row per `summarise()` group was deprecated in dplyr 1.1.0.
+## ℹ Please use `reframe()` instead.
+## ℹ When switching from `summarise()` to `reframe()`, remember that `reframe()` always
+##   returns an ungrouped data frame and adjust accordingly.
+## ℹ The deprecated feature was likely used in the migbirdHIP package.
+##   Please report the issue to the authors.
+## This warning is displayed once every 8 hours.
+## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated.
+```
+
+```
 ## # A tibble: 3 × 3
 ##   source_file        n  prop
 ##   <chr>          <int> <dbl>
-## 1 AL20211229.txt  4790     1
+## 1 AL20211229.txt  4791     1
 ## 2 LA20211217.txt   608     1
 ## 3 LA20211220.txt  1192     1
 ```
@@ -508,10 +520,10 @@ DL1301_corrected <- correct(DL1301_proofed, year = 2021)
 ## # A tibble: 3 × 3
 ##   source_file        n  prop
 ##   <chr>          <int> <dbl>
-## 1 AL20211229.txt  4790     1
+## 1 AL20211229.txt  4791     1
 ## 2 LA20211217.txt   608     1
 ## 3 LA20211220.txt  1192     1
-## # A tibble: 55 × 3
+## # A tibble: 56 × 3
 ##    source_file    state bad_zip
 ##    <chr>          <chr>   <int>
 ##  1 MO20211229.txt MO         36
@@ -524,7 +536,7 @@ DL1301_corrected <- correct(DL1301_proofed, year = 2021)
 ##  8 UT20211229.txt UT          3
 ##  9 AL20211229.txt NC          2
 ## 10 FL20211229.txt GA          2
-## # … with 45 more rows
+## # ℹ 46 more rows
 ```
 
 The following changes are made by the `correct` function:
@@ -592,7 +604,7 @@ pullErrors(DL1301_proofed, error = "suffix")
 ```
 
 ```
-##  [1] "MD"  "ESQ" "MAL" "MR"  "W"   "CJS" "CME" "M"   "SMI" "I�M" "MO"  "MS"  "MRS" "-"
+## Error in pullErrors(DL1301_proofed, error = "suffix"): unused argument (error = "suffix")
 ```
 
 Running `pullErrors` on a field that has no errors will return a message.
@@ -603,7 +615,7 @@ pullErrors(DL1301_proofed, error = "dove_bag")
 ```
 
 ```
-## Success! All values are correct.
+## Error in pullErrors(DL1301_proofed, error = "dove_bag"): unused argument (error = "dove_bag")
 ```
 
 ### manualFix
@@ -628,7 +640,7 @@ write_hip(DL1301_corrected, path = "C:/HIP/processed_data/")
 
 ### writeReport
 
-The `writeReport` function can be used to automatically generate an R markdown document with figures, tables, and summary statistics. This can be done at the end of a download cycle (using `type = "dl_report"`) or the entire HIP season (with `type = "season_report"`).  Writing a total season report is a memory intensive process, so for this option, we recommend [increasing your memory](#memory-problems) allocated to R.
+The `writeReport` function can be used to automatically generate an R markdown document with figures, tables, and summary statistics. This can be done at the end of a download cycle.
 
 
 ```r
@@ -637,7 +649,6 @@ memory.limit(size = 55000)
 
 writeReport(
   path = "C:/HIP/DL1301",
-  type = "dl_report",
   corrected_path = "C:/HIP/corrected_data",
   future_path = "C:/HIP/future_data",
   past_path = "C:/HIP/past_data",
@@ -658,7 +669,7 @@ The `outOfStateHunters` function plots and tabulates how many hunters registered
 outOfStateHunters(DL1301_proofed)
 ```
 
-<img src="figure/outofstate-1.png" title="Figure 6. Plot of proportions of out-of-state hunters." alt="Figure 6. Plot of proportions of out-of-state hunters." width="500" style="display: block; margin: auto;" />
+<img src="figure/outofstate-1.png" alt="Figure 6. Plot of proportions of out-of-state hunters." width="500" style="display: block; margin: auto;" />
 
 ### youthHunters
 
@@ -669,7 +680,7 @@ The `youthHunters` function returns a table and plot of the number of hunters wi
 youthHunters(DL1301_proofed, year = 2021)
 ```
 
-<img src="figure/youth-1.png" title="Figure 7. Plot of proportions of youth hunters." alt="Figure 7. Plot of proportions of youth hunters." width="500" style="display: block; margin: auto;" />
+<img src="figure/youth-1.png" alt="Figure 7. Plot of proportions of youth hunters." width="500" style="display: block; margin: auto;" />
 
 ### errorPlot_fields
 
@@ -680,7 +691,7 @@ The `errorPlot_fields` function can be run on all states...
 errorPlot_fields(DL1301_proofed, loc = "all", year = 2021)
 ```
 
-<img src="figure/errorfieldsplotall-1.png" title="Figure 2. Plot of all location's errors by field name." alt="Figure 2. Plot of all location's errors by field name." width="500" style="display: block; margin: auto;" />
+<img src="figure/errorfieldsplotall-1.png" alt="Figure 2. Plot of all location's errors by field name." width="500" style="display: block; margin: auto;" />
 
 ... or it can be limited to just one.
 
@@ -689,7 +700,7 @@ errorPlot_fields(DL1301_proofed, loc = "all", year = 2021)
 errorPlot_fields(DL1301_proofed, loc = "LA", year = 2021)
 ```
 
-<img src="figure/errorfieldsplotsc-1.png" title="Figure 3. Plot of Louisiana's errors by field name." alt="Figure 3. Plot of Louisiana's errors by field name." width="500" style="display: block; margin: auto;" />
+<img src="figure/errorfieldsplotsc-1.png" alt="Figure 3. Plot of Louisiana's errors by field name." width="500" style="display: block; margin: auto;" />
 
 The `youth` parameter can be set to TRUE for `errorPlot_fields` to view the proportion of "errors" created by youth hunters. Youth hunters are not included in the error plot if `youth = FALSE` (set as default).
 
@@ -698,14 +709,14 @@ The `youth` parameter can be set to TRUE for `errorPlot_fields` to view the prop
 errorPlot_fields(DL1301_proofed, year = 2021, youth = TRUE)
 ```
 
-<img src="figure/errorfieldsplotyouth-1.png" title="Figure 4. Plot of all location's errors by field name, with stacked colors to indicate if there are youth hunters or Canadian zip codes in the data, two common causes of error." alt="Figure 4. Plot of all location's errors by field name, with stacked colors to indicate if there are youth hunters or Canadian zip codes in the data, two common causes of error." width="500" style="display: block; margin: auto;" />
+<img src="figure/errorfieldsplotyouth-1.png" alt="Figure 4. Plot of all location's errors by field name, with stacked colors to indicate if there are youth hunters or Canadian zip codes in the data, two common causes of error." width="500" style="display: block; margin: auto;" />
 
 It is possible to add any `ggplot2` components to these plots. For season total data specifically, the plot can be facet_wrapped using either dl_cycle or dl_date. The example below demonstrates how this package's functions can interact with the tidyverse and shows an example of an `errorPlot_fields` facet_wrap (using a subset of 4 download cycles)
 
 
 ```r
 errorPlot_fields(
-  hipdata2020 %>%
+  hipdata2020 |>
     filter(str_detect(dl_cycle, "0800|0901|0902|1001")),
     year = 2021) +
   theme(
@@ -723,7 +734,7 @@ The `errorPlot_states` function plots error proportions per state. You may optio
 errorPlot_states(DL1301_proofed)
 ```
 
-<img src="figure/errorplotstates-1.png" title="Figure 5. Plot of proportion of error by state." alt="Figure 5. Plot of proportion of error by state." width="500" style="display: block; margin: auto;" />
+<img src="figure/errorplotstates-1.png" alt="Figure 5. Plot of proportion of error by state." width="500" style="display: block; margin: auto;" />
 
 ### errorPlot_dl
 
@@ -734,7 +745,7 @@ This function should not be used unless you want to visualize an entire season o
 errorPlot_dl(hipdata2020, loc = "MI")
 ```
 
-<img src="image/errorPlot_dl.png" title="errorPlot_dl example output" alt="errorPlot_dl example output" width="70%" style="display: block; margin: auto;" />
+<img src="image/errorPlot_dl.png" alt="errorPlot_dl example output" width="70%" style="display: block; margin: auto;" />
 
 ### errorTable
 
@@ -746,20 +757,20 @@ errorTable(DL1301_proofed)
 ```
 
 ```
-## # A tibble: 89 × 3
+## # A tibble: 90 × 3
 ##    dl_state error           error_count
-##    <chr>    <chr>                 <dbl>
+##    <chr>    <chr>                 <int>
 ##  1 AK       issue_date                1
 ##  2 AK       registration_yr           1
 ##  3 AL       birth_date                2
 ##  4 AL       email                     3
 ##  5 AL       firstname                 5
-##  6 AL       registration_yr        4790
-##  7 AL       suffix                    5
-##  8 AL       zip                      10
-##  9 CA       birth_date              173
-## 10 CA       title                     2
-## # … with 79 more rows
+##  6 AL       registration_yr        4791
+##  7 AL       state                     1
+##  8 AL       suffix                    5
+##  9 AL       zip                      11
+## 10 CA       birth_date              173
+## # ℹ 80 more rows
 ```
 
 Errors can be reported by only location by turning off the `field` parameter.
@@ -772,9 +783,9 @@ errorTable(DL1301_proofed, field = "none")
 ```
 ## # A tibble: 28 × 2
 ##    dl_state error_count
-##    <chr>          <dbl>
+##    <chr>          <int>
 ##  1 AK                 2
-##  2 AL              4815
+##  2 AL              4818
 ##  3 CA               175
 ##  4 CO                68
 ##  5 CT               252
@@ -783,7 +794,7 @@ errorTable(DL1301_proofed, field = "none")
 ##  8 IA                60
 ##  9 ID               175
 ## 10 IN                54
-## # … with 18 more rows
+## # ℹ 18 more rows
 ```
 
 Errors can be reported by only field by turning off the `loc` parameter.
@@ -796,7 +807,7 @@ errorTable(DL1301_proofed, loc = "none")
 ```
 ## # A tibble: 12 × 2
 ##    error           error_count
-##    <chr>                 <dbl>
+##    <chr>                 <int>
 ##  1 birth_date             1307
 ##  2 city                      1
 ##  3 email                   274
@@ -804,11 +815,11 @@ errorTable(DL1301_proofed, loc = "none")
 ##  5 hunt_mig_birds           11
 ##  6 issue_date                1
 ##  7 lastname                  5
-##  8 registration_yr        6591
-##  9 state                     1
+##  8 registration_yr        6592
+##  9 state                     2
 ## 10 suffix                   37
 ## 11 title                     3
-## 12 zip                     132
+## 12 zip                     133
 ```
 
 Location can be specified.
@@ -821,7 +832,7 @@ errorTable(DL1301_proofed, loc = "CA")
 ```
 ## # A tibble: 2 × 3
 ##   dl_state error      error_count
-##   <chr>    <chr>            <dbl>
+##   <chr>    <chr>            <int>
 ## 1 CA       birth_date         173
 ## 2 CA       title                2
 ```
@@ -836,7 +847,7 @@ errorTable(DL1301_proofed, field = "suffix")
 ```
 ## # A tibble: 1 × 2
 ##   error  error_count
-##   <chr>        <dbl>
+##   <chr>        <int>
 ## 1 suffix          37
 ```
 
@@ -850,7 +861,7 @@ errorTable(DL1301_proofed, loc = "CA", field = "none")
 ```
 ## # A tibble: 1 × 2
 ##   dl_state total_errors
-##   <chr>           <dbl>
+##   <chr>           <int>
 ## 1 CA                175
 ```
 
@@ -862,8 +873,7 @@ errorTable(DL1301_proofed, loc = "CA", field = "dove_bag")
 ```
 
 ```
-## # A tibble: 0 × 3
-## # … with 3 variables: dl_state <chr>, error <chr>, error_count <dbl>
+## No errors in dove_bag for CA.
 ```
 
 ### redFlags
@@ -881,8 +891,8 @@ redFlags(DL1301_proofed, type = "state", threshold = 0.03)
 ##   dl_state count_errors count_correct proportion flag        
 ##   <chr>           <int>         <int>      <dbl> <chr>       
 ## 1 CT                252          5948     0.0406 error > 0.03
-## 2 LA               1810         43190     0.0402 error > 0.03
-## 3 AL               4815        114935     0.0402 error > 0.03
+## 2 AL               4818        114957     0.0402 error > 0.03
+## 3 LA               1810         43190     0.0402 error > 0.03
 ```
 
 <b>By field.</b>
@@ -897,8 +907,8 @@ redFlags(DL1301_proofed, type = "field", threshold = 0.01)
 ## # A tibble: 2 × 5
 ##   errors          count_errors count_correct proportion flag        
 ##   <chr>                  <int>         <int>      <dbl> <chr>       
-## 1 registration_yr         6591         41862     0.136  error > 0.01
-## 2 birth_date              1307         47146     0.0270 error > 0.01
+## 1 registration_yr         6592         41863     0.136  error > 0.01
+## 2 birth_date              1307         47148     0.0270 error > 0.01
 ```
 
 ## Troubleshooting
@@ -911,13 +921,13 @@ Sometimes `read_hip` will throw one or more warnings. Warnings are usually benig
 
 This parsing failure occurs when a .txt file is missing the last two columns in the fixed-width file (registration_yr and email). For the offending file(s), these columns are filled with NA in the output tibble. No action must be taken.
 
-<img src="image/parsing_failure_1.png" title="Example 1. Common warning that results after running read_hip with missing columns in fixed-width text files." alt="Example 1. Common warning that results after running read_hip with missing columns in fixed-width text files." width="60%" style="display: block; margin: auto;" />
+<img src="image/parsing_failure_1.png" alt="Example 1. Common warning that results after running read_hip with missing columns in fixed-width text files." width="60%" style="display: block; margin: auto;" />
 
 #### Example 2
 
 Another version of a parsing failure occurs when a file is missing the last column in last row of the fixed-width file. This value is set to NA in the output tibble. No action must be taken.
 
-<img src="image/parsing_failure_2.png" title="Example 2. Common warning that results after running read_hip with a missing column in one row of a fixed-width text file." alt="Example 2. Common warning that results after running read_hip with a missing column in one row of a fixed-width text file." width="60%" style="display: block; margin: auto;" />
+<img src="image/parsing_failure_2.png" alt="Example 2. Common warning that results after running read_hip with a missing column in one row of a fixed-width text file." width="60%" style="display: block; margin: auto;" />
 
 ### Memory problems
 
