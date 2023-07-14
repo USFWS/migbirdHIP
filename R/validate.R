@@ -46,8 +46,8 @@ validate <-
     if (!period %in% c(NA, "dl_date", "dl_cycle")) {
       message(
         paste0(
-          "Error: Please supply NA, 'dl_cycle', or 'dl_date' for `period`",
-          " parameter.")
+          "Error: Incorrect value supplied for `period` parameter. Please",
+          " choose: NA, 'dl_cycle', or 'dl_date'.")
       )
     } else {
       if (type == "vertical") {
@@ -265,7 +265,11 @@ validate <-
             }
         } else {
           # Return for incorrect type given
-          message("Incorrect type of validation supplied.")
+          message(
+            paste0(
+              "Error: Incorrect value supplied for `type` parameter. Please",
+              " choose: 'vertical' or 'horizontal'.")
+          )
         }
       }
   }
