@@ -3,19 +3,21 @@
 #' After cleaning the data with \code{\link{clean}}, compare each field to an expected range of values and flag non-conforming values in a new "errors" column.
 #'
 #' @importFrom dplyr mutate
+#' @importFrom dplyr select
+#' @importFrom tidyr as_tibble
 #' @importFrom dplyr row_number
 #' @importFrom dplyr bind_rows
+#' @importFrom dplyr distinct
 #' @importFrom dplyr filter
 #' @importFrom dplyr case_when
 #' @importFrom dplyr left_join
+#' @importFrom dplyr reframe
+#' @importFrom stringr str_detect
 #' @importFrom dplyr group_by
 #' @importFrom dplyr ungroup
-#' @importFrom dplyr select
-#' @importFrom dplyr distinct
+#' @importFrom dplyr n
 #' @importFrom stringr str_extract
-#' @importFrom stringr str_detect
 #' @importFrom stringr str_remove_all
-#' @importFrom dplyr as_tibble
 #'
 #' @param x The object created after cleaning data with \code{\link{clean}}
 #' @param year The year in which the Harvest Information Program data were collected
@@ -28,12 +30,26 @@
 proof <-
   function(x, year){
 
+    # US District and Territory abbreviations:
+    # District of Columbia, American Samoa, Guam, Northern Mariana Islands,
+    # Puerto Rico, Virgin Islands, US Minor Outlying Islands, Marshall Islands,
+    # Micronesia, Palau, Armed Forces (Americas), Armed Forces (Europe), Armed
+    # Forces (Pacific)
+    territories <-
+      c("DC", "AS", "GU", "MP", "PR", "VI", "UM", "MH", "FM", "PW", "AA", "AE",
+        "AP")
+
+    # Canada abbreviations:
+    # Alberta, British Columbia, Manitoba, New Brunswick, Newfoundland and
+    # Labrador, Nova Scotia, Northwest Territories, Nunavut, Ontario, Prince
+    # Edward Island, Province du Québec, Quebec, Saskatchewan, Yukon
+    canada <-
+      c("AB", "BC", "MB", "NB", "NL", "NS", "NT", "NU", "ON", "PE", "PQ", "QC",
+        "SK", "YT")
+
+    # Combine abbreviations
     states_provinces_and_canada <-
-      paste0(
-        "AL|AK|AZ|AR|CA|CO|CT|DE|DC|FL|GA|HI|ID|IL|IN|IA|KS|KY|LA|ME|MD|MA|",
-        "MI|MN|MS|MO|MT|NE|NV|NH|NJ|NM|NY|NC|ND|OH|OK|OR|PA|RI|SC|SD|TN|TX|",
-        "UT|VT|VA|WA|WV|WI|WY|AS|GU|MP|PR|VI|UM|FM|MH|PW|AA|AE|AP|CM|CZ|NB|",
-        "PI|TT|ON|QC|NS|NB|MB|BC|PE|SK|AB|NL")
+      paste(c(datasets::state.abb, territories, canada), collapse = "|")
 
     # Create a record key so that the errors can be joined in later
     keyed_x <-
@@ -169,10 +185,9 @@ proof <-
           ungroup() |>
           filter(registration_yr == year + 1) |>
           group_by(source_file) |>
-          summarize(
+          reframe(
             n = n(),
             prop = round(n()/total_n, 2)) |>
-          ungroup() |>
           distinct())
     }else if((year - 1) %in% keyed_x$registration_yr){
       message(paste0("Error: Records detected with registration_yr = yr - 1."))
@@ -183,10 +198,9 @@ proof <-
           ungroup() |>
           filter(registration_yr == year - 1) |>
           group_by(source_file) |>
-          summarize(
+          reframe(
             n = n(),
             prop = round(n()/total_n, 2)) |>
-          ungroup() |>
           distinct())
     }
 
