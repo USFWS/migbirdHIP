@@ -9,8 +9,8 @@ writeReport(
   yr,
   dl = NA,
   corrected_path,
-  future_path = NA,
-  past_path = NA,
+  future_path,
+  past_path,
   dir,
   file
 )

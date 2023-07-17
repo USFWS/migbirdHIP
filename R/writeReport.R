@@ -1,13 +1,13 @@
 #' Write an R markdown report from template
 #'
-#' Create documentation with figures and tables that summarizes HIP download data at a download cycle scale.
+#' Create documentation with figures and tables that summarizes HIP data at a download cycle scale.
 #'
 #' @importFrom quarto quarto_render
 #' @importFrom rmarkdown render
 #'
 #' @param path File path to the folder containing HIP .txt files
 #' @param yr The year in which the Harvest Information Program data were collected
-#' @param dl Download cycle (when running a download report)
+#' @param dl Download cycle
 #' @param corrected_path Path to directory that contains output .csv files
 #' @param future_path Path to directory that contains future data .csv files
 #' @param past_path Path to directory that contains past data .csv files
