@@ -27,6 +27,7 @@
 #' @importFrom stringr str_replace
 #' @importFrom stringr str_extract
 #' @importFrom stringr str_remove
+#' @importFrom rlang .data
 #'
 #' @param path File path to the folder containing HIP .txt files
 #' @param unique Return a distinct frame? Defaults to TRUE
