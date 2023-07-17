@@ -41,15 +41,9 @@ fixDuplicates <-
         firstname, lastname, state, birth_date, dl_state, registration_yr) |>
       # Identify duplicates, aka records in groups of n > 1 that belong to the
       # same individual
-      mutate(
-        duplicate =
-          ifelse(
-            n() > 1,
-            paste0("duplicate_", cur_group_id()),
-            "single")) |>
-      ungroup() |>
-      # Filter out non-duplicate records
-      filter(str_detect(duplicate, "duplicate"))
+      filter(n() > 1) |>
+      mutate(duplicate = paste0("duplicate_", cur_group_id())) |>
+      ungroup()
 
     # Define sea duck & brant states
     sdbr_states <-
