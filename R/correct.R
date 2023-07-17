@@ -4,20 +4,7 @@
 #'
 #' @importFrom dplyr mutate
 #' @importFrom dplyr case_when
-#' @importFrom dplyr left_join
-#' @importFrom dplyr filter
-#' @importFrom dplyr select
-#' @importFrom dplyr rename_at
-#' @importFrom dplyr vars
-#' @importFrom dplyr contains
-#' @importFrom dplyr group_by
-#' @importFrom dplyr summarize
-#' @importFrom dplyr n
-#' @importFrom dplyr ungroup
-#' @importFrom dplyr arrange
-#' @importFrom dplyr desc
 #' @importFrom stringr str_detect
-#' @importFrom stringr str_extract
 #' @importFrom stringr str_replace
 #' @importFrom stringr str_remove_all
 #'
@@ -125,45 +112,8 @@ correct <-
       )
 
     # Re-run the proof script to get an updated errors column
-    corrproof_bag_x <-
-      proof(corrected_x, year = year) |>
-      # Proof the zip codes -- are they associated with the correct states?
-      # Make a zipPrefix to join by; pull the first 3 zip digits
-      mutate(zipPrefix = str_extract(zip, "^[0-9]{3}")) |>
-      left_join(
-        zip_code_ref |>
-          select(zipPrefix, zipState = state),
-        by = "zipPrefix") |>
-      # Add an error if the state doesn't match zipState
-      mutate(
-        errors =
-          case_when(
-            state != zipState & is.na(errors) ~ "zip",
-            state != zipState & !is.na(errors) & !str_detect(errors, "zip") ~
-              paste0(errors, "-zip"),
-            TRUE ~ errors)
-      )
+    corrproof_bag_x <- proof(corrected_x, year = year)
 
-    # Error check: are any zip codes wrong?
-    if(TRUE %in% (corrproof_bag_x$state != corrproof_bag_x$zipState)){
-      message(
-        paste0("Warning: Zip codes detected that do not correspond to ",
-               "provided state of residence."))
-      suppressMessages(
-        print(
-          corrproof_bag_x |>
-            select(source_file, record_key, zip, state, zipState) |>
-            filter(state != zipState) |>
-            group_by(source_file, state) |>
-            summarize(bad_zip = n()) |>
-            ungroup() |>
-            arrange(desc(bad_zip))
-          ))
-    }
-
-    corrproof_bag_x <-
-      corrproof_bag_x |>
-      select(-c("zipPrefix", "zipState"))
-      return(corrproof_bag_x)
+    return(corrproof_bag_x)
 
   }

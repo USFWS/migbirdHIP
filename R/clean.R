@@ -18,7 +18,11 @@
 #' @importFrom stringr str_remove
 #' @importFrom stringr str_replace
 #' @importFrom stringr str_trim
-#' @importFrom rlang .data
+#' @importFrom dplyr left_join
+#' @importFrom dplyr reframe
+#' @importFrom dplyr n
+#' @importFrom dplyr arrange
+#' @importFrom dplyr distinct
 #'
 #' @param x The object created after reading in data with \code{\link{read_hip}}
 #'
@@ -118,7 +122,36 @@ clean <-
             str_remove(zip, "\\-\\_+"),
             zip)) |>
       # Delete white space around strings again
-      mutate_all(str_trim)
+      mutate_all(str_trim) |>
+      # Proof the zip codes -- are they associated with the correct states?
+      # Make a zipPrefix to join by; pull the first 3 zip digits
+      mutate(zipPrefix = str_extract(zip, "^[0-9]{3}")) |>
+      left_join(
+        zip_code_ref |>
+          select(zipPrefix, zipState = state),
+        by = "zipPrefix")
 
-    return(cleaned_x)
+    # Error check: are any zip codes wrong?
+    if(TRUE %in% (cleaned_x$state != cleaned_x$zipState)){
+      message(
+        paste0("Warning: Zip codes detected that do not correspond to ",
+               "provided state of residence."))
+
+      print(
+        cleaned_x |>
+          select(source_file, state, zip, zipState) |>
+          group_by(source_file) |>
+          mutate(total_records = n()) |>
+          ungroup() |>
+          filter(state != zipState) |>
+          group_by(source_file) |>
+          reframe(
+            bad_zip = n(),
+            prop = round(bad_zip/total_records, 3)) |>
+          distinct() |>
+          arrange(desc(bad_zip))
+      )
+    }
+
+    return(cleaned_x |> select(-c("zipPrefix", "zipState")))
   }
