@@ -30,6 +30,11 @@
 write_hip <-
   function(x, path, split = TRUE){
 
+    # Add a final "/" if not included already
+    if(!str_detect(path, "\\/$")) {
+      path <- paste0(path, "/")
+    }
+
     bagfields <-
       names(x)[match("ducks_bag", names(x)):match("seaducks", names(x))]
 

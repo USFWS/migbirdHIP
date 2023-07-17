@@ -45,10 +45,8 @@ read_hip <-
   function(path, unique = TRUE, state = NA, season = FALSE) {
 
     # Add a final "/" if not included already
-    if(!str_detect(path, "\\/$")){
+    if(!str_detect(path, "\\/$")) {
       path <- paste0(path, "/")
-    }else{
-      path <- path
     }
 
     # Create a tibble of the HIP .txt files to be read from the provided

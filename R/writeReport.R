@@ -20,7 +20,32 @@
 #' @export
 
 writeReport <-
-  function(path, yr, dl = NA, corrected_path, future_path = NA, past_path = NA, dir, file){
+  function(path, yr, dl = NA, corrected_path, future_path, past_path, dir, file){
+
+    # Add a final "/" to path if not included already
+    if(!str_detect(path, "\\/$")) {
+      path <- paste0(path, "/")
+    }
+
+    # Add a final "/" to corrected_path if not included already
+    if(!str_detect(corrected_path, "\\/$")) {
+      corrected_path <- paste0(corrected_path, "/")
+    }
+
+    # Add a final "/" to future_path if not included already
+    if(!str_detect(future_path, "\\/$")) {
+      future_path <- paste0(future_path, "/")
+    }
+
+    # Add a final "/" to past_path if not included already
+    if(!str_detect(past_path, "\\/$")) {
+      past_path <- paste0(past_path, "/")
+    }
+
+    # Add a final "/" to dir if not included already
+    if(!str_detect(dir, "\\/$")) {
+      dir <- paste0(dir, "/")
+    }
 
     #quarto_render(
     render(
