@@ -20,7 +20,7 @@ writeReport(
 
 \item{yr}{The year in which the Harvest Information Program data were collected}
 
-\item{dl}{Download cycle (when running a download report)}
+\item{dl}{Download cycle}
 
 \item{corrected_path}{Path to directory that contains output .csv files}
 
@@ -33,7 +33,7 @@ writeReport(
 \item{file}{What the report file should be named}
 }
 \description{
-Create documentation with figures and tables that summarizes HIP download data at a download cycle scale.
+Create documentation with figures and tables that summarizes HIP data at a download cycle scale.
 }
 \references{
 \url{https://github.com/USFWS/migbirdHIP}
