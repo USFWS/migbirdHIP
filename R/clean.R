@@ -80,16 +80,6 @@ clean <-
             firstname),
         # Remove anything that's not a letter from middle initial col
         middle = ifelse(str_detect(middle, "[^A-Z]"), NA, middle),
-        # Do a little P.O. Box string cleaning
-        address =
-          case_when(
-            str_detect(address, "^\\.") ~
-              str_remove(address, "^\\."),
-            str_detect(address, "P.O.BOX ") ~
-              str_replace(address, "P.O.BOX ", "PO BOX "),
-            str_detect(address, "P.O. BOX ") ~
-              str_replace(address, "P.O. BOX ", "PO BOX "),
-            TRUE ~ address),
         # Zip code correction
         zip =
           # Remove ending hyphen from zip codes with 5 digits
