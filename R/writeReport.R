@@ -3,12 +3,12 @@
 #' Create documentation with figures and tables that summarizes HIP data at a download cycle scale.
 #'
 #' @importFrom quarto quarto_render
-#' @importFrom rmarkdown render
+#' @importFrom stringr str_detect
 #'
 #' @param path File path to the folder containing HIP .txt files
-#' @param yr The year in which the Harvest Information Program data were collected
+#' @param year The year in which the Harvest Information Program data were collected
 #' @param dl Download cycle
-#' @param corrected_path Path to directory that contains output .csv files
+#' @param temp_path Path to directory that contains output .csv files
 #' @param future_path Path to directory that contains future data .csv files
 #' @param past_path Path to directory that contains past data .csv files
 #' @param dir Folder in which to save the completed report
@@ -20,53 +20,62 @@
 #' @export
 
 writeReport <-
-  function(path, yr, dl = NA, corrected_path, future_path, past_path, dir, file){
+  function(path, temp_path, future_path, past_path, year, dl, dir, file){
 
     # Add a final "/" to path if not included already
     if(!str_detect(path, "\\/$")) {
       path <- paste0(path, "/")
     }
-
-    # Add a final "/" to corrected_path if not included already
-    if(!str_detect(corrected_path, "\\/$")) {
-      corrected_path <- paste0(corrected_path, "/")
+    # Add a final "/" to temp_path if not included already
+    if(!str_detect(temp_path, "\\/$")) {
+      temp_path <- paste0(temp_path, "/")
     }
-
     # Add a final "/" to future_path if not included already
     if(!str_detect(future_path, "\\/$")) {
       future_path <- paste0(future_path, "/")
     }
-
     # Add a final "/" to past_path if not included already
     if(!str_detect(past_path, "\\/$")) {
       past_path <- paste0(past_path, "/")
     }
-
     # Add a final "/" to dir if not included already
     if(!str_detect(dir, "\\/$")) {
       dir <- paste0(dir, "/")
     }
 
-    #quarto_render(
-    render(
-      input =
-        # Use the specified template
-        system.file(
-          "templates",
-          paste0(type, ".Rmd"),
-          package = "migbirdHIP"),
+    # Copy .qmd template from R pacakge directory to output directory; a
+    # workaround required due to quarto's inability to render a document
+    # anywhere except the directory where the .qmd file is located (and it can't
+    # be rendered in the package directory!)
+    invisible(
+      file.copy(
+        from =
+          system.file(
+            "templates",
+            "dl_report.qmd",
+            package = "migbirdHIP"),
+        to = dir,
+        overwrite = TRUE)
+    )
+
+    # Render report
+    quarto_render(
+      input = paste0(dir, "dl_report.qmd"),
       # Include the specified parameters so the functions can run
-      #execute_params =
-      params =
+      execute_params =
         list(
           comp_path = path,
-          final_path = corrected_path,
+          final_path = temp_path,
           future_path = future_path,
           past_path = past_path,
           dl = dl,
-          year = yr),
-      output_dir = dir,
-      output_file = file,
+          year = year),
+      output_file = paste0(file, ".html"),
+      output_format = "html",
       # Don't show lengthy knitting status text in console
-      quiet = TRUE)
-    }
+      quiet = F)
+
+    # Delete the template from the directory
+    invisible(file.remove(paste0(dir, "dl_report.qmd")))
+
+  }

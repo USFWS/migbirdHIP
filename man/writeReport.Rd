@@ -4,29 +4,20 @@
 \alias{writeReport}
 \title{Write an R markdown report from template}
 \usage{
-writeReport(
-  path,
-  yr,
-  dl = NA,
-  corrected_path,
-  future_path,
-  past_path,
-  dir,
-  file
-)
+writeReport(path, temp_path, future_path, past_path, year, dl, dir, file)
 }
 \arguments{
 \item{path}{File path to the folder containing HIP .txt files}
 
-\item{yr}{The year in which the Harvest Information Program data were collected}
-
-\item{dl}{Download cycle}
-
-\item{corrected_path}{Path to directory that contains output .csv files}
+\item{temp_path}{Path to directory that contains output .csv files}
 
 \item{future_path}{Path to directory that contains future data .csv files}
 
 \item{past_path}{Path to directory that contains past data .csv files}
+
+\item{year}{The year in which the Harvest Information Program data were collected}
+
+\item{dl}{Download cycle}
 
 \item{dir}{Folder in which to save the completed report}
 
