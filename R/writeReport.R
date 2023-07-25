@@ -70,7 +70,6 @@ writeReport <-
           past_path = past_path,
           dl = dl,
           year = year),
-      output_file = paste0(file, ".html"),
       output_format = "html",
       # Don't show lengthy knitting status text in console
       quiet = F)
