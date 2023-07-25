@@ -78,4 +78,11 @@ writeReport <-
     # Delete the template from the directory
     invisible(file.remove(paste0(dir, "dl_report.qmd")))
 
+    # Rename the output
+    invisible(
+      file.rename(
+        from = paste0(dir, "dl_report.qmd"),
+        to = paste0(dir, file, ".html"))
+    )
+
   }
