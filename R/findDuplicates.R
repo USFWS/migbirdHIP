@@ -30,7 +30,7 @@
 #' @importFrom ggplot2 theme_classic
 #' @importFrom ggplot2 theme
 #' @importFrom ggplot2 element_text
-#' @importFrom ggplot2 stat
+#' @importFrom ggplot2 after_stat
 #' @importFrom dplyr count
 #' @importFrom dplyr summarize
 #' @importFrom stats reorder
@@ -236,7 +236,7 @@ findDuplicates <-
             geom_text(
               aes(
                 x = dupl,
-                label = stat(count),
+                label = after_stat(count),
                 angle = 90),
               stat = "count",
               vjust = 0.2,
