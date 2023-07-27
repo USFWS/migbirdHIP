@@ -28,7 +28,7 @@ redFlags <-
 
       # State red flags
       rf <-
-        errorLevel_errors_states(x) |>
+        errorLevel_errors_state(x) |>
         mutate(
           flag =
             ifelse(
