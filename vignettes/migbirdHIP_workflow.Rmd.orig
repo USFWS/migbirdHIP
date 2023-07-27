@@ -400,13 +400,13 @@ All functions in [Part C](#part-c-data-visualization-and-tabulation) will run on
 The `pullErrors` function can be used to view all of the actual values that were flagged as errors in a particular field. In this example, we find that the "suffix" field contains several values that are not accepted.
 
 ```{r pullerrors}
-pullErrors(DL1301_proofed, error = "suffix")
+pullErrors(DL1301_proofed, field = "suffix")
 ```
 
 Running `pullErrors` on a field that has no errors will return a message.
 
 ```{r pullerrors2}
-pullErrors(DL1301_proofed, error = "dove_bag")
+pullErrors(DL1301_proofed, field = "dove_bag")
 ```
 
 ### manualFix
