@@ -13,6 +13,10 @@
 #' @importFrom dplyr arrange
 #' @importFrom dplyr desc
 #' @importFrom tidyr pivot_longer
+#' @importFrom purrr map
+#' @importFrom rlang sym
+#' @importFrom dplyr n
+#' @importFrom purrr list_rbind
 #'
 #' @param x The object created after fixing data with \code{\link{fixDuplicates}}
 #'
@@ -28,8 +32,7 @@ strataCheck <-
     # state based on the current hip_bags_ref
     strata_by_state <-
       hip_bags_ref |>
-      select(state, spp, stateBagValue) |>
-      distinct() |>
+      distinct(state, spp, stateBagValue) |>
       filter(!is.na(stateBagValue)) |>
       group_by(state, spp) |>
       mutate(normal_strata = paste(stateBagValue, collapse = ", ")) |>
@@ -67,9 +70,28 @@ strataCheck <-
         by = c("dl_state", "spp")) |>
       arrange(desc(normal_strata))
 
-    if(nrow(strata_x) > 0){
-      return(strata_x)}
-    else{
+    if(nrow(strata_x) > 0) {
+      return(
+        strata_x |>
+          left_join(
+            map(
+              1:nrow(strata_x),
+              ~x |>
+                select(dl_state, sym(strata_x[[.x,2]])) |>
+                filter(dl_state == strata_x[[.x,1]]) |>
+                mutate(n_state = n()) |>
+                filter(!!sym(strata_x[[.x,2]]) == strata_x[[.x,3]]) |>
+                mutate(
+                  n_bad_strata = n(),
+                  spp = strata_x[[.x,2]]) |>
+                select(-sym(strata_x[[.x,2]])) |>
+                mutate(prop = paste0(round(n_bad_strata/n_state, 2)*100,"%")) |>
+                distinct(dl_state, spp, n = n_bad_strata, prop)) |>
+              list_rbind(),
+            by = c("dl_state", "spp")
+          )
+      )
+    } else {
       message("No strata abnormalities detected.")
     }
 
