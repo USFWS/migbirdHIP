@@ -208,7 +208,7 @@ findDuplicates <-
         message(
           paste(
             "There are", duplicate_individuals,
-            "registrations with duplicates;", duplicate_total,
+            "registrations with duplicates;", nrow(duplicates),
             "total duplicated records.", sep = " "))
 
       } else {
@@ -264,7 +264,7 @@ findDuplicates <-
           message(
             paste(
               "There are", duplicate_individuals,
-              "registrations with duplicates;", duplicate_total,
+              "registrations with duplicates;", nrow(duplicates),
               "total duplicated records.", sep = " "))
 
         }
