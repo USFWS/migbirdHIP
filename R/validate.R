@@ -118,27 +118,31 @@ validate <-
               # Subset the data
               select(
                 dl_state,
-                dl_date,
+                source_file,
                 matches("bag|coots|rails|cranes|pigeon|brant|seaducks")) |>
-              group_by(dl_state, dl_date) |>
-              # Add number of rows per group
+              group_by(source_file) |>
+              # Add number of rows per source_file
               mutate(dl_rows = n()) |>
+              ungroup() |>
               # Move dl_rows to 3rd col position
-              relocate(dl_rows, .after = dl_date) |>
-              ungroup() |>
-              group_by(dl_state, dl_date, dl_rows) |>
+              relocate(dl_rows, .after = source_file) |>
+              group_by(dl_state, source_file, dl_rows) |>
               # Count the number of unique values in each species column
-              summarize(across(ducks_bag:seaducks, ~length(unique(.x))), .groups = "keep") |>
+              summarize(
+                across(
+                  ducks_bag:seaducks,
+                  ~length(unique(.x))),
+                .groups = "keep") |>
               pivot_longer(
-                cols = !contains("dl"),
+                cols = !matches("dl|source"),
                 names_to = "species_grp",
-                values_to = "v_rep") |>
+                values_to = "n_unique_values") |>
               ungroup() |>
-              # Keep only the uniform spp groups
-              filter(v_rep == 1) |>
-              # Report count of times uniform values are repeated
+              # Keep only the spp groups with uniform values
+              filter(n_unique_values == 1) |>
               mutate(v_repeated = dl_rows) |>
-              select(-c("dl_rows", "v_rep"))
+              select(dl_state, source_file, species_grp, v_repeated)
+
           } else if (period %in% c("dl_date", "dl_cycle")) {
 
             # With time period specification: dl_date or dl_cycle
