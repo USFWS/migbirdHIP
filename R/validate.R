@@ -22,6 +22,7 @@
 #' @importFrom tidyr pivot_longer
 #' @importFrom stringr str_sub
 #' @importFrom stringr str_split
+#' @importFrom dplyr left_join
 #'
 #' @param x The object created after cleaning data with \code{\link{clean}}
 #' @param type Type of validation to perform. Acceptable values include:
@@ -113,7 +114,7 @@ validate <-
 
             # Without time period specification
 
-            validated_v <-
+            vr <-
               x |>
               # Subset the data
               select(
@@ -142,6 +143,44 @@ validate <-
               filter(n_unique_values == 1) |>
               mutate(v_repeated = dl_rows) |>
               select(dl_state, source_file, species_grp, v_repeated)
+
+            validated_v <-
+              vr |>
+              # Join in what value was repeated
+              mutate(
+                repeated_value =
+                  map(
+                    1:nrow(vr),
+                    ~investigate(
+                      final_data,
+                      loc = vr$dl_state[.x],
+                      period_type = "dl_date",
+                      period =
+                        str_extract(
+                          vr$source_file[.x], "[0-9].+(?=\\.txt)"),
+                      species = vr$species_grp[.x]) |>
+                      pull(1)) |>
+                  unlist()
+              ) |>
+              # Keep only the spp groups with more than 1 possible bag value
+              # i.e. filter out "no season" species/states
+              left_join(
+                hip_bags_ref |>
+                  select(-FWSstratum) |>
+                  group_by(state, spp) |>
+                  filter(n() == 1) |>
+                  ungroup() |>
+                  rename(
+                    dl_state = state,
+                    species_grp = spp,
+                    repeated_value = stateBagValue) |>
+                  mutate(
+                    repeated_value = as.character(repeated_value),
+                    flag = "no season"),
+                by = c("dl_state", "species_grp", "repeated_value")
+              ) |>
+              filter(is.na(flag)) |>
+              select(-flag)
 
           } else if (period %in% c("dl_date", "dl_cycle")) {
 
