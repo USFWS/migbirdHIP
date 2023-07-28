@@ -152,7 +152,7 @@ validate <-
                   map(
                     1:nrow(vr),
                     ~investigate(
-                      final_data,
+                      x,
                       loc = vr$dl_state[.x],
                       period_type = "dl_date",
                       period =
