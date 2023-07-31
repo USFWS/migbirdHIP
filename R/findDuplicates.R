@@ -52,9 +52,6 @@ findDuplicates <-
                "Please use `return = 'table'` or `return = 'plot'`."))
     } else {
 
-      # Define permit states
-      permit_states <- c("WA", "OR", "CO", "SD")
-
       # List of permit records
       pmts <-
         x |>

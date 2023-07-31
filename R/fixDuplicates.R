@@ -45,16 +45,6 @@ fixDuplicates <-
       mutate(duplicate = paste0("duplicate_", cur_group_id())) |>
       ungroup()
 
-    # Define sea duck & brant states
-    sdbr_states <-
-      c("AK", "CA", "CT", "DE", "MA", "MD", "NC", "NH", "NJ", "NY", "RI", "VA")
-
-    # Define sea duck (w/o brant) states
-    seaduck_states <- c("ME")
-
-    # Define permit states
-    permit_states <- c("WA", "OR", "CO", "SD")
-
     # --------------------------------------------------------------------------
     # PART 2: Sea duck AND brant states duplicate resolution
 
