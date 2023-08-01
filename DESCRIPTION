@@ -19,7 +19,6 @@ Suggests:
     DT,
     kableExtra,
     knitr,
-    sf,
     stringi
 VignetteBuilder: knitr
 Authors@R: 
