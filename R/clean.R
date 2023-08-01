@@ -114,12 +114,10 @@ clean <-
       # Delete white space around strings again
       mutate_all(str_trim) |>
       # Proof the zip codes -- are they associated with the correct states?
-      # Make a zipPrefix to join by; pull the first 3 zip digits
-      mutate(zipPrefix = str_extract(zip, "^[0-9]{3}")) |>
       left_join(
         zip_code_ref |>
-          select(zipPrefix, zipState = state),
-        by = "zipPrefix")
+          distinct(zip = zipcode, zipState = state),
+        by = "zip")
 
     # Error check: are any zip codes wrong?
     if(TRUE %in% (cleaned_x$state != cleaned_x$zipState)){
@@ -143,5 +141,5 @@ clean <-
       )
     }
 
-    return(cleaned_x |> select(-c("zipPrefix", "zipState")))
+    return(cleaned_x |> select(-zipState))
   }
