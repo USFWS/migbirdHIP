@@ -116,4 +116,15 @@ utils::globalVariables(
     "count_records_w_error",
     "errorLevel_errors_states",
     "total_records_per_state",
-    "total_records"))
+    "total_records",
+    "spp1",
+    "spp2",
+    "id",
+    "s1",
+    "s2",
+    "flag1",
+    "flag2",
+    "n_unique_values",
+    "species_grp",
+    "v_repeated",
+    "repeated_value"))

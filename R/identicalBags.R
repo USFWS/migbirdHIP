@@ -79,7 +79,7 @@ identicalBags <-
                   spp1 = spp_combos$s1[[y]],
                   spp2 = spp_combos$s2[[y]],
                   n = length(v1),
-                  value = v1[1])
+                  value = paste0(unique(v1), collapse = ", "))
               }
             }) |>
             list_rbind()
