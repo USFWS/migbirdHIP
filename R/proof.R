@@ -30,26 +30,10 @@
 proof <-
   function(x, year){
 
-    # US District and Territory abbreviations:
-    # District of Columbia, American Samoa, Guam, Northern Mariana Islands,
-    # Puerto Rico, Virgin Islands, US Minor Outlying Islands, Marshall Islands,
-    # Micronesia, Palau, Armed Forces (Americas), Armed Forces (Europe), Armed
-    # Forces (Pacific)
-    territories <-
-      c("DC", "AS", "GU", "MP", "PR", "VI", "UM", "MH", "FM", "PW", "AA", "AE",
-        "AP")
-
-    # Canada abbreviations:
-    # Alberta, British Columbia, Manitoba, New Brunswick, Newfoundland and
-    # Labrador, Nova Scotia, Northwest Territories, Nunavut, Ontario, Prince
-    # Edward Island, Province du Québec, Quebec, Saskatchewan, Yukon
-    canada <-
-      c("AB", "BC", "MB", "NB", "NL", "NS", "NT", "NU", "ON", "PE", "PQ", "QC",
-        "SK", "YT")
-
-    # Combine abbreviations
+    # Combine US State, District and Territory abbreviations with Canada
+    # abbreviations
     states_provinces_and_canada <-
-      paste(c(datasets::state.abb, territories, canada), collapse = "|")
+      paste(c(datasets::state.abb, us_territories, canada), collapse = "|")
 
     # Create a record key so that the errors can be joined in later
     keyed_x <-
@@ -228,12 +212,11 @@ proof <-
     # Proof the zip codes -- are they associated with the correct states?
     graded_x <-
       graded_x |>
-      # Make a zipPrefix to join by; pull the first 3 zip digits
-      mutate(zipPrefix = str_extract(zip, "^[0-9]{3}")) |>
+      # Proof the zip codes -- are they associated with the correct states?
       left_join(
         zip_code_ref |>
-          select(zipPrefix, zipState = state),
-        by = "zipPrefix") |>
+          distinct(zip = zipcode, zipState = state),
+        by = "zip") |>
       # Add an error if the state doesn't match zipState
       mutate(
         errors =
@@ -243,7 +226,7 @@ proof <-
               paste0(errors, "-zip"),
             TRUE ~ errors)
       ) |>
-      select(-c("zipPrefix", "zipState"))
+      select(-zipState)
 
     return(graded_x)
 
