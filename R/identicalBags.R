@@ -125,5 +125,5 @@ identicalBags <-
     if(nrow(checked_cols) > 0) {
       return(checked_cols)
     } else {
-      message("Data are good to go! No identical columns detected.")}
+      message("Data are good to go! No identical bag columns detected.")}
   }
