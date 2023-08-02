@@ -23,7 +23,6 @@
 #' @importFrom stringr str_extract
 #' @importFrom dplyr left_join
 #' @importFrom dplyr rename
-#' @importFrom dplyr case_when
 #'
 #' @param x A HIP data tibble
 #'
@@ -119,16 +118,8 @@ identicalBags <-
           by = c("dl_state", "spp2", "value")
         ) |>
         select(-dl_state) |>
-        filter(is.na(flag1)|is.na(flag2)) |>
-        # Add notes specifying which species have a season
-        mutate(
-          note =
-            case_when(
-              is.na(flag1) & is.na(flag2) ~ paste0("Both seasons exist"),
-              is.na(flag1) ~ paste0(spp1, " has a season"),
-              is.na(flag2) ~ paste0(spp2, " has a season"),
-              TRUE ~ NA_character_
-            )) |>
+        # Filter out any state/species that do not have a season
+        filter(is.na(flag1) & is.na(flag2)) |>
         select(-c("flag1", "flag2"))
 
     if(nrow(checked_cols) > 0) {
