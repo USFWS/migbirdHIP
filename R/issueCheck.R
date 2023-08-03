@@ -42,13 +42,6 @@
 issueCheck <-
   function(data, year, future_outpath = NA, past_outpath = NA, plot = FALSE, write = TRUE){
 
-    # Create a vector that identifies 2-season states
-    twoseasonstates <-
-      licenses_ref |>
-      filter(category == "2 season") |>
-      select(state) |>
-      pull()
-
     # Determine the destination of each record
     issue_assignments <-
       data |>
