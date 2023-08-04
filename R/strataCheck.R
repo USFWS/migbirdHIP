@@ -9,6 +9,8 @@
 #' @importFrom dplyr mutate
 #' @importFrom dplyr ungroup
 #' @importFrom dplyr left_join
+#' @importFrom dplyr anti_join
+#' @importFrom dplyr inner_join
 #' @importFrom dplyr rename
 #' @importFrom dplyr arrange
 #' @importFrom dplyr desc
@@ -28,13 +30,28 @@
 strataCheck <-
   function(x){
 
+    # The following nested joins remove all values from hip_bags_ref that are not
+    # 0 or 1 for states/species combinations in pmt_files (e.g. 2s are not
+    # acceptable in regular HIP pre-processing)
+    non_pmt_file_bags_ref <-
+      anti_join(
+        hip_bags_ref |>
+          select(-FWSstratum) |>
+          rename(dl_state = state) |>
+          mutate(stateBagValue  = as.character(stateBagValue)),
+        hip_bags_ref |>
+          select(-FWSstratum) |>
+          rename(dl_state = state) |>
+          mutate(stateBagValue  = as.character(stateBagValue)) |>
+          inner_join(pmt_files |> select(-value)) |>
+          filter(!stateBagValue %in% c("0", "1"))
+      )
+
     # Create a tibble that contains all of the possible strata for a spp in a
     # state based on the current hip_bags_ref
     strata_by_state <-
-      hip_bags_ref |>
-      distinct(state, spp, stateBagValue) |>
-      filter(!is.na(stateBagValue)) |>
-      group_by(state, spp) |>
+      non_pmt_file_bags_ref |>
+      group_by(dl_state, spp) |>
       mutate(normal_strata = paste(stateBagValue, collapse = ", ")) |>
       ungroup() |>
       select(-stateBagValue) |>
@@ -52,27 +69,21 @@ strataCheck <-
         values_to = "state_strata") |>
       ungroup() |>
       distinct() |>
-      arrange(dl_state, spp) |>
       left_join(
-        hip_bags_ref |>
-          select(-FWSstratum) |>
-          rename(dl_state = state) |>
-          mutate(
-            state_strata = as.character(stateBagValue),
-            stateBagValue  = as.character(stateBagValue)),
+        non_pmt_file_bags_ref |>
+          mutate(state_strata = as.character(stateBagValue)),
         by = c("dl_state", "spp", "state_strata")
       ) |>
-      filter(is.na(stateBagValue)) |>
-      select(-stateBagValue) |>
-      left_join(
-        strata_by_state |>
-          rename(dl_state = state),
-        by = c("dl_state", "spp")) |>
-      arrange(desc(normal_strata))
+      filter(is.na(stateBagValue))
 
     if(nrow(strata_x) > 0) {
       return(
         strata_x |>
+          select(-stateBagValue) |>
+          left_join(
+            strata_by_state,
+            by = c("dl_state", "spp")) |>
+          arrange(desc(normal_strata)) |>
           left_join(
             map(
               1:nrow(strata_x),

@@ -33,7 +33,7 @@ proof <-
     # Combine US State, District and Territory abbreviations with Canada
     # abbreviations
     states_provinces_and_canada <-
-      paste(c(datasets::state.abb, us_territories, canada), collapse = "|")
+      paste(c(datasets::state.abb, abbr_usa, abbr_canada), collapse = "|")
 
     # Create a record key so that the errors can be joined in later
     keyed_x <-

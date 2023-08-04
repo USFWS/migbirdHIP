@@ -66,7 +66,7 @@ findDuplicates <-
             rowSums(across(matches("cranes|band|brant|seaducks")), na.rm = T),
           record_type =
             ifelse(
-              other_sum == 0 & special_sum > 0 & dl_state %in% permit_states,
+              other_sum == 0 & special_sum > 0 & dl_state %in% unique(pmt_inline$dl_state),
               "PMT",
               NA)) |>
         filter(record_type == "PMT") |>

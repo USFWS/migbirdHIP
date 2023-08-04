@@ -57,7 +57,7 @@ fixDuplicates <-
     sdbr_dupes <-
       duplicates |>
       # Filter to sea duck AND brant states
-      filter(dl_state %in% sdbr_states) |>
+      filter(dl_state %in% states_sdbr) |>
       group_by(duplicate) |>
       mutate(
         # Check for most recent issue date
@@ -83,8 +83,8 @@ fixDuplicates <-
     # Quick-check variables
     sdbr1 <-
       duplicates |>
-      filter(dl_state %in% sdbr_states) |> select(duplicate) |> distinct()
-    sdbr2 <- sdbr_dupes |> select(duplicate) |> distinct()
+      filter(dl_state %in% states_sdbr) |> distinct(duplicate)
+    sdbr2 <- sdbr_dupes |> distinct(duplicate)
 
     # Error checker #1a
     # Thrown when the filter above for sdbr_dupes removes too many records.
@@ -229,7 +229,7 @@ fixDuplicates <-
       message("Error 4: Not all duplicate hunters were handled.")
       print(
         anti_join(
-          duplicates |> filter(dl_state %in% sdbr_states),
+          duplicates |> filter(dl_state %in% states_sdbr),
           sdbr_dupes,
           by = c("duplicate"))
       )}
@@ -246,7 +246,7 @@ fixDuplicates <-
     seaduck_dupes <-
       duplicates |>
       # Filter to seaduck states
-      filter(dl_state %in% seaduck_states) |>
+      filter(dl_state %in% states_seaducks) |>
       group_by(duplicate) |>
       mutate(
         # Check for most recent issue date
@@ -272,8 +272,8 @@ fixDuplicates <-
     # Quick-check variables
     sd1 <-
       duplicates |>
-      filter(dl_state %in% seaduck_states) |> select(duplicate) |> distinct()
-    sd2 <- seaduck_dupes |> select(duplicate) |> distinct()
+      filter(dl_state %in% states_seaducks) |> distinct(duplicate)
+    sd2 <- seaduck_dupes |> distinct(duplicate)
 
     # Error checker #1a
     # Thrown when the filter above for seaduck_dupes removes too many records.
@@ -418,7 +418,7 @@ fixDuplicates <-
       message("Error 4: Not all duplicate hunters were handled.")
       print(
         anti_join(
-          duplicates |> filter(dl_state %in% seaduck_states),
+          duplicates |> filter(dl_state %in% states_seaducks),
           seaduck_dupes,
           by = c("duplicate"))
       )}
@@ -430,9 +430,9 @@ fixDuplicates <-
       duplicates |>
       # Record not from seaduck, brant, or permit state
       filter(
-        !(dl_state %in% sdbr_states) &
-        !(dl_state %in% seaduck_states) &
-        !(dl_state %in% permit_states)) |>
+        !(dl_state %in% states_sdbr) &
+        !(dl_state %in% states_seaducks) &
+        !(dl_state %in% unique(pmt_inline$dl_state))) |>
       # Repeat duplicate checking
       group_by(duplicate) |>
       mutate(
@@ -457,10 +457,10 @@ fixDuplicates <-
     o1 <-
       duplicates |>
       filter(
-        !(dl_state %in% sdbr_states) &
-        !(dl_state %in% seaduck_states) &
-          !(dl_state %in% permit_states)) |> select(duplicate) |> distinct()
-    o2 <- other_dupes |> select(duplicate) |> distinct()
+        !(dl_state %in% states_sdbr) &
+        !(dl_state %in% states_seaducks) &
+          !(dl_state %in% unique(pmt_inline$dl_state))) |> distinct(duplicate)
+    o2 <- other_dupes |> distinct(duplicate)
 
     # Error checker #5a
     # Thrown when the filter above for other_dupes removes too many records.
@@ -593,8 +593,8 @@ fixDuplicates <-
       print(
         anti_join(
           duplicates |>
-            filter(!(dl_state %in% seaduck_states) &
-                     !(dl_state %in% permit_states)),
+            filter(!(dl_state %in% states_seaducks) &
+                     !(dl_state %in% unique(pmt_inline$dl_state))),
           other_dupes,
           by = c("duplicate"))
       )}
@@ -602,7 +602,7 @@ fixDuplicates <-
     # --------------------------------------------------------------------------
     # PART 5: Permit state duplicate resolution
 
-    # Some permit states (WA, OR, CO, SD) submit permit records separately from
+    # Some permit states (WA, OR) submit permit records separately from
     # HIP records. The status of each record will be determined and they will be
     # labeled as either HIP or permit. Multiple HIP records must be resolved
     # (keep only 1 per hunter), but multiple permits are allowed.
@@ -612,7 +612,7 @@ fixDuplicates <-
     permit_dupes <-
       duplicates |>
       # Filter the duplicates to those that occur in permit states
-      filter(dl_state %in% permit_states) |>
+      filter(dl_state %in% unique(pmt_inline$dl_state)) |>
       # Set "." to NA in take fields & make those fields numeric
       mutate_at(
         vars(matches("bag|coots|rails")),
@@ -647,8 +647,7 @@ fixDuplicates <-
       print(
         permit_dupes |>
           filter(is.na(record_type)) |>
-          select(duplicate) |>
-          distinct()
+          distinct(duplicate)
       )}
 
     # If there is more than one HIP record per person, decide which one to keep
@@ -765,7 +764,7 @@ fixDuplicates <-
       print(
         anti_join(
           duplicates |>
-            filter(dl_state %in% permit_states),
+            filter(dl_state %in% unique(pmt_inline$dl_state)),
           hip_dupes,
           by = c("duplicate"))
       )}
@@ -828,7 +827,7 @@ fixDuplicates <-
       mutate(
         record_type =
           ifelse(
-            other_sum == 0 & special_sum > 0 & dl_state %in% permit_states,
+            other_sum == 0 & special_sum > 0 & dl_state %in% unique(pmt_inline$dl_state),
             "PMT",
             record_type)) |>
       select(-c(other_sum, special_sum)) |>
@@ -859,14 +858,13 @@ fixDuplicates <-
       print(
         anti_join(
           x |>
-            select(
+            distinct(
               firstname,
               lastname,
               state,
               birth_date,
               dl_state,
-              registration_yr) |>
-            distinct(),
+              registration_yr),
           resolved_duplicates |>
             select(
               firstname,

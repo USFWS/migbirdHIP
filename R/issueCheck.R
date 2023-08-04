@@ -56,7 +56,7 @@ issueCheck <-
         # (does not include MS)
         issue_eval =
           ifelse(
-            !dl_state %in% c(twoseasonstates, "MS"),
+            !dl_state %in% c(states_twoseason, "MS"),
             case_when(
               mdy(issue_date) %within%
                 interval(issue_start, last_day_migbird_hunting) ~ "current",
@@ -69,14 +69,14 @@ issueCheck <-
             # For records from two-season states with a future registration year
             # and issue_date before the last day of hunting, copy them for next
             # year (and count them for this year)
-            dl_state %in% twoseasonstates &
+            dl_state %in% states_twoseason &
               registration_yr == as.character(year + 1) &
               mdy(issue_date) %within%
               interval(issue_start, last_day_migbird_hunting) ~ "copy",
             # For records from two-season states with a current registration
             # year and issue date after the last day of hunting, postpone
             # sampling them until next year
-            dl_state %in% twoseasonstates &
+            dl_state %in% states_twoseason &
               registration_yr == as.character(year) &
               mdy(issue_date) > last_day_migbird_hunting ~ "postpone",
             # For records from Mississippi, if the issue_date is within

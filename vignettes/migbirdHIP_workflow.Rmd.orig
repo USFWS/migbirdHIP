@@ -251,9 +251,9 @@ Records are kept when they meet the below criteria (in order of importance):
 4. For duplicates from seaduck-only state (ME), keep records with a 2 in seaduck.
 5. If records are tied, one is chosen randomly.
 
-A new field called "record_type" is added to the data after the above deduplicating process. Every HIP record is labeled "HIP". Permit states WA, OR, CO, and SD send HIP and permit records separately, which are labeled "HIP" and "PMT" respectively.
+A new field called "record_type" is added to the data after the above deduplicating process. Every HIP record is labeled "HIP". Permit states WA and OR send HIP and permit records separately, which are labeled "HIP" and "PMT" respectively.
 
-Note: This function replaces "." values with NA in non-permit species columns for WA, OR, CO, and SD records.
+Note: This function replaces "." values with NA in non-permit species columns for WA and OR records.
 
 
 ```{r, fixduplicates}

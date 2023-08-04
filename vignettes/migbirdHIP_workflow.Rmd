@@ -210,20 +210,25 @@ DL1301_clean <- clean(DL1301_unshifted)
 ```
 
 ```
-## # A tibble: 22 × 3
+## # A tibble: 16 × 3
 ##    source_file    bad_zip  prop
 ##    <chr>            <int> <dbl>
-##  1 MO20211229.txt      43 0.012
+##  1 MO20211229.txt      39 0.011
 ##  2 NE20211217.txt      15 0.017
-##  3 AL20211229.txt      11 0.002
-##  4 NE20211222.txt       8 0.019
-##  5 LA20211217.txt       6 0.01 
-##  6 UT20211229.txt       5 0.007
-##  7 WA20211215.txt       5 0.003
-##  8 FL20211229.txt       4 0.001
-##  9 GA20211229.txt       4 0.001
-## 10 ID20211229.txt       4 0.002
-## # ℹ 12 more rows
+##  3 AL20211229.txt       7 0.001
+##  4 NE20211222.txt       6 0.014
+##  5 LA20211217.txt       5 0.008
+##  6 ID20211229.txt       4 0.002
+##  7 WA20211229.txt       4 0.003
+##  8 IA20211215.txt       3 0.001
+##  9 OK20211229.txt       3 0.001
+## 10 WA20211215.txt       3 0.002
+## 11 UT20211229.txt       2 0.003
+## 12 FL20211229.txt       1 0    
+## 13 ME20211229.txt       1 0.007
+## 14 NM20211229.txt       1 0.003
+## 15 OR20211229.txt       1 0.001
+## 16 TN20211229.txt       1 0
 ```
 
 This function does simple data cleaning. Importantly, records are discarded if first name, last name, birth date, state of residence, address AND email, OR city AND zip AND email are missing.
@@ -361,9 +366,9 @@ Records are kept when they meet the below criteria (in order of importance):
 4. For duplicates from seaduck-only state (ME), keep records with a 2 in seaduck.
 5. If records are tied, one is chosen randomly.
 
-A new field called "record_type" is added to the data after the above deduplicating process. Every HIP record is labeled "HIP". Permit states WA, OR, CO, and SD send HIP and permit records separately, which are labeled "HIP" and "PMT" respectively.
+A new field called "record_type" is added to the data after the above deduplicating process. Every HIP record is labeled "HIP". Permit states WA and OR send HIP and permit records separately, which are labeled "HIP" and "PMT" respectively.
 
-Note: This function replaces "." values with NA in non-permit species columns for WA, OR, CO, and SD records.
+Note: This function replaces "." values with NA in non-permit species columns for WA and OR records.
 
 
 
@@ -420,7 +425,7 @@ validate(DL1301_fixed, type = "horizontal")
 ##  4 MO20211229.txt 1        2697    3604       0.748
 ##  5 ME20211229.txt 1         112     151       0.742
 ##  6 NM20211229.txt 1         208     295       0.705
-##  7 ID20211229.txt 1        1763    2588       0.681
+##  7 ID20211229.txt 1        1764    2588       0.682
 ##  8 ND20211215.txt 1         130     204       0.637
 ##  9 CA20211229.txt 1        2003    3211       0.624
 ## 10 IN20211229.txt 1         416     690       0.603
@@ -591,8 +596,7 @@ pullErrors(DL1301_proofed, field = "suffix")
 ```
 
 ```
-##  [1] "MD"  "ESQ" "MAL" "MR"  "W"   "CJS" "CME" "M"   "SMI" "I�M" "MO" 
-## [12] "MS"  "MRS" "-"
+##  [1] "MD"  "ESQ" "MAL" "MR"  "W"   "CJS" "CME" "M"   "SMI" "I�M" "MO"  "MS"  "MRS" "-"
 ```
 
 Running `pullErrors` on a field that has no errors will return a message.
@@ -745,7 +749,7 @@ errorTable(DL1301_proofed)
 ```
 
 ```
-## # A tibble: 90 × 3
+## # A tibble: 85 × 3
 ##    dl_state error           error_count
 ##    <chr>    <chr>                 <int>
 ##  1 AK       issue_date                1
@@ -756,9 +760,9 @@ errorTable(DL1301_proofed)
 ##  6 AL       registration_yr        4791
 ##  7 AL       state                     1
 ##  8 AL       suffix                    5
-##  9 AL       zip                      11
+##  9 AL       zip                       7
 ## 10 CA       birth_date              173
-## # ℹ 80 more rows
+## # ℹ 75 more rows
 ```
 
 Errors can be reported by only location by turning off the `field` parameter.
@@ -773,15 +777,15 @@ errorTable(DL1301_proofed, field = "none")
 ##    dl_state error_count
 ##    <chr>          <int>
 ##  1 AK                 2
-##  2 AL              4818
+##  2 AL              4814
 ##  3 CA               175
-##  4 CO                68
+##  4 CO                67
 ##  5 CT               252
-##  6 FL                11
-##  7 GA                22
+##  6 FL                 8
+##  7 GA                18
 ##  8 IA                60
 ##  9 ID               175
-## 10 IN                54
+## 10 IN                53
 ## # ℹ 18 more rows
 ```
 
@@ -807,7 +811,7 @@ errorTable(DL1301_proofed, loc = "none")
 ##  9 state                     2
 ## 10 suffix                   37
 ## 11 title                     3
-## 12 zip                     133
+## 12 zip                     100
 ```
 
 Location can be specified.
@@ -879,8 +883,8 @@ redFlags(DL1301_proofed, type = "state", threshold = 0.03)
 ##   dl_state count_errors count_correct proportion flag        
 ##   <chr>           <int>         <dbl>      <dbl> <chr>       
 ## 1 CT                252          3220     0.0726 error > 0.03
-## 2 AL               4818         62256     0.0718 error > 0.03
-## 3 LA               1810         23390     0.0718 error > 0.03
+## 2 AL               4814         62260     0.0718 error > 0.03
+## 3 LA               1808         23392     0.0717 error > 0.03
 ```
 
 <b>By field.</b>
