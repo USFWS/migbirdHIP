@@ -437,23 +437,19 @@ errorLevel_errors_state <-
     x |>
       select(errors, dl_state) |>
       group_by(dl_state) |>
-      mutate(total_records_per_state = n()) |>
+      mutate(total_records = n()) |>
       ungroup() |>
       separate_wider_delim(
         errors, delim = "-", names_sep = "_", too_few = "align_start") |>
       # Transform errors into a single column
       pivot_longer(starts_with("errors"), names_to = "name") |>
       filter(!is.na(value)) |>
-      select(dl_state, total_records_per_state, errors = value) |>
+      select(dl_state, total_records, errors = value) |>
       group_by(dl_state) |>
       reframe(
         count_errors = n(),
-        # Possible errors assigned by proof = 14
-        # c("title", "firstname", "middle", "lastname", "suffix", "address",
-        #   "city", "state", "zip", "birth_date", "issue_date",
-        #   "hunt_mig_birds", "registration_yr", "email")
-        count_correct = (total_records_per_state*14) - count_errors,
-        proportion = count_errors/(total_records_per_state*14)) |>
+        count_correct = (total_records*14) - count_errors,
+        proportion = count_errors/(total_records*14)) |>
       distinct()
   }
 
