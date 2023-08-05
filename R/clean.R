@@ -83,7 +83,17 @@ clean <-
         # Zip code correction
         zip =
           # Remove ending hyphen from zip codes with 5 digits
-          ifelse(str_detect(zip, "\\-$"), str_remove(zip, "\\-"), zip),
+          ifelse(
+            str_detect(zip, "^[0-9]{5}\\-$"),
+            str_remove(zip, "\\-$"),
+            zip),
+        zip =
+          # Remove final 0 from zip codes with length of 10 digits
+          ifelse(
+            str_detect(zip, "^[0-9]{10}$") &
+              str_extract(zip, "[0-9]{1}(?=$)") == "0",
+            str_remove(zip, "[0-9]{1}(?=$)"),
+            zip),
         zip =
           # Insert a hyphen in continuous 9 digit zip codes
           ifelse(
