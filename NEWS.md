@@ -68,7 +68,10 @@ editor_options:
 -   Replaced `dplyr::summarize()` with `dplyr::reframe()` since
     returning more than 1 row per group was deprecated in `dplyr 1.1.0`
 -   Added forward slash to end of all paths as needed
--   Eliminated address cleaning from `clean()`
+-   `clean()`
+    -   Eliminated address cleaning
+    -   Added zip code cleaning to remove final 0 from zip codes with
+        length of 10 digits
 -   Replaced `ggplot::stat()` with `ggplot::after_stat()`, since the
     former was deprecated in `ggplot2 3.4.0`
 

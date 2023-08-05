@@ -282,8 +282,6 @@ validate(DL1301_fixed, type = "horizontal")
 
 <b>Vertically.</b> The vertical check searches within each column for repetition. Any species group column with the same value in all rows will be detected. The default version of this function (`all = FALSE`) only checks duck bags. If the parameter is set to `all = TRUE`, every species group will be checked.
 
-The two time period options to assess vertical repetition are `period = "dl_date"` (used automatically)...
-
 ```{r, validate_make_bad_values, echo = F}
 # Make vertical repitition in the data (for example purposes) since there are none!
 DL1301_fixed <-
@@ -295,19 +293,13 @@ DL1301_fixed <-
 validate(DL1301_fixed, type = "vertical")
 ```
 
-... and `period = "dl_cycle"`.
-
-```{r, validate_v_time}
-validate(DL1301_fixed, type = "vertical", period = "dl_cycle")
-```
-
 It is not possible to include as much detail in the vertical output as in the horizontal output without being specific about which state, species, and time scale you wish to assess. Vertical repetition returned in the output from this function can be looked at more closely using `investigate`.
 
 If there are no repetitions, a positive message will be returned.
 
 ### investigate
 
-Did the vertical output from the `validate` function return repeated values? Are some of those values a high number that are repeated and need to be looked at more closely? The `investigate` function allows you to see what value was vertically repeated for a species. Parameters required are download state, type of download time period, value of the download date or download cycle, and species — all of this information is provided in the vertical `validate` output.
+Did the vertical output from the `validate` function return repeated values? Are some of those values a high number that are repeated and need to be looked at more closely? The `investigate` function allows you to see what value was vertically repeated for a species. Parameters required are download state, type of download time period, value of the download date or download cycle, and species.
 
 ```{r investigate}
 investigate(

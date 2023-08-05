@@ -388,7 +388,12 @@ strataCheck(DL1301_fixed)
 ```
 
 ```
-## # A tibble: 39 × 6
+## Joining with `by = join_by(dl_state, spp)`
+## Joining with `by = join_by(dl_state, spp, stateBagValue)`
+```
+
+```
+## # A tibble: 41 × 6
 ##    dl_state spp          state_strata normal_strata     n prop 
 ##    <chr>    <chr>        <chr>        <chr>         <int> <chr>
 ##  1 FL       dove_bag     0            1, 2, 3, 5        2 0%   
@@ -401,7 +406,7 @@ strataCheck(DL1301_fixed)
 ##  8 OR       ducks_bag    0            1, 2, 3, 4       11 1%   
 ##  9 OR       geese_bag    0            1, 2, 3, 4       11 1%   
 ## 10 TN       ducks_bag    0            1, 2, 3, 4       85 4%   
-## # ℹ 29 more rows
+## # ℹ 31 more rows
 ```
 
 ### validate
@@ -425,7 +430,7 @@ validate(DL1301_fixed, type = "horizontal")
 ##  4 MO20211229.txt 1        2697    3604       0.748
 ##  5 ME20211229.txt 1         112     151       0.742
 ##  6 NM20211229.txt 1         208     295       0.705
-##  7 ID20211229.txt 1        1764    2588       0.682
+##  7 ID20211229.txt 1        1759    2588       0.680
 ##  8 ND20211215.txt 1         130     204       0.637
 ##  9 CA20211229.txt 1        2003    3211       0.624
 ## 10 IN20211229.txt 1         416     690       0.603
@@ -433,8 +438,6 @@ validate(DL1301_fixed, type = "horizontal")
 ```
 
 <b>Vertically.</b> The vertical check searches within each column for repetition. Any species group column with the same value in all rows will be detected. The default version of this function (`all = FALSE`) only checks duck bags. If the parameter is set to `all = TRUE`, every species group will be checked.
-
-The two time period options to assess vertical repetition are `period = "dl_date"` (used automatically)...
 
 
 
@@ -445,23 +448,9 @@ validate(DL1301_fixed, type = "vertical")
 
 ```
 ## # A tibble: 1 × 4
-##   dl_state dl_date  species_grp v_repeated
-##   <chr>    <chr>    <chr>            <int>
-## 1 AK       20211228 ducks_bag           65
-```
-
-... and `period = "dl_cycle"`.
-
-
-```r
-validate(DL1301_fixed, type = "vertical", period = "dl_cycle")
-```
-
-```
-## # A tibble: 1 × 4
-##   dl_state dl_cycle species_grp v_repeated
-##   <chr>    <chr>    <chr>            <int>
-## 1 AK       1301     ducks_bag           65
+##   dl_state dl_date  spp       v_repeated
+##   <chr>    <chr>    <chr>          <int>
+## 1 AK       20211228 ducks_bag         65
 ```
 
 It is not possible to include as much detail in the vertical output as in the horizontal output without being specific about which state, species, and time scale you wish to assess. Vertical repetition returned in the output from this function can be looked at more closely using `investigate`.
@@ -470,7 +459,7 @@ If there are no repetitions, a positive message will be returned.
 
 ### investigate
 
-Did the vertical output from the `validate` function return repeated values? Are some of those values a high number that are repeated and need to be looked at more closely? The `investigate` function allows you to see what value was vertically repeated for a species. Parameters required are download state, type of download time period, value of the download date or download cycle, and species — all of this information is provided in the vertical `validate` output.
+Did the vertical output from the `validate` function return repeated values? Are some of those values a high number that are repeated and need to be looked at more closely? The `investigate` function allows you to see what value was vertically repeated for a species. Parameters required are download state, type of download time period, value of the download date or download cycle, and species.
 
 
 ```r
@@ -596,7 +585,8 @@ pullErrors(DL1301_proofed, field = "suffix")
 ```
 
 ```
-##  [1] "MD"  "ESQ" "MAL" "MR"  "W"   "CJS" "CME" "M"   "SMI" "I�M" "MO"  "MS"  "MRS" "-"
+##  [1] "MD"  "ESQ" "MAL" "MR"  "W"   "CJS" "CME" "M"   "SMI" "I�M"
+## [11] "MO"  "MS"  "MRS" "-"
 ```
 
 Running `pullErrors` on a field that has no errors will return a message.
@@ -897,10 +887,10 @@ redFlags(DL1301_proofed, type = "field", threshold = 0.01)
 
 ```
 ## # A tibble: 2 × 5
-##   errors          count_errors count_correct proportion flag        
-##   <chr>                  <int>         <int>      <dbl> <chr>       
-## 1 registration_yr         6592         41863     0.136  error > 0.01
-## 2 birth_date              1307         47148     0.0270 error > 0.01
+##   errors          count_errors count_correct proportion flag      
+##   <chr>                  <int>         <int>      <dbl> <chr>     
+## 1 registration_yr         6592         41863     0.136  error > 0…
+## 2 birth_date              1307         47148     0.0270 error > 0…
 ```
 
 ## Troubleshooting
