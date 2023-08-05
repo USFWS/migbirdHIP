@@ -97,9 +97,12 @@ identicalBags <-
               dl_state = state,
               value = stateBagValue,
               spp1 = spp) |>
-            mutate(
-              value = as.character(value),
-              flag1 = "no season"),
+            mutate(value = as.character(value)) |>
+            # Join in state/species combinations that are supposed to be
+            # all 0s because we receive those bag values in another format
+            bind_rows(pmt_files |> rename(spp1 = spp)) |>
+            distinct() |>
+            mutate(flag1 = "no season"),
           by = c("dl_state", "spp1", "value")
         ) |>
         left_join(
@@ -112,9 +115,12 @@ identicalBags <-
               dl_state = state,
               value = stateBagValue,
               spp2 = spp) |>
-            mutate(
-              value = as.character(value),
-              flag2 = "no season"),
+            mutate(value = as.character(value)) |>
+            # Join in state/species combinations that are supposed to be
+            # all 0s because we receive those bag values in another format
+            bind_rows(pmt_files |> rename(spp2 = spp)) |>
+            distinct() |>
+            mutate(flag2 = "no season"),
           by = c("dl_state", "spp2", "value")
         ) |>
         select(-dl_state) |>
