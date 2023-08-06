@@ -4,6 +4,7 @@
 #'
 #' @importFrom dplyr select
 #' @importFrom dplyr matches
+#' @importFrom dplyr all_of
 #' @importFrom dplyr group_by
 #' @importFrom dplyr mutate
 #' @importFrom dplyr n
@@ -78,7 +79,7 @@ validate <-
           select(
             dl_state,
             source_file,
-            matches("bag|coots|rails|cranes|pigeon|brant|seaducks")) |>
+            all_of(ref_bagfields)) |>
           group_by(source_file) |>
           # Add number of rows per source_file
           mutate(dl_rows = n()) |>
@@ -89,7 +90,7 @@ validate <-
           # Count the number of unique values in each species column
           summarize(
             across(
-              ducks_bag:seaducks,
+              all_of(ref_bagfields),
               ~length(unique(.x))),
             .groups = "keep") |>
           pivot_longer(
@@ -178,7 +179,7 @@ validate <-
             # Subset the data
             select(
               source_file,
-              matches("bag|coots|rails|cranes|pigeon|brant|seaducks")) |>
+              all_of(ref_bagfields)) |>
             group_by(source_file) |>
             # Paste all of the species group values together
             unite(h_string, !contains("source"), sep = "-") |>

@@ -3,6 +3,7 @@
 #' After checking the data with \code{\link{validate}}, look into reported repeated values to determine if they are worrisome.
 #'
 #' @importFrom dplyr select
+#' @importFrom dplyr all_of
 #' @importFrom dplyr filter
 #' @importFrom dplyr distinct
 #' @importFrom dplyr quo_name
@@ -30,7 +31,7 @@ investigate <-
 
     investigated_x <-
       x |>
-      select(dl_state, {{period_type}}, ducks_bag:seaducks, source_file) |>
+      select(dl_state, {{period_type}}, all_of(ref_bagfields), source_file) |>
       filter(dl_state == loc & !!sym(period_type) == period) |>
       select(quo_name(species), source_file) |>
       distinct()

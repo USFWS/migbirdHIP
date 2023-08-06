@@ -3,7 +3,6 @@
 #' Check to make sure the data from each file don't have any columns that are exactly the same.
 #'
 #' @importFrom dplyr select
-#' @importFrom dplyr matches
 #' @importFrom tidyr expand_grid
 #' @importFrom dplyr filter
 #' @importFrom dplyr mutate
@@ -34,18 +33,11 @@
 identicalBags <-
   function(x) {
 
-    # Get a list of species cols
-    spp <-
-      x |>
-      select(
-        matches("bag|coots|rails|cranes|pigeon|brant|seaducks")) |>
-      names()
-
     # Get species column combinations
     spp_combos <-
       expand_grid(
-        spp1 = spp,
-        spp2 = spp) |>
+        spp1 = ref_bagfields,
+        spp2 = ref_bagfields) |>
       filter(spp1 != spp2) |>
       mutate(id = row_number()) |>
       pivot_longer(cols = contains("spp")) |>

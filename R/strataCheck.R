@@ -3,6 +3,7 @@
 #' After fixing the data with \code{\link{fixDuplicates}}, ensure there are no new strata that have been introduced by a state to the species groups.
 #'
 #' @importFrom dplyr select
+#' @importFrom dplyr all_of
 #' @importFrom dplyr distinct
 #' @importFrom dplyr filter
 #' @importFrom dplyr group_by
@@ -61,7 +62,7 @@ strataCheck <-
     # hip_bags_ref?
     strata_x <-
       x |>
-      select(dl_state, ducks_bag:seaducks) |>
+      select(dl_state, all_of(ref_bagfields)) |>
       group_by(dl_state) |>
       pivot_longer(
         cols = !contains("dl"),
