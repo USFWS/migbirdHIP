@@ -1,9 +1,3 @@
----
-editor_options: 
-  markdown: 
-    wrap: 72
----
-
 # migbirdHIP (dev version)
 
 ## Major changes & new features
@@ -13,7 +7,7 @@ editor_options:
 -   New `fileCheck()` function
 -   New `shiftCheck()` function
 -   New `identicalBags()` function
--   New `glyphCheck()` function
+-   New `glyphCheck()` function; `glyphFinder()` no longer exported
 -   Templates
     -   New `dl_report.qmd` replaces `dl_report.Rmd`, with additional
         features

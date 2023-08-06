@@ -7,7 +7,7 @@
 glyphFinder(data, field)
 }
 \arguments{
-\item{data}{HIP data table at any point during pre-processing}
+\item{data}{The tibble created after reading in data with \code{\link{read_hip}}}
 
 \item{field}{Field that should be checked for non-UTF-8 characters. One of the fields from the following list may be supplied:
 \itemize{
