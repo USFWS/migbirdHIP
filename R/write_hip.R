@@ -9,6 +9,8 @@
 #' @importFrom dplyr filter
 #' @importFrom dplyr distinct
 #' @importFrom dplyr pull
+#' @importFrom dplyr group_by
+#' @importFrom dplyr ungroup
 #' @importFrom rlang sym
 #' @importFrom rlang :=
 #' @importFrom stringr str_detect
@@ -35,9 +37,6 @@ write_hip <-
       path <- paste0(path, "/")
     }
 
-    bagfields <-
-      names(x)[match("ducks_bag", names(x)):match("seaducks", names(x))]
-
     stratanames <-
       c("S_ducks", "S_geese", "S_doves", "S_woodcock", "S_coot_snipe",
         "S_rail_gallinule", "S_cranes", "S_bt_pigeons", "S_brant", "S_seaducks")
@@ -45,10 +44,10 @@ write_hip <-
     # Generate a list of translated bags for each species/species group
     bag_translations <-
       map(
-        1:length(bagfields),
+        1:length(ref_bagfields),
         ~hip_bags_ref |>
-          filter(spp == bagfields[.x]) |>
-          mutate(!!sym(bagfields[.x]) := as.character(stateBagValue)) |>
+          filter(spp == ref_bagfields[.x]) |>
+          mutate(!!sym(ref_bagfields[.x]) := as.character(stateBagValue)) |>
           select(-c("stateBagValue", "spp")) |>
           rename(
             dl_state = state,
@@ -56,14 +55,51 @@ write_hip <-
       )
 
     # Left join all the bag translations to the corrected data
-    for(i in 1:length(bagfields)) {
-
+    for(i in 1:length(ref_bagfields)) {
       x <-
         x |>
         left_join(
           bag_translations[[i]],
-          by = c("dl_state", bagfields[[i]])
+          by = c("dl_state", ref_bagfields[i])
         )
+    }
+
+    # Generate a list of zeros for each no-season state/species
+    zero_translations <-
+      map(
+        1:length(ref_bagfields),
+        ~hip_bags_ref |>
+          select(-stateBagValue) |>
+          group_by(state, spp) |>
+          filter(n() == 1) |>
+          ungroup() |>
+          filter(spp == ref_bagfields[.x]) |>
+          mutate(!!sym(stratanames[.x]) := NA) |>
+          select(-spp) |>
+          rename(
+            dl_state = state,
+            !!sym(paste0(stratanames[.x], "_0s")) := FWSstratum)
+      )
+
+    # If a season doesn't exist, make sure the translation is 0 (not NA)
+    for(i in 1:length(ref_bagfields)) {
+      if(nrow(zero_translations[[i]]) > 0) {
+        x <-
+          x |>
+          left_join(
+            zero_translations[[i]],
+            by = c("dl_state", stratanames[i])) |>
+          mutate(
+            !!sym(stratanames[i]) :=
+              ifelse(
+                is.na(!!sym(paste0(stratanames[i]))) &
+                  !is.na(!!sym(paste0(stratanames[i], "_0s"))),
+                !!sym(paste0(stratanames[i], "_0s")),
+                !!sym(paste0(stratanames[i]))
+              )
+          ) |>
+          select(-!!sym(paste0(stratanames[i], "_0s")))
+      }
     }
 
     # Generate the polished output table
@@ -100,7 +136,7 @@ write_hip <-
         # pipe a dot above
         source_file = str_remove(source_file, "\\/"))
 
-    if(split == TRUE){
+    if(split == TRUE) {
       # Split data and write each input file to its own output file
       final_list <- split(final_table, f = final_table$source_file)
       rm(final_table)
@@ -112,13 +148,12 @@ write_hip <-
           file = str_replace(
             paste0(path,
                    final_list[[.x]] |>
-                     select(source_file) |>
-                     distinct() |>
+                     distinct(source_file) |>
                      pull()),
             ".txt$",
             ".csv"),
           na = ""))
-    }else{
+    } else {
       # Write data to a single csv
       fwrite(
         final_table,
