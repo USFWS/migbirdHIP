@@ -12,27 +12,29 @@ Program](https://www.fws.gov/harvestsurvey) data.
 
 Tasks that can be accomplished with this package include:
 
--   `read_hip` imports data
--   `strataCheck` identifies any new strata
--   `validate` checks for table-wide repetition
--   `clean` does basic reorganization tasks
--   `issueCheck` looks for records that should be processed later
--   `findDuplicates` identifies duplicate HIP records
--   `fixDuplicates` resolves duplicate HIP records
--   `investigate` reports details on repeated values
--   `proof` checks values for errors
--   `correct` systematically fixes erroneous values
--   `shiftFix` corrects line shift errors
--   `manualFix` lets the user fix any remaining unsatisfactory values
--   `glyphFinder` identifies non-UTF-8 characters in any given field
--   Error visualization with `errorPlot_dl`, `errorPlot_fields`, and
-    `errorPlot_states`
--   Exploration of specific errors with `youthHunters` and
-    `outOfStateHunters`
--   Detailed error reporting with `errorTable`, `pullErrors`, and
-    `redFlags`
--   Automated report writing with `writeReport`
--   Custom .csv writing with `write_hip`
+- `read_hip` imports data
+- `clean` does basic reorganization tasks
+- `fileCheck` makes sure all files are new
+- `glyphCheck` identifies non-UTF-8 characters
+- `shiftCheck` finds line shift errors and `shiftFix` corrects them
+- `strataCheck` identifies any new strata
+- `validate` checks for table-wide repetition
+- `identicalBags` checks for matching columns within files
+- `issueCheck` looks for records that should be processed later
+- `findDuplicates` identifies duplicate HIP records
+- `fixDuplicates` resolves duplicate HIP records
+- `investigate` reports details on repeated values
+- `proof` checks values for errors
+- `correct` systematically fixes erroneous values
+- Error visualization with `errorPlot_dl`, `errorPlot_fields`, and
+  `errorPlot_states`
+- Exploration of specific errors with `youthHunters` and
+  `outOfStateHunters`
+- Detailed error reporting with `errorTable`, `pullErrors`, and
+  `redFlags`
+- `manualFix` lets the user fix any remaining unsatisfactory values
+- Automated report writing with `writeReport`
+- Custom .csv writing with `write_hip`
 
 ## Installation
 
