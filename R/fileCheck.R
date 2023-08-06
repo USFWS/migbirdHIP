@@ -23,6 +23,14 @@
 
 fileCheck <-
   function(raw_path, processed_path) {
+    # Add a final "/" to raw_path if not included already
+    if(!str_detect(raw_path, "\\/$")) {
+      raw_path <- paste0(raw_path, "/")
+    }
+    # Add a final "/" to processed_path if not included already
+    if(!str_detect(processed_path, "\\/$")) {
+      processed_path <- paste0(processed_path, "/")
+    }
     if(TRUE %in%
        (str_replace(list.files(raw_path, recursive = F), "TXT", "txt") %in%
         str_replace(list.files(processed_path, recursive = F), "csv", "txt"))) {
