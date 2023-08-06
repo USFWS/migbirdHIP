@@ -19,9 +19,9 @@ writeReport(path, temp_path, future_path, past_path, year, dl, dir, file)
 
 \item{dl}{Download cycle}
 
-\item{dir}{Folder in which to save the completed report}
+\item{dir}{Folder in which to save the rendered report}
 
-\item{file}{What the report file should be named}
+\item{file}{What the report file should be named (do not include an extension or suffix indicating file type, this is done automatically)}
 }
 \description{
 Create documentation with figures and tables that summarizes HIP data at a download cycle scale.

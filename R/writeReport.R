@@ -6,13 +6,13 @@
 #' @importFrom stringr str_detect
 #'
 #' @param path File path to the folder containing HIP .txt files
-#' @param year The year in which the Harvest Information Program data were collected
-#' @param dl Download cycle
 #' @param temp_path Path to directory that contains output .csv files
 #' @param future_path Path to directory that contains future data .csv files
 #' @param past_path Path to directory that contains past data .csv files
-#' @param dir Folder in which to save the completed report
-#' @param file What the report file should be named
+#' @param year The year in which the Harvest Information Program data were collected
+#' @param dl Download cycle
+#' @param dir Folder in which to save the rendered report
+#' @param file What the report file should be named (do not include an extension or suffix indicating file type, this is done automatically)
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}
