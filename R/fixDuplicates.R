@@ -4,7 +4,6 @@
 #'
 #' @importFrom dplyr group_by
 #' @importFrom dplyr mutate
-#' @importFrom dplyr mutate_at
 #' @importFrom dplyr ungroup
 #' @importFrom dplyr filter
 #' @importFrom dplyr arrange
@@ -12,6 +11,7 @@
 #' @importFrom dplyr across
 #' @importFrom dplyr vars
 #' @importFrom dplyr matches
+#' @importFrom dplyr all_of
 #' @importFrom dplyr select
 #' @importFrom dplyr anti_join
 #' @importFrom dplyr slice_sample
@@ -115,9 +115,7 @@ fixDuplicates <-
         # Check records for all 0s or all 1s
         x_bags =
           pmap_chr(
-            select(
-              sdbr_dupes,
-              matches("bag|coots|rails|cranes|pigeon|brant|seaducks")),
+            select(sdbr_dupes, all_of(ref_bagfields)),
             ~case_when(
               # Look for 0s in every species column
               all(c(...) == "0") ~ "zeros",
@@ -304,9 +302,7 @@ fixDuplicates <-
         # Check records for all 0s or all 1s
         x_bags =
           pmap_chr(
-            select(
-              seaduck_dupes,
-              matches("bag|coots|rails|cranes|pigeon|brant|seaducks")),
+            select(seaduck_dupes, all_of(ref_bagfields)),
             ~case_when(
               # Look for 0s in every species column
               all(c(...) == "0") ~ "zeros",
@@ -491,9 +487,7 @@ fixDuplicates <-
         # Check records for all 0s or all 1s
         x_bags =
           pmap_chr(
-            select(
-              other_dupes,
-              matches("bag|coots|rails|cranes|pigeon|brant|seaducks")),
+            select(other_dupes, all_of(ref_bagfields)),
             ~case_when(
               # Look for 0s in every species column
               all(c(...) == "0") ~ "zeros",
@@ -614,10 +608,11 @@ fixDuplicates <-
       # Filter the duplicates to those that occur in permit states
       filter(dl_state %in% unique(pmt_inline$dl_state)) |>
       # Set "." to NA in take fields & make those fields numeric
-      mutate_at(
-        vars(matches("bag|coots|rails")),
-        ~str_replace(., "\\.", NA_character_) |>
-          as.numeric(.)) |>
+      mutate(
+        across(
+          matches("bag|coots|rails"),
+          ~str_replace(.x, "\\.", NA_character_) |>
+          as.numeric(.))) |>
       # Calculate sum of values in the non-permit species columns to use as a
       # proxy.
       # Note: We can no longer use "special_sum" == 0 because the value for
@@ -628,8 +623,8 @@ fixDuplicates <-
       mutate(
         other_sum = rowSums(across(matches("bag|coots|rails")), na.rm = T)) |>
       # Reset bags to character for row bind later
-      mutate_at(vars(matches("bag|coots|rails")), ~as.character(.)) |>
       mutate(
+        across(matches("bag|coots|rails"), ~as.character(.x)),
         record_type =
           case_when(
             # If the sum of values in non-permit species columns is > 0, the
@@ -682,9 +677,7 @@ fixDuplicates <-
         # Check records for all 0s or all 1s
         x_bags =
           pmap_chr(
-            select(
-              hip_dupes,
-              matches("bag|coots|rails|cranes|pigeon|brant|seaducks")),
+            select(hip_dupes, all_of(ref_bagfields)),
             ~case_when(
               # Look for 0s in every species column
               all(c(...) == "0") ~ "zeros",
@@ -813,18 +806,17 @@ fixDuplicates <-
       # These records should all be HIP
       mutate(record_type = "HIP") |>
       # Classify solo permit records as PMT
-      mutate_at(
-        vars(matches("bag|coots|rails|band|brant|seaducks")),
-        ~as.numeric(.)) |>
       mutate(
+        across(
+          matches("bag|coots|rails|band|brant|seaducks"),
+          ~as.numeric(.x)),
         other_sum =
           rowSums(across(matches("bag|coots|rails")), na.rm = T),
         special_sum =
-          rowSums(across(matches("band|brant|seaducks")), na.rm = T)) |>
-      mutate_at(
-        vars(matches("bag|coots|rails|band|brant|seaducks")),
-        ~as.character(.)) |>
-      mutate(
+          rowSums(across(matches("band|brant|seaducks")), na.rm = T),
+        across(
+          matches("bag|coots|rails|band|brant|seaducks"),
+          ~as.character(.x)),
         record_type =
           ifelse(
             other_sum == 0 & special_sum > 0 & dl_state %in% unique(pmt_inline$dl_state),

@@ -3,7 +3,6 @@
 #' Determine how many duplicate records are in the data. Plot and tabulate which fields are duplicates of individual hunters (i.e. data grouped by first name, last name, state, and birth date, registration year, and download state).
 #'
 #' @importFrom dplyr mutate
-#' @importFrom dplyr mutate_at
 #' @importFrom dplyr row_number
 #' @importFrom dplyr group_by
 #' @importFrom dplyr n
@@ -17,6 +16,7 @@
 #' @importFrom dplyr across
 #' @importFrom dplyr vars
 #' @importFrom dplyr matches
+#' @importFrom dplyr all_of
 #' @importFrom stringr str_detect
 #' @importFrom stringr str_remove
 #' @importFrom dplyr case_when
@@ -56,10 +56,10 @@ findDuplicates <-
       pmts <-
         x |>
         # Classify solo permit records as PMT
-        mutate_at(
-          vars(matches("bag|coots|rails|cranes|band|brant|seaducks")),
-          ~as.numeric(.)) |>
         mutate(
+          across(
+            all_of(ref_bagfields),
+            ~as.numeric(.x)),
           other_sum =
             rowSums(across(matches("bag|coots|rails")), na.rm = T),
           special_sum =

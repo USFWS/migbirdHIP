@@ -4,7 +4,6 @@
 #'
 #' @importFrom tibble as_tibble_col
 #' @importFrom dplyr mutate
-#' @importFrom dplyr mutate_at
 #' @importFrom dplyr across
 #' @importFrom dplyr vars
 #' @importFrom dplyr matches
@@ -188,9 +187,10 @@ read_hip <-
                 is.na(birth_date)) |>
             select(dl_state, firstname, lastname, state, birth_date) |>
             rename(X = state) |>
-            mutate_at(
-              vars(matches("firstname|lastname|X|birth_date")),
-              ~ifelse(is.na(.), "1", NA) |> as.numeric(.)) |>
+            mutate(
+              across(
+                matches("firstname|lastname|X|birth_date"),
+                ~ifelse(is.na(.x), 1, NA))) |>
             mutate(
               sum =
                 rowSums(

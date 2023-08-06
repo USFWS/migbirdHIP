@@ -28,11 +28,13 @@
     (e.g. NM band-tailed pigeon = 2).
 -   `validate()` was edited to return source file field in output and
     filter out states and species with no season from output.
+-   `write_hip()` sets any state/species combinations without a season to have strata of 0; bad bag values remain NA
 -   `sysdata.rda`
     -   Added vectors of abbreviated US territories and Canada
         provinces/territories, both updated to include missing
         abbreviations from previous versions and remove redundant
         abbreviations
+    -   Added vector of bag field names
     -   Added vector of two-season states
     -   Added vectors of seaduck and brant states, seaduck-only states,
         brant-only states, and two-season states
