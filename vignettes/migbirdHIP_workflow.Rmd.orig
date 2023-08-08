@@ -86,7 +86,7 @@ renameFiles(path = "C:/HIP/DL1301", year = 2021)
 
 Check if any files in the input folder have already been written to the processed folder.
 
-``{r filecheck, eval = FALSE}
+```{r filecheck, eval = FALSE}
 fileCheck(
   raw_path = "C:/HIP/DL1301",
   processed_path = "C:/HIP/corrected_data"
