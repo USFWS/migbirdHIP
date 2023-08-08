@@ -113,4 +113,5 @@ utils::globalVariables(
     "n_unique_values",
     "v_repeated",
     "repeated_value",
-    "zipcode"))
+    "zipcode",
+    "assigned_data"))
