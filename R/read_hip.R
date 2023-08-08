@@ -4,11 +4,6 @@
 #'
 #' @importFrom tibble as_tibble_col
 #' @importFrom dplyr mutate
-#' @importFrom dplyr across
-#' @importFrom dplyr vars
-#' @importFrom dplyr matches
-#' @importFrom dplyr arrange
-#' @importFrom dplyr desc
 #' @importFrom dplyr filter
 #' @importFrom dplyr pull
 #' @importFrom dplyr group_by
@@ -170,43 +165,29 @@ read_hip <-
 
       # Return a message for records with blank or NA values in firstname,
       # lastname, state, or birth date
-      if(TRUE %in% is.na(pulled_data$firstname) |
-         TRUE %in% is.na(pulled_data$lastname) |
-         TRUE %in% is.na(pulled_data$state) |
-         TRUE %in% is.na(pulled_data$birth_date)){
-        message(
-          paste0("Error: One or more NA values detected in ID fields ",
-                 "(firstname, lastname, state, birth date)."))
+      raw_nas <-
+        pulled_data |>
+        group_by(dl_state) |>
+        mutate(n_total = n()) |>
+        ungroup() |>
+        filter(
+          is.na(firstname)|is.na(lastname)|is.na(state)|is.na(birth_date)) |>
+        group_by(dl_state) |>
+        reframe(n = n(), prop = round(n/n_total, 2)) |>
+        distinct() |>
+        filter(n >= 100 | prop >= 0.1)
 
-        print(
-          pulled_data |>
-            filter(
-              is.na(firstname)|
-                is.na(lastname)|
-                is.na(state)|
-                is.na(birth_date)) |>
-            select(dl_state, firstname, lastname, state, birth_date) |>
-            rename(X = state) |>
-            mutate(
-              across(
-                matches("firstname|lastname|X|birth_date"),
-                ~ifelse(is.na(.x), 1, NA))) |>
-            mutate(
-              sum =
-                rowSums(
-                  across(matches("firstname|lastname|X|birth_date")),
-                  na.rm = T),
-              prop = sum/4) |>
-            group_by(dl_state) |>
-            summarize(
-              mean_prop = mean(prop),
-              n = n()
-            ) |>
-            ungroup() |>
-            arrange(desc(mean_prop)))}
+      if(nrow(raw_nas) > 0) {
+        message(
+          paste0("Error: NA values detected in one or more ID fields ",
+                 "(firstname, lastname, state, birth date) for >10% of a file ",
+                 "and/or >100 records."))
+
+        print(raw_nas)
+      }
 
       # Return a message if there is an NA in dl_state
-      if(TRUE %in% is.na(pulled_data$dl_state)){
+      if(TRUE %in% is.na(pulled_data$dl_state)) {
         message(
           paste0("Error: One or more more NA values detected in dl_state."))
 
@@ -214,10 +195,11 @@ read_hip <-
           pulled_data |>
             distinct(dl_state, source_file) |>
             filter(is.na(dl_state))
-        )}
+        )
+      }
 
       # Return a message if there is an NA in dl_date
-      if(TRUE %in% is.na(pulled_data$dl_date)){
+      if(TRUE %in% is.na(pulled_data$dl_date)) {
         message(
           paste0("Error: One or more more NA values detected in dl_date."))
 
@@ -225,7 +207,8 @@ read_hip <-
           pulled_data |>
             select(dl_date, source_file) |>
             filter(is.na(dl_date)) |>
-            distinct())}
+            distinct())
+      }
 
       # Return a message if all emails are missing from a file
       if(nrow(
@@ -233,7 +216,7 @@ read_hip <-
         group_by(source_file) |>
         summarize(n_emails = length(unique(email))) |>
         ungroup() |>
-        filter(n_emails == 1)) > 0){
+        filter(n_emails == 1)) > 0) {
         message(
           paste0("Error: One or more files are missing 100% of emails."))
 
@@ -243,7 +226,8 @@ read_hip <-
             summarize(n_emails = length(unique(email))) |>
             ungroup() |>
             filter(n_emails == 1) |>
-            select(source_file))}
+            select(source_file))
+      }
 
       # Check if all dl_states are acceptable
       # States in the data
@@ -254,7 +238,7 @@ read_hip <-
       # continental US states
       if(FALSE %in%
          (dl_states_in_data |> pull(dl_state) %in%
-          datasets::state.abb[datasets::state.abb != "HI"])){
+          datasets::state.abb[datasets::state.abb != "HI"])) {
         message(
           paste0("Error: One or more dl_state values do not belong in the ",
                  "list of expected 49 continental US states."))
@@ -265,7 +249,8 @@ read_hip <-
               !dl_state %in% datasets::state.abb[datasets::state.abb != "HI"]
             ) |>
             pull()
-        )}
+        )
+      }
 
       return(pulled_data)
     }
