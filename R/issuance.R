@@ -172,7 +172,7 @@ issueCheck <-
 
     # Plot results
     if(plot == TRUE){
-      issuePlot(assigned_data, year)
+      issuePlot(issue_assignments, year)
     }
 
     # Create future data frame
