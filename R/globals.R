@@ -97,7 +97,6 @@ utils::globalVariables(
     "xmax",
     "ymin",
     "ymax",
-    "bad_zip",
     "type",
     "count_records_correct",
     "count_records_w_error",

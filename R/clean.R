@@ -122,34 +122,37 @@ clean <-
             str_remove(zip, "\\-\\_+"),
             zip)) |>
       # Delete white space around strings again
-      mutate_all(str_trim) |>
-      # Proof the zip codes -- are they associated with the correct states?
+      mutate_all(str_trim)
+
+    # Proof the zip codes -- are they associated with the correct states?
+    zipcheck <-
+      cleaned_x |>
       left_join(
         zip_code_ref |>
           distinct(zip = zipcode, zipState = state),
-        by = "zip")
+        by = "zip") |>
+      select(source_file, state, zip, zipState) |>
+      group_by(source_file) |>
+      mutate(total_records = n()) |>
+      ungroup() |>
+      filter(state != zipState) |>
+      group_by(source_file) |>
+      reframe(
+        n = n(),
+        prop = round(n/total_records, 2)) |>
+      distinct() |>
+      arrange(desc(n)) |>
+      filter(n >= 100 | prop >= 0.1)
 
     # Error check: are any zip codes wrong?
-    if(TRUE %in% (cleaned_x$state != cleaned_x$zipState)){
+    if(nrow(zipcheck) > 0){
       message(
         paste0("Warning: Zip codes detected that do not correspond to ",
-               "provided state of residence."))
+               "provided state of residence for >10% of a file ",
+               "and/or >100 records."))
 
-      print(
-        cleaned_x |>
-          select(source_file, state, zip, zipState) |>
-          group_by(source_file) |>
-          mutate(total_records = n()) |>
-          ungroup() |>
-          filter(state != zipState) |>
-          group_by(source_file) |>
-          reframe(
-            bad_zip = n(),
-            prop = round(bad_zip/total_records, 3)) |>
-          distinct() |>
-          arrange(desc(bad_zip))
-      )
+      print(zipcheck)
     }
 
-    return(cleaned_x |> select(-zipState))
+    return(cleaned_x)
   }
