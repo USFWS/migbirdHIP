@@ -52,7 +52,9 @@ glyphCheck <-
         names(data),
         ~glyphFinder(data, .x) |>
           rename(value = !!sym(.x)) |>
-          mutate(field = .x) |>
+          mutate(
+            field = .x,
+            value = as.character(value)) |>
           relocate(field, .before = "value")
       ) |>
       filter(!is.na(value)) |>
