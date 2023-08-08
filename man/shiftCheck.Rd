@@ -10,7 +10,7 @@ shiftCheck(data)
 \item{data}{A raw data table created by \code{\link{read_hip}}}
 }
 \description{
-Find and print any rows that have a line shift error.
+Find and print any rows that have a line shift error with number of positions shifted.
 }
 \references{
 \url{https://github.com/USFWS/migbirdHIP}

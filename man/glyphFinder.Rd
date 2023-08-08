@@ -14,7 +14,7 @@ glyphFinder(data, field)
 \item title, firstname, middle, lastname, suffix, address, city, state, zip, birth_date, issue_date, hunt_mig_birds, ducks_bag, geese_bag, dove_bag, woodcock_bag, coots_snipe, rails_gallinules, cranes, band_tailed_pigeon, brant, seaducks, registration_year, email}}
 }
 \description{
-Pull and view non-UTF-8 characters in a field when R throws error 'invalid UTF-8 byte sequence detected'.
+The internal \code{glyphFinder} function pulls non-UTF-8 characters in a field.
 }
 \references{
 \url{https://github.com/USFWS/migbirdHIP}

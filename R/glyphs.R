@@ -1,6 +1,6 @@
 #' Find non-UTF-8 glyphs/characters in a field
 #'
-#' Pull and view non-UTF-8 characters in a field when R throws error 'invalid UTF-8 byte sequence detected'.
+#' The internal \code{glyphFinder} function pulls non-UTF-8 characters in a field.
 #'
 #' @importFrom dplyr select
 #' @importFrom rlang sym
