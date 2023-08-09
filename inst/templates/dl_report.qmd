@@ -1144,6 +1144,7 @@ Files were received from the following yellow states. Hexagons shaded blue, oran
 
 if(params$dl == "0799") {
   cat("Map not available for this report.")
+  files_received <- NULL
 } else {
   files_received <- 
     # Get all of the received files up to and including this download
