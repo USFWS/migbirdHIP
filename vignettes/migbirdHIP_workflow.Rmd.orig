@@ -28,7 +28,6 @@ vignette: >
     - [strataCheck](#stratacheck)
     - [identicalBags](#identicalbags)
     - [validate](#validate)
-    - [investigate](#investigate)
 - [Part B: Data Proofing and Correction](#part-b-data-proofing-and-correction)
     - [proof](#proof)
     - [correct](#correct)
@@ -323,22 +322,9 @@ DL1301_fixed <-
 validate(DL1301_fixed, type = "vertical")
 ```
 
-It is not possible to include as much detail in the vertical output as in the horizontal output without being specific about which state, species, and time scale you wish to assess. Vertical repetition returned in the output from this function can be looked at more closely using `investigate`.
+It is not possible to include as much detail in the vertical output as in the horizontal output without being specific about which state, species, and time scale you wish to assess.
 
 If there are no repetitions, a positive message will be returned.
-
-### investigate
-
-Did the vertical output from the `validate` function return repeated values? Are some of those values a high number that are repeated and need to be looked at more closely? The `investigate` function allows you to see what value was vertically repeated for a species. Parameters required are download state, type of download time period, value of the download date or download cycle, and species.
-
-```{r investigate}
-investigate(
-  DL1301_fixed,
-  loc = "AK",
-  period_type = "dl_date",
-  period = "20211228",
-  species = "ducks_bag")
-```
 
 ## Part B: Data Proofing and Correction
 

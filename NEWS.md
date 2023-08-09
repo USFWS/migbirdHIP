@@ -20,6 +20,7 @@
 -   Added 2 new internal package functions (`issueAssign()` and `issuePlot`), used inside of `issueCheck()` and by the download report
 -   `strataCheck()` now returns 2 additional fields in output; number of bad strata and proportion of bad strata. It also checks for permit species coming during regular HIP and returns them as erroneous (e.g. NM band-tailed pigeon = 2).
 -   `validate()` was edited to return source file field in output and filter out states and species with no season from output.
+-   `investigate()` no longer exported; it works inside of `validate()` to return a more detailed output without running `investigate()` separately
 -   `write_hip()` sets any state/species combinations without a season to have strata of 0; bad bag values remain NA
 -   `sysdata.rda`
     -   Added vectors of abbreviated US territories and Canada provinces/territories, both updated to include missing abbreviations from previous versions and remove redundant abbreviations

@@ -23,7 +23,6 @@ Tasks that can be accomplished with this package include:
 - `issueCheck` looks for records that should be processed later
 - `findDuplicates` identifies duplicate HIP records
 - `fixDuplicates` resolves duplicate HIP records
-- `investigate` reports details on repeated values
 - `proof` checks values for errors
 - `correct` systematically fixes erroneous values
 - Error visualization with `errorPlot_dl`, `errorPlot_fields`, and
