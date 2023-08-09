@@ -1065,10 +1065,12 @@ States with more than 1% error before correction
 #| echo: false
 
 rfstate <-
-  migbirdHIP::redFlags(
-    proofed_data, 
-    type = "state", 
-    threshold = 0.01) 
+  suppressMessages(
+    migbirdHIP::redFlags(
+      proofed_data, 
+      type = "state", 
+      threshold = 0.01) 
+  )
 
 if(!is.null(rfstate)) {
   kableExtra::kbl(
@@ -1080,13 +1082,9 @@ if(!is.null(rfstate)) {
       `Correct count` = count_correct,
       Proportion = proportion)
     ) |>
-    # kableExtra::kable_styling(
-    #   bootstrap_options = "striped",
-    #   full_width = F) 
     kableExtra::kable_styling(full_width = F) |> 
     kableExtra::row_spec(
       1:nrow(rfstate), extra_css = "padding: 3px;")
-  
 } else {
   cat("✔️ No states exceeded the error threshold!")
 }
@@ -1100,23 +1098,24 @@ Fields with more than 1% error before correction
 #| echo: false
 
 rffield <-
-  migbirdHIP::redFlags(
-    proofed_data, 
-    type = "field", 
-    threshold = 0.01) |>
-    dplyr::mutate(proportion = paste0(round(proportion, 2)*100, "%")) |>
-    dplyr::select(
-      Field = errors,
-      `Error count` = count_errors,
-      `Correct count` = count_correct,
-      Proportion = proportion
+  suppressMessages(
+    migbirdHIP::redFlags(
+      proofed_data, 
+      type = "field", 
+      threshold = 0.01)
     )
 
 if(nrow(rffield) > 0) {
-  kableExtra::kbl(rffield) |>
-    # kableExtra::kable_styling(
-    #   bootstrap_options = "striped",
-    #   full_width = F)
+  kableExtra::kbl(
+    rffield |> 
+      dplyr::mutate(proportion = paste0(round(proportion, 2)*100, "%")) |>
+      dplyr::select(
+        Field = errors,
+        `Error count` = count_errors,
+        `Correct count` = count_correct,
+        Proportion = proportion
+      )
+    ) |>
     kableExtra::kable_styling(full_width = F) |> 
     kableExtra::row_spec(
       1:nrow(rffield), extra_css = "padding: 3px;")
