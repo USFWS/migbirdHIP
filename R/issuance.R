@@ -17,7 +17,7 @@
 #' @param future_outpath Directory where future data should be saved as .csv
 #' @param past_outpath Directory where past data should be saved as .csv
 #' @param plot Create a plot? Default is FALSE
-#' @param write Defaults to TRUE; should future data be written as .csv?
+#' @param write Defaults to TRUE; should future data and past data be written out as .csv files?
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}

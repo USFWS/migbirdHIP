@@ -24,7 +24,7 @@ issueCheck(
 
 \item{plot}{Create a plot? Default is FALSE}
 
-\item{write}{Defaults to TRUE; should future data be written as .csv?}
+\item{write}{Defaults to TRUE; should future data and past data be written out as .csv files?}
 }
 \description{
 After cleaning the data with \code{\link{clean}}, ensure each record is assigned the appropriate registration_yr.
