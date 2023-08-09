@@ -118,24 +118,6 @@ library(migbirdHIP)
 DL1301 <- read_hip("C:/HIP/DL1301")
 ```
 
-```
-## # A tibble: 12 × 3
-##    dl_state mean_prop     n
-##    <chr>        <dbl> <int>
-##  1 LA           1         1
-##  2 WV           0.75      1
-##  3 IN           0.667     3
-##  4 FL           0.25      5
-##  5 GA           0.25     11
-##  6 IA           0.25      4
-##  7 ID           0.25      1
-##  8 ME           0.25      1
-##  9 OK           0.25     25
-## 10 OR           0.25      1
-## 11 TN           0.25      9
-## 12 VA           0.25      7
-```
-
 Did you get a warning or three? Read an explanation of common `read_hip` warnings, [below](#common-read_hip-warnings).
 
 ### glyphCheck
@@ -226,32 +208,6 @@ After data are read and unshifted, we `clean`:
 
 ```r
 DL1301_clean <- clean(DL1301_unshifted)
-```
-
-```
-## Warning: Zip codes detected that do not correspond to provided state of residence.
-```
-
-```
-## # A tibble: 16 × 3
-##    source_file    bad_zip  prop
-##    <chr>            <int> <dbl>
-##  1 MO20211229.txt      39 0.011
-##  2 NE20211217.txt      15 0.017
-##  3 AL20211229.txt       7 0.001
-##  4 NE20211222.txt       6 0.014
-##  5 LA20211217.txt       5 0.008
-##  6 ID20211229.txt       4 0.002
-##  7 WA20211229.txt       4 0.003
-##  8 IA20211215.txt       3 0.001
-##  9 OK20211229.txt       3 0.001
-## 10 WA20211215.txt       3 0.002
-## 11 UT20211229.txt       2 0.003
-## 12 FL20211229.txt       1 0    
-## 13 ME20211229.txt       1 0.007
-## 14 NM20211229.txt       1 0.003
-## 15 OR20211229.txt       1 0.001
-## 16 TN20211229.txt       1 0
 ```
 
 This function does simple data cleaning. Importantly, records are discarded if first name, last name, birth date, state of residence, address AND email, OR city AND zip AND email are missing.
@@ -410,24 +366,26 @@ strataCheck(DL1301_fixed)
 
 ```
 ## Joining with `by = join_by(dl_state, spp)`
-## Joining with `by = join_by(dl_state, spp, stateBagValue)`
+## Joining with `by = join_by(dl_state, spp,
+## stateBagValue)`
 ```
 
 ```
 ## # A tibble: 41 × 6
-##    dl_state spp          state_strata normal_strata     n prop 
-##    <chr>    <chr>        <chr>        <chr>         <int> <chr>
-##  1 FL       dove_bag     0            1, 2, 3, 5        2 0%   
-##  2 IA       dove_bag     0            1, 2, 3, 5      279 9%   
-##  3 OR       dove_bag     0            1, 2, 3, 5       11 1%   
-##  4 TN       dove_bag     0            1, 2, 3, 5       85 4%   
-##  5 TN       woodcock_bag 0            1, 2, 3, 5       85 4%   
-##  6 IA       ducks_bag    0            1, 2, 3, 4     2841 89%  
-##  7 IA       geese_bag    0            1, 2, 3, 4     2841 89%  
-##  8 OR       ducks_bag    0            1, 2, 3, 4       11 1%   
-##  9 OR       geese_bag    0            1, 2, 3, 4       11 1%   
-## 10 TN       ducks_bag    0            1, 2, 3, 4       85 4%   
+##    dl_state spp       state_strata normal_strata     n
+##    <chr>    <chr>     <chr>        <chr>         <int>
+##  1 FL       dove_bag  0            1, 2, 3, 5        2
+##  2 IA       dove_bag  0            1, 2, 3, 5      279
+##  3 OR       dove_bag  0            1, 2, 3, 5       11
+##  4 TN       dove_bag  0            1, 2, 3, 5       85
+##  5 TN       woodcock… 0            1, 2, 3, 5       85
+##  6 IA       ducks_bag 0            1, 2, 3, 4     2841
+##  7 IA       geese_bag 0            1, 2, 3, 4     2841
+##  8 OR       ducks_bag 0            1, 2, 3, 4       11
+##  9 OR       geese_bag 0            1, 2, 3, 4       11
+## 10 TN       ducks_bag 0            1, 2, 3, 4       85
 ## # ℹ 31 more rows
+## # ℹ 1 more variable: prop <chr>
 ```
 
 ### identicalBags
@@ -441,18 +399,18 @@ identicalBags(DL1301_fixed)
 
 ```
 ## # A tibble: 23 × 5
-##    source_file    spp1               spp2                 n value  
-##    <chr>          <chr>              <chr>            <int> <chr>  
-##  1 CT20211229.txt coots_snipe        dove_bag            87 1      
-##  2 IA20211215.txt brant              woodcock_bag      3175 0, 1, 2
-##  3 IA20211215.txt brant              rails_gallinules  3175 0, 1, 2
-##  4 IA20211215.txt rails_gallinules   woodcock_bag      3175 0, 1, 2
-##  5 KY20211228.txt band_tailed_pigeon cranes             984 1      
-##  6 KY20211228.txt band_tailed_pigeon brant              984 1      
-##  7 KY20211228.txt band_tailed_pigeon seaducks           984 1      
-##  8 KY20211228.txt brant              cranes             984 1      
-##  9 KY20211228.txt brant              seaducks           984 1      
-## 10 KY20211228.txt cranes             seaducks           984 1      
+##    source_file    spp1               spp2      n value
+##    <chr>          <chr>              <chr> <int> <chr>
+##  1 CT20211229.txt coots_snipe        dove…    87 1    
+##  2 IA20211215.txt brant              wood…  3175 0, 1…
+##  3 IA20211215.txt brant              rail…  3175 0, 1…
+##  4 IA20211215.txt rails_gallinules   wood…  3175 0, 1…
+##  5 KY20211228.txt band_tailed_pigeon cran…   984 1    
+##  6 KY20211228.txt band_tailed_pigeon brant   984 1    
+##  7 KY20211228.txt band_tailed_pigeon sead…   984 1    
+##  8 KY20211228.txt brant              cran…   984 1    
+##  9 KY20211228.txt brant              sead…   984 1    
+## 10 KY20211228.txt cranes             sead…   984 1    
 ## # ℹ 13 more rows
 ```
 
@@ -477,7 +435,7 @@ validate(DL1301_fixed, type = "horizontal")
 ##  4 MO20211229.txt 1        2697    3604       0.748
 ##  5 ME20211229.txt 1         112     151       0.742
 ##  6 NM20211229.txt 1         208     295       0.705
-##  7 ID20211229.txt 1        1760    2588       0.680
+##  7 ID20211229.txt 1        1762    2588       0.681
 ##  8 CT20211229.txt 1          57      87       0.655
 ##  9 ND20211215.txt 1         130     204       0.637
 ## 10 CA20211229.txt 1        2003    3211       0.624
@@ -632,8 +590,8 @@ pullErrors(DL1301_proofed, field = "suffix")
 ```
 
 ```
-##  [1] "MD"  "ESQ" "MAL" "MR"  "W"   "CJS" "CME" "M"   "SMI" "I�M" "MO" 
-## [12] "MS"  "MRS" "-"
+##  [1] "MD"  "ESQ" "MAL" "MR"  "W"   "CJS" "CME" "M"  
+##  [9] "SMI" "I�M" "MO"  "MS"  "MRS" "-"
 ```
 
 Running `pullErrors` on a field that has no errors will return a message.
@@ -677,7 +635,7 @@ The `writeReport` function can be used to automatically generate an R markdown d
 memory.limit(size = 55000)
 
 writeReport(
-  path = "C:/HIP/DL1301",
+  raw_path = "C:/HIP/DL1301",
   temp_path = "C:/HIP/corrected_data",
   future_path = "C:/HIP/future_data",
   past_path = "C:/HIP/past_data",
@@ -917,11 +875,11 @@ redFlags(DL1301_proofed, type = "state", threshold = 0.03)
 
 ```
 ## # A tibble: 3 × 5
-##   dl_state count_errors count_correct proportion flag        
-##   <chr>           <int>         <dbl>      <dbl> <chr>       
-## 1 CT                 88          1130     0.0722 error > 0.03
-## 2 AL               4814         62260     0.0718 error > 0.03
-## 3 LA               1808         23392     0.0717 error > 0.03
+##   dl_state count_errors count_correct proportion flag 
+##   <chr>           <int>         <dbl>      <dbl> <chr>
+## 1 CT                 88          1130     0.0722 erro…
+## 2 AL               4814         62260     0.0718 erro…
+## 3 LA               1808         23392     0.0717 erro…
 ```
 
 <b>By field.</b>
@@ -934,10 +892,10 @@ redFlags(DL1301_proofed, type = "field", threshold = 0.01)
 
 ```
 ## # A tibble: 2 × 5
-##   errors          count_errors count_correct proportion flag        
-##   <chr>                  <int>         <int>      <dbl> <chr>       
-## 1 registration_yr         6592         41161     0.138  error > 0.01
-## 2 birth_date              1295         46458     0.0271 error > 0.01
+##   errors   count_errors count_correct proportion flag 
+##   <chr>           <int>         <int>      <dbl> <chr>
+## 1 registr…         6592         41161     0.138  erro…
+## 2 birth_d…         1295         46458     0.0271 erro…
 ```
 
 ## Troubleshooting

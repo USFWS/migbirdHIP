@@ -5,7 +5,7 @@
 #' @importFrom quarto quarto_render
 #' @importFrom stringr str_detect
 #'
-#' @param path File path to the folder containing HIP .txt files
+#' @param raw_path File path to the folder containing HIP .txt files
 #' @param temp_path Path to directory that contains output .csv files
 #' @param future_path Path to directory that contains future data .csv files
 #' @param past_path Path to directory that contains past data .csv files
@@ -20,7 +20,7 @@
 #' @export
 
 writeReport <-
-  function(path, temp_path, future_path, past_path, year, dl, dir, file){
+  function(raw_path, temp_path, future_path, past_path, year, dl, dir, file){
 
     # Add a final "/" to path if not included already
     if(!str_detect(path, "\\/$")) {
@@ -64,8 +64,8 @@ writeReport <-
       # Include the specified parameters so the functions can run
       execute_params =
         list(
-          comp_path = path,
-          final_path = temp_path,
+          raw_path = raw_path,
+          temp_path = temp_path,
           future_path = future_path,
           past_path = past_path,
           dl = dl,

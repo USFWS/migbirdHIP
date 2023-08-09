@@ -4,10 +4,10 @@
 \alias{writeReport}
 \title{Write an R markdown report from template}
 \usage{
-writeReport(path, temp_path, future_path, past_path, year, dl, dir, file)
+writeReport(raw_path, temp_path, future_path, past_path, year, dl, dir, file)
 }
 \arguments{
-\item{path}{File path to the folder containing HIP .txt files}
+\item{raw_path}{File path to the folder containing HIP .txt files}
 
 \item{temp_path}{Path to directory that contains output .csv files}
 

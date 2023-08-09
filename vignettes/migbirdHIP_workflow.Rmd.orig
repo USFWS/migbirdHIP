@@ -461,7 +461,7 @@ The `writeReport` function can be used to automatically generate an R markdown d
 memory.limit(size = 55000)
 
 writeReport(
-  path = "C:/HIP/DL1301",
+  raw_path = "C:/HIP/DL1301",
   temp_path = "C:/HIP/corrected_data",
   future_path = "C:/HIP/future_data",
   past_path = "C:/HIP/past_data",
