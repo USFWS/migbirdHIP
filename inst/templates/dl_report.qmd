@@ -252,6 +252,8 @@ if(nrow(issue_assignments |> dplyr::filter(decision == "bad")) > 0){
   split_bit <- split(bit, bit$message)
   
   bit <- NULL
+} else {
+  split_bit <- NULL
 }
 ```
 
