@@ -58,7 +58,7 @@ catch_messages <-
   }
 
 dl_data <- 
-  catch_messages(migbirdHIP::read_hip(params$comp_path)) |> 
+  catch_messages(migbirdHIP::read_hip(params$temp_path)) |> 
   dplyr::mutate(dl_cycle = params$dl)
 ```
 
@@ -362,7 +362,7 @@ rm(`%>%`)
 blanks <-
   tibble::tibble(
     list.files(
-      params$comp_path, recursive = F, pattern = "*\\.txt$", 
+      params$temp_path, recursive = F, pattern = "*\\.txt$", 
       ignore.case = T, full.names = TRUE) |>
     tibble::as_tibble_col(column_name = "filepath") |>
     # Don't process permit files
@@ -436,7 +436,7 @@ idb2 <-
 # Vector of source files
 file_list <- 
   list.files(
-    params$comp_path, 
+    params$temp_path, 
     recursive = F, 
     pattern = "*\\.txt$", 
     ignore.case = TRUE)
@@ -554,7 +554,7 @@ bullets <-
     # Count of received lines of data, files, states
     paste0(
       "* This cycle, ", 
-      suppressWarnings(migbirdHIP::sumLines(params$comp_path)), 
+      suppressWarnings(migbirdHIP::sumLines(params$temp_path)), 
       " lines of data were submitted in ", 
       length(file_list), 
       " files from ",
@@ -1140,7 +1140,7 @@ Files were received from the following yellow states. Hexagons shaded blue, oran
 files_received <- 
   # Get all of the received files up to and including this download
   list.files(
-    stringr::str_remove(params$comp_path, "\\/D.+"), recursive = T) |> 
+    stringr::str_remove(params$temp_path, "\\/D.+"), recursive = T) |> 
   tibble::as_tibble() |> 
   tidyr::separate(value, into = c("dl", "file"), sep = "/", extra = "drop") |> 
   tidyr::separate(file, into = c("state", "date"), sep = 2, extra = "drop") |> 
