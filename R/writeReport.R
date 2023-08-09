@@ -23,8 +23,8 @@ writeReport <-
   function(raw_path, temp_path, future_path, past_path, year, dl, dir, file){
 
     # Add a final "/" to path if not included already
-    if(!str_detect(path, "\\/$")) {
-      path <- paste0(path, "/")
+    if(!str_detect(raw_path, "\\/$")) {
+      raw_path <- paste0(raw_path, "/")
     }
     # Add a final "/" to temp_path if not included already
     if(!str_detect(temp_path, "\\/$")) {
