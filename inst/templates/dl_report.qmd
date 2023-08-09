@@ -20,7 +20,7 @@ format:
 params:
   raw_path:
     value: x
-  final_path:
+  temp_path:
     value: x
   future_path:
     value: x
@@ -112,9 +112,9 @@ proofed_data <- migbirdHIP::proof(fixed_data, year = params$year)
 # Read in the completed download data (for better/more accurate figures and tables)
 final_data <-
   purrr::map_df(
-    1:length(list.files(params$final_path)),
+    1:length(list.files(params$temp_path)),
     ~data.table::fread(
-      paste0(params$final_path, list.files(params$final_path)[.x]),
+      paste0(params$temp_path, list.files(params$temp_path)[.x]),
       colClasses = rep("character", 38),
       na.strings = "") |> 
       dplyr::select(1:28) |> 
