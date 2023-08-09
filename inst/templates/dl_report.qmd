@@ -1144,7 +1144,6 @@ Files were received from the following yellow states. Hexagons shaded blue, oran
 
 if(params$dl == "0799") {
   cat("Map not available for this report.")
-  files_received <- NULL
 } else {
   files_received <- 
     # Get all of the received files up to and including this download
@@ -1235,7 +1234,8 @@ DT::datatable(
 ```{r exclusions_per_state}
 #| echo: false
 
-excluded <- 
+if(params$dl != "0799") {
+  excluded <- 
   files_received |> 
   dplyr::left_join(
     final_data |> 
@@ -1248,16 +1248,19 @@ excluded <-
   dplyr::filter(none == "No records") |> 
   dplyr::select(state) |> 
   dplyr::pull()
-
-if(length(excluded) > 0) {
+  
+  if(length(excluded) > 0) {
   cat(
     paste0(
       "❌",
       " These states submitted files for this download, but no records were used: ",
     paste0(excluded, collapse = ", ")))
   
+  } else {
+    cat("✔️ All download states that submitted files are included in the final data!")
+  }
 } else {
-  cat("✔️ All download states that submitted files are included in the final data!")
+  cat("Not relevant to this report.")
 }
 
 files_received <- NULL
