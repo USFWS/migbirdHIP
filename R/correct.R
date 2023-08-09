@@ -112,7 +112,7 @@ correct <-
       )
 
     # Re-run the proof script to get an updated errors column
-    corrproof_bag_x <- proof(corrected_x, year = year)
+    corrproof_bag_x <- suppressMessages(proof(corrected_x, year = year))
 
     return(corrproof_bag_x)
 
