@@ -80,7 +80,7 @@ writeReport <-
     # Rename the output
     invisible(
       file.rename(
-        from = paste0(dir, "dl_report.qmd"),
+        from = paste0(dir, "dl_report.html"),
         to = paste0(dir, file, ".html"))
     )
 
