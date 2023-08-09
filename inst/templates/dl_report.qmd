@@ -553,6 +553,10 @@ duplicates <-
 
 bullets <- 
   c(
+    # Identify a "future data" report
+    if(params$dl == "0799") {
+      c("* This is a future data report for last season.")
+    },
     # Count of received lines of data, files, states
     paste0(
       "* This cycle, ", 
@@ -1138,65 +1142,69 @@ Files were received from the following yellow states. Hexagons shaded blue, oran
 #| echo: false
 #| fig-align: center
 
-files_received <- 
-  # Get all of the received files up to and including this download
-  list.files(
-    stringr::str_remove(params$raw_path, "\\/D.+"), recursive = T) |> 
-  tibble::as_tibble() |> 
-  tidyr::separate(value, into = c("dl", "file"), sep = "/", extra = "drop") |> 
-  tidyr::separate(file, into = c("state", "date"), sep = 2, extra = "drop") |> 
-  dplyr::select(-date) |> 
-  dplyr::distinct() |> 
-  dplyr::mutate(dl = stringr::str_remove(dl, "DL")) |> 
-  # Keep only the download data information
-  dplyr::filter(stringr::str_detect(dl, "^[0-9]{4}$")) |> 
-  dplyr::mutate(dl = as.numeric(dl)) |> 
-  # Discard any downloads before 0800 and keep only actual states
-  dplyr::filter(dl >= 800 & state %in% datasets::state.abb) |> 
-  # Filter out downloads that occur after this one
-  dplyr::filter(dl <= params$dl) |> 
-  dplyr::group_by(dl) |> 
-  dplyr::mutate(ord = dplyr::cur_group_id()) |> 
-  dplyr::ungroup() |> 
-  dplyr::group_by(state) |> 
-  dplyr::mutate(most_recent_dl = max(dl)) |>
-  dplyr::ungroup() |> 
-  dplyr::filter(dl == most_recent_dl) |> 
-  dplyr::mutate(
-    lag = 
-      ifelse(
-        (max(ord) - ord) < 4,
-        as.character(max(ord) - ord),
-        "4+")) |> 
-  dplyr::select(state, lag) |> 
-  # Add an ID for the hex map
-  dplyr::left_join(
-    tibble::tibble(
-      state = datasets::state.abb,
-      id = datasets::state.name),
-    by = "state"
-  ) |> 
-  dplyr::arrange(id)
-
-migbirdHIP:::hexmap |>
-  dplyr::left_join(files_received, by = c("id", "state")) |> 
-  ggplot2::ggplot() +
-  ggplot2::geom_sf(
-    ggplot2::aes(fill = lag),
-    color = "white") +
-  ggplot2::geom_sf_text(
-    ggplot2::aes(label = state),
-    nudge_y = 0, size = 3.5) +
-  ggplot2::labs(fill = "Downloads since\nfile(s) last received") +
-  ggplot2::theme_void() +
-  ggplot2::scale_fill_manual(
-    values =
-      c("#ffffb2", "#56B4E9", "#0072B2", "#E69F00", "#999999")) +
-  ggplot2::theme(legend.position = "bottom") +
-  ggplot2::guides(
-    fill =
-      ggplot2::guide_legend(
-        label.vjust = -8.5, label.position = "top", title.vjust = 0.2))
+if(params$dl == "0799") {
+  cat("Map not available for this report.")
+} else {
+  files_received <- 
+    # Get all of the received files up to and including this download
+    list.files(
+      stringr::str_remove(params$raw_path, "\\/D.+"), recursive = T) |> 
+    tibble::as_tibble() |> 
+    tidyr::separate(value, into = c("dl", "file"), sep = "/", extra = "drop") |> 
+    tidyr::separate(file, into = c("state", "date"), sep = 2, extra = "drop") |> 
+    dplyr::select(-date) |> 
+    dplyr::distinct() |> 
+    dplyr::mutate(dl = stringr::str_remove(dl, "DL")) |> 
+    # Keep only the download data information
+    dplyr::filter(stringr::str_detect(dl, "^[0-9]{4}$")) |> 
+    dplyr::mutate(dl = as.numeric(dl)) |> 
+    # Discard any downloads before 0800 and keep only actual states
+    dplyr::filter(dl >= 800 & state %in% datasets::state.abb) |> 
+    # Filter out downloads that occur after this one
+    dplyr::filter(dl <= params$dl) |> 
+    dplyr::group_by(dl) |> 
+    dplyr::mutate(ord = dplyr::cur_group_id()) |> 
+    dplyr::ungroup() |> 
+    dplyr::group_by(state) |> 
+    dplyr::mutate(most_recent_dl = max(dl)) |>
+    dplyr::ungroup() |> 
+    dplyr::filter(dl == most_recent_dl) |> 
+    dplyr::mutate(
+      lag = 
+        ifelse(
+          (max(ord) - ord) < 4,
+          as.character(max(ord) - ord),
+          "4+")) |> 
+    dplyr::select(state, lag) |> 
+    # Add an ID for the hex map
+    dplyr::left_join(
+      tibble::tibble(
+        state = datasets::state.abb,
+        id = datasets::state.name),
+      by = "state"
+    ) |> 
+    dplyr::arrange(id)
+  
+  migbirdHIP:::hexmap |>
+    dplyr::left_join(files_received, by = c("id", "state")) |> 
+    ggplot2::ggplot() +
+    ggplot2::geom_sf(
+      ggplot2::aes(fill = lag),
+      color = "white") +
+    ggplot2::geom_sf_text(
+      ggplot2::aes(label = state),
+      nudge_y = 0, size = 3.5) +
+    ggplot2::labs(fill = "Downloads since\nfile(s) last received") +
+    ggplot2::theme_void() +
+    ggplot2::scale_fill_manual(
+      values =
+        c("#ffffb2", "#56B4E9", "#0072B2", "#E69F00", "#999999")) +
+    ggplot2::theme(legend.position = "bottom") +
+    ggplot2::guides(
+      fill =
+        ggplot2::guide_legend(
+          label.vjust = -8.5, label.position = "top", title.vjust = 0.2))
+}
 ```
 
 ## Records per state
@@ -1512,6 +1520,19 @@ v_rep_all <- NULL
 ```
 
 # Issuance
+
+```{r future_data_ignore}
+#| echo: false
+
+if(params$dl == "0799") {
+  cat(
+    paste0(
+      "❌",
+      " Ignore this page! Information below not relevant to future data report.\n\n")
+  )
+}
+  
+```
 
 ## Summary of registration year
 
