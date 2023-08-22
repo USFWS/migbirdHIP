@@ -103,7 +103,7 @@ cleaned_data <- catch_messages(migbirdHIP::clean(fixed_dates_data))
 
 fixed_dates_data <- NULL
 
-current_data <- catch_messages(migbirdHIP::issueCheck(cleaned_data, params$year, write = F))
+current_data <- catch_messages(migbirdHIP::issueCheck(cleaned_data, params$year))
 
 fixed_data <- catch_messages(migbirdHIP::fixDuplicates(current_data))
 

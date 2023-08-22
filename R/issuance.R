@@ -4,20 +4,15 @@
 #'
 #' @importFrom dplyr filter
 #' @importFrom dplyr select
-#' @importFrom dplyr mutate
 #' @importFrom dplyr group_by
 #' @importFrom dplyr summarize
-#' @importFrom dplyr n
+#' @importFrom dplyr count
 #' @importFrom dplyr ungroup
 #' @importFrom stringr str_detect
-#' @importFrom utils write.csv
 #'
 #' @param data The object created after cleaning data with \code{\link{clean}}
 #' @param year The year of the HIP season (e.g. 2022 for the 2022-2023 season)
-#' @param future_outpath Directory where future data should be saved as .csv
-#' @param past_outpath Directory where past data should be saved as .csv
 #' @param plot Create a plot? Default is FALSE
-#' @param write Defaults to TRUE; should future data and past data be written out as .csv files?
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}
@@ -25,137 +20,56 @@
 #' @export
 
 issueCheck <-
-  function(data, year, future_outpath = NA, past_outpath = NA, plot = FALSE, write = TRUE){
+  function(data, year, plot = FALSE){
 
     # Determine the destination of each record
     issue_assignments <- issueAssign(data, year)
 
     # Return message if issue_date = "00/00/0000" detected
-    if(TRUE %in% str_detect(data$issue_date, "00/00/0000")){
+    if(TRUE %in% str_detect(data$issue_date, "00/00/0000")) {
       message("Error: issue_date value of 00/00/0000 detected.")
     }
 
     # Return message if "bad issue dates" detected
-    if(TRUE %in% str_detect(issue_assignments$decision, "bad issue dates")){
+    if(TRUE %in% str_detect(issue_assignments$decision, "bad issue dates")) {
       message("Error: Bad issue_date value(s) detected.")
     }
 
-    # Create a frame of current data
-    current_data <-
-      issue_assignments |>
-      filter(!decision %in% c("past", "postpone")) |>
-      mutate(
-        registration_yr =
-          ifelse(
-            decision == "copy" & dl_state != "MS",
-            as.character(as.numeric(registration_yr) - 1),
-            registration_yr)) |>
-      select(-c("decision", "reg_yr_eval", "issue_eval"))
+    # Return messages for how many records need to be recycled
+    if(nrow(filter(issue_assignments, decision == "copy")) == 0) {
+      message("* 0 records need to be recycled for next season.")
+    }
 
-    # Return messages for how many records have been copied
-    # Message for NOT copied non-MS records
+    # Return message for number of non-MS records that need to be recycled
     if(
       nrow(
-        issue_assignments |>
-          filter(decision == "copy" & dl_state != "MS")) == 0){
+        filter(issue_assignments, decision == "copy" & dl_state != "MS")) > 0) {
       message(
-        paste0(
-          "* 0 future records need to be modified (registration_yr - 1) and co",
-          "pied for next year."))
-      }
-
-    # Message for NOT copied MS records
-    if(
-      nrow(
-        issue_assignments |>
-          filter(decision == "copy" & dl_state == "MS")) == 0){
-      message(
-        paste0(
-          "* 0 future Mississippi records need to be copied for next year."))
-      }
-
-    # Message for copied non-MS records
-    if(
-      nrow(
-        issue_assignments |>
-          filter(decision == "copy" & dl_state != "MS")) > 0){
-      message(
-        paste0(
-          "* ",
+        paste(
+          "*",
           nrow(
-            issue_assignments |>
-              filter(decision == "copy" & dl_state != "MS")),
-          " future records have been modified to have registration_yr - 1. The",
-          "y have been copied and saved for next season in the future data .cs",
-          "v with their original registration_yr."))
+            filter(issue_assignments, decision == "copy" & dl_state != "MS")),
+          "non-MS records must be recycled for next season."), sep = " ")
     }
 
-    # Message for copied MS records with registration_yr change
-    if(
-      nrow(
-        issue_assignments |>
-        filter(
-          decision == "copy" &
-          dl_state == "MS" &
-          as.numeric(registration_yr) > year)) > 0){
+    # Return message for how many records must be postponed
+    if(nrow(filter(issue_assignments, decision == "postpone")) == 0) {
+      message("* 0 records need to be postponed for next season.")
+    } else {
       message(
-        paste0(
-          "* ",
-          nrow(
-            issue_assignments |>
-              filter(
-                decision == "copy" &
-                  dl_state == "MS" &
-                  as.numeric(registration_yr) > year)), " Mississippi records ",
-          "detected with registration_yr + 1. Please fix."))
+        paste(
+          "*", nrow(filter(issue_assignments, decision == "postpone")),
+          "records must be postponed for next year."), sep = " ")
     }
 
-    # Message for copied MS records without registration_yr change
-    if(
-      nrow(
-        issue_assignments |>
-        filter(
-          decision == "copy" &
-          dl_state == "MS" &
-          as.numeric(registration_yr) == year)) > 0){
+    # Return message for how many past records were found
+    if(nrow(issue_assignments |> filter(decision == "past")) == 0) {
+      message("* 0 past records detected.")
+    } else {
       message(
-        paste0(
-          "* ",
-          nrow(
-            issue_assignments |>
-              filter(
-                decision == "copy" &
-                  dl_state == "MS" &
-                  as.numeric(registration_yr) == year)), " future Mississippi ",
-          "records have been copied and saved for next season. Copied records ",
-          "have been modified to have registration_yr + 1."))
-    }
-
-    # Return messages for how many records have been postponed
-    if(nrow(issue_assignments |> filter(decision == "postpone")) == 0){
-      message(
-        paste0(
-          "* 0 records need to be postponed for next year."))
-    }else{
-      message(
-        paste0(
-          "* ", nrow(issue_assignments |> filter(decision == "postpone")), " ",
-          "future records have been postponed for next year. They will be filt",
-          "ered out from this download and saved in the future data .csv with ",
-          "their original registration_yr."))
-    }
-
-    # Return messages for how many past records have been set aside
-    if(nrow(issue_assignments |> filter(decision == "past")) == 0){
-      message(
-        paste0(
-          "* 0 past records detected."))
-    }else{
-      message(
-        paste0(
-          "* ", nrow(issue_assignments |> filter(decision == "past")), " past",
-          " records have been set aside. They will be filtered out from this d",
-          "ownload and returned for review in the download report."))
+        paste(
+          "*", nrow(issue_assignments |> filter(decision == "past")),
+          "past records detected. They have been filtered out.", sep = " "))
     }
 
     # Print results
@@ -163,7 +77,7 @@ issueCheck <-
       suppressMessages(
         issue_assignments |>
           group_by(source_file, issue_eval, reg_yr_eval, decision) |>
-          summarize(n = n()) |>
+          count() |>
           ungroup() |>
           group_by(reg_yr_eval, issue_eval, decision) |>
           summarize(sum_n = sum(n)) |>
@@ -175,75 +89,12 @@ issueCheck <-
       issuePlot(issue_assignments, year)
     }
 
-    # Create future data frame
-    future_data <-
+    # Create a frame of current data
+    current_data <-
       issue_assignments |>
-      filter(decision %in% c("copy", "postpone")) |>
-      mutate(
-        registration_yr =
-          ifelse(
-            dl_state == "MS" & as.numeric(registration_yr) == year,
-            as.character(as.numeric(registration_yr) + 1),
-            registration_yr)) |>
+      filter(decision != "past") |>
       select(-c("decision", "reg_yr_eval", "issue_eval"))
 
-    # Create past data frame
-    past_data <-
-      issue_assignments |>
-      filter(decision == "past") |>
-      select(-c("decision", "reg_yr_eval", "issue_eval"))
-
-    # Write out future data if needed
-    if(nrow(future_data) > 0 & write == TRUE){
-      if(!str_detect(future_outpath, "/$")){
-          future_outpath <- paste0(future_outpath, "/")
-        }
-      write.csv(
-        future_data,
-        paste0(
-          future_outpath,
-          "2022-2023_DL", future_data$dl_cycle[1], "_future_data.csv"),
-        row.names = FALSE)
-      message(
-        paste0(
-          "FUTURE DATA written to path:\n",
-          future_outpath,
-          "2022-2023_DL", future_data$dl_cycle[1], "_future_data.csv"))
-      print(
-        future_data |>
-          group_by(source_file) |>
-          summarize(n = n()) |>
-          ungroup())
-    }else if(nrow(future_data) > 0 & write == FALSE){
-      message("* Future data write-out skipped.")
-    }else if(nrow(future_data) == 0 & write == TRUE){
-      message("* Future data write-out skipped; no data.")
-    }
-
-    # Write out past data if needed
-    if(nrow(past_data) > 0 & write == TRUE){
-      if(!str_detect(past_outpath, "/$")){
-        past_outpath <- paste0(past_outpath, "/")
-      }
-      write.csv(
-        past_data,
-        paste0(past_outpath,
-               "2022-2023_DL", past_data$dl_cycle[1], "_past_data.csv"),
-        row.names = FALSE)
-      message(
-        paste0("PAST DATA written to path:\n",
-               past_outpath,
-               "2022-2023_DL", past_data$dl_cycle[1], "_past_data.csv"))
-      print(
-        past_data |>
-          group_by(source_file) |>
-          summarize(n = n()) |>
-          ungroup())
-    }else if(nrow(past_data) > 0 & write == FALSE){
-      message("* Past data write-out skipped.")
-    }else if(nrow(past_data) == 0 & write == TRUE){
-      message("* Past data write-out skipped; no data.")
-    }
     return(current_data)
   }
 
@@ -261,6 +112,7 @@ issueCheck <-
 #' @importFrom lubridate mdy
 #' @importFrom lubridate interval
 #' @importFrom lubridate %within%
+#' @importFrom lubridate years
 #' @importFrom stringr str_detect
 #' @importFrom dplyr select
 #'
@@ -287,37 +139,37 @@ issueAssign <-
             !dl_state %in% c(states_twoseason, "MS"),
             case_when(
               mdy(issue_date) %within%
-                interval(issue_start, last_day_migbird_hunting) ~ "current",
+                interval(issue_start, issue_end) ~ "current",
               mdy(issue_date) < issue_start ~ "past",
-              mdy(issue_date) > last_day_migbird_hunting ~ "future",
+              mdy(issue_date) > issue_end ~ "future",
               TRUE ~ "bad issue dates"),
             "two season state"),
         reg_yr_eval =
           case_when(
-            # For records from two-season states with a future registration year
-            # and issue_date before the last day of hunting, copy them for next
-            # year (and count them for this year)
+            # For records from two-season states with an issue_date between
+            # issue_start and issue_end, copy them for next year (and count them
+            # for this year)
             dl_state %in% states_twoseason &
-              registration_yr == as.character(year + 1) &
-              mdy(issue_date) %within%
-              interval(issue_start, last_day_migbird_hunting) ~ "copy",
-            # For records from two-season states with a current registration
-            # year and issue date after the last day of hunting, postpone
-            # sampling them until next year
+              mdy(issue_date) %within% interval(issue_start, issue_end) ~
+              "copy",
+            # For records from two-season states with an issue date after the
+            # PREDICTED issue_start for next season, postpone sampling them
+            # until next season
             dl_state %in% states_twoseason &
-              registration_yr == as.character(year) &
-              mdy(issue_date) > last_day_migbird_hunting ~ "postpone",
+              mdy(issue_date) >= (issue_start + years(1)) ~ "postpone",
+            # For records from two-season states with an old issue date, past
+            dl_state %in% states_twoseason &
+              mdy(issue_date) < issue_start ~ "past",
             # For records from Mississippi, if the issue_date is within
             # Mississippi's hunting season, copy them for next year (and count
             # them for this year)
             dl_state == "MS" &
-              !str_detect(source_file, "future") &
-              mdy(issue_date) %within%
-              interval(MS_firstday, MS_lastday) ~ "copy",
+              mdy(issue_date) %within% interval(MS_firstday, MS_lastday) ~
+              "copy",
             # Postpone all other future registration_yr values, for all states
-            registration_yr == as.character(year + 1) ~ "postpone",
-            # Check for yr-1 registration_yr values for all states
-            registration_yr == as.character(year - 1) ~ "past",
+            as.numeric(registration_yr) > year ~ "postpone",
+            # Check for old registration_yr values for all states
+            as.numeric(registration_yr) < year ~ "past",
             TRUE ~ "nochange"),
         # Assign destination of each record to decision
         decision =

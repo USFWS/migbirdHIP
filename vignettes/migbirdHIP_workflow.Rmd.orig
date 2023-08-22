@@ -215,37 +215,10 @@ Other quick fixes include:
 
 ### issueCheck
 
-Sometimes we receive HIP records that should be processed in a future season. We also sometiems receive records that should be processed in both this season and a future one, since some states have license years that encompass two seasons. The `issueCheck` function evaluates issue_date and registration_yr for two-season states (ME, MA, ID, CT, WV, VT, NH, IA, ND, SD, and TN) as well as a 365-day state (MS). It sets aside future records and past records in separate .csv files to be evaluated later. Only the current registrations are returned.
-
-For ME, MA, ID, CT, WV, VT, NH, IA, ND, SD, and TN:
-
-* If a record's issue_date is between issue_start and last day of hunting season, AND registration_yr is for next season, (1) COPY the record for next year and (2) CHANGE registration_yr for this year (subtract 1) so it's includable in the sample.
-* If a record's issue_date is after the end of hunting season, SET IT ASIDE for next year.
-* If a record's registration_yr is yr-1, SET IT ASIDE as past data.
-
-For MS:
-
-* If a record's issue_date is between the first day of the hunting season and the last day of the hunting season in Mississippi, keep a copy for this year (with registration_yr as the current year) and copy one for next year (registration_yr + 1).
-
-For all states:
-
-* If a record's registration_yr is in the future, SET IT ASIDE for next year.
-
-
-```{r, issuecheck}
-DL1301_current <- issueCheck(DL1301_clean, year = 2021, plot = F, write = F)
-```
-
-To export a table of records to process in a future season and to set aside records from past seasons to include in the download report, specify the outpaths where the .csv files should be written and specify `write = TRUE`.
-
-```{r, issuecheck2, eval = FALSE}
-DL1301_current <- issueCheck(DL1301_clean, year = 2021, future_outpath = "C:/HIP/future_data/", past_outpath = "C:/HIP/past_data/", plot = F, write = T)
-```
-
-To print a plot of bad records in which the registration_yr and issue_date do not agree, use `plot = T`.
+The `issueCheck` function filters out past registrations, returns messages for records received that should be saved for the future, and plots records that have a disagreement between registration year and issue date. To skip plotting, specify `plot = F`.
 
 ```{r, issuecheck3, eval = FALSE}
-DL1301_current <- issueCheck(DL1301_clean, year = 2021, plot = T, write = F)
+DL1301_current <- issueCheck(DL1301_clean, year = 2021, plot = T)
 ```
 
 ### findDuplicates

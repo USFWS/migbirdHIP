@@ -17,6 +17,7 @@
 -   Edited writeReport() to render quarto documents
 -   Refactored read_hip() and eliminated encoding check
 -   Added 3 new internal package functions (`errorLevel_errors_field()`, `errorLevel_errors_state()`, and `recordLevel_errors_state()`), which are used inside `redFlags()`, `errorPlot_fields()`, and `errorPlot_states()`. They reduce code redundancy and ensures updates happen universally.
+-   `issueCheck()` no longer exports future and past data as .csv files. Past data are still filtered out from the returned tibble, and output messages indicate if future data exist.
 -   Added 2 new internal package functions (`issueAssign()` and `issuePlot`), used inside of `issueCheck()` and by the download report
 -   `strataCheck()` now returns 2 additional fields in output; number of bad strata and proportion of bad strata. It also checks for permit species coming during regular HIP and returns them as erroneous (e.g. NM band-tailed pigeon = 2).
 -   `validate()` was edited to return source file field in output and filter out states and species with no season from output.
