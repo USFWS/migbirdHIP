@@ -13,6 +13,7 @@
 #' @importFrom dplyr bind_cols
 #' @importFrom tidyr pivot_longer
 #' @importFrom tidyr pivot_wider
+#' @importFrom tidyr everything
 #'
 #' @param data A cleaned data table created by \code{\link{clean}}
 #' @param record_id The ID of the line to be adjusted
@@ -73,7 +74,7 @@ shiftFix <-
           # Fix the middle columns
           # This must be done by pivoting, since there's no rowwise lag, lead,
           # or column indexing in tidyverse
-          pivot_longer(everything()) |>
+          pivot_longer(cols = everything()) |>
           mutate(
             value2 =
               paste0(
@@ -95,8 +96,6 @@ shiftFix <-
     return(unshifted)
 
   }
-
-utils::globalVariables("everything")
 
 #' Check for frame shifts
 #'

@@ -1,4 +1,6 @@
-utils::globalVariables(
+#' @importFrom utils globalVariables
+
+globalVariables(
   c("title",
     "firstname",
     "middle",
