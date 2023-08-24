@@ -22,10 +22,6 @@ params:
     value: x
   temp_path:
     value: x
-  future_path:
-    value: x
-  past_path:
-    value: x
   dl:
     value: x
   year:
@@ -1569,124 +1565,51 @@ if(nrow(reg_yr_summary) > 0){
 reg_yr_summary <- NULL
 ```
 
-## Records changed for this season and copied for next season
-
-Records below had their registration year edited to be compatible for this HIP season. They were also copied and exported for next HIP season.
-
-```{r reg_yr_check2}
-#| echo: false
-#| message: false
-
-if(nrow(issue_assignments |> dplyr::filter(decision == "copy")) > 0){
-  
-  current_records <-
-    issue_assignments |>
-    dplyr::filter(decision != "postpone") |>
-    dplyr::mutate(
-      registration_yr =
-        ifelse(
-          decision == "copy",
-          as.character(as.numeric(registration_yr)-1),
-          registration_yr)) |>
-    dplyr::filter(decision == "copy") |> 
-    dplyr::select(-decision) 
-  
-  current_summary <- 
-    current_records |> 
-    dplyr::group_by(dl_state, registration_yr) |> 
-    dplyr::summarize(n = dplyr::n()) |> 
-    dplyr::ungroup() |> 
-    dplyr::arrange(dplyr::desc(n))
-  
-  DT::datatable(
-    current_summary |> 
-      dplyr::rename(
-        State = dl_state,
-        `Registration year` = registration_yr,
-        `Number of records` = n
-      ))
-}else{
-  cat("✔️ No records to change/copy.")
-}
-
-```
-
 ## Future records
 
-Records below have an issue date and registration year indicating they should be set aside for next year.
+Records below have an issue date and registration year indicating they should not be sampled until next year.
 
 ```{r future_records}
 #| echo: false
 
-if(!stringr::str_detect(params$future_path, "\\/$")){
-  future_path <- paste0(params$future_path, "/")
-}else{
-  future_path <- params$future_path
+if(nrow(dplyr::filter(issue_assignments, decision %in% c("postpone", "copy"))) > 0){
+  DT::datatable(
+    suppressMessages(
+      issue_assignments |> 
+        dplyr::filter(decision %in% c("postpone", "copy")) |>
+        dplyr::group_by(dl_state, registration_yr) |>
+        dplyr::count() |>
+        dplyr::ungroup() |>
+        dplyr::arrange(dplyr::desc(n))
+      )
+    )
+} else {
+  cat("✔️ No future records detected.")
 }
 
-future_file <- paste0("DL", params$dl, "_future_data.csv")
-
-if(future_file %in% list.files(future_path)){
-  future_data <-
-    readr::read_csv(paste0(future_path, future_file), show_col_types = F)
-  
-  suppressMessages(
-    future_summary <- 
-      future_data |> 
-      dplyr::group_by(dl_state, registration_yr) |> 
-      dplyr::summarize(n = dplyr::n()) |> 
-      dplyr::ungroup() |> 
-      dplyr::arrange(dplyr::desc(n)))
-  
-  DT::datatable(future_summary)
-  
-}else{
-  cat("✔️ No records to postpone.")
-}
-
-future_path <- NULL
-future_file <- NULL
-future_data <- NULL
-future_summary <- NULL
 ```
 
 ## Past records
 
-Records below have an issue date and registration year indicating they qualify for a previous HIP season; these records were set aside and are not be eligible to be sampled.
+Records below have an issue date and registration year indicating they qualify for a previous HIP season; these records are not be eligible to be sampled.
 
 ```{r past_records}
 #| echo: false
 
-if(!stringr::str_detect(params$past_path, "\\/$")){
-  past_path <- paste0(params$past_path, "/")
-}else{
-  past_path <- params$past_path
-}
-
-past_file <- paste0("DL", params$dl, "_past_data.csv")
-
-if(past_file %in% list.files(past_path)){
-  past_data <-
-    readr::read_csv(paste0(past_path, past_file), show_col_types = F)
-  
-  suppressMessages(
-    past_summary <- 
-      past_data |> 
-      dplyr::group_by(dl_state, registration_yr) |> 
-      dplyr::summarize(n = dplyr::n()) |> 
-      dplyr::ungroup() |> 
-      dplyr::arrange(dplyr::desc(n)))
-  
-  DT::datatable(past_summary)
-  
-}else{
+if(nrow(dplyr::filter(issue_assignments, decision == "past")) > 0){
+  DT::datatable(
+    suppressMessages(
+      issue_assignments |> 
+        dplyr::filter(decision == "past") |>
+        dplyr::group_by(dl_state, registration_yr) |>
+        dplyr::count() |>
+        dplyr::ungroup() |>
+        dplyr::arrange(dplyr::desc(n))
+      )
+    )
+} else {
   cat("✔️ No past records.")
 }
-
-past_data <- NULL
-past_summary <- NULL
-past_path <- NULL
-past_file <- NULL
 
 ```
 

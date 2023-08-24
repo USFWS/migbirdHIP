@@ -20,7 +20,7 @@
 #' @export
 
 writeReport <-
-  function(raw_path, temp_path, future_path, past_path, year, dl, dir, file){
+  function(raw_path, temp_path, year, dl, dir, file){
 
     # Add a final "/" to path if not included already
     if(!str_detect(raw_path, "\\/$")) {
@@ -29,14 +29,6 @@ writeReport <-
     # Add a final "/" to temp_path if not included already
     if(!str_detect(temp_path, "\\/$")) {
       temp_path <- paste0(temp_path, "/")
-    }
-    # Add a final "/" to future_path if not included already
-    if(!str_detect(future_path, "\\/$")) {
-      future_path <- paste0(future_path, "/")
-    }
-    # Add a final "/" to past_path if not included already
-    if(!str_detect(past_path, "\\/$")) {
-      past_path <- paste0(past_path, "/")
     }
     # Add a final "/" to dir if not included already
     if(!str_detect(dir, "\\/$")) {
@@ -66,8 +58,6 @@ writeReport <-
         list(
           raw_path = raw_path,
           temp_path = temp_path,
-          future_path = future_path,
-          past_path = past_path,
           dl = dl,
           year = year),
       output_format = "html",

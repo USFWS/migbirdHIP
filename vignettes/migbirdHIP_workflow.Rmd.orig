@@ -217,8 +217,12 @@ Other quick fixes include:
 
 The `issueCheck` function filters out past registrations, returns messages for records received that should be saved for the future, and plots records that have a disagreement between registration year and issue date. To skip plotting, specify `plot = F`.
 
-```{r, issuecheck3, eval = FALSE}
-DL1301_current <- issueCheck(DL1301_clean, year = 2021, plot = T)
+```{r, issuecheck, eval = F}
+DL1301_current <- issueCheck(DL1301_clean, year = 2021, plot = F)
+```
+
+```{r, createcurrent, include = F}
+DL1301_current <- DL1301_clean
 ```
 
 ### findDuplicates
@@ -422,8 +426,6 @@ memory.limit(size = 55000)
 writeReport(
   raw_path = "C:/HIP/DL1301",
   temp_path = "C:/HIP/corrected_data",
-  future_path = "C:/HIP/future_data",
-  past_path = "C:/HIP/past_data",
   year = 2019,
   dl = "1301",
   dir = "C:/HIP/dl_reports",

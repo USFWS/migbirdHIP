@@ -4,16 +4,12 @@
 \alias{writeReport}
 \title{Write an R markdown report from template}
 \usage{
-writeReport(raw_path, temp_path, future_path, past_path, year, dl, dir, file)
+writeReport(raw_path, temp_path, year, dl, dir, file)
 }
 \arguments{
 \item{raw_path}{File path to the folder containing HIP .txt files}
 
 \item{temp_path}{Path to directory that contains output .csv files}
-
-\item{future_path}{Path to directory that contains future data .csv files}
-
-\item{past_path}{Path to directory that contains past data .csv files}
 
 \item{year}{The year in which the Harvest Information Program data were collected}
 
@@ -22,6 +18,10 @@ writeReport(raw_path, temp_path, future_path, past_path, year, dl, dir, file)
 \item{dir}{Folder in which to save the rendered report}
 
 \item{file}{What the report file should be named (do not include an extension or suffix indicating file type, this is done automatically)}
+
+\item{future_path}{Path to directory that contains future data .csv files}
+
+\item{past_path}{Path to directory that contains past data .csv files}
 }
 \description{
 Create documentation with figures and tables that summarizes HIP data at a download cycle scale.
