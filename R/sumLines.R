@@ -32,5 +32,5 @@ sumLines <-
       close(con)
     }
 
-    return(sum(sum_lines))
+    return(sum(data.frame(source_file = dl_files, lines = sum_lines)))
   }
