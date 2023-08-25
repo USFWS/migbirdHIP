@@ -8,7 +8,11 @@
 #' @importFrom dplyr summarize
 #' @importFrom dplyr count
 #' @importFrom dplyr ungroup
+#' @importFrom dplyr arrange
+#' @importFrom dplyr mutate
 #' @importFrom stringr str_detect
+#' @importFrom lubridate ymd
+#' @importFrom lubridate mdy
 #'
 #' @param data The object created after cleaning data with \code{\link{clean}}
 #' @param year The year of the HIP season (e.g. 2022 for the 2022-2023 season)
@@ -25,21 +29,42 @@ issueCheck <-
     # Determine the destination of each record
     issue_assignments <- issueAssign(data, year)
 
+    # Return message if any issue_date is after the file was submitted
+    if(nrow(filter(data, mdy(issue_date) > ymd(dl_date))) > 0) {
+      message("Error: issue_date in the future detected.")
+      print(
+        filter(issue_assignments, mdy(issue_date) > ymd(dl_date)) |>
+          select(source_file, dl_state, issue_date, registration_yr, dl_date)
+      )
+    }
+    # Return message if issue_eval is NA (issue_date or reg yr not evaluated)
+    if(TRUE %in% is.na(issue_assignments$issue_eval)) {
+      message("Error: NA in issue_eval.")
+      print(
+        filter(issue_assignments, is.na(issue_eval)) |>
+          select(dl_state, issue_date, registration_yr)
+        )
+    }
+    # Return message if reg_yr_eval is NA (issue_date or reg yr not evaluated)
+    if(TRUE %in% is.na(issue_assignments$reg_yr_eval)) {
+      message("Error: NA in reg_yr_eval.")
+      print(
+        filter(issue_assignments, is.na(reg_yr_eval)) |>
+          select(dl_state, issue_date, registration_yr)
+      )
+    }
     # Return message if issue_date = "00/00/0000" detected
     if(TRUE %in% str_detect(data$issue_date, "00/00/0000")) {
       message("Error: issue_date value of 00/00/0000 detected.")
     }
-
     # Return message if "bad issue dates" detected
     if(TRUE %in% str_detect(issue_assignments$decision, "bad issue dates")) {
       message("Error: Bad issue_date value(s) detected.")
     }
-
     # Return messages for how many records need to be recycled
     if(nrow(filter(issue_assignments, decision == "copy")) == 0) {
       message("* 0 records need to be recycled for next season.")
     }
-
     # Return message for number of non-MS records that need to be recycled
     if(
       nrow(
@@ -51,7 +76,6 @@ issueCheck <-
             filter(issue_assignments, decision == "copy" & dl_state != "MS")),
           "non-MS records must be recycled for next season."), sep = " ")
     }
-
     # Return message for how many records must be postponed
     if(nrow(filter(issue_assignments, decision == "postpone")) == 0) {
       message("* 0 records need to be postponed for next season.")
@@ -61,7 +85,6 @@ issueCheck <-
           "*", nrow(filter(issue_assignments, decision == "postpone")),
           "records must be postponed for next year."), sep = " ")
     }
-
     # Return message for how many past records were found
     if(nrow(issue_assignments |> filter(decision == "past")) == 0) {
       message("* 0 past records detected.")
@@ -76,12 +99,13 @@ issueCheck <-
     print(
       suppressMessages(
         issue_assignments |>
-          group_by(source_file, issue_eval, reg_yr_eval, decision) |>
-          count() |>
-          ungroup() |>
+          count(source_file, issue_eval, reg_yr_eval, decision) |>
           group_by(reg_yr_eval, issue_eval, decision) |>
           summarize(sum_n = sum(n)) |>
-          ungroup())
+          ungroup() |>
+          arrange(issue_eval) |>
+          mutate(decision = ifelse(decision == "nochange", "current", decision))
+        )
     )
 
     # Plot results
@@ -97,8 +121,6 @@ issueCheck <-
 
     return(current_data)
   }
-
-
 
 #' Assign decisions to records on how to process them using issue dates and license years
 #'
@@ -144,6 +166,8 @@ issueAssign <-
               mdy(issue_date) > issue_end ~ "future",
               TRUE ~ "bad issue dates"),
             "two season state"),
+        # More calculations for 2-season states, and evaluate registration year
+        # for 1-season states
         reg_yr_eval =
           case_when(
             # For records from two-season states with an issue_date between
@@ -166,27 +190,38 @@ issueAssign <-
             dl_state == "MS" &
               mdy(issue_date) %within% interval(MS_firstday, MS_lastday) ~
               "copy",
+            # For records from Mississippi with an issue date after the last day
+            # of hunting, postpone sampling them until next season
+            dl_state == "MS" & mdy(issue_date) > MS_lastday ~ "postpone",
+            # For records from Mississippi with an issue date 365 days or more
+            # before the first day of hunting
+            dl_state == "MS" & mdy(issue_date) < MS_firstday - years(1) ~
+              "past",
+            # For records from Mississippi with an issue date
+            # within 365 days of the last day of hunting, current
+            dl_state == "MS" & mdy(issue_date) %within%
+              interval(MS_lastday - years(1), MS_lastday) ~
+              "current",
             # Postpone all other future registration_yr values, for all states
             as.numeric(registration_yr) > year ~ "postpone",
             # Check for old registration_yr values for all states
             as.numeric(registration_yr) < year ~ "past",
-            TRUE ~ "nochange"),
+            # Current registration year
+            as.numeric(registration_yr) == year ~ "current",
+            TRUE ~ NA_character_),
         # Assign destination of each record to decision
         decision =
           case_when(
-            issue_eval == "current" & reg_yr_eval == "nochange" ~ "nochange",
-            issue_eval == "current" & reg_yr_eval == "past" ~ "bad",
-            issue_eval == "current" & reg_yr_eval == "copy" ~ "copy",
-            issue_eval == "current" & reg_yr_eval == "postpone" ~ "postpone",
-            issue_eval == "past" & reg_yr_eval == "nochange" ~ "bad",
-            issue_eval == "past" & reg_yr_eval == "past" ~ "past",
-            issue_eval == "past" & reg_yr_eval == "copy" ~ "bad",
-            issue_eval == "past" & reg_yr_eval == "postpone" ~ "bad",
-            issue_eval == "future" & reg_yr_eval == "nochange" ~ "bad",
-            issue_eval == "future" & reg_yr_eval == "past" ~ "bad",
-            issue_eval == "future" & reg_yr_eval == "copy" ~ "copy",
-            issue_eval == "future" & reg_yr_eval == "postpone" ~ "postpone",
-            issue_eval == "two season state" & reg_yr_eval == "nochange" ~
+            is.na(reg_yr_eval) ~ NA_character_,
+            dl_state == "MS" & reg_yr_eval == "past" ~ "past",
+            dl_state == "MS" & reg_yr_eval == "copy" ~ "copy",
+            dl_state == "MS" & reg_yr_eval == "postpone" ~ "postpone",
+            dl_state == "MS" & reg_yr_eval == "current" ~ "nochange",
+            issue_eval == "bad issue dates" ~ "bad",
+            issue_eval == "current" ~ "nochange",
+            issue_eval == "past" ~ "past",
+            issue_eval == "future" ~ "postpone",
+            issue_eval == "two season state" & reg_yr_eval == "current" ~
               "nochange",
             issue_eval == "two season state" & reg_yr_eval == "past" ~ "past",
             issue_eval == "two season state" & reg_yr_eval == "copy" ~ "copy",
@@ -279,7 +314,8 @@ issuePlot <-
           aes(x = issue_end, y = dl_state,
               shape = "Issue end")) +
         labs(x = "Date", y = "State",
-             title = "Bad issue_date/registration_yr combinations") +
+             title = "Bad issue_date/registration_yr combinations",
+             color = "Registration year") +
         scale_fill_manual("Seasons",
                           labels = c(paste(year-1, year, sep = "-"),
                                      paste(year, year+1, sep = "-"),
