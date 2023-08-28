@@ -176,7 +176,7 @@ read_hip <-
           missing_lines <-
             pulled_data |>
             count(source_file) |>
-            left_join(sumLines(files), by = "source_file") |>
+            left_join(sumLines(path), by = "source_file") |>
             filter(n != num_lines)
         )
 
