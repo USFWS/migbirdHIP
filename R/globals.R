@@ -116,4 +116,5 @@ globalVariables(
     "repeated_value",
     "zipcode",
     "assigned_data",
-    "n_shift"))
+    "n_shift",
+    "num_lines"))

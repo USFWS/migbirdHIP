@@ -177,7 +177,7 @@ read_hip <-
             pulled_data |>
             count(source_file) |>
             left_join(sumLines(files), by = "source_file") |>
-            filter(n != lines)
+            filter(n != num_lines)
         )
 
         if(nrow(missing_lines) > 0) {
@@ -307,5 +307,5 @@ sumLines <-
       close(con)
     }
 
-    return(data.frame(source_file = dl_files, lines = sum_lines))
+    return(data.frame(source_file = dl_files, num_lines = sum_lines))
   }
