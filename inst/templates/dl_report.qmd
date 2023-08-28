@@ -141,116 +141,66 @@ final_data <-
 # Issue date checking
 issue_assignments <- migbirdHIP:::issueAssign(cleaned_data, params$year)
 
-if(nrow(issue_assignments |> dplyr::filter(decision == "bad")) > 0){
+bit <-
+  issue_assignments |>
+  dplyr::select(dl_state, source_file, issue_date, registration_yr) |>
+  dplyr::left_join(
+    migbirdHIP:::licenses_ref |>
+      dplyr::select(
+        -c("hunting_season", "category")) |> 
+      dplyr::rename(dl_state = state),
+    by = "dl_state") |>  
+  dplyr::mutate(
+    issue_date = lubridate::mdy(issue_date),
+    type = 
+      dplyr::case_when(
+        # Issue date is valid for this season, but registration year is !=
+        # params$year
+        issue_date %within% 
+          lubridate::interval(issue_start, issue_end) & 
+          registration_yr != as.character(params$year) ~ 
+          "good issue date, but registration year is",
+        # Issue date is before the first day of the hunting season &
+        # registration year is params$year 
+        issue_date < issue_start & 
+          registration_yr == as.character(params$year) ~ 
+          "issue date before the first day of issuance",
+        # Issue date is before the first day of the hunting season &
+        # registration year is != params$year
+        issue_date < issue_start & 
+          registration_yr != as.character(params$year) ~ 
+          paste0(
+            "issue date before the first day of issuance, and",
+            " registration year is"),
+        # Issue date is after issue_end
+        issue_date > issue_end & 
+          registration_yr == as.character(params$year) ~ 
+          "issue date after end of issue window",
+        # Repeat above but with different registration yr
+        # Issue date is after issue_end
+        issue_date > issue_end & 
+          registration_yr != as.character(params$year) ~ 
+          paste0(
+            "issue date after end of issue window and last day of hunting, ",
+            "and registration year is"),
+        TRUE ~ NA_character_
+      )
+    ) |> 
+  dplyr::filter(!is.na(type)) |> 
+  dplyr::mutate(
+    message = 
+      ifelse(
+        registration_yr != as.character(params$year),
+        paste("Records with", type, registration_yr, sep = " "),
+        paste("Records with", type, sep = " "))
+  ) |>
+  dplyr::count(dl_state, message) |> 
+  dplyr::arrange(dplyr::desc(n)) 
+
+split_bit <- split(bit, bit$message)
   
-  bit <-
-    issue_assignments |>
-    dplyr::filter(decision == "bad") |>
-    dplyr::select(dl_state, source_file, issue_date, registration_yr) |>
-    dplyr::left_join(
-      migbirdHIP:::licenses_ref |>
-        dplyr::select(
-          -c("hunting_season", "category")) |> 
-        dplyr::rename(dl_state = state),
-      by = "dl_state") |>  
-    dplyr::mutate(
-      issue_date = lubridate::mdy(issue_date),
-      type = 
-        dplyr::case_when(
-          # Issue date is valid for this season, but registration year is !=
-          # params$year
-          issue_date %within% 
-            lubridate::interval(issue_start, last_day_migbird_hunting) & 
-            registration_yr != as.character(params$year) ~ 
-            "good issue date, but registration year is",
-          # Issue date is before the first day of the hunting season &
-          # registration year is params$year 
-          issue_date < issue_start & 
-            registration_yr == as.character(params$year) ~ 
-            "issue date before the first day of the hunting season",
-          # Issue date is before the first day of the hunting season &
-          # registration year is != params$year
-          issue_date < issue_start & 
-            registration_yr != as.character(params$year) ~ 
-            paste0(
-              "issue date before the first day of the hunting season, and",
-              " registration year is"),
-          # Issue date is between last day of hunting and issue_end
-          last_day_migbird_hunting < issue_end &
-            issue_date %within% 
-            lubridate::interval(last_day_migbird_hunting, issue_end) & 
-            registration_yr == as.character(params$year) ~ 
-            paste0(
-              "issue date after last day of hunting but before end of issue",
-              " window"),
-          # Issue date is between issue_end and last day of hunting
-          last_day_migbird_hunting > issue_end &
-            issue_date %within% 
-            lubridate::interval(issue_end, last_day_migbird_hunting) & 
-            registration_yr == as.character(params$year) ~ 
-            paste0(
-              "issue date after end of issue window but before last day of",
-              " hunting"),
-          # Issue date is after equal issue_end and last day of hunting
-          last_day_migbird_hunting == issue_end &
-            issue_date > issue_end & 
-            registration_yr == as.character(params$year) ~ 
-            "issue date after end of issue window and last day of hunting",
-          # Issue date is after BOTH issue_end and last day of hunting
-          issue_date > last_day_migbird_hunting &
-            issue_date > issue_end & 
-            registration_yr == as.character(params$year) ~ 
-            "issue date after end of issue window and last day of hunting",
-          # Repeated the last 4 above but with different registration yr
-          # Issue date is between last day of hunting and issue_end
-          last_day_migbird_hunting < issue_end &
-            issue_date %within% 
-            lubridate::interval(last_day_migbird_hunting, issue_end) & 
-            registration_yr != as.character(params$year) ~ 
-            paste0(
-              "issue date after last day of hunting but before end of issue ",
-              "window, and registration year is"),
-          # Issue date is between issue_end and last day of hunting
-          last_day_migbird_hunting > issue_end &
-            issue_date %within% 
-            lubridate::interval(issue_end, last_day_migbird_hunting) & 
-            registration_yr != as.character(params$year) ~ 
-            paste0(
-              "issue date after end of issue window but before last day of ",
-              "hunting, and registration year is"),
-          # Issue date is after equal issue_end and last day of hunting
-          last_day_migbird_hunting == issue_end &
-            issue_date > issue_end & 
-            registration_yr != as.character(params$year) ~ 
-            paste0(
-              "issue date after end of issue window and last day of hunting, ",
-              "and registration year is"),
-          # Issue date is after BOTH issue_end and last day of hunting
-          issue_date > last_day_migbird_hunting &
-            issue_date > issue_end & 
-            registration_yr != as.character(params$year) ~ 
-            paste0(
-              "issue date after end of issue window and last day of hunting, ",
-              "and registration year is"),
-          TRUE ~ NA_character_
-        ),
-      message = 
-        ifelse(
-          registration_yr != as.character(params$year),
-          paste("Records with", type, registration_yr, sep = " "),
-          paste("Records with", type, sep = " "))
-    ) |>
-    dplyr::group_by(dl_state, message) |> 
-    dplyr::count() |> 
-    dplyr::ungroup() |> 
-    dplyr::arrange(dplyr::desc(n)) 
-  
-  split_bit <- split(bit, bit$message)
-  
-  bit <- NULL
-} else {
-  split_bit <- NULL
-}
+bit <- NULL
+
 ```
 
 ```{r overview_statistics}
@@ -343,7 +293,7 @@ important_statistics <-
     dplyr::filter(
       !stringr::str_detect(
         value, 
-        "are blank|ID fields|provided state|write-out|past records|0 future|Mississippi|100% of emails|00/00/0000")
+        "are blank|ID fields|provided state|write-out|past records|0 future|issue_date in the|Mississippi|100% of emails|00/00/0000")
     ) |> 
     dplyr::mutate(
       value = 
@@ -549,10 +499,6 @@ duplicates <-
 
 bullets <- 
   c(
-    # Identify a "future data" report
-    if(params$dl == "0799") {
-      c("* This is a future data report for last season.")
-    },
     # Count of received lines of data, files, states
     paste0(
       "* This cycle, ", 
@@ -803,6 +749,7 @@ if(nrow(idb2) > 0) {
     paste0(
       "❌", 
       " Indentical bag columns detected in file(s) with more than 100 rows."))
+  cat("\n\n")
   cat(
     paste0(
       "💡", " Likely species combinations not included (coots_snipe and rails_gallinules, brant and seaducks, band_tailed_pigeon and doves)."))
@@ -1028,6 +975,7 @@ if(nrow(duplicates) > 0) {
       dupe_prop, ") were duplicated.")
   )
   cat("\n\n")
+  duplicates <- filter(duplicates, n_dupes >= 100 | dupe_prop >= 3)
   writeLines(
     unlist(
       purrr::map(
@@ -1053,7 +1001,7 @@ v_rep_all_split <- NULL
 blanks <- NULL
 pii2 <- NULL
 bad_issue <- NULL
-dupes <- NULL
+duplicates <- NULL
 idb2 <- NULL
 ```
 
@@ -1138,7 +1086,7 @@ Files were received from the following yellow states. Hexagons shaded blue, oran
 #| echo: false
 #| fig-align: center
 
-if(params$dl == "0799") {
+if(params$dl == "0800") {
   cat("Map not available for this report.")
 } else {
   files_received <- 
@@ -1230,8 +1178,7 @@ DT::datatable(
 ```{r exclusions_per_state}
 #| echo: false
 
-if(params$dl != "0799") {
-  excluded <- 
+excluded <- 
   files_received |> 
   dplyr::left_join(
     final_data |> 
@@ -1245,7 +1192,7 @@ if(params$dl != "0799") {
   dplyr::select(state) |> 
   dplyr::pull()
   
-  if(length(excluded) > 0) {
+if(length(excluded) > 0) {
   cat(
     paste0(
       "❌",
@@ -1254,9 +1201,6 @@ if(params$dl != "0799") {
   
   } else {
     cat("✔️ All download states that submitted files are included in the final data!")
-  }
-} else {
-  cat("Not relevant to this report.")
 }
 
 files_received <- NULL
@@ -1423,6 +1367,10 @@ huntcheck <- NULL
 if(!is.null(stratacheck_tbl)) { 
   DT::datatable(
     stratacheck_tbl |> 
+      dplyr::mutate(
+        nprop = as.numeric(stringr::str_extract(prop, "[0-9]{1,3}"))) |>
+      dplyr::arrange(dplyr::desc(nprop)) |> 
+      dplyr::select(-nprop) |> 
       dplyr::rename(
         `Download state` = dl_state,
         Species = spp,
@@ -1521,19 +1469,6 @@ v_rep_all <- NULL
 
 # Issuance
 
-```{r future_data_ignore}
-#| echo: false
-
-if(params$dl == "0799") {
-  cat(
-    paste0(
-      "❌",
-      " Ignore this page! Information below not relevant to future data report.\n\n")
-  )
-}
-  
-```
-
 ## Summary of registration year
 
 ```{r reg_yr_check}
@@ -1591,7 +1526,7 @@ if(nrow(dplyr::filter(issue_assignments, decision %in% c("postpone", "copy"))) >
 
 ## Past records
 
-Records below have an issue date and registration year indicating they qualify for a previous HIP season; these records are not be eligible to be sampled.
+Records below have an issue date and registration year indicating they qualify for a previous HIP season; these records are not eligible to be sampled.
 
 ```{r past_records}
 #| echo: false
