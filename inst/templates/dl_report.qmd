@@ -556,7 +556,7 @@ bullets <-
     # Count of received lines of data, files, states
     paste0(
       "* This cycle, ", 
-      suppressWarnings(migbirdHIP::sumLines(params$raw_path)), 
+      suppressWarnings(sum(migbirdHIP:::sumLines(params$raw_path)$num_lines)), 
       " lines of data were submitted in ", 
       length(file_list), 
       " files from ",
