@@ -294,7 +294,7 @@ issuePlot <-
 
     badplot_data <-
       assigned_data |>
-      filter(decision == "bad") |>
+      filter(decision != "nochange") |>
       select(dl_state, source_file, issue_date, registration_yr, decision) |>
       left_join(
         licenses_ref |>
@@ -324,7 +324,7 @@ issuePlot <-
           aes(x = issue_end, y = dl_state,
               shape = "Issue end")) +
         labs(x = "Date", y = "State",
-             title = "Bad issue_date/registration_yr combinations",
+             title = "Non-current registrations",
              color = "Registration year") +
         scale_fill_manual("Seasons",
                           labels = c(paste(year-1, year, sep = "-"),
