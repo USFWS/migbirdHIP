@@ -502,9 +502,13 @@ bullets <-
     # Count of received lines of data, files, states
     paste0(
       "* This cycle, ", 
-      suppressWarnings(sum(migbirdHIP:::sumLines(params$raw_path)$num_lines)), 
+      suppressWarnings(
+        format.default(
+          sum(migbirdHIP:::sumLines(params$raw_path)$num_lines),
+          big.mark = ",")
+        ), 
       " lines of data were submitted in ", 
-      length(file_list), 
+      format.default(length(file_list), big.mark = ","), 
       " files from ",
       length(
         unique(
@@ -513,10 +517,12 @@ bullets <-
     ,
     # Count of retained lines of data, files, states
     paste0(
-      "* We retained ", nrow(final_data), 
+      "* We retained ", 
+      format.default(nrow(final_data), big.mark = ","), 
       " unique records in the final data from ", 
-      length(unique(final_data$source_file)), " files and ", 
-      final_data |> dplyr::select(dl_state) |> dplyr::distinct() |> nrow(), 
+      format.default(length(unique(final_data$source_file)), big.mark = ","),
+      " files and ", 
+      length(unique(final_data$dl_state)), 
       " states.")
     ,
     # Captured message outputs from other functions
@@ -528,7 +534,7 @@ bullets <-
     if(canada_records > 0){
       paste0(
         "* A total of ", 
-        canada_records, 
+        format.default(canada_records, big.mark = ","), 
         " records were received from Canada.")
       }
   )
@@ -1373,7 +1379,7 @@ if(!is.null(stratacheck_tbl)) {
       dplyr::arrange(dplyr::desc(nprop)) |> 
       dplyr::select(-nprop) |> 
       dplyr::rename(
-        `Download state` = dl_state,
+        `State` = dl_state,
         Species = spp,
         `Strata provided` = state_strata,
         `Strata expected` = normal_strata,
@@ -1501,6 +1507,73 @@ if(nrow(reg_yr_summary) > 0){
 reg_yr_summary <- NULL
 ```
 
+## Non-current records
+
+Records below did not have an issue date and/or registration year that were current.
+
+```{r bad_issue_dates_plot}
+#| echo: false
+#| fig.align: center
+
+if(nrow(dplyr::filter(issue_assignments, decision != "nochange")) > 0){
+  migbirdHIP:::issuePlot(issue_assignments, params$year)
+}else{
+  cat("✔️ No bad data to plot.")
+}
+```
+
+```{r bad_issue_dates_tbl}
+#| echo: false
+#| message: false
+
+if(nrow(dplyr::filter(issue_assignments, decision != "nochange")) > 0){
+  stamp_format <- lubridate::stamp("Apr 15, 1993")
+  
+  bad_issue_table <-
+    issue_assignments |>
+    dplyr::filter(decision != "nochange") |>
+    dplyr::select(dl_state, source_file, issue_date, registration_yr) |>
+    dplyr::left_join(
+      migbirdHIP:::licenses_ref |>
+        dplyr::select(
+          -c("hunting_season", "category")) |> 
+        dplyr::rename(dl_state = state),
+      by = "dl_state") |>
+    dplyr::group_by(
+      dl_state, source_file, registration_yr, issue_start, issue_end) |> 
+    dplyr::summarize(
+      n = dplyr::n(),
+      `Error window` =
+        paste(
+          min(stamp_format(lubridate::mdy(issue_date))),
+          max(stamp_format(lubridate::mdy(issue_date))),
+          sep = " to ")
+    )|> 
+    dplyr::ungroup() |> 
+    dplyr::relocate(n, .after = "source_file") |> 
+    dplyr::mutate(
+      `Issue window` = 
+        paste(stamp_format(issue_start), 
+              stamp_format(issue_end), sep = " to ")) |> 
+    dplyr::select(-c("issue_start", "issue_end")) |> 
+    dplyr::relocate(`Error window`, .after = `Issue window`) |> 
+    dplyr::relocate(n, .after = registration_yr)
+  
+  DT::datatable(
+    bad_issue_table |> 
+      dplyr::rename(
+        State = dl_state,
+        File = source_file,
+        Year = registration_yr,
+        `Count outside window` = n
+      )
+  )
+}
+
+bad_issue_table <- NULL
+issue_assignments <- NULL
+```
+
 ## Future records
 
 Records below have an issue date and registration year indicating they should not be sampled until next year.
@@ -1547,79 +1620,6 @@ if(nrow(dplyr::filter(issue_assignments, decision == "past")) > 0){
   cat("✔️ No past records.")
 }
 
-```
-
-## Irreconcilable records
-
-Records below did not have an issue date and registration year that were in agreement.
-
-#### Scenarios for disagreement
-
--   Issue date is good, but registration year is `r params$year - 1`
--   Issue date is before the first day of the hunting season, but registration year is `r params$year` or `r params$year + 1`
--   Issue date is after the last day of hunting, but registration year is `r params$year - 1` or `r params$year`
-
-```{r bad_issue_dates_plot}
-#| echo: false
-#| fig.align: center
-
-if(nrow(dplyr::filter(issue_assignments, decision == "bad")) > 0){
-  migbirdHIP:::issuePlot(issue_assignments, params$year)
-}else{
-  cat("✔️ No bad data to plot.")
-}
-```
-
-```{r bad_issue_dates_tbl}
-#| echo: false
-#| message: false
-
-if(nrow(issue_assignments |> dplyr::filter(decision == "bad")) > 0){
-  stamp_format <- lubridate::stamp("Apr 15, 1993")
-  
-  bad_issue_table <-
-    issue_assignments |>
-    dplyr::filter(decision == "bad") |>
-    dplyr::select(dl_state, source_file, issue_date, registration_yr) |>
-    dplyr::left_join(
-      migbirdHIP:::licenses_ref |>
-        dplyr::select(
-          -c("hunting_season", "category")) |> 
-        dplyr::rename(dl_state = state),
-      by = "dl_state") |>
-    dplyr::group_by(
-      dl_state, source_file, registration_yr, issue_start, issue_end) |> 
-    dplyr::summarize(
-      n = dplyr::n(),
-      `Error window` =
-        paste(
-          min(stamp_format(lubridate::mdy(issue_date))),
-          max(stamp_format(lubridate::mdy(issue_date))),
-          sep = " to ")
-    )|> 
-    dplyr::ungroup() |> 
-    dplyr::relocate(n, .after = "source_file") |> 
-    dplyr::mutate(
-      `Issue window` = 
-        paste(stamp_format(issue_start), 
-              stamp_format(issue_end), sep = " to ")) |> 
-    dplyr::select(-c("issue_start", "issue_end")) |> 
-    dplyr::relocate(`Error window`, .after = `Issue window`) |> 
-    dplyr::relocate(n, .after = registration_yr)
-  
-  DT::datatable(
-    bad_issue_table |> 
-      dplyr::rename(
-        State = dl_state,
-        File = source_file,
-        Year = registration_yr,
-        `Count outside window` = n
-      )
-  )
-}
-
-bad_issue_table <- NULL
-issue_assignments <- NULL
 ```
 
 # Duplicates
@@ -1831,30 +1831,6 @@ zipcheck <- NULL
 ```
 :::
 
-## By state
-
-::: panel-tabset
-### Before correction
-
-```{r errors_perstate_before}
-#| echo: false
-#| fig.align: center
-
-migbirdHIP::errorPlot_states(proofed_data)
-```
-
-### After correction
-
-```{r errors_perstate_after}
-#| echo: false
-#| fig.align: center
-
-migbirdHIP::errorPlot_states(final_data)
-
-final_data <- NULL
-```
-:::
-
 ```{r errortable}
 #| include: false
 
@@ -1963,4 +1939,43 @@ if(et$error[3] != "birth_date"){
 DT::datatable(err3)
 ```
 :::
+
+## By state
+
+::: panel-tabset
+### Before correction
+
+```{r errors_perstate_before}
+#| echo: false
+#| fig.align: center
+
+migbirdHIP::errorPlot_states(proofed_data)
+```
+
+### After correction
+
+```{r errors_perstate_after}
+#| echo: false
+#| fig.align: center
+
+migbirdHIP::errorPlot_states(final_data)
+
+final_data <- NULL
+```
+:::
+
+## Causes of errors by state
+
+```{r errors_perstate_tbl}
+#| echo: false
+
+DT::datatable(
+  et |> 
+    dplyr::rename(
+      State = dl_state,
+      Error = error,
+      Count = error_count)
+  )
+```
+
 :::
