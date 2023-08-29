@@ -7,8 +7,6 @@
 #'
 #' @param raw_path File path to the folder containing HIP .txt files
 #' @param temp_path Path to directory that contains output .csv files
-#' @param future_path Path to directory that contains future data .csv files
-#' @param past_path Path to directory that contains past data .csv files
 #' @param year The year in which the Harvest Information Program data were collected
 #' @param dl Download cycle
 #' @param dir Folder in which to save the rendered report
