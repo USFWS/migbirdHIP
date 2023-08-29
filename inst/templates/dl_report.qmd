@@ -1088,7 +1088,7 @@ Files were received from the following yellow states. Hexagons shaded blue, oran
 
 if(params$dl == "0800") {
   cat("Map not available for this report.")
-} else {
+  
   files_received <- 
     # Get all of the received files up to and including this download
     list.files(
@@ -1128,6 +1128,7 @@ if(params$dl == "0800") {
       by = "state"
     ) |> 
     dplyr::arrange(id)
+} else {
   
   migbirdHIP:::hexmap |>
     dplyr::left_join(files_received, by = c("id", "state")) |> 
