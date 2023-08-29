@@ -1571,7 +1571,6 @@ if(nrow(dplyr::filter(issue_assignments, decision != "nochange")) > 0){
 }
 
 bad_issue_table <- NULL
-issue_assignments <- NULL
 ```
 
 ## Future records
@@ -1620,6 +1619,7 @@ if(nrow(dplyr::filter(issue_assignments, decision == "past")) > 0){
   cat("✔️ No past records.")
 }
 
+issue_assignments <- NULL
 ```
 
 # Duplicates
