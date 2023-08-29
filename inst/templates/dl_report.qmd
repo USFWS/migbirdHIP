@@ -975,7 +975,7 @@ if(nrow(duplicates) > 0) {
       dupe_prop, ") were duplicated.")
   )
   cat("\n\n")
-  duplicates <- filter(duplicates, n_dupes >= 100 | dupe_prop >= 3)
+  duplicates <- dplyr::filter(duplicates, n_dupes >= 100 | dupe_prop >= 3)
   writeLines(
     unlist(
       purrr::map(
