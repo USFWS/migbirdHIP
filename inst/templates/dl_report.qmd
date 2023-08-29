@@ -1970,7 +1970,7 @@ final_data <- NULL
 #| echo: false
 
 DT::datatable(
-  et |> 
+  migbirdHIP::errorTable(proofed_data, loc = "all") |> 
     dplyr::rename(
       State = dl_state,
       Error = error,
