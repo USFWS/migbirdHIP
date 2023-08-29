@@ -72,8 +72,12 @@ issueCheck <-
       message(
         paste(
           "*",
-          nrow(
-            filter(issue_assignments, decision == "copy" & dl_state != "MS")),
+          format.default(
+            nrow(
+              filter(
+                issue_assignments,
+                decision == "copy" & dl_state != "MS")),
+            big.mark = ","),
           "non-MS records must be recycled for next season."), sep = " ")
     }
     # Return message for how many records must be postponed
@@ -82,7 +86,10 @@ issueCheck <-
     } else {
       message(
         paste(
-          "*", nrow(filter(issue_assignments, decision == "postpone")),
+          "*",
+          format.default(
+            nrow(filter(issue_assignments, decision == "postpone")),
+            big.mark = ","),
           "records must be postponed for next year."), sep = " ")
     }
     # Return message for how many past records were found
@@ -91,7 +98,10 @@ issueCheck <-
     } else {
       message(
         paste(
-          "*", nrow(issue_assignments |> filter(decision == "past")),
+          "*",
+          format.default(
+            nrow(issue_assignments |> filter(decision == "past")),
+            big.mark = ","),
           "past records detected. They have been filtered out.", sep = " "))
     }
 
