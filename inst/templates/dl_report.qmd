@@ -358,9 +358,38 @@ all_h_valid <- migbirdHIP::validate(final_data, type = "horizontal", all = T)
 all_h_valid_100 <- all_h_valid |> dplyr::filter(prop_repeat == 1)
 
 # Vertical repetition
-v_rep_all <- 
-  migbirdHIP::validate(final_data, type = "vertical", all = T) |> 
-  dplyr::filter(v_repeated >= 100)
+vrep_all <- migbirdHIP::validate(final_data, type = "vertical", all = T) 
+
+# Vertical repetition filtered
+vrep_100 <-
+  vrep_all |> 
+  dplyr::filter(v_repeated >= 100) |> 
+  # Filter out expected vertical repetition for bag values that are wrong, 
+  # e.g. received 1s for no-season instead of 0s, etc; this already shows 
+  # up in the stratacheck section and clutters the data summary here
+  dplyr::left_join(
+    migbirdHIP:::hip_bags_ref |>
+      dplyr::select(-FWSstratum) |>
+      dplyr::group_by(state, spp) |>
+      dplyr::filter(dplyr::n() == 1) |>
+      dplyr::ungroup() |>
+      dplyr::rename(
+        dl_state = state,
+        repeated_value = stateBagValue) |>
+      dplyr::mutate(
+        repeated_value = as.character(repeated_value)) |>
+      # Join in state/species combinations that are supposed to be
+      # all 0s because we receive those bag values in another format
+      dplyr::bind_rows(
+        migbirdHIP:::pmt_files |> 
+          dplyr::rename(repeated_value = value)) |>
+      dplyr::distinct() |>
+      dplyr::select(-repeated_value) |> 
+      dplyr::mutate(flag = "no season"),
+    by = c("dl_state", "spp")
+    ) |> 
+  dplyr::filter(is.na(flag)) |> 
+  dplyr::select(-flag)
 
 # Identical bags
 identicalbags <- migbirdHIP::identicalBags(final_data)
@@ -380,8 +409,63 @@ idb2 <-
       )
   ) |> 
   dplyr::filter(common != "Y") |> 
-  dplyr::select(-c("source_file", "common")) |> 
-  dplyr::distinct()
+  dplyr::select(-common) |> 
+  dplyr::group_by(dl_state, spp1, spp2, value) |> 
+  dplyr::reframe(
+    files = length(unique(source_file)),
+    n = sum(n)) |> 
+  dplyr::mutate(
+    files = 
+      ifelse(files == 1, " 1 file", paste0(files, " files"))) |> 
+  # Filter out expected vertical repetition for bag values that are wrong, 
+  # e.g. received 1s for no-season instead of 0s, etc; this already shows 
+  # up in the stratacheck section and clutters the data summary here
+  dplyr::left_join(
+    migbirdHIP:::hip_bags_ref |>
+      dplyr::select(-FWSstratum) |>
+      dplyr::group_by(state, spp) |>
+      dplyr::filter(dplyr::n() == 1) |>
+      dplyr::ungroup() |>
+      dplyr::rename(
+        dl_state = state,
+        repeated_value = stateBagValue,
+        spp1 = spp) |>
+      dplyr::mutate(
+        repeated_value = as.character(repeated_value)) |>
+      # Join in state/species combinations that are supposed to be
+      # all 0s because we receive those bag values in another format
+      dplyr::bind_rows(
+        migbirdHIP:::pmt_files |> 
+          dplyr::rename(repeated_value = value, spp1 = spp)) |>
+      dplyr::distinct() |>
+      dplyr::select(-repeated_value) |> 
+      dplyr::mutate(flag1 = "no season"),
+    by = c("dl_state", "spp1")
+  ) |> 
+  dplyr::left_join(
+    migbirdHIP:::hip_bags_ref |>
+      dplyr::select(-FWSstratum) |>
+      dplyr::group_by(state, spp) |>
+      dplyr::filter(dplyr::n() == 1) |>
+      dplyr::ungroup() |>
+      dplyr::rename(
+        dl_state = state,
+        repeated_value = stateBagValue,
+        spp2 = spp) |>
+      dplyr::mutate(
+        repeated_value = as.character(repeated_value)) |>
+      # Join in state/species combinations that are supposed to be
+      # all 0s because we receive those bag values in another format
+      dplyr::bind_rows(
+        migbirdHIP:::pmt_files |> 
+          dplyr::rename(repeated_value = value, spp2 = spp)) |>
+      dplyr::distinct() |>
+      dplyr::select(-repeated_value) |> 
+      dplyr::mutate(flag2 = "no season"),
+    by = c("dl_state", "spp2")
+  ) |> 
+  dplyr::filter(is.na(flag1) & is.na(flag2)) |> 
+  dplyr::select(-c("flag1", "flag2"))
 
 # Vector of source files
 file_list <- 
@@ -760,7 +844,7 @@ if(nrow(idb2) > 0) {
   cat("\n\n")
   cat(
     paste0(
-      "💡", " Likely species combinations not included (coots_snipe and rails_gallinules, brant and seaducks, band_tailed_pigeon and doves)."))
+      "💡", " Likely species combinations not included (coots_snipe and rails_gallinules, brant and seaducks)."))
   cat("\n\n")
   if(nrow(idb2) == 1) { 
     cat(
@@ -779,7 +863,8 @@ if(nrow(idb2) > 0) {
             1:length(idb2_split),
             function(x) {
               list(
-                paste0("* ", names(idb2_split[x])),
+                paste0("* ", names(idb2_split[x]), " (", 
+                 unique(idb2_split[[x]]$files), ")"),
                 purrr::map(
                   1:nrow(idb2_split[[x]]),
                   function(y) {
@@ -787,7 +872,7 @@ if(nrow(idb2) > 0) {
                       "    + ", 
                       idb2_split[[x]]$spp1[y], " and ", 
                       idb2_split[[x]]$spp2[y], 
-                      " (n = ", idb2_split[[x]]$n[y], 
+                      " (records = ", idb2_split[[x]]$n[y], 
                       ", value(s) = ", idb2_split[[x]]$value[y], ")")
                   }
                 )
@@ -835,52 +920,52 @@ if(nrow(all_h_valid_100) > 0) {
 cat("\n\n")
 cat("### Vertical repetition")
 cat("\n\n")
-if(nrow(v_rep_all) > 0) { 
+if(nrow(vrep_100) > 0) { 
   cat(
     paste0(
       "❌", 
       " Vertical repetition was detected in file(s) with more than 100 rows."))
   cat("\n\n")
-  if(nrow(v_rep_all) == 1) {
+  if(nrow(vrep_100) == 1) {
   cat(
     paste0(
-      "* ", v_rep_all$source_file,
-      " repeated ", v_rep_all$repeated_value, 
+      "* ", vrep_100$source_file,
+      " repeated ", vrep_100$repeated_value, 
       " for ", 
-      v_rep_all_split$spp,
-      "(n = ", unique(v_rep_all$v_repeated), 
+      vrep_100$spp,
+      "(n = ", unique(vrep_100$v_repeated), 
       " records).")
     )
-  } else if(nrow(v_rep_all) > 1) {
-    v_rep_all_split <- 
-      split(v_rep_all, v_rep_all$source_file) |>
+  } else if(nrow(vrep_100) > 1) {
+    vrep_100_split <- 
+      split(vrep_100, vrep_100$source_file) |>
       setNames(
-        v_rep_all |> 
+        vrep_100 |> 
           dplyr::distinct(source_file, v_repeated) |> 
           dplyr::pull(v_repeated))
     
-    v_rep_all_split <- 
-      v_rep_all_split[
-        as.character(sort(as.numeric(names(v_rep_all_split)), decreasing = T))]
+    vrep_100_split <- 
+      vrep_100_split[
+        as.character(sort(as.numeric(names(vrep_100_split)), decreasing = T))]
     
     writeLines(
       unlist(
         purrr::map(
-          1:length(v_rep_all_split),
+          1:length(vrep_100_split),
           function(x) {
             list(
               paste(
                 "*",
-                unique(v_rep_all_split[[x]]$source_file),
-                "(n =", unique(v_rep_all_split[[x]]$v_repeated), 
+                unique(vrep_100_split[[x]]$source_file),
+                "(n =", unique(vrep_100_split[[x]]$v_repeated), 
                 "records)", sep = " "),
               purrr::map(
-                1:nrow(v_rep_all_split[[x]]),
+                1:nrow(vrep_100_split[[x]]),
                 function(y) {
                   paste0(
-                    "    + ", v_rep_all_split[[x]]$repeated_value[y], 
+                    "    + ", vrep_100_split[[x]]$repeated_value[y], 
                     " for ", 
-                    v_rep_all_split[[x]]$spp[y])
+                    vrep_100_split[[x]]$spp[y])
                 }
               )
             )
@@ -1005,7 +1090,8 @@ cat("\n\n")
 
 idb2_split <- NULL
 stratacheck_split <- NULL
-v_rep_all_split <- NULL
+vrep_100 <- NULL
+vrep_100_split <- NULL
 blanks <- NULL
 pii2 <- NULL
 bad_issue <- NULL
@@ -1466,9 +1552,9 @@ The table below contains files with values repeated for 100% of any bag column. 
 ```{r v_validate}
 #| echo: false
 
-if(!is.null(v_rep_all)) {
+if(!is.null(vrep_all)) {
   DT::datatable(
-    v_rep_all |> 
+    vrep_all |> 
       dplyr::select(-dl_state) |> 
       dplyr::rename(
         `Source file` = source_file,
@@ -1480,7 +1566,7 @@ if(!is.null(v_rep_all)) {
   cat("✔️ No vertical repetition detected!")
 }
 
-v_rep_all <- NULL
+vrep_all <- NULL
 ```
 
 # Issuance
