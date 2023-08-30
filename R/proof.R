@@ -44,7 +44,7 @@ proof <-
       bind_rows(
         # Title should be 1 or 2, no other values
         keyed_x |>
-          filter(!str_detect(title, "1|2")) |>
+          filter(!str_detect(title, "0|1|2")) |>
           mutate(error = "title"),
         # First name
         keyed_x |>
