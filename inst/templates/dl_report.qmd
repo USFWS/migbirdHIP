@@ -105,6 +105,8 @@ fixed_data <- catch_messages(migbirdHIP::fixDuplicates(current_data))
 
 proofed_data <- migbirdHIP::proof(fixed_data, year = params$year)
 
+fixed_data <- NULL
+
 # Read in the completed download data (for better/more accurate figures and tables)
 final_data <-
   purrr::map_df(
@@ -1009,6 +1011,7 @@ pii2 <- NULL
 bad_issue <- NULL
 duplicates <- NULL
 idb2 <- NULL
+cleaned_data <- NULL
 ```
 
 ## High error proportions
@@ -1644,16 +1647,15 @@ current_data <- NULL
 #| echo: false
 #| fig.align: center
 
-fixed_dupes <- migbirdHIP::findDuplicates(fixed_data, return = "table")
+fixed_dupes <- migbirdHIP::findDuplicates(proofed_data, return = "table")
 
 if(!is.null(fixed_dupes)) {
-  migbirdHIP::findDuplicates(fixed_data)
+  migbirdHIP::findDuplicates(proofed_data)
   
   DT::datatable(fixed_dupes)
 } 
 
 fixed_dupes <- NULL
-fixed_data <- NULL
 ```
 :::
 
@@ -1960,13 +1962,16 @@ migbirdHIP::errorPlot_states(proofed_data)
 
 migbirdHIP::errorPlot_states(final_data)
 
-final_data <- NULL
 ```
 :::
 
 ## Causes of errors by state
 
-```{r errors_perstate_tbl}
+::: panel-tabset
+
+### Before correction
+
+```{r errors_perstate_tbl_p}
 #| echo: false
 
 DT::datatable(
@@ -1978,4 +1983,22 @@ DT::datatable(
   )
 ```
 
+### After correction
+
+```{r errors_perstate_tbl_c}
+#| echo: false
+
+DT::datatable(
+  migbirdHIP::errorTable(final_data, loc = "all") |> 
+    dplyr::rename(
+      State = dl_state,
+      Error = error,
+      Count = error_count)
+  )
+
+final_data <- NULL
+proofed_data <- NULL
+```
+
+:::
 :::
