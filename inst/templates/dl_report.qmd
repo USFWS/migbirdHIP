@@ -1529,12 +1529,13 @@ if(nrow(dplyr::filter(issue_assignments, decision != "nochange")) > 0){
 #| echo: false
 #| message: false
 
-if(nrow(dplyr::filter(issue_assignments, decision != "nochange")) > 0){
+if(nrow(dplyr::filter(issue_assignments, decision != "nochange") |> dplyr::filter(!(dl_state %in% states_twoseason & decision == "copy"))) > 0){
   stamp_format <- lubridate::stamp("Apr 15, 1993")
   
   bad_issue_table <-
     issue_assignments |>
     dplyr::filter(decision != "nochange") |>
+    dplyr::filter(!(dl_state %in% states_twoseason & decision == "copy")) |> 
     dplyr::select(dl_state, source_file, issue_date, registration_yr) |>
     dplyr::left_join(
       migbirdHIP:::licenses_ref |>
