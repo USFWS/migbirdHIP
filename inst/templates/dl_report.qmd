@@ -1179,7 +1179,13 @@ DT::datatable(
     dplyr::rename(
       State = dl_state,
       `Number of records` = n
-    ))
+    ),
+    extensions = "Buttons",
+    options = 
+      list(
+        dom = "Bfrtip",
+        buttons = c("csv", "excel", "pdf"))
+  )
 
 ```
 
