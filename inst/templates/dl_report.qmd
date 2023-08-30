@@ -394,12 +394,12 @@ vrep_100 <-
 # Identical bags
 identicalbags <- migbirdHIP::identicalBags(final_data)
 
-idb2 <-
+idb_filtered <-
   identicalbags |> 
   dplyr::mutate(
     dl_state = 
       stringr::str_extract(source_file, "^[A-Z]{2}")) |> 
-  dplyr::filter(n > 100) |> 
+  dplyr::filter(n > 100 & stringr::str_detect(value, ",")) |> 
   dplyr::mutate(
     common = 
       dplyr::case_when(
@@ -409,63 +409,72 @@ idb2 <-
       )
   ) |> 
   dplyr::filter(common != "Y") |> 
-  dplyr::select(-common) |> 
-  dplyr::group_by(dl_state, spp1, spp2, value) |> 
-  dplyr::reframe(
-    files = length(unique(source_file)),
-    n = sum(n)) |> 
-  dplyr::mutate(
-    files = 
-      ifelse(files == 1, " 1 file", paste0(files, " files"))) |> 
-  # Filter out expected vertical repetition for bag values that are wrong, 
-  # e.g. received 1s for no-season instead of 0s, etc; this already shows 
-  # up in the stratacheck section and clutters the data summary here
-  dplyr::left_join(
-    migbirdHIP:::hip_bags_ref |>
-      dplyr::select(-FWSstratum) |>
-      dplyr::group_by(state, spp) |>
-      dplyr::filter(dplyr::n() == 1) |>
-      dplyr::ungroup() |>
-      dplyr::rename(
-        dl_state = state,
-        repeated_value = stateBagValue,
-        spp1 = spp) |>
-      dplyr::mutate(
-        repeated_value = as.character(repeated_value)) |>
-      # Join in state/species combinations that are supposed to be
-      # all 0s because we receive those bag values in another format
-      dplyr::bind_rows(
-        migbirdHIP:::pmt_files |> 
-          dplyr::rename(repeated_value = value, spp1 = spp)) |>
-      dplyr::distinct() |>
-      dplyr::select(-repeated_value) |> 
-      dplyr::mutate(flag1 = "no season"),
-    by = c("dl_state", "spp1")
-  ) |> 
-  dplyr::left_join(
-    migbirdHIP:::hip_bags_ref |>
-      dplyr::select(-FWSstratum) |>
-      dplyr::group_by(state, spp) |>
-      dplyr::filter(dplyr::n() == 1) |>
-      dplyr::ungroup() |>
-      dplyr::rename(
-        dl_state = state,
-        repeated_value = stateBagValue,
-        spp2 = spp) |>
-      dplyr::mutate(
-        repeated_value = as.character(repeated_value)) |>
-      # Join in state/species combinations that are supposed to be
-      # all 0s because we receive those bag values in another format
-      dplyr::bind_rows(
-        migbirdHIP:::pmt_files |> 
-          dplyr::rename(repeated_value = value, spp2 = spp)) |>
-      dplyr::distinct() |>
-      dplyr::select(-repeated_value) |> 
-      dplyr::mutate(flag2 = "no season"),
-    by = c("dl_state", "spp2")
-  ) |> 
-  dplyr::filter(is.na(flag1) & is.na(flag2)) |> 
-  dplyr::select(-c("flag1", "flag2"))
+  dplyr::select(-common) 
+
+if(nrow(idb_filtered) > 0) {
+  idb2 <-
+    idb_filtered |> 
+    dplyr::group_by(dl_state, spp1, spp2, value) |> 
+    dplyr::reframe(
+      files = length(unique(source_file)),
+      n = sum(n)) |> 
+    dplyr::mutate(
+      files = 
+        ifelse(files == 1, " 1 file", paste0(files, " files"))) |> 
+    # Filter out expected vertical repetition for bag values that are wrong, 
+    # e.g. received 1s for no-season instead of 0s, etc; this already shows 
+    # up in the stratacheck section and clutters the data summary here
+    dplyr::left_join(
+      migbirdHIP:::hip_bags_ref |>
+        dplyr::select(-FWSstratum) |>
+        dplyr::group_by(state, spp) |>
+        dplyr::filter(dplyr::n() == 1) |>
+        dplyr::ungroup() |>
+        dplyr::rename(
+          dl_state = state,
+          repeated_value = stateBagValue,
+          spp1 = spp) |>
+        dplyr::mutate(
+          repeated_value = as.character(repeated_value)) |>
+        # Join in state/species combinations that are supposed to be
+        # all 0s because we receive those bag values in another format
+        dplyr::bind_rows(
+          migbirdHIP:::pmt_files |> 
+            dplyr::rename(repeated_value = value, spp1 = spp)) |>
+        dplyr::distinct() |>
+        dplyr::select(-repeated_value) |> 
+        dplyr::mutate(flag1 = "no season"),
+      by = c("dl_state", "spp1")
+    ) |> 
+    dplyr::left_join(
+      migbirdHIP:::hip_bags_ref |>
+        dplyr::select(-FWSstratum) |>
+        dplyr::group_by(state, spp) |>
+        dplyr::filter(dplyr::n() == 1) |>
+        dplyr::ungroup() |>
+        dplyr::rename(
+          dl_state = state,
+          repeated_value = stateBagValue,
+          spp2 = spp) |>
+        dplyr::mutate(
+          repeated_value = as.character(repeated_value)) |>
+        # Join in state/species combinations that are supposed to be
+        # all 0s because we receive those bag values in another format
+        dplyr::bind_rows(
+          migbirdHIP:::pmt_files |> 
+            dplyr::rename(repeated_value = value, spp2 = spp)) |>
+        dplyr::distinct() |>
+        dplyr::select(-repeated_value) |> 
+        dplyr::mutate(flag2 = "no season"),
+      by = c("dl_state", "spp2")
+    ) |> 
+    dplyr::filter(is.na(flag1) & is.na(flag2)) |> 
+    dplyr::select(-c("flag1", "flag2"))
+} else {
+  idb2 <- idb_filtered
+}
+
+idb_filtered <- NULL
 
 # Vector of source files
 file_list <- 
@@ -840,7 +849,7 @@ if(nrow(idb2) > 0) {
   cat(
     paste0(
       "❌", 
-      " Indentical bag columns detected in file(s) with more than 100 rows."))
+      " Indentical columns detected that contain more than 1 bag value in file(s) with more than 100 rows."))
   cat("\n\n")
   cat(
     paste0(
@@ -883,7 +892,7 @@ if(nrow(idb2) > 0) {
       )
   }
 } else {
-  cat(paste0("✔️", " No identical bag columns were found."))
+  cat(paste0("✔️", " No identical bag columns were found in files with more than 100 rows, with more than 1 bag value in common."))
 }
 
 cat("\n\n")
