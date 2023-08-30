@@ -295,6 +295,7 @@ issuePlot <-
     badplot_data <-
       assigned_data |>
       filter(decision != "nochange") |>
+      filter(!(dl_state %in% states_twoseason & decision == "copy")) |>
       select(dl_state, source_file, issue_date, registration_yr, decision) |>
       left_join(
         licenses_ref |>
