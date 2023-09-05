@@ -6,8 +6,8 @@
 ## Overview
 
 The migbirdHIP package provides an easy-to-use set of R functions for
-the U.S. Fish and Wildlife Service Migratory Bird Program to wrangle,
-tidy, and visualize [Harvest Information
+the U.S. Fish and Wildlife Service Migratory Bird Program to process,
+clean, and visualize [Harvest Information
 Program](https://www.fws.gov/harvestsurvey) data.
 
 Tasks that can be accomplished with this package include:
@@ -16,8 +16,8 @@ Tasks that can be accomplished with this package include:
 - `clean` does basic reorganization tasks
 - `fileCheck` makes sure all files are new
 - `glyphCheck` identifies non-UTF-8 characters
-- `shiftCheck` finds line shift errors and `shiftFix` corrects them
-- `strataCheck` identifies any new strata
+- `shiftCheck` finds line shift errors
+- `strataCheck` identifies any new or unexpected strata
 - `validate` checks for table-wide repetition
 - `identicalBags` checks for matching columns within files
 - `issueCheck` looks for records that should be processed later
@@ -31,14 +31,13 @@ Tasks that can be accomplished with this package include:
   `outOfStateHunters`
 - Detailed error reporting with `errorTable`, `pullErrors`, and
   `redFlags`
-- `manualFix` lets the user fix any remaining unsatisfactory values
 - Automated report writing with `writeReport`
 - Custom .csv writing with `write_hip`
 
 ## Installation
 
 ``` r
-devtools::install_github("USFWS/migbirdHIP", quiet = T, upgrade = F, build_vignettes = T)
+devtools::install_github("USFWS/migbirdHIP", build_vignettes = T)
 ```
 
 ## Vignette

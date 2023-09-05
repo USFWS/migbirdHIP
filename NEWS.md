@@ -24,6 +24,7 @@
 -   `investigate()` no longer exported; it works inside of `validate()` to return a more detailed output without running `investigate()` separately
 -   `write_hip()` sets any state/species combinations without a season to have strata of 0; bad bag values remain NA
 -   `sumLines()` returns a data table with the sum of lines per file instead of a single number; set as internal function and moved inside of `read_hip()`
+-   `manualFix()` function removed; no longer relevant
 -   `sysdata.rda`
     -   Added vectors of abbreviated US territories and Canada provinces/territories, both updated to include missing abbreviations from previous versions and remove redundant abbreviations
     -   Added vector of bag field names

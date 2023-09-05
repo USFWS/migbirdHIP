@@ -32,7 +32,6 @@ vignette: >
     - [proof](#proof)
     - [correct](#correct)
     - [pullErrors](#pullerrors)
-    - [manualFix](#manualfix)
     - [write_hip](#write_hip)
     - [writeReport](#writereport)
 - [Part C: Data Visualization and Tabulation](#part-c-data-visualization-and-tabulation)
@@ -392,16 +391,6 @@ Running `pullErrors` on a field that has no errors will return a message.
 
 ```{r pullerrors2}
 pullErrors(DL1301_proofed, field = "dove_bag")
-```
-
-### manualFix
-
-The automated `correct` function cannot always catch and fix every error. To finish the job, `manualFix` function replaces specified inaccurate values with the values you want. It is not recommended that this function only be used after correcting the data; it's best used on a case-by-case basis. If problems are only identified after `proof`, you can run `manualFix` on the cleaned data and re-run `proof`. This function is highly flexible and recommended to be used as needed.
-
-In the below example, a "GS" value in the state field is corrected to "GA".
-
-```{r manualfix, eval = FALSE}
-manualFix(DL1301_corrected, field = "state", error_value = "GS", correct_value = "GA")
 ```
 
 ### write_hip
