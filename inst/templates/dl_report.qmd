@@ -755,7 +755,8 @@ if(nrow(huntcheck) > 0) {
 if(!is.null(stratacheck_tbl)) {
   cat(paste0("❌", " Incorrect bag values detected."))
   cat("\n\n")
-  DT::datatable(
+  
+  kableExtra::kbl(
     stratacheck_tbl |> 
       dplyr::mutate(
         nprop = as.numeric(stringr::str_extract(prop, "[0-9]{1,3}"))) |>
@@ -767,8 +768,10 @@ if(!is.null(stratacheck_tbl)) {
         `Strata provided` = state_strata,
         `Strata expected` = normal_strata,
         Count = n,
-        Proportion = prop)
-    )
+        Proportion = prop)) |> 
+    kableExtra::row_spec(
+      1:nrow(rfstate), extra_css = "padding: 3px;")
+    
 } else { 
   cat(paste0("✔️", " All bag values are correct."))
 }
@@ -931,7 +934,7 @@ if(nrow(vrep_100) > 0) {
   cat(
     paste0(
       "❌", 
-      " Vertical repetition was detected in file(s) with more than 100 rows."))
+      " Vertical repetition was detected in file(s) with more than 100 rows. See Strata tab."))
   # cat("\n\n")
   # if(nrow(vrep_100) == 1) {
   # cat(
@@ -1204,7 +1207,7 @@ files_received <-
     # Discard any downloads before 0800 and keep only actual states
     dplyr::filter(dl >= 800 & state %in% datasets::state.abb) |> 
     # Filter out downloads that occur after this one
-    dplyr::filter(dl <= params$dl) |> 
+    dplyr::filter(dl <= as.numeric(params$dl)) |> 
     dplyr::group_by(dl) |> 
     dplyr::mutate(ord = dplyr::cur_group_id()) |> 
     dplyr::ungroup() |> 
@@ -1236,7 +1239,7 @@ if(params$dl == "0800") {
     dplyr::left_join(files_received, by = c("id", "state")) |> 
     ggplot2::ggplot() +
     ggplot2::geom_sf(
-      ggplot2::aes(fill = lag),
+      ggplot2::aes(geometry = geometry, fill = lag),
       color = "white") +
     ggplot2::geom_sf_text(
       ggplot2::aes(label = state),
