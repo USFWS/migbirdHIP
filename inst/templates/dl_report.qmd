@@ -770,7 +770,7 @@ if(!is.null(stratacheck_tbl)) {
         Count = n,
         Proportion = prop)) |> 
     kableExtra::row_spec(
-      1:nrow(rfstate), extra_css = "padding: 3px;")
+      1:nrow(stratacheck_tbl), extra_css = "padding: 3px;")
     
 } else { 
   cat(paste0("✔️", " All bag values are correct."))
