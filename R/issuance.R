@@ -9,6 +9,7 @@
 #' @importFrom dplyr count
 #' @importFrom dplyr ungroup
 #' @importFrom dplyr arrange
+#' @importFrom dplyr desc
 #' @importFrom dplyr mutate
 #' @importFrom stringr str_detect
 #' @importFrom lubridate ymd
@@ -127,7 +128,30 @@ issueCheck <-
     current_data <-
       issue_assignments |>
       filter(decision != "past") |>
+      mutate(
+        registration_yr =
+          ifelse(
+            registration_yr != as.character(year),
+            as.character(year),
+            registration_yr)) |>
       select(-c("decision", "reg_yr_eval", "issue_eval"))
+
+    if(
+      nrow(
+        filter(issue_assignments,
+               decision != "past" &
+               registration_yr != as.character(year))) > 0) {
+      message(
+        paste0(
+          "Current registrations with registration_yr values not equal to ",
+          year, " changed to ", year, "."))
+      print(
+        issue_assignments |>
+          filter(decision != "past" & registration_yr != as.character(year)) |>
+          count(dl_state, registration_yr) |>
+          arrange(desc(n))
+      )
+    }
 
     return(current_data)
   }
