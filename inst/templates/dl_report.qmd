@@ -776,7 +776,7 @@ if(!is.null(stratacheck_tbl)) {
 
 ### Bullets
 
-```{r stratacheck_agenda_tbl}
+```{r stratacheck_agenda_bullets}
 #| echo: false
 #| output: asis
 
