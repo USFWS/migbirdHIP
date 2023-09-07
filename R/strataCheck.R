@@ -97,10 +97,12 @@ strataCheck <-
                   n_bad_strata = n(),
                   spp = strata_x[[.x,2]]) |>
                 select(-sym(strata_x[[.x,2]])) |>
-                mutate(prop = paste0(round(n_bad_strata/n_state, 2)*100,"%")) |>
-                distinct(dl_state, spp, n = n_bad_strata, prop)) |>
+                mutate(
+                  prop = paste0(round(n_bad_strata/n_state, 2)*100,"%"),
+                  state_strata = strata_x[[.x,3]]) |>
+                distinct(dl_state, spp, state_strata, n = n_bad_strata, prop)) |>
               list_rbind(),
-            by = c("dl_state", "spp")
+            by = c("dl_state", "spp", "state_strata")
           )
       )
     } else {
