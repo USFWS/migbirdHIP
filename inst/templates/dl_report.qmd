@@ -769,6 +769,7 @@ if(!is.null(stratacheck_tbl)) {
         `Strata expected` = normal_strata,
         Count = n,
         Proportion = prop)) |> 
+    kableExtra::kable_styling(full_width = T) |> 
     kableExtra::row_spec(
       1:nrow(stratacheck_tbl), extra_css = "padding: 3px;")
     
