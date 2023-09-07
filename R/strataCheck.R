@@ -31,6 +31,21 @@
 strataCheck <-
   function(x){
 
+    # Filter out solo inline permits
+    x <-
+      x |>
+      filter(
+        !(dl_state == "OR" &
+            ducks_bag == "0" &
+            geese_bag == "0" &
+            dove_bag == "0" &
+            woodcock_bag == "0" &
+            coots_snipe == "0" &
+            rails_gallinules == "0" &
+            (band_tailed_pigeon == "2" |
+               brant == "2" |
+               seaducks == "2")))
+
     # The following nested joins remove all values from hip_bags_ref that are not
     # 0 or 1 for states/species combinations in pmt_files (e.g. 2s are not
     # acceptable in regular HIP pre-processing)
