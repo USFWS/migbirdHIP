@@ -154,5 +154,9 @@ clean <-
       print(zipcheck)
     }
 
+    # If any permit file states submitted a 2 for crane and/or
+    # band_tailed_pigeon, change the 2 to a 0
+    cleaned_x <- strataFix(cleaned_x)
+
     return(cleaned_x)
   }
