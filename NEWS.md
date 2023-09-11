@@ -19,7 +19,9 @@
 -   Added 3 new internal package functions (`errorLevel_errors_field()`, `errorLevel_errors_state()`, and `recordLevel_errors_state()`), which are used inside `redFlags()`, `errorPlot_fields()`, and `errorPlot_states()`. They reduce code redundancy and ensures updates happen universally.
 -   `issueCheck()` no longer exports future and past data as .csv files. Past data are still filtered out from the returned tibble, and output messages indicate if future data exist. More emphasis is put upon `issue_date` to determine relevancy of a record.
 -   Added 2 new internal package functions (`issueAssign()` and `issuePlot`), used inside of `issueCheck()` and by the download report
--   Added internal function `strataFix()` to be used inside of `clean()` to resolve false permit labels; "2" values from states that submit permit files for crane and band-tailed pigeons changed to "0"
+-   `clean()`
+    -   Added internal function `strataFix()` to be used inside of `clean()` to resolve false permit labels; "2" values from states that submit permit files for crane and band-tailed pigeons changed to "0"
+    -   If any OR HuntY = 0 for solo permit (2 in BTPI, brant, or seaduck and 0 in all other bag fields), change HuntY to 2
 -   `strataCheck()` now returns 2 additional fields in output; number of bad strata and proportion of bad strata. It also checks for permit species coming during regular HIP and returns them as erroneous (e.g. NM band-tailed pigeon = 2).
 -   `validate()` was edited to return source file field in output and filter out states and species with no season from output.
 -   `investigate()` no longer exported; it works inside of `validate()` to return a more detailed output without running `investigate()` separately

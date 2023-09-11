@@ -120,7 +120,18 @@ clean <-
           ifelse(
             str_detect(zip, "\\-\\_+"),
             str_remove(zip, "\\-\\_+"),
-            zip)) |>
+            zip),
+        # If any OR HuntY = 0 for solo permit, change HuntY to 2
+        hunt_mig_birds =
+          ifelse(
+            dl_state == "OR" &
+              hunt_mig_birds == "0" &
+              sum(as.numeric(band_tailed_pigeon),
+                  as.numeric(brant),
+                  as.numeric(seaducks)) > 2,
+            "2",
+            hunt_mig_birds)
+          ) |>
       # Delete white space around strings again
       mutate_all(str_trim)
 
