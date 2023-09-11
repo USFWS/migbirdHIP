@@ -650,13 +650,13 @@ if(nrow(pii2 |> dplyr::filter(prop >= 0.1 | n >= 100)) > 0) {
     cat(
       paste0(
       "❌", 
-      " One file is missing PII in >10% or 100+ records."))
+      " One file is missing PII in > 10% or 100+ records."))
   } else if(nrow(pii2) > 1) {
     cat(
       paste0(
       "❌", 
       " ", nrow(pii2), 
-      " files are missing PII in >10% or 100+ records."))
+      " files are missing PII in > 10% or 100+ records."))
   }
   cat("\n\n")
   pii2 |> 
@@ -670,7 +670,7 @@ if(nrow(pii2 |> dplyr::filter(prop >= 0.1 | n >= 100)) > 0) {
     kableExtra::row_spec(
       1:nrow(pii2), extra_css = "padding: 3px;")
 } else {
-  cat(paste0("✔️", " No files are missing PII in >10% or 100+ records."))
+  cat(paste0("✔️", " No files are missing PII in > 10% or 100+ records."))
 }
 
 cat("\n\n")
@@ -753,7 +753,7 @@ if(nrow(huntcheck) > 0) {
 #| output: asis
 
 if(!is.null(stratacheck_tbl)) {
-  cat(paste0("❌", " Incorrect bag values detected."))
+  cat(paste0("❌", " Incorrect bag values detected (> 0% of file)."))
   cat("\n\n")
   
   kableExtra::kbl(
@@ -761,6 +761,7 @@ if(!is.null(stratacheck_tbl)) {
       dplyr::mutate(
         nprop = as.numeric(stringr::str_extract(prop, "[0-9]{1,3}"))) |>
       dplyr::arrange(dplyr::desc(nprop)) |> 
+      dplyr::filter(nprop > 0) |> 
       dplyr::select(-nprop) |> 
       dplyr::rename(
         `State` = dl_state,
@@ -785,7 +786,7 @@ if(!is.null(stratacheck_tbl)) {
 #| output: asis
 
 if(!is.null(stratacheck_tbl)) {
-  cat(paste0("❌", " Incorrect bag values detected."))
+  cat(paste0("❌", " Incorrect bag values detected (> 0% of file)."))
   cat("\n\n")
   if(nrow(stratacheck_tbl) == 1) {
     cat(
@@ -800,6 +801,7 @@ if(!is.null(stratacheck_tbl)) {
     stratacheck_split <- 
       split(
         stratacheck_tbl |> 
+          dplyr::filter(nprop > 0) |> 
           dplyr::mutate(
             value = 
               ifelse(
