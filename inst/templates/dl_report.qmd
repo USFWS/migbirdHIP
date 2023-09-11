@@ -266,7 +266,7 @@ important_statistics <-
     dplyr::filter(
       !stringr::str_detect(
         value, 
-        "reg_yr_eval|Current registrations with|are blank|ID fields|provided state|write-out|past records|0 future|issue_date in the|Mississippi|100% of emails|00/00/0000|2s converted")
+        "reg_yr_eval|Current registrations with|are blank|ID fields|provided state|write-out|past records|0 future|issue_date in the|Mississippi|100% of emails|00/00/0000|2s converted|0 records need to be postponed")
     ) |> 
     dplyr::mutate(
       value = 
@@ -1414,6 +1414,8 @@ huntcheck <- NULL
 
 ## Strata check
 
+Export the strata issues table as a CSV, Excel, or PDF document by clicking a button below.
+
 ```{r stratacheck}
 #| echo: false
 
@@ -1447,7 +1449,7 @@ stratacheck_tbl <- NULL
 
 ## Identical values
 
-The table below shows files that contained identical columns for any combination of species fields in the final data. Identical columns detected for species without a season in a state are ignored. The `Count` field indicates the number of records that the file contained, the `Value` field contains the value(s) that is/are the same between `Species 1` and `Species 2`, and the `Note` field indicates if one or both of the species have a season in that state.
+The table below shows files that contained identical columns for any combination of species fields in the final data. Identical columns detected for species without a season in a state are ignored. The `Count` field indicates the number of records that the file contained, and the `Value` field contains the value(s) that is/are the same between `Species 1` and `Species 2`.
 
 ```{r identical_bags}
 #| echo: false
@@ -1455,12 +1457,13 @@ The table below shows files that contained identical columns for any combination
 if(!is.null(identicalbags)) {
   DT::datatable(
     identicalbags |>
-    dplyr::rename(
-      `Source file` = source_file,
-      `Species 1` = spp1,
-      `Species 2` = spp2,
-      Count = n,
-      Value = value)
+      dplyr::select(-dl_state) |> 
+      dplyr::rename(
+        `Source file` = source_file,
+        `Species 1` = spp1,
+        `Species 2` = spp2,
+        Count = n,
+        Value = value)
   )
 } else {
   cat("✔️ No identical columns detected!")
@@ -1555,7 +1558,7 @@ reg_yr_summary <- NULL
 
 ## Non-current records
 
-Records below did not have an issue date and/or registration year that were current.
+Records below did not have an issue date that is current.
 
 ```{r bad_issue_dates_plot}
 #| echo: false
@@ -1622,7 +1625,7 @@ bad_issue_table <- NULL
 
 ## Future records
 
-Records below have an issue date and registration year indicating they should not be sampled until next year.
+Records below have an issue date and registration year indicating they should be sampled until next year.
 
 ```{r future_records}
 #| echo: false
@@ -1646,7 +1649,7 @@ if(nrow(dplyr::filter(issue_assignments, decision %in% c("postpone", "copy"))) >
 
 ## Past records
 
-Records below have an issue date and registration year indicating they qualify for a previous HIP season; these records are not eligible to be sampled.
+Records below have an issue date and registration year indicating they qualify for a previous HIP season. These records are not eligible to be sampled and were removed from the final data.
 
 ```{r past_records}
 #| echo: false
