@@ -90,7 +90,18 @@ strataCheck <-
           mutate(state_strata = as.character(stateBagValue)),
         by = c("dl_state", "spp", "state_strata")
       ) |>
-      filter(is.na(stateBagValue))
+      filter(is.na(stateBagValue)) |>
+      # Filter out permit file states with unexpected 0s (they were created by
+      # strataFix) for btpi and cranes
+      filter(
+        !(dl_state %in%
+            pmt_files$dl_state[pmt_files$spp == "band_tailed_pigeon"] &
+          spp == "band_tailed_pigeon" &
+          state_strata == "0")) |>
+      filter(
+        !(dl_state %in% pmt_files$dl_state[pmt_files$spp == "cranes"] &
+            spp == "cranes" &
+            state_strata == "0"))
 
     if(nrow(strata_x) > 0) {
       return(
