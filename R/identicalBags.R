@@ -83,7 +83,7 @@ identicalBags <-
         # reported by strataCheck function and clutters the output here
         # i.e. filter out "no season" species/states
         left_join(
-          migbirdHIP:::hip_bags_ref |>
+          hip_bags_ref |>
             select(-FWSstratum) |>
             group_by(state, spp) |>
             filter(n() == 1) |>
@@ -97,7 +97,7 @@ identicalBags <-
             # Join in state/species combinations that are supposed to be
             # all 0s because we receive those bag values in another format
             bind_rows(
-              migbirdHIP:::pmt_files |>
+              pmt_files |>
                 rename(repeated_value = value, spp1 = spp)) |>
             distinct() |>
             select(-repeated_value) |>
@@ -105,7 +105,7 @@ identicalBags <-
           by = c("dl_state", "spp1")
         ) |>
         left_join(
-          migbirdHIP:::hip_bags_ref |>
+          hip_bags_ref |>
             select(-FWSstratum) |>
             group_by(state, spp) |>
             filter(n() == 1) |>
@@ -119,7 +119,7 @@ identicalBags <-
             # Join in state/species combinations that are supposed to be
             # all 0s because we receive those bag values in another format
             bind_rows(
-              migbirdHIP:::pmt_files |>
+              pmt_files |>
                 rename(repeated_value = value, spp2 = spp)) |>
             distinct() |>
             select(-repeated_value) |>
