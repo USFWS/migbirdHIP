@@ -77,46 +77,55 @@ identicalBags <-
         }) |>
         list_rbind() |>
         mutate(dl_state = str_extract(source_file, "^[A-Z]{2}")) |>
-        # Keep only the spp groups with more than 1 possible bag value
+        # Keep only the spp groups with more than 1 possible bag value AND
+        # filter out expected vertical repetition for bag values that are wrong,
+        # e.g. received 1s for no-season instead of 0s, etc; this is already
+        # reported by strataCheck function and clutters the output here
         # i.e. filter out "no season" species/states
         left_join(
-          hip_bags_ref |>
+          migbirdHIP:::hip_bags_ref |>
             select(-FWSstratum) |>
             group_by(state, spp) |>
             filter(n() == 1) |>
             ungroup() |>
             rename(
               dl_state = state,
-              value = stateBagValue,
+              repeated_value = stateBagValue,
               spp1 = spp) |>
-            mutate(value = as.character(value)) |>
+            mutate(
+              repeated_value = as.character(repeated_value)) |>
             # Join in state/species combinations that are supposed to be
             # all 0s because we receive those bag values in another format
-            bind_rows(pmt_files |> rename(spp1 = spp)) |>
+            bind_rows(
+              migbirdHIP:::pmt_files |>
+                rename(repeated_value = value, spp1 = spp)) |>
             distinct() |>
+            select(-repeated_value) |>
             mutate(flag1 = "no season"),
-          by = c("dl_state", "spp1", "value")
+          by = c("dl_state", "spp1")
         ) |>
         left_join(
-          hip_bags_ref |>
+          migbirdHIP:::hip_bags_ref |>
             select(-FWSstratum) |>
             group_by(state, spp) |>
             filter(n() == 1) |>
             ungroup() |>
             rename(
               dl_state = state,
-              value = stateBagValue,
+              repeated_value = stateBagValue,
               spp2 = spp) |>
-            mutate(value = as.character(value)) |>
+            mutate(
+              repeated_value = as.character(repeated_value)) |>
             # Join in state/species combinations that are supposed to be
             # all 0s because we receive those bag values in another format
-            bind_rows(pmt_files |> rename(spp2 = spp)) |>
+            bind_rows(
+              migbirdHIP:::pmt_files |>
+                rename(repeated_value = value, spp2 = spp)) |>
             distinct() |>
+            select(-repeated_value) |>
             mutate(flag2 = "no season"),
-          by = c("dl_state", "spp2", "value")
+          by = c("dl_state", "spp2")
         ) |>
-        select(-dl_state) |>
-        # Filter out any state/species that do not have a season
         filter(is.na(flag1) & is.na(flag2)) |>
         select(-c("flag1", "flag2"))
 

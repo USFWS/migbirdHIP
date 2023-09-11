@@ -319,6 +319,10 @@ huntcheck <-
 # Strata check table
 stratacheck_tbl <- migbirdHIP::strataCheck(final_data)
 
+stratacheck_tbl_non0 <- 
+  stratacheck_tbl |> 
+  dplyr::filter(prop != "0%")
+
 # All horizontal validation
 all_h_valid <- migbirdHIP::validate(final_data, type = "horizontal", all = T) 
 
@@ -360,24 +364,11 @@ vrep_100 <-
   dplyr::select(-flag)
 
 # Identical bags
-identicalbags <- migbirdHIP::identicalBags(final_data)
+identicalbags <- migbirdHIP::identicalBags(final_data) 
 
 idb_filtered <-
   identicalbags |> 
-  dplyr::mutate(
-    dl_state = 
-      stringr::str_extract(source_file, "^[A-Z]{2}")) |> 
-  dplyr::filter(n > 100 & stringr::str_detect(value, ",")) |> 
-  dplyr::mutate(
-    common = 
-      dplyr::case_when(
-        spp1 == "brant" & spp2 == "seaducks" ~ "Y",
-        spp1 == "coots_snipe" & spp2 == "rails_gallinules" ~ "Y",
-        TRUE ~ "N"
-      )
-  ) |> 
-  dplyr::filter(common != "Y") |> 
-  dplyr::select(-common) 
+  dplyr::filter(n > 100 & stringr::str_detect(value, ","))
 
 if(nrow(idb_filtered) > 0) {
   idb2 <-
@@ -388,56 +379,7 @@ if(nrow(idb_filtered) > 0) {
       n = sum(n)) |> 
     dplyr::mutate(
       files = 
-        ifelse(files == 1, " 1 file", paste0(files, " files"))) |> 
-    # Filter out expected vertical repetition for bag values that are wrong, 
-    # e.g. received 1s for no-season instead of 0s, etc; this already shows 
-    # up in the stratacheck section and clutters the data summary here
-    dplyr::left_join(
-      migbirdHIP:::hip_bags_ref |>
-        dplyr::select(-FWSstratum) |>
-        dplyr::group_by(state, spp) |>
-        dplyr::filter(dplyr::n() == 1) |>
-        dplyr::ungroup() |>
-        dplyr::rename(
-          dl_state = state,
-          repeated_value = stateBagValue,
-          spp1 = spp) |>
-        dplyr::mutate(
-          repeated_value = as.character(repeated_value)) |>
-        # Join in state/species combinations that are supposed to be
-        # all 0s because we receive those bag values in another format
-        dplyr::bind_rows(
-          migbirdHIP:::pmt_files |> 
-            dplyr::rename(repeated_value = value, spp1 = spp)) |>
-        dplyr::distinct() |>
-        dplyr::select(-repeated_value) |> 
-        dplyr::mutate(flag1 = "no season"),
-      by = c("dl_state", "spp1")
-    ) |> 
-    dplyr::left_join(
-      migbirdHIP:::hip_bags_ref |>
-        dplyr::select(-FWSstratum) |>
-        dplyr::group_by(state, spp) |>
-        dplyr::filter(dplyr::n() == 1) |>
-        dplyr::ungroup() |>
-        dplyr::rename(
-          dl_state = state,
-          repeated_value = stateBagValue,
-          spp2 = spp) |>
-        dplyr::mutate(
-          repeated_value = as.character(repeated_value)) |>
-        # Join in state/species combinations that are supposed to be
-        # all 0s because we receive those bag values in another format
-        dplyr::bind_rows(
-          migbirdHIP:::pmt_files |> 
-            dplyr::rename(repeated_value = value, spp2 = spp)) |>
-        dplyr::distinct() |>
-        dplyr::select(-repeated_value) |> 
-        dplyr::mutate(flag2 = "no season"),
-      by = c("dl_state", "spp2")
-    ) |> 
-    dplyr::filter(is.na(flag1) & is.na(flag2)) |> 
-    dplyr::select(-c("flag1", "flag2"))
+        ifelse(files == 1, " 1 file", paste0(files, " files")))
 } else {
   idb2 <- idb_filtered
 }
@@ -752,16 +694,15 @@ if(nrow(huntcheck) > 0) {
 #| echo: false
 #| output: asis
 
-if(!is.null(stratacheck_tbl)) {
+if(!is.null(stratacheck_tbl_non0)) {
   cat(paste0("❌", " Incorrect bag values detected (> 0% of file)."))
   cat("\n\n")
   
   kableExtra::kbl(
-    stratacheck_tbl |> 
+    stratacheck_tbl_non0 |> 
       dplyr::mutate(
         nprop = as.numeric(stringr::str_extract(prop, "[0-9]{1,3}"))) |>
       dplyr::arrange(dplyr::desc(nprop)) |> 
-      dplyr::filter(nprop > 0) |> 
       dplyr::select(-nprop) |> 
       dplyr::rename(
         `State` = dl_state,
@@ -772,7 +713,7 @@ if(!is.null(stratacheck_tbl)) {
         Proportion = prop)) |> 
     kableExtra::kable_styling(full_width = T) |> 
     kableExtra::row_spec(
-      1:nrow(stratacheck_tbl), extra_css = "padding: 3px;")
+      1:nrow(stratacheck_tbl_non0), extra_css = "padding: 3px;")
     
 } else { 
   cat(paste0("✔️", " All bag values are correct."))
@@ -785,30 +726,29 @@ if(!is.null(stratacheck_tbl)) {
 #| echo: false
 #| output: asis
 
-if(!is.null(stratacheck_tbl)) {
+if(!is.null(stratacheck_tbl_non0)) {
   cat(paste0("❌", " Incorrect bag values detected (> 0% of file)."))
   cat("\n\n")
-  if(nrow(stratacheck_tbl) == 1) {
+  if(nrow(stratacheck_tbl_non0) == 1) {
     cat(
       paste0(
-        "* ", stratacheck_tbl$dl_state, " reported ", 
-        stratacheck_tbl$state_strata, " for ", 
-        stratacheck_tbl$prop, " of ", 
-        stratacheck_tbl$spp, 
-        " (expected ", stratacheck_tbl$normal_strata, ").")
+        "* ", stratacheck_tbl_non0$dl_state, " reported ", 
+        stratacheck_tbl_non0$state_strata, " for ", 
+        stratacheck_tbl_non0$prop, " of ", 
+        stratacheck_tbl_non0$spp, 
+        " (expected ", stratacheck_tbl_non0$normal_strata, ").")
     )
-  } else if(nrow(stratacheck_tbl) > 1) {
+  } else if(nrow(stratacheck_tbl_non0) > 1) {
     stratacheck_split <- 
       split(
-        stratacheck_tbl |> 
-          dplyr::filter(nprop > 0) |> 
+        stratacheck_tbl_non0 |> 
           dplyr::mutate(
             value = 
               ifelse(
                 prop == "100%", 
                 prop, 
                 paste0(prop, " (n = ", n, ")"))), 
-        stratacheck_tbl$dl_state)
+        stratacheck_tbl_non0$dl_state)
     
     writeLines(
       unlist(
@@ -837,6 +777,8 @@ if(!is.null(stratacheck_tbl)) {
 } else { 
   cat(paste0("✔️", " All bag values are correct."))
 }
+
+stratacheck_tbl_non0 <- NULL
 ```
 
 :::
@@ -854,10 +796,6 @@ if(nrow(idb2) > 0) {
     paste0(
       "❌", 
       " Indentical columns detected that contain more than 1 bag value in file(s) with more than 100 rows."))
-  cat("\n\n")
-  cat(
-    paste0(
-      "💡", " Likely species combinations not included (coots_snipe and rails_gallinules, brant and seaducks)."))
   cat("\n\n")
   if(nrow(idb2) == 1) { 
     cat(
