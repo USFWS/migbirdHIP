@@ -326,6 +326,9 @@ stratacheck_tbl_non0 <-
 # All horizontal validation
 all_h_valid <- migbirdHIP::validate(final_data, type = "horizontal", all = T) 
 
+# All 0s
+all_h_valid_0s <- all_h_valid |> dplyr::filter(h_value == "0")
+
 # Horizontal repetition for 100% of file
 all_h_valid_100 <- all_h_valid |> dplyr::filter(prop_repeat == 1)
 
@@ -837,6 +840,29 @@ if(nrow(idb2) > 0) {
   cat(paste0("✔️", " No identical bag columns were found in files with more than 100 rows, with more than 1 bag value in common."))
 }
 
+cat("\n\n")
+cat("### All zero bags")
+cat("\n\n")
+if(nrow(all_h_valid_0s) > 0) {
+  cat(
+    paste0(
+      "❌", 
+      " Repeated 0s detected across bag fields. These records have been removed from the final data."))
+  cat("\n\n")
+  writeLines( 
+    unlist(
+      purrr::map(
+        1:nrow(all_h_valid_0s),
+          ~paste0(
+            "* ", all_h_valid_0s$source_file[.x], " with ", 
+            all_h_valid_0s$h_rep[.x], " record(s)")
+      )
+    )
+  )  
+} else {
+  cat(paste0("✔️", " No horizontally repeated 0s detected."))
+}
+  
 cat("\n\n")
 cat("### Horizontal repetition")
 cat("\n\n")
