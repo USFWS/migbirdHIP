@@ -4,6 +4,7 @@
 #'
 #' @importFrom dplyr mutate
 #' @importFrom dplyr case_when
+#' @importFrom dplyr filter
 #' @importFrom stringr str_detect
 #' @importFrom stringr str_replace
 #' @importFrom stringr str_remove_all
@@ -36,24 +37,51 @@ correct <-
         # Change "none"s back to NAs in errors col
         errors =
           ifelse(errors == "none", NA, errors),
-        # Email
+        # Email correction
         email =
-          # Delete spaces
-          str_remove_all(email, " "),
-        email =
-          # Delete slashes /
-          str_remove_all(email, "\\/"),
-        email =
-          # Delete commas
-          str_remove_all(email, "\\,"),
-        email =
-          # To lowercase
-          tolower(email),
+          # Delete spaces, slashes, and commas; change to lowercase
+          tolower(str_remove_all(email, "( |\\/|\\,)")),
         email =
           # Fix multiple @
           ifelse(
             str_detect(email, "\\@\\@+"),
             str_replace(email, "\\@\\@+", "\\@"),
+            email),
+        email =
+          # Fix multiple .
+          ifelse(
+            str_detect(email, "\\.\\.+"),
+            str_replace(email, "\\.\\.+", "\\."),
+            email),
+        email =
+          # Delete dot when it is first character in local part
+          ifelse(
+            str_detect(email, "^\\."),
+            str_remove(email, "^\\."),
+            email),
+        email =
+          # Delete dot when it is last character in local part
+          ifelse(
+            str_detect(email, "\\.(?=\\@)"),
+            str_remove(email, "\\.(?=\\@)"),
+            email),
+        email =
+          # Delete dot when it is last character
+          ifelse(
+            str_detect(email, "\\.$"),
+            str_remove(email, "\\.$"),
+            email),
+        email =
+          # Delete hyphen when it is first character in domain part
+          ifelse(
+            str_detect(email, "(?<=\\@)\\-"),
+            str_remove(email, "(?<=\\@)\\-"),
+            email),
+        email =
+          # Delete ! from domain part
+          ifelse(
+            str_detect(email, "\\!+(?!.*\\@.*)"),
+            str_remove_all(email, "\\!+(?!.*\\@.*)"),
             email),
         email =
           # Add endings to common domains
@@ -62,37 +90,83 @@ correct <-
               str_replace(email, "\\@gmail$", "\\@gmail\\.com"),
             str_detect(email, "\\@yahoo$") ~
               str_replace(email, "\\@yahoo$", "\\@yahoo\\.com"),
+            str_detect(email, "\\@hotmail$") ~
+              str_replace(email, "\\@hotmail$", "\\@hotmail\\.com"),
             str_detect(email, "\\@aol$") ~
               str_replace(email, "\\@aol$", "\\@aol\\.com"),
+            str_detect(email, "\\@icloud$") ~
+              str_replace(email, "\\@icloud$", "\\@icloud\\.com"),
             str_detect(email, "\\@comcast$") ~
               str_replace(email, "\\@comcast$", "\\@comcast\\.net"),
+            str_detect(email, "\\@outlook$") ~
+              str_replace(email, "\\@outlook$", "\\@outlook\\.com"),
+            str_detect(email, "\\@sbcglobal$") ~
+              str_replace(email, "\\@sbcglobal$", "\\@sbcglobal\\.net"),
+            str_detect(email, "\\@att$") ~
+              str_replace(email, "\\@att$", "\\@att\\.net"),
+            str_detect(email, "\\@msn$") ~
+              str_replace(email, "\\@msn$", "\\@msn\\.com"),
+            str_detect(email, "\\@live$") ~
+              str_replace(email, "\\@live$", "\\@live\\.com"),
+            str_detect(email, "\\@bellsouth$") ~
+              str_replace(email, "\\@bellsouth$", "\\@bellsouth\\.net"),
+            str_detect(email, "\\@charter$") ~
+              str_replace(email, "\\@charter$", "\\@charter\\.net"),
+            str_detect(email, "\\@ymail$") ~
+              str_replace(email, "\\@ymail$", "\\@ymail\\.com"),
+            str_detect(email, "\\@me$") ~
+              str_replace(email, "\\@me$", "\\@me\\.com"),
             str_detect(email, "\\@verizon$") ~
               str_replace(email, "\\@verizon$", "\\@verizon\\.net"),
             str_detect(email, "\\@cox$") ~
               str_replace(email, "\\@cox$", "\\@cox\\.net"),
-            str_detect(email, "\\@outlook$") ~
-              str_replace(email, "\\@outlook$", "\\@outlook\\.com"),
-            str_detect(email, "\\@hotmail$") ~
-              str_replace(email, "\\@hotmail$", "\\@hotmail\\.com"),
+            str_detect(email, "\\@earthlink$") ~
+              str_replace(email, "\\@earthlink$", "\\@earthlink\\.net"),
+            str_detect(email, "\\@protonmail$") ~
+              str_replace(email, "\\@protonmail$", "\\@protonmail\\.com"),
+            str_detect(email, "\\@pm$") ~
+              str_replace(email, "\\@pm$", "\\@pm\\.me"),
+            str_detect(email, "\\@mail$") ~
+              str_replace(email, "\\@mail$", "\\@mail\\.com"),
+            str_detect(email, "\\@duck$") ~
+              str_replace(email, "\\@duck$", "\\@duck\\.com"),
+            str_detect(email, "\\@ducks$") ~
+              str_replace(email, "\\@ducks$", "\\@ducks\\.org"),
             TRUE ~ email
           ),
         email =
           # Fix punctuation
           case_when(
-            # Correct .ccom typos
+            # Correct .com typos
+            str_detect(email, "(?<=\\.)con$") ~
+              str_replace(email, "con$", "com"),
             str_detect(email, "(?<=\\.)ccom$") ~
               str_replace(email, "ccom$", "com"),
-            # Add period if missing
-            str_detect(email, "(?<=[^\\.])com$") ~
+            # Add period(s) if missing
+            str_detect(email, "(?<!\\.)com$") ~
               str_replace(email, "com$", "\\.com"),
-            str_detect(email, "(?<=[^\\.])net$") ~
+            str_detect(email, "(?<!\\.)net$") ~
               str_replace(email, "net$", "\\.net"),
-            str_detect(email, "(?<=[^\\.])edu$") ~
+            str_detect(email, "(?<!\\.)edu$") ~
               str_replace(email, "edu$", "\\.edu"),
-            str_detect(email, "(?<=[^\\.])gov$") ~
+            str_detect(email, "(?<!\\.)gov$") ~
               str_replace(email, "gov$", "\\.gov"),
-            str_detect(email, "(?<=[^\\.])org$") ~
+            str_detect(email, "(?<!\\.)org$") ~
               str_replace(email, "org$", "\\.org"),
+            str_detect(email, "\\@navymil$") ~
+              str_replace(email, "navymil$", "navy\\.mil"),
+            str_detect(email, "\\@usnavymil$") ~
+              str_replace(email, "usnavymil$", "us\\.navy\\.mil"),
+            str_detect(email, "\\@usafmil$") ~
+              str_replace(email, "usafmil$", "us\\.af\\.mil"),
+            str_detect(email, "\\@mailmil$") ~
+              str_replace(email, "mailmil$", "mail\\.mil"),
+            str_detect(email, "\\@armymil$") ~
+              str_replace(email, "armymil$", "army\\.mil"),
+            str_detect(email, "\\@usarmymil$") ~
+              str_replace(email, "usarmymil$", "us\\.army\\.mil"),
+            str_detect(email, "\\@usacearmymil$") ~
+              str_replace(email, "usacearmymil$", "us\\.ace\\.army\\.mil"),
             TRUE ~ email
           ),
         email =
