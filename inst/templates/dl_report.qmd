@@ -266,7 +266,7 @@ important_statistics <-
     dplyr::filter(
       !stringr::str_detect(
         value, 
-        "reg_yr_eval|Current registrations with|are blank|ID fields|provided state|write-out|past records|0 future|issue_date in the|Mississippi|100% of emails|00/00/0000|2s converted|0 records need to be postponed")
+        "reg_yr_eval|Current registrations with|are blank|ID fields|provided state|write-out|past records|0 future|issue_date in the|Mississippi|100% of emails|00/00/0000|2s converted|0 records need to be postponed|single digit")
     ) |> 
     dplyr::mutate(
       value = 
