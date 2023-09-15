@@ -180,13 +180,15 @@ correct <-
           case_when(
             # If there is no @
             !str_detect(email, "\\@") ~ NA_character_,
-            # If the email is invalid
-            str_detect(email, "noemail\\@") ~ NA_character_,
-            str_detect(email, "^none@none$") ~ NA_character_,
+            # If the email is obfuscative
+            str_detect(email, "^(none\\@|no\\@|none\\@)") ~ NA_character_,
+            str_detect(email, "\\@none") ~ NA_character_,
+            # If domain is invalid
+            str_detect(email, "\\@example.com$") ~ NA_character_,
             # If there are any remaining "NA" type strings
             str_detect(email, "n\\/a") ~ NA_character_,
             # If there is only an @
-            str_detect(email, "^@$") ~ NA_character_,
+            str_detect(email, "^\\@$") ~ NA_character_,
             TRUE ~ email
           )
       )
