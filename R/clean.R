@@ -10,6 +10,7 @@
 #' @importFrom dplyr filter
 #' @importFrom dplyr if_all
 #' @importFrom dplyr if_any
+#' @importFrom tidyr all_of
 #' @importFrom dplyr select
 #' @importFrom stringr str_to_upper
 #' @importFrom stringr str_detect
@@ -36,10 +37,14 @@ clean <-
 
     cleaned_x <-
       x |>
+      # Filter out any record if any bag value is not a 1-digit number
+      filter(!if_any(all_of(ref_bagfields), ~!str_detect(.x, "^[0-9]{1}$"))) |>
       # Filter out records if firstname, lastname, city of residence, state of
       # residence, or date of birth are missing -- records discarded because
       # these are needed to identify individuals
-      filter(!if_any(c("firstname", "lastname", "state", "birth_date"), ~is.na(.x))) |>
+      filter(
+        !if_any(
+          c("firstname", "lastname", "state", "birth_date"), ~is.na(.x))) |>
       # Discard additional records if they are missing a value for email AND
       # elements of a physical address that are required to determine where
       filter(!if_all(c("address", "email"), ~is.na(.x))) |>
@@ -158,9 +163,8 @@ clean <-
     # Error check: are any zip codes wrong?
     if(nrow(zipcheck) > 0){
       message(
-        paste0("Warning: Zip codes detected that do not correspond to ",
-               "provided state of residence for >10% of a file ",
-               "and/or >100 records."))
+        paste0("Warning: Zip codes detected that do not correspond to provided",
+               " state of residence for >10% of a file and/or >100 records."))
 
       print(zipcheck)
     }
