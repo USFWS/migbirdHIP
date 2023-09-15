@@ -3,55 +3,61 @@
 ## Major changes & new features
 
 -   Added a `NEWS.md` file to track changes to the package.
--   Replaced tidy pipes `%>%` and `%<>%` with base R pipe `|>`
--   New `fileCheck()` function
--   New `shiftCheck()` function
--   New `identicalBags()` function
--   New `glyphCheck()` function; `glyphFinder()` no longer exported
+-   New `fileCheck()` function: checks if any files in the input folder have already been written to processed folder.
+-   New `shiftCheck()` function: find and print any rows that have a line shift error with number of positions shifted.
+-   New `identicalBags()` function: returns output if any columns are exactly the same in a file; does not return "no season" matches.
+-   New `glyphCheck()` function: pull and view any non-UTF-8 characters in the raw data; helps guide manual fixes to read in the HIP files without line shifts.
+    -   `glyphFinder()` no longer exported, now used internally inside of `glyphCheck()`
+-   Added 3 new internal package functions (`errorLevel_errors_field()`, `errorLevel_errors_state()`, and `recordLevel_errors_state()`), which are used inside `redFlags()`, `errorPlot_fields()`, and `errorPlot_states()`. They reduce code redundancy and ensure updates happen universally.
+-   Added 2 new internal package functions (`issueAssign()` and `issuePlot`), which are used inside of `issueCheck()` and by the download report (`dl_report.qmd`).
+-   Added internal function `strataFix()` to be used inside of `clean()` to resolve false permit labels. This function edits strata values for `band_tailed_pigeon` and `crane` from states that submit permit files for crane and band-tailed pigeons; values changed from `"2"` to `"0"`.
+-   Edited `writeReport()` to render quarto documents.
+-   Edited `issueCheck()` to place more emphasis on `issue_date` to determine relevancy of a record. The function no longer exports future and past data as `.csv` files. Past data are still filtered out from the returned tibble. Output messages indicate if future data exist.
+-   Edited `clean()` function:
+    -   Filter out any rows that contain a bag value other than a single digit
+    -   Eliminated address cleaning
+    -   Moved zip code checking and messaging to `clean()` from `proof()`; now checks on entire zip code, not just prefix. Remove ending `0` when `zip` value is 10 digits long.
+    -   Changed Oregon solo permit `hunt_mig_birds` field when it equals `"0"` to `"2"`. For context, a solo permit contains a `"2"` in at least one of the `band_tailed_pigeon`, `brant`, or `seaduck` fields and contains `"0"` in all other bag fields.
+-   Edited `correct()` to remove any records with value of `"0"` or `NA` value in every bag field; improved `email` field cleaning and repair.
+-   Edited `strataCheck()` to return two additional fields in output; 1) number of bad strata and 2) proportion of bad strata. The function now checks for permit species coming during regular HIP and returns them as erroneous (e.g. NM `band_tailed_pigeon` = `"2"`).
+-   Edited `write_hip()` to set any state/species combinations without a season to have strata of `"0"`; bad bag values remain NA.
+-   Edited `sumLines()` to improve speed and efficiency. In addition, the function now returns a data table with the sum of lines per file instead of a single number. No longer exported; set as internal function.
+-   Edited `read_hip()` to eliminate encoding check and optionally use `sumLines()` function to ensure all lines were read in. Returns a message if any records contain a bag value other than a single digit. In addition, now converts blank strings to `NA`.
+-   Edited `validate()` to return `source_file` field and filter out states and species with no season from function output.
+-   Edited `investigate()` to no longer be exported; it works inside of `validate()` to return a more detailed output. This replaces the previous workflow of running `investigate()` separately.
+-   Removed `manualFix()` function because it is no longer relevant to the package.
 -   Templates
-    -   New `dl_report.qmd` replaces `dl_report.Rmd`, with additional features
+    -   New Quarto `dl_report.qmd` replaced RMarkdown `dl_report.Rmd`.
+        -   The new Quarto layout allows tabset panels which divides content into sections that can be more easily read and focused on by the user. Tabset panels were also incorporated for before and after plots to show proportion of errors that are corrected during pre-processing.
+        -   A new summary section distills the findings of the functions overall for the user to discern the most important issues from the HIP files that were processed. This is partly accomplished with the use of a `catch_messages()` function created only for use in the `dl_report.qmd` and is not exported or contained within the `migbirdHIP` package internally. The `catch_messages()` function wraps around pre-processing functions (such as `read_hip()`, `clean()`, `issueCheck()`, etc) and captures messages in a list so that they can be returned as readable bullet points.
+        -   A new map displays time lag of files received from 49 states in a hexagonal representation of the continental US.
+        -   Emojis are printed with output text to quickly indicate to readers whether issues ❌ need attention or ✔️ are not concerning.
+        -   Sections added as needed to report on new function output (see above for which new functions were added).
+        -   A new section lists any states that were excluded from the output when they submitted data for that download (e.g. all records were issued in the past and are not eligible for the current season; perhaps sent by mistake).
     -   Eliminated `season_report.Rmd` template
 -   Imports
     -   Removed `magrittr` and `rmarkdown`
     -   Added `quarto` and `sf`
--   Edited writeReport() to render quarto documents
--   Refactored read_hip() and eliminated encoding check
--   Added 3 new internal package functions (`errorLevel_errors_field()`, `errorLevel_errors_state()`, and `recordLevel_errors_state()`), which are used inside `redFlags()`, `errorPlot_fields()`, and `errorPlot_states()`. They reduce code redundancy and ensures updates happen universally.
--   `issueCheck()` no longer exports future and past data as .csv files. Past data are still filtered out from the returned tibble, and output messages indicate if future data exist. More emphasis is put upon `issue_date` to determine relevancy of a record.
--   Added 2 new internal package functions (`issueAssign()` and `issuePlot`), used inside of `issueCheck()` and by the download report
--   `clean()`
-    -   Added internal function `strataFix()` to be used inside of `clean()` to resolve false permit labels; "2" values from states that submit permit files for crane and band-tailed pigeons changed to "0"
-    -   If any OR HuntY = 0 for solo permit (2 in BTPI, brant, or seaduck and 0 in all other bag fields), change HuntY to 2
--   `strataCheck()` now returns 2 additional fields in output; number of bad strata and proportion of bad strata. It also checks for permit species coming during regular HIP and returns them as erroneous (e.g. NM band-tailed pigeon = 2).
--   `validate()` was edited to return source file field in output and filter out states and species with no season from output.
--   `investigate()` no longer exported; it works inside of `validate()` to return a more detailed output without running `investigate()` separately
--   `write_hip()` sets any state/species combinations without a season to have strata of 0; bad bag values remain NA
--   `sumLines()` returns a data table with the sum of lines per file instead of a single number; set as internal function and moved inside of `read_hip()`
--   `manualFix()` function removed; no longer relevant
--   `sysdata.rda`
+-   Internal package data (`sysdata.rda`)
     -   Added vectors of abbreviated US territories and Canada provinces/territories, both updated to include missing abbreviations from previous versions and remove redundant abbreviations
     -   Added vector of bag field names
     -   Added vector of two-season states
-    -   Added vectors of seaduck and brant states, seaduck-only states, brant-only states, and two-season states
+    -   Added vectors of seaduck and brant states, seaduck-only states, and two-season states
     -   Added hexmap grid for download report
     -   Added tibbles of permit file states/species and states/species of permits received inline
     -   Updated zip code reference table, bag reference table, license window reference table, and MS reference dates
--   Moved zip code checking and messaging to `clean()` from `proof()`; now checks on entire zip code, not just prefix
 
 ## Minor changes / bug fixes
 
--   Edited speed and efficiency in `sumLines()`
--   `read_hip()` converts blank strings to `NA`
--   Switched to `tidyr::separate_wider_delim()` or `tidyr::separate_wider_position()` to avoid superseded `tidyr::separate()`
--   Changed license back to CC0 from Public Domain, which was causing a warning in `devtools::check()`
+-   License changed to CC0 (previously Public Domain), which was causing a warning in `devtools::check()`
 -   Refactored `write_hip()` to eliminate redundancy; replaced repeated `left_join()` with for loop
--   Refactored `findDuplicates()`; moved error message to start, which reduces wait time for error; investigated replacing redundancy of searching for duplicate fields using a for loop or `purrr::map()` but this added 20+ seconds of processing time
+-   Refactored `findDuplicates()` by throwing an error message for a bad string supplied to the `return` parameter at the start, which reduces wait time for failure.
+    -   Investigated replacing `findDuplicates()` redundancy of searching for duplicate fields using a `for` loop or `purrr::map()`, but this change added 20+ seconds of processing time so left the redundancy as-is.
+-   Refactored all functions that take a path parameter to add a forward slash to the end each supplied path if not included by the user.
+-   Replaced superseded `tidyr::separate()` with `tidyr::separate_wider_delim()` or `tidyr::separate_wider_position()`
 -   Replaced `dplyr::summarize()` with `dplyr::reframe()` since returning more than 1 row per group was deprecated in `dplyr 1.1.0`
--   Added forward slash to end of all paths as needed
--   `clean()`
-    -   Eliminated address cleaning
-    -   Added zip code cleaning to remove final 0 from zip codes with length of 10 digits
 -   Replaced `ggplot::stat()` with `ggplot::after_stat()`, since the former was deprecated in `ggplot2 3.4.0`
+-   Replaced tidy pipes `%>%` and `%<>%` with base R pipe `|>` for increased speed and reduced dependency on tidyverse packages.
 
 # migbirdHIP 1.2.7
 
