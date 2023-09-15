@@ -121,7 +121,10 @@ validate <-
                   pull(1)) |>
               unlist()
           ) |>
-          # Keep only the spp groups with more than 1 possible bag value
+          # Keep only the spp groups with more than 1 possible bag value AND
+          # filter out expected vertical repetition for bag values that are wrong,
+          # e.g. received 1s for no-season instead of 0s, etc; this is already
+          # reported by strataCheck function and clutters the output here
           # i.e. filter out "no season" species/states
           left_join(
             hip_bags_ref |>
@@ -135,11 +138,11 @@ validate <-
               mutate(repeated_value = as.character(repeated_value)) |>
               # Join in state/species combinations that are supposed to be
               # all 0s because we receive those bag values in another format
-              bind_rows(
-                pmt_files |> rename(repeated_value = value)) |>
+              bind_rows(pmt_files |> rename(repeated_value = value)) |>
               distinct() |>
+              select(-repeated_value) |>
               mutate(flag = "no season"),
-            by = c("dl_state", "spp", "repeated_value")
+            by = c("dl_state", "spp")
           ) |>
           filter(is.na(flag)) |>
           select(-flag)
