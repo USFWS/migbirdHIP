@@ -18,6 +18,7 @@
 #' @importFrom dplyr n
 #' @importFrom stringr str_extract
 #' @importFrom stringr str_remove_all
+#' @importFrom stringr str_length
 #'
 #' @param x The object created after cleaning data with \code{\link{clean}}
 #' @param year The year in which the Harvest Information Program data were collected
@@ -141,9 +142,25 @@ proof <-
         # Email
         keyed_x |>
           filter(
+            # If email doesn't fit a loose validation regular expression, mark
+            # as error. Local part may contain Latin lower and uppercase
+            # letters, numbers, underscores, dots, hyphens, and a plus sign
+            # (consecutive dots, leading dots, etc all handled in correct
+            # function even if not marked as error); must contain @; domain may
+            # contain Latin lower and uppercase letters, numbers, and hyphens;
+            # subdomains acceptable when separated by a dot.
             !str_detect(
               email,
-              "^[a-zA-Z0-9\\_\\.\\+\\-]+\\@[a-zA-Z0-9\\-]+\\.[a-zA-Z0-9\\-\\.]+$")) |>
+              "^[a-zA-Z0-9\\_\\.\\+\\-]+\\@[a-zA-Z0-9\\-]+\\.[a-zA-Z0-9\\-\\.]+$") |
+              # If email is obfuscative
+              str_detect(email, "^(none\\@|no\\@|none\\@)") |
+              str_detect(email, "\\@none") |
+              # If domain is invalid
+              str_detect(email, "\\@example.com$") |
+              # If longer than 100 characters (max length of valid address is
+              # 254 but this would be very rare)
+              str_length(email) > 100
+            ) |>
           mutate(error = "email")
       ) |>
       select(temp_key, error)
