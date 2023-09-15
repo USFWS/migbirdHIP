@@ -209,6 +209,24 @@ read_hip <-
         print(raw_nas)
       }
 
+      # Return a message if any records contain a bag value that is not a
+      # 1-digit number
+      nondigit_bags <-
+        pulled_data |>
+        filter(if_any(all_of(ref_bagfields), ~!str_detect(.x, "^[0-9]{1}$")))
+
+      if(nrow(nondigit_bags) > 0) {
+        message(
+          paste0(
+            "Error: One or more records detected with a value other than a ",
+            "single digit; these records will be filtered out in clean()."))
+        print(
+          nondigit_bags |>
+            unite(bags, matches(ref_bagfields), sep = " ") |>
+            select(source_file, record_key, bags)
+          )
+      }
+
       # Return a message if there is an NA in dl_state
       if(TRUE %in% is.na(pulled_data$dl_state)) {
         message("Error: One or more more NA values detected in dl_state.")
