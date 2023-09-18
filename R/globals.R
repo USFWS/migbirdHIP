@@ -117,4 +117,6 @@ globalVariables(
     "zipcode",
     "assigned_data",
     "n_shift",
-    "num_lines"))
+    "num_lines",
+    "bags",
+    "state_strata"))
