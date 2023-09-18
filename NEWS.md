@@ -3,6 +3,7 @@
 ## Major changes & new features
 
 -   Added a `NEWS.md` file to track changes to the package.
+-   Added package documentation page `man/migbirdHIP-package.Rd`
 -   New `fileCheck()` function: checks if any files in the input folder have already been written to processed folder.
 -   New `shiftCheck()` function: find and print any rows that have a line shift error with number of positions shifted.
 -   New `identicalBags()` function: returns output if any columns are exactly the same in a file; does not return "no season" matches.
@@ -38,6 +39,8 @@
 -   Imports
     -   Removed `magrittr` and `rmarkdown`
     -   Added `quarto` and `sf`
+-   Suggests
+    -   Added `spelling`
 -   Internal package data (`sysdata.rda`)
     -   Added vectors of abbreviated US territories and Canada provinces/territories, both updated to include missing abbreviations from previous versions and remove redundant abbreviations
     -   Added vector of bag field names
@@ -58,6 +61,11 @@
 -   Replaced `dplyr::summarize()` with `dplyr::reframe()` since returning more than 1 row per group was deprecated in `dplyr 1.1.0`
 -   Replaced `ggplot::stat()` with `ggplot::after_stat()`, since the former was deprecated in `ggplot2 3.4.0`
 -   Replaced tidy pipes `%>%` and `%<>%` with base R pipe `|>` for increased speed and reduced dependency on tidyverse packages.
+-   Edited `DESCRIPTION` file:
+    -   Changed package description
+    -   Set language to `en-US`
+    -   Added a URL to the Harvest Information Program website
+-   Incorporated `usethis::use_spell_check()` to package checking workflow, which added an `inst/WORDLIST` file (whitelisted words) to the package.
 
 # migbirdHIP 1.2.7
 

@@ -20,6 +20,7 @@ Suggests:
     kableExtra,
     knitr,
     sf,
+    spelling,
     stringi
 VignetteBuilder: knitr
 Authors@R: 
@@ -28,10 +29,8 @@ Authors@R:
            role = c("aut", "cre"),
            email = "abby_walter@fws.gov",
            comment = c(ORCID = "0000-0003-4017-5596"))
-Description: Easy-to-use functions specifically designed to handle biweekly HIP 
-    download data. A sequential process organizes state files into a tidy format
-    and flags errors that should be inspected. Errors can be visualized in 
-    simple plots and summarized in bite-sized tables.
+Description: Functions designed to process and visualize data submitted to the USFWS Harvest Information Program.
+URL: https://www.fws.gov/project/migratory-bird-hunter-survey-diary-survey
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
@@ -39,3 +38,4 @@ RoxygenNote: 7.2.3
 Depends: 
     R (>= 4.2)
 License: CC0
+Language: en-US
