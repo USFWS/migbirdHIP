@@ -48,6 +48,12 @@ correct <-
           # Delete spaces, slashes, and commas; change to lowercase
           tolower(str_remove_all(email, "( |\\/|\\,)")),
         email =
+          # Delete ! from domain part
+          ifelse(
+            str_detect(email, "\\!+(?!.*\\@.*)"),
+            str_remove_all(email, "\\!+(?!.*\\@.*)"),
+            email),
+        email =
           # Fix multiple @
           ifelse(
             str_detect(email, "\\@\\@+"),
@@ -84,13 +90,67 @@ correct <-
             str_remove(email, "(?<=\\@)\\-"),
             email),
         email =
-          # Delete ! from domain part
-          ifelse(
-            str_detect(email, "\\!+(?!.*\\@.*)"),
-            str_remove_all(email, "\\!+(?!.*\\@.*)"),
-            email),
+          # Edit common misspellings of domains
+          case_when(
+            # gmail
+            str_detect(email, "(?<=\\@)(gmai|gmaill|gmal|gmall|gmali)(?=\\.)") ~
+              str_replace(
+                email,
+                "(?<=\\@)(gmai|gmaill|gmal|gmall|gmali)(?=\\.)",
+                "gmail"),
+            TRUE ~ email
+          ),
         email =
-          # Add endings to common domains
+          # Correct top level domain
+          case_when(
+            # gmail
+            str_detect(email, "(?<=\\@)gmail\\.(co|net|edu|org)$") ~
+              str_replace(email, "gmail\\.(co|net|edu|org)$", "gmail.com"),
+            TRUE ~ email
+            ),
+        email =
+          # Correct top level domain typos
+          case_when(
+            # .com.com (2 or more)
+            str_detect(email, "(?<=\\.)com(\\.com)+$") ~
+              str_replace(email, "com(\\.com)+$", "com"),
+            # .comcom (2 or more)
+            str_detect(email, "(?<=\\.)com(com)+$") ~
+              str_replace(email, "com(com)+$", "com"),
+            # .con
+            str_detect(email, "(?<=\\.)con$") ~
+              str_replace(email, "con$", "com"),
+            # .ccom
+            str_detect(email, "(?<=\\.)ccom$") ~
+              str_replace(email, "ccom$", "com"),
+            # .coom
+            str_detect(email, "(?<=\\.)coom$") ~
+              str_replace(email, "coom$", "com"),
+            # .comm
+            str_detect(email, "(?<=\\.)comm$") ~
+              str_replace(email, "comm$", "com"),
+            # .c0m
+            str_detect(email, "(?<=\\.)c0m$") ~
+              str_replace(email, "c0m$", "com"),
+            # .ocm
+            str_detect(email, "(?<=\\.)ocm$") ~
+              str_replace(email, "ocm$", "com"),
+            # .cm
+            str_detect(email, "(?<=\\.)cm$") ~
+              str_replace(email, "cm$", "com"),
+            # .om
+            str_detect(email, "(?<=\\.)om$") ~
+              str_replace(email, "om$", "com"),
+            # .cim
+            str_detect(email, "(?<=\\.)cim$") ~
+              str_replace(email, "cim$", "com"),
+            # .common
+            str_detect(email, "(?<=\\.)common$") ~
+              str_replace(email, "common$", "com"),
+            TRUE ~ email
+          ),
+        email =
+          # Add in missing top level domain endings
           case_when(
             str_detect(email, "\\@gmail$") ~
               str_replace(email, "\\@gmail$", "\\@gmail\\.com"),
@@ -141,14 +201,8 @@ correct <-
             TRUE ~ email
           ),
         email =
-          # Fix punctuation
+          # Add period(s) top top level domains if missing
           case_when(
-            # Correct .com typos
-            str_detect(email, "(?<=\\.)con$") ~
-              str_replace(email, "con$", "com"),
-            str_detect(email, "(?<=\\.)ccom$") ~
-              str_replace(email, "ccom$", "com"),
-            # Add period(s) if missing
             str_detect(email, "(?<!\\.)com$") ~
               str_replace(email, "com$", "\\.com"),
             str_detect(email, "(?<!\\.)net$") ~
@@ -181,12 +235,10 @@ correct <-
             # If there is no @
             !str_detect(email, "\\@") ~ NA_character_,
             # If the email is obfuscative
-            str_detect(email, "^(none\\@|no\\@|none\\@)") ~ NA_character_,
+            str_detect(email, "^(none\\@|no\\@|na\\@|not\\@)") ~ NA_character_,
             str_detect(email, "\\@none") ~ NA_character_,
             # If domain is invalid
             str_detect(email, "\\@example.com$") ~ NA_character_,
-            # If there are any remaining "NA" type strings
-            str_detect(email, "n\\/a") ~ NA_character_,
             # If there is only an @
             str_detect(email, "^\\@$") ~ NA_character_,
             TRUE ~ email
