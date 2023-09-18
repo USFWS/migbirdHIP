@@ -1,6 +1,15 @@
 Package: migbirdHIP
 Title: Process USFWS Migratory Bird Harvest Information Program Data in R
 Version: 1.2.7
+Authors@R: 
+    person("Abby", "Walter", , "abby_walter@fws.gov", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0003-4017-5596"))
+Description: Functions designed to process and visualize data submitted to
+    the USFWS Harvest Information Program.
+License: CC0
+URL: https://www.fws.gov/project/migratory-bird-hunter-survey-diary-survey
+Depends: 
+    R (>= 4.2)
 Imports: 
     data.table (>= 1.14.2),
     dplyr (>= 1.1.1),
@@ -22,20 +31,10 @@ Suggests:
     sf,
     spelling,
     stringi
-VignetteBuilder: knitr
-Authors@R: 
-    person(given = "Abby",
-           family = "Walter",
-           role = c("aut", "cre"),
-           email = "abby_walter@fws.gov",
-           comment = c(ORCID = "0000-0003-4017-5596"))
-Description: Functions designed to process and visualize data submitted to the USFWS Harvest Information Program.
-URL: https://www.fws.gov/project/migratory-bird-hunter-survey-diary-survey
+VignetteBuilder: 
+    knitr
 Encoding: UTF-8
+Language: en-US
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
-Depends: 
-    R (>= 4.2)
-License: CC0
-Language: en-US
