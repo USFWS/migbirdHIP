@@ -9,7 +9,7 @@ outOfStateHunters(x, output = "plot")
 \arguments{
 \item{x}{A proofed data table created by \code{\link{proof}}}
 
-\item{output}{"plot" (defualt) or "table"}
+\item{output}{"plot" (default) or "table"}
 }
 \description{
 Create a tibble or plot of hunters who have registered outside of their home state.

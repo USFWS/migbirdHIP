@@ -23,7 +23,7 @@
 #' @importFrom ggplot2 element_text
 #'
 #' @param x A proofed data table created by \code{\link{proof}}
-#' @param output "plot" (defualt) or "table"
+#' @param output "plot" (default) or "table"
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}
