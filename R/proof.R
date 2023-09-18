@@ -153,13 +153,30 @@ proof <-
               email,
               "^[a-zA-Z0-9\\_\\.\\+\\-]+\\@[a-zA-Z0-9\\-]+\\.[a-zA-Z0-9\\-\\.]+$") |
               # If email is obfuscative
-              str_detect(email, "^(none\\@|no\\@|none\\@)") |
+              str_detect(email, "^(none\\@|no\\@|na\\@|not\\@)") |
               str_detect(email, "\\@none") |
+              str_detect(email, "\\@(no\\.com|na\\.org)$") |
               # If domain is invalid
               str_detect(email, "\\@example.com$") |
               # If longer than 100 characters (max length of valid address is
               # 254 but this would be very rare)
-              str_length(email) > 100
+              str_length(email) > 100 |
+              # If there is no @
+              !str_detect(email, "\\@") |
+              # If there is only an @
+              str_detect(email, "^\\@$") |
+              # If there are multiple @
+              str_detect(email, "\\@\\@+") |
+              # If there are multiple .
+              str_detect(email, "\\.\\.+") |
+              # If there is a dot in the place of the first character
+              str_detect(email, "^\\.") |
+              # If dot is last character
+              str_detect(email, "\\.$") |
+              # Hyphen in first place of domain
+              str_detect(email, "(?<=\\@)\\-") |
+              # ! in domain
+              str_detect(email, "\\!+(?!.*\\@.*)")
             ) |>
           mutate(error = "email")
       ) |>
