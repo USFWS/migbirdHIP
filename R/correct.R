@@ -90,17 +90,6 @@ correct <-
             str_remove(email, "(?<=\\@)\\-"),
             email),
         email =
-          # Edit common misspellings of domains
-          case_when(
-            # gmail
-            str_detect(email, "(?<=\\@)(gmai|gmaill|gmal|gmall|gmali)(?=\\.)") ~
-              str_replace(
-                email,
-                "(?<=\\@)(gmai|gmaill|gmal|gmall|gmali)(?=\\.)",
-                "gmail"),
-            TRUE ~ email
-          ),
-        email =
           # Correct top level domain
           case_when(
             # gmail
@@ -201,7 +190,7 @@ correct <-
             TRUE ~ email
           ),
         email =
-          # Add period(s) top top level domains if missing
+          # Add period(s) to top level domains if missing
           case_when(
             str_detect(email, "(?<!\\.)com$") ~
               str_replace(email, "com$", "\\.com"),
@@ -227,20 +216,6 @@ correct <-
               str_replace(email, "usarmymil$", "us\\.army\\.mil"),
             str_detect(email, "\\@usacearmymil$") ~
               str_replace(email, "usacearmymil$", "us\\.ace\\.army\\.mil"),
-            TRUE ~ email
-          ),
-        email =
-          # Replace with NA
-          case_when(
-            # If there is no @
-            !str_detect(email, "\\@") ~ NA_character_,
-            # If the email is obfuscative
-            str_detect(email, "^(none\\@|no\\@|na\\@|not\\@)") ~ NA_character_,
-            str_detect(email, "\\@none") ~ NA_character_,
-            # If domain is invalid
-            str_detect(email, "\\@example.com$") ~ NA_character_,
-            # If there is only an @
-            str_detect(email, "^\\@$") ~ NA_character_,
             TRUE ~ email
           )
       )
