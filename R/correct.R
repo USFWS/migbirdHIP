@@ -95,6 +95,15 @@ correct <-
             # gmail
             str_detect(email, "(?<=\\@)gmail\\.(co|net|edu|org)$") ~
               str_replace(email, "gmail\\.(co|net|edu|org)$", "gmail.com"),
+            # ATT
+            str_detect(email, "(?<=\\@)att\\.(com|org)$") ~
+              str_replace(email, "att\\.(com|org)$", "att.net"),
+            # Comcast
+            str_detect(email, "(?<=\\@)comcast\\.(com|org)$") ~
+              str_replace(email, "comcast\\.(com|org)$", "comcast.net"),
+            # iCloud
+            str_detect(email, "(?<=\\@)icloud\\.(net|org)$") ~
+              str_replace(email, "icloud\\.(net|org)$", "icloud.com"),
             TRUE ~ email
             ),
         email =
