@@ -171,6 +171,8 @@ proof <-
               str_detect(email, "\\.\\.+") |
               # If there is a dot in the place of the first character
               str_detect(email, "^\\.") |
+              # If there is a dot in the place of last character in local part
+              str_detect(email, "\\.(?=\\@)" |
               # If dot is last character
               str_detect(email, "\\.$") |
               # Hyphen in first place of domain
