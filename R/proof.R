@@ -151,22 +151,22 @@ proof <-
             # subdomains acceptable when separated by a dot.
             !str_detect(
               email,
-              "^[a-zA-Z0-9\\_\\.\\+\\-]+\\@[a-zA-Z0-9\\-]+\\.[a-zA-Z0-9\\-\\.]+$") |
+              "^[a-zA-Z0-9\\_\\.\\+\\-]+\\@[a-zA-Z0-9\\-]+\\.[a-zA-Z0-9\\-\\.]+$"
+              ) |
               # If email is obfuscative
-              str_detect(email, "^(none\\@|no\\@|na\\@|not\\@)") |
+              str_detect(
+                email,
+                "^(none|no|na|not|non|www\\.none|nomail|noemail|noreply|customer|unknown|notprovided)\\@"
+                ) |
               str_detect(email, "\\@none") |
               str_detect(email, "\\@(no\\.com|na\\.org)$") |
+              # Obfuscative Texas emails from @tpw or @tpwd
+              str_detect(email, "\\@(tpw|twp)") |
               # If domain is invalid
               str_detect(email, "\\@example.com$") |
               # If longer than 100 characters (max length of valid address is
               # 254 but this would be very rare)
               str_length(email) > 100 |
-              # If there is no @
-              !str_detect(email, "\\@") |
-              # If there is only an @
-              str_detect(email, "^\\@$") |
-              # If there are multiple @
-              str_detect(email, "\\@\\@+") |
               # If there are multiple .
               str_detect(email, "\\.\\.+") |
               # If there is a dot in the place of the first character
@@ -175,8 +175,15 @@ proof <-
               str_detect(email, "\\.$") |
               # Hyphen in first place of domain
               str_detect(email, "(?<=\\@)\\-") |
-              # ! in domain
-              str_detect(email, "\\!+(?!.*\\@.*)")
+              # Bad top level domain
+              str_detect(email, "(?<=\\@)gmail\\.(co|net|edu|org)$") |
+              str_detect(email, "(?<=\\@)att\\.(com|org)$") |
+              str_detect(email, "(?<=\\@)comcast\\.(com|org)$") |
+              str_detect(email, "(?<=\\@)icloud\\.(net|org)$") |
+              str_detect(
+                email,
+                "(?<=\\.)(com(\\.com)+|com(com)+|con|ccom|coom|comm|c0m|ocm|cm|om|cim|common)$"
+              )
             ) |>
           mutate(error = "email")
       ) |>
