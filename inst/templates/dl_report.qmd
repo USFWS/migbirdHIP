@@ -1484,6 +1484,7 @@ if(!is.null(identicalbags)) {
   DT::datatable(
     identicalbags |>
       dplyr::select(-dl_state) |> 
+      dplyr::arrange(dplyr::desc(n)) |> 
       dplyr::rename(
         `Source file` = source_file,
         `Species 1` = spp1,
@@ -1536,6 +1537,7 @@ if(!is.null(vrep_all)) {
   DT::datatable(
     vrep_all |> 
       dplyr::select(-dl_state) |> 
+      dplyr::arrange(dplyr::desc(v_repeated)) |> 
       dplyr::rename(
         `Source file` = source_file,
         `Species` = spp,
@@ -1607,7 +1609,7 @@ if(nrow(dplyr::filter(issue_assignments, decision != "nochange") |> dplyr::filte
   bad_issue_table <-
     issue_assignments |>
     dplyr::filter(decision != "nochange") |>
-    dplyr::filter(!(dl_state %in% migbirdHIP:::states_twoseason & decision == "copy")) |> 
+    dplyr::filter(!(dl_state %in% c(migbirdHIP:::states_twoseason, "MS") & decision == "copy")) |> 
     dplyr::select(dl_state, source_file, issue_date, registration_yr) |>
     dplyr::left_join(
       migbirdHIP:::licenses_ref |>
