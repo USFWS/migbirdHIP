@@ -141,6 +141,7 @@ proof <-
           mutate(error = "registration_yr"),
         # Email
         keyed_x |>
+          mutate(email = tolower(email)) |>
           filter(
             # If email doesn't fit a loose validation regular expression, mark
             # as error. Local part may contain Latin lower and uppercase
