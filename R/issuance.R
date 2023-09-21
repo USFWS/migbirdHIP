@@ -35,7 +35,7 @@ issueCheck <-
       message("Error: issue_date in the future detected.")
       print(
         filter(issue_assignments, mdy(issue_date) > ymd(dl_date)) |>
-          select(source_file, dl_state, issue_date, registration_yr, dl_date)
+          count(source_file, dl_state, issue_date, registration_yr, dl_date)
       )
     }
     # Return message if issue_eval is NA (issue_date or reg yr not evaluated)
