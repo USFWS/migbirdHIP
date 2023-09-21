@@ -4,13 +4,11 @@
 #'
 #' @importFrom dplyr filter
 #' @importFrom dplyr select
-#' @importFrom dplyr group_by
-#' @importFrom dplyr summarize
 #' @importFrom dplyr count
-#' @importFrom dplyr ungroup
 #' @importFrom dplyr arrange
 #' @importFrom dplyr desc
 #' @importFrom dplyr mutate
+#' @importFrom dplyr rename
 #' @importFrom stringr str_detect
 #' @importFrom lubridate ymd
 #' @importFrom lubridate mdy
