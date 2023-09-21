@@ -110,11 +110,9 @@ issueCheck <-
     print(
       suppressMessages(
         issue_assignments |>
-          count(source_file, issue_eval, reg_yr_eval, decision) |>
-          group_by(reg_yr_eval, issue_eval, decision) |>
-          summarize(sum_n = sum(n)) |>
-          ungroup() |>
+          count(reg_yr_eval, issue_eval, decision) |>
           arrange(issue_eval) |>
+          rename(registration_yr = reg_yr_eval, issue_date = issue_eval) |>
           mutate(decision = ifelse(decision == "nochange", "current", decision))
         )
     )
