@@ -27,6 +27,7 @@
 -   Edited `validate()` to return `source_file` field and filter out states and species with no season from function output.
 -   Edited `investigate()` to no longer be exported; it works inside of `validate()` to return a more detailed output. This replaces the previous workflow of running `investigate()` separately.
 -   Removed `manualFix()` function because it is no longer relevant to the package.
+-   Removed `shiftFix()` because line shift errors cannot be fixed programmatically on a reliable basis.
 -   Templates
     -   New Quarto `dl_report.qmd` replaced RMarkdown `dl_report.Rmd`.
         -   The new Quarto layout allows tabset panels which divides content into sections that can be more easily read and focused on by the user. Tabset panels were also incorporated for before and after plots to show proportion of errors that are corrected during pre-processing.

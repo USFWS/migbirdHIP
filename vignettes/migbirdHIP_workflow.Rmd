@@ -20,7 +20,6 @@ vignette: >
     - [read_hip](#read_hip)
     - [glyphCheck](#glyphcheck)
     - [shiftCheck](#shiftcheck)
-    - [shiftFix](#shiftfix)
     - [clean](#clean)
     - [issueCheck](#issuecheck)
     - [findDuplicates](#findduplicates)
@@ -113,7 +112,7 @@ We will use the default settings to read in all of the states from download 1301
 ```r
 library(migbirdHIP)
 
-DL1301 <- read_hip("C:/HIP/DL1301")
+DL1301 <- read_hip("C:/HIP/DL1301", sumlines = F)
 ```
 
 Did you get a warning or three? Read an explanation of common `read_hip` warnings, [below](#common-read_hip-warnings).
@@ -136,76 +135,27 @@ Find and print any rows that have a line shift error.
 shiftCheck(DL1301)
 ```
 
-### shiftFix
-
-The `shiftFix` function moves row values by a designated number of characters across a designated span of columns. It takes parameters `x`, `record_id`, `first_col`, `last_col`, and `n_shift`. For example, if we wanted to modify the 117th row (with row id = "row_117") in a dataframe called "ducks" from column "wing" to column "tail", to shift the data 2 characters to the left, we would run:
-
-`shiftFix(x = ducks, record_id = "row_117", first_col = "wing", last_col = "tail", n_shift = 2)`
-
-For HIP processing, this function is used in conjunction with other R code to achieve a final dataframe.
-
-
-```r
-# Snooping
-snoop <-
-  DL1301 |>
-  dplyr::filter(
-    !stringr::str_detect(birth_date, "^[0-9]{2}\\/[0-9]{2}\\/[0-9]{4}$")) |>
-  dplyr::mutate(
-    n_shift =
-      stringr::str_length(
-        stringr::str_extract(issue_date, "^[0-9]+(?=\\/)")) - 2) |>
-  dplyr::relocate(record_key, .before = "title") |>
-  dplyr::relocate(source_file, .before = "record_key") |>
-  dplyr::select(record_key, n_shift) |>
-  print()
-```
-
-```
-## # A tibble: 1 × 2
-##   record_key   n_shift
-##   <chr>          <dbl>
-## 1 record_32904       1
-```
-
-```r
-# Correct frame shift for x number of records
-unshifted <-
-  purrr::map_dfr(
-    1:length(snoop$record_key),
-    ~shiftFix(
-      # Fix the raw data file
-      DL1301,
-      # For x record id
-      snoop$record_key[.x],
-      # Shift from state col to email col
-      "state",
-      "email",
-      # Shift n number of characters
-      snoop$n_shift[.x])) |>
-  # Delete the 0s from end of zip
-  dplyr::mutate(zip = stringr::str_remove(zip, "0$")) |>
-  # Add 0s to the beginning of birth_date
-  dplyr::mutate(
-    birth_date =
-      ifelse(
-        stringr::str_detect(birth_date, "^[0-9]{1}\\/"),
-        paste0("0", birth_date),
-        birth_date))
-
-DL1301_unshifted <-
-  DL1301 |>
-  dplyr::filter(!record_key %in% unshifted$record_key) |>
-  dplyr::bind_rows(unshifted)
-```
-
 ### clean
 
 After data are read and unshifted, we `clean`:
 
 
 ```r
-DL1301_clean <- clean(DL1301_unshifted)
+DL1301_clean <- clean(DL1301)
+```
+
+```
+## 2s converted to 0s for permit file states:
+```
+
+```
+## # A tibble: 4 × 3
+##   dl_state     n spp               
+##   <chr>    <int> <chr>             
+## 1 NM          46 band_tailed_pigeon
+## 2 UT          10 band_tailed_pigeon
+## 3 CO          17 cranes            
+## 4 NM          34 cranes
 ```
 
 This function does simple data cleaning. Importantly, records are discarded if first name, last name, birth date, state of residence, address AND email, OR city AND zip AND email are missing.
@@ -311,20 +261,20 @@ strataCheck(DL1301_fixed)
 ```
 
 ```
-## # A tibble: 41 × 6
-##    dl_state spp          state_strata normal_strata     n prop 
-##    <chr>    <chr>        <chr>        <chr>         <int> <chr>
-##  1 FL       dove_bag     0            1, 2, 3, 5        2 0%   
-##  2 IA       dove_bag     0            1, 2, 3, 5      279 9%   
-##  3 OR       dove_bag     0            1, 2, 3, 5       11 1%   
-##  4 TN       dove_bag     0            1, 2, 3, 5       85 4%   
-##  5 TN       woodcock_bag 0            1, 2, 3, 5       85 4%   
-##  6 IA       ducks_bag    0            1, 2, 3, 4     2841 89%  
-##  7 IA       geese_bag    0            1, 2, 3, 4     2841 89%  
-##  8 OR       ducks_bag    0            1, 2, 3, 4       11 1%   
-##  9 OR       geese_bag    0            1, 2, 3, 4       11 1%   
-## 10 TN       ducks_bag    0            1, 2, 3, 4       85 4%   
-## # ℹ 31 more rows
+## # A tibble: 30 × 6
+##    dl_state spp              state_strata normal_strata     n prop 
+##    <chr>    <chr>            <chr>        <chr>         <int> <chr>
+##  1 FL       dove_bag         0            1, 2, 3, 5        2 0%   
+##  2 IA       dove_bag         0            1, 2, 3, 5      279 9%   
+##  3 TN       dove_bag         0            1, 2, 3, 5       85 4%   
+##  4 TN       woodcock_bag     0            1, 2, 3, 5       85 4%   
+##  5 IA       ducks_bag        0            1, 2, 3, 4     2841 89%  
+##  6 IA       geese_bag        0            1, 2, 3, 4     2841 89%  
+##  7 TN       ducks_bag        0            1, 2, 3, 4       85 4%   
+##  8 TN       geese_bag        0            1, 2, 3, 4       85 4%   
+##  9 FL       rails_gallinules 0            1, 2              3 0%   
+## 10 IA       woodcock_bag     0            1, 2           2841 89%  
+## # ℹ 20 more rows
 ```
 
 ### identicalBags
@@ -337,20 +287,13 @@ identicalBags(DL1301_fixed)
 ```
 
 ```
-## # A tibble: 21 × 5
-##    source_file    spp1               spp2                 n value  
-##    <chr>          <chr>              <chr>            <int> <chr>  
-##  1 IA20211215.txt brant              woodcock_bag      3175 0, 1, 2
-##  2 IA20211215.txt brant              rails_gallinules  3175 0, 1, 2
-##  3 IA20211215.txt rails_gallinules   woodcock_bag      3175 0, 1, 2
-##  4 KY20211228.txt band_tailed_pigeon cranes             984 1      
-##  5 KY20211228.txt band_tailed_pigeon brant              984 1      
-##  6 KY20211228.txt band_tailed_pigeon seaducks           984 1      
-##  7 KY20211228.txt brant              cranes             984 1      
-##  8 KY20211228.txt brant              seaducks           984 1      
-##  9 KY20211228.txt cranes             seaducks           984 1      
-## 10 NE20211217.txt band_tailed_pigeon brant              903 1      
-## # ℹ 11 more rows
+## # A tibble: 4 × 6
+##   source_file    spp1               spp2             n value   dl_state
+##   <chr>          <chr>              <chr>        <int> <chr>   <chr>   
+## 1 IA20211215.txt rails_gallinules   woodcock_bag  3175 0, 1, 2 IA      
+## 2 OR20211229.txt band_tailed_pigeon brant          813 0       OR      
+## 3 WA20211215.txt band_tailed_pigeon coots_snipe   1737 1       WA      
+## 4 WA20211229.txt band_tailed_pigeon coots_snipe   1460 1       WA
 ```
 
 ### validate
@@ -374,7 +317,7 @@ validate(DL1301_fixed, type = "horizontal")
 ##  4 MO20211229.txt 1        2697    3604       0.748
 ##  5 ME20211229.txt 1         112     151       0.742
 ##  6 NM20211229.txt 1         208     295       0.705
-##  7 ID20211229.txt 1        1761    2588       0.680
+##  7 ID20211229.txt 1        1762    2588       0.681
 ##  8 ND20211215.txt 1         130     204       0.637
 ##  9 CA20211229.txt 1        2003    3211       0.624
 ## 10 IN20211229.txt 1         416     690       0.603
@@ -631,7 +574,7 @@ errorTable(DL1301_proofed)
 ```
 
 ```
-## # A tibble: 111 × 3
+## # A tibble: 114 × 3
 ##    dl_state error           error_count
 ##    <chr>    <chr>                 <int>
 ##  1 AK       registration_yr           1
@@ -644,7 +587,7 @@ errorTable(DL1301_proofed)
 ##  8 AL       suffix                    5
 ##  9 AL       zip                      17
 ## 10 CA       birth_date              173
-## # ℹ 101 more rows
+## # ℹ 104 more rows
 ```
 
 Errors can be reported by only location by turning off the `field` parameter.
@@ -663,8 +606,8 @@ errorTable(DL1301_proofed, field = "none")
 ##  3 CA               175
 ##  4 CO                69
 ##  5 CT               420
-##  6 FL                13
-##  7 GA                22
+##  6 FL                32
+##  7 GA                31
 ##  8 IA                61
 ##  9 ID               179
 ## 10 IN                59
@@ -679,20 +622,19 @@ errorTable(DL1301_proofed, loc = "none")
 ```
 
 ```
-## # A tibble: 11 × 2
+## # A tibble: 10 × 2
 ##    error           error_count
 ##    <chr>                 <int>
 ##  1 birth_date             1308
 ##  2 city                     43
-##  3 email                   279
+##  3 email                   378
 ##  4 firstname                48
-##  5 hunt_mig_birds           11
-##  6 lastname                 14
-##  7 registration_yr        7301
-##  8 state                     2
-##  9 suffix                   37
-## 10 title                     3
-## 11 zip                     175
+##  5 lastname                 14
+##  6 registration_yr        7302
+##  7 state                     3
+##  8 suffix                   37
+##  9 title                     3
+## 10 zip                     176
 ```
 
 Location can be specified.
@@ -782,7 +724,7 @@ redFlags(DL1301_proofed, type = "field", threshold = 0.01)
 ## # A tibble: 2 × 5
 ##   errors          count_errors count_correct proportion flag        
 ##   <chr>                  <int>         <int>      <dbl> <chr>       
-## 1 registration_yr         7301         41161     0.151  error > 0.01
+## 1 registration_yr         7302         41160     0.151  error > 0.01
 ## 2 birth_date              1308         47154     0.0270 error > 0.01
 ```
 

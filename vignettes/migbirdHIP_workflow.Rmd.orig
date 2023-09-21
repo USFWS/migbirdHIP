@@ -20,7 +20,6 @@ vignette: >
     - [read_hip](#read_hip)
     - [glyphCheck](#glyphcheck)
     - [shiftCheck](#shiftcheck)
-    - [shiftFix](#shiftfix)
     - [clean](#clean)
     - [issueCheck](#issuecheck)
     - [findDuplicates](#findduplicates)
@@ -111,7 +110,7 @@ We will use the default settings to read in all of the states from download 1301
 ```{r, readhip, message = FALSE, warning = FALSE}
 library(migbirdHIP)
 
-DL1301 <- read_hip("C:/HIP/DL1301")
+DL1301 <- read_hip("C:/HIP/DL1301", sumlines = F)
 ```
 
 Did you get a warning or three? Read an explanation of common `read_hip` warnings, [below](#common-read_hip-warnings).
@@ -132,66 +131,12 @@ Find and print any rows that have a line shift error.
 shiftCheck(DL1301)
 ```
 
-### shiftFix
-
-The `shiftFix` function moves row values by a designated number of characters across a designated span of columns. It takes parameters `x`, `record_id`, `first_col`, `last_col`, and `n_shift`. For example, if we wanted to modify the 117th row (with row id = "row_117") in a dataframe called "ducks" from column "wing" to column "tail", to shift the data 2 characters to the left, we would run:
-
-`shiftFix(x = ducks, record_id = "row_117", first_col = "wing", last_col = "tail", n_shift = 2)`
-
-For HIP processing, this function is used in conjunction with other R code to achieve a final dataframe.
-
-```{r shiftFix, warning = FALSE, message = FALSE}
-
-# Snooping
-snoop <-
-  DL1301 |>
-  dplyr::filter(
-    !stringr::str_detect(birth_date, "^[0-9]{2}\\/[0-9]{2}\\/[0-9]{4}$")) |>
-  dplyr::mutate(
-    n_shift =
-      stringr::str_length(
-        stringr::str_extract(issue_date, "^[0-9]+(?=\\/)")) - 2) |>
-  dplyr::relocate(record_key, .before = "title") |>
-  dplyr::relocate(source_file, .before = "record_key") |>
-  dplyr::select(record_key, n_shift) |>
-  print()
-
-# Correct frame shift for x number of records
-unshifted <-
-  purrr::map_dfr(
-    1:length(snoop$record_key),
-    ~shiftFix(
-      # Fix the raw data file
-      DL1301,
-      # For x record id
-      snoop$record_key[.x],
-      # Shift from state col to email col
-      "state",
-      "email",
-      # Shift n number of characters
-      snoop$n_shift[.x])) |>
-  # Delete the 0s from end of zip
-  dplyr::mutate(zip = stringr::str_remove(zip, "0$")) |>
-  # Add 0s to the beginning of birth_date
-  dplyr::mutate(
-    birth_date =
-      ifelse(
-        stringr::str_detect(birth_date, "^[0-9]{1}\\/"),
-        paste0("0", birth_date),
-        birth_date))
-
-DL1301_unshifted <-
-  DL1301 |>
-  dplyr::filter(!record_key %in% unshifted$record_key) |>
-  dplyr::bind_rows(unshifted)
-```
-
 ### clean
 
 After data are read and unshifted, we `clean`:
 
 ```{r, clean}
-DL1301_clean <- clean(DL1301_unshifted)
+DL1301_clean <- clean(DL1301)
 ```
 
 This function does simple data cleaning. Importantly, records are discarded if first name, last name, birth date, state of residence, address AND email, OR city AND zip AND email are missing.
