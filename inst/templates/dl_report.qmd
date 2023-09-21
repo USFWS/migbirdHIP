@@ -382,7 +382,7 @@ if(nrow(idb_filtered) > 0) {
       n = sum(n)) |> 
     dplyr::mutate(
       files = 
-        ifelse(files == 1, " 1 file", paste0(files, " files")))
+        ifelse(files == 1, "1 file", paste0(files, " files")))
 } else {
   idb2 <- idb_filtered
 }
