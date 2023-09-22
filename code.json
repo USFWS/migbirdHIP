@@ -1,9 +1,9 @@
 [
   {
     "name": "migbirdHIP",
-    "organization": "U.S. Fish and Wildlife",
+    "organization": "U.S. Fish and Wildlife Service",
     "description": "An R package designed to process, clean, and visualize Harvest Information Program (HIP) data",
-    "version": "v1.2.7",
+    "version": "v1.2.8",
     "status": "Operational",
 
     "permissions": {
@@ -22,7 +22,7 @@
     "repositoryURL": "https://github.com/USFWS/migbirdHIP.git",
     "vcs": "git",
 
-    "laborHours": 630,
+    "laborHours": 635,
 
     "tags": [
       "usfws",
@@ -30,7 +30,10 @@
     ],
 
     "languages": [
-      "R"
+      "R",
+      "json",
+      "md",
+      "qmd"
     ],
 
     "contact": {
@@ -39,7 +42,7 @@
     },
 
     "date": {
-      "metadataLastUpdated": "2023-09-11"
+      "metadataLastUpdated": "2023-09-22"
     }
   }
 ]

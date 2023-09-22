@@ -1,5 +1,9 @@
 # migbirdHIP (dev version)
 
+-   
+
+# migbirdHIP 1.2.8
+
 ## Major changes & new features
 
 -   Added a `NEWS.md` file to track changes to the package.
