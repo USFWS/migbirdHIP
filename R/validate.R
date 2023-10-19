@@ -116,7 +116,7 @@ validate <-
                   period_type = "dl_date",
                   period =
                     str_extract(
-                      vr$source_file[.x], "[0-9].+(?=\\.txt)"),
+                      vr$source_file[.x], "[0-9].+(?=\\.txt|\\.csv)"),
                   species = vr$spp[.x]) |>
                   pull(1)) |>
               unlist()
