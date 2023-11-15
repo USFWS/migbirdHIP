@@ -377,7 +377,8 @@ if(!is.null(identicalbags)) {
   idb_filtered <- identicalbags
 }
 
-if(nrow(idb_filtered) > 0) {
+if(!is.null(idb_filtered)) {
+  if(nrow(idb_filtered) > 0) {
   idb2 <-
     idb_filtered |> 
     dplyr::group_by(dl_state, spp1, spp2, value) |> 
@@ -387,6 +388,7 @@ if(nrow(idb_filtered) > 0) {
     dplyr::mutate(
       files = 
         ifelse(files == 1, "1 file", paste0(files, " files")))
+  }
 } else {
   idb2 <- idb_filtered
 }
