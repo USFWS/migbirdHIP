@@ -800,47 +800,49 @@ stratacheck_tbl_non0 <- NULL
 
 cat("### Identical bag columns")
 cat("\n\n")
-if(nrow(idb2) > 0) {
-  cat(
-    paste0(
-      "❌", 
-      " Indentical columns detected that contain more than 1 bag value in file(s) with more than 100 rows."))
-  cat("\n\n")
-  if(nrow(idb2) == 1) { 
+if(!is.null(idb2)) {
+  if(nrow(idb2) > 0) {
     cat(
       paste0(
-        "* ", idb2$dl_state, " reported identical ", 
-        idb2$spp1, " and ", idb2$spp2, 
-        " (n = ", idb2$n, 
-        ", value(s) = ", idb2$value, ").")
-    )
-  } else if (nrow(idb2) > 1) { 
-      idb2_split <- split(idb2, idb2$dl_state)
-          
-      writeLines(
-        unlist(
-          purrr::map(
-            1:length(idb2_split),
-            function(x) {
-              list(
-                paste0("* ", names(idb2_split[x]), " (", 
-                 unique(idb2_split[[x]]$files), ")"),
-                purrr::map(
-                  1:nrow(idb2_split[[x]]),
-                  function(y) {
-                    paste0(
-                      "    + ", 
-                      idb2_split[[x]]$spp1[y], " and ", 
-                      idb2_split[[x]]$spp2[y], 
-                      " (records = ", idb2_split[[x]]$n[y], 
-                      ", value(s) = ", idb2_split[[x]]$value[y], ")")
-                  }
+        "❌", 
+        " Indentical columns detected that contain more than 1 bag value in file(s) with more than 100 rows."))
+    cat("\n\n")
+    if(nrow(idb2) == 1) { 
+      cat(
+        paste0(
+          "* ", idb2$dl_state, " reported identical ", 
+          idb2$spp1, " and ", idb2$spp2, 
+          " (n = ", idb2$n, 
+          ", value(s) = ", idb2$value, ").")
+      )
+    } else if (nrow(idb2) > 1) { 
+        idb2_split <- split(idb2, idb2$dl_state)
+            
+        writeLines(
+          unlist(
+            purrr::map(
+              1:length(idb2_split),
+              function(x) {
+                list(
+                  paste0("* ", names(idb2_split[x]), " (", 
+                   unique(idb2_split[[x]]$files), ")"),
+                  purrr::map(
+                    1:nrow(idb2_split[[x]]),
+                    function(y) {
+                      paste0(
+                        "    + ", 
+                        idb2_split[[x]]$spp1[y], " and ", 
+                        idb2_split[[x]]$spp2[y], 
+                        " (records = ", idb2_split[[x]]$n[y], 
+                        ", value(s) = ", idb2_split[[x]]$value[y], ")")
+                    }
+                  )
                 )
-              )
-            }
+              }
+            )
           )
         )
-      )
+    }
   }
 } else {
   cat(paste0("✔️", " No identical bag columns were found in files with more than 100 rows, with more than 1 bag value in common."))
