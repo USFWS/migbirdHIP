@@ -369,9 +369,13 @@ vrep_100 <-
 # Identical bags
 identicalbags <- migbirdHIP::identicalBags(final_data) 
 
-idb_filtered <-
+if(!is.null(identicalbags)) {
+  idb_filtered <-
   identicalbags |> 
   dplyr::filter(n > 100 & stringr::str_detect(value, ","))
+} else {
+  idb_filtered <- identicalbags
+}
 
 if(nrow(idb_filtered) > 0) {
   idb2 <-
