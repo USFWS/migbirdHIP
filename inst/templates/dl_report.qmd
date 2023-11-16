@@ -1053,20 +1053,22 @@ if(nrow(duplicates) > 0) {
       dupe_prop, ") were duplicated.")
   )
   cat("\n\n")
-  duplicates <- dplyr::filter(duplicates, n_dupes >= 100 | dupe_prop >= 3)
-  writeLines(
-    unlist(
-      purrr::map(
-        1:nrow(duplicates),
+  duplicates2 <- dplyr::filter(duplicates, n_dupes >= 100 | dupe_prop >= 3)
+  if(nrow(duplicates2) > 0) {
+    writeLines(
+      unlist(
+        purrr::map(
+          1:nrow(duplicates2),
           ~paste0(
-            "* ", duplicates$dl_state[.x], " has ", 
-            duplicates$n_dupes[.x], 
+            "* ", duplicates2$dl_state[.x], " has ", 
+            duplicates2$n_dupes[.x], 
             " duplicates ",
-            duplicates$n_files_with_dupes[.x], " (", 
-            duplicates$total_prop_dupes[.x], " of records).")
+            duplicates2$n_files_with_dupes[.x], " (", 
+            duplicates2$total_prop_dupes[.x], " of records).")
+        )
       )
     )
-  )
+  }
 } else { 
   cat(paste0("✔️", " No duplicate records received."))
 }
