@@ -1103,6 +1103,7 @@ rfstate <-
   )
 
 if(!is.null(rfstate)) {
+  cat("Values are reported at the field level (14 fields per record).")
   kableExtra::kbl(
     rfstate |>
     dplyr::mutate(proportion = paste0(round(proportion, 2)*100, "%")) |>
@@ -1612,6 +1613,7 @@ if(nrow(dplyr::filter(issue_assignments, decision != "nochange")) > 0){
 ```{r bad_issue_dates_tbl}
 #| echo: false
 #| message: false
+#| warning: false
 
 if(nrow(dplyr::filter(issue_assignments, decision != "nochange") |> dplyr::filter(!(dl_state %in% migbirdHIP:::states_twoseason & decision == "copy"))) > 0){
   stamp_format <- lubridate::stamp("Apr 15, 1993")
