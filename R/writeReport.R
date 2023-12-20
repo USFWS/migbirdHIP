@@ -20,6 +20,14 @@
 writeReport <-
   function(raw_path, temp_path, year, dl, dir, file){
 
+    # Fail if required packages are missing
+    try(
+      if(length(find.package("kableExtra", quiet = T)) == 0)
+        stop("Install package kableExtra to render this report.", call. = F))
+    try(
+      if(length(find.package("DT", quiet = T)) == 0)
+        stop("Install package DT to render this report.", call. = F))
+
     # Add a final "/" to path if not included already
     if(!str_detect(raw_path, "\\/$")) {
       raw_path <- paste0(raw_path, "/")
