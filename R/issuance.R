@@ -30,7 +30,8 @@ issueCheck <-
 
     # Return message if any issue_date is after the file was submitted
     if(nrow(filter(data, mdy(issue_date) > ymd(dl_date))) > 0) {
-      message("Error: issue_date in the future detected.")
+      message(
+        "Error: issue_date in the future detected (relative to file name).")
       print(
         filter(issue_assignments, mdy(issue_date) > ymd(dl_date)) |>
           count(source_file, dl_state, issue_date, registration_yr, dl_date)
