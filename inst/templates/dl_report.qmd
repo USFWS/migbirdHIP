@@ -371,8 +371,8 @@ identicalbags <- migbirdHIP::identicalBags(final_data)
 
 if(!is.null(identicalbags)) {
   idb_filtered <-
-  identicalbags |> 
-  dplyr::filter(n > 100 & stringr::str_detect(value, ","))
+    identicalbags |> 
+    dplyr::filter(n > 100 & stringr::str_detect(value, ","))
 } else {
   idb_filtered <- identicalbags
 }
@@ -1105,7 +1105,7 @@ rfstate <-
   )
 
 if(!is.null(rfstate)) {
-  cat("Values are reported at the field level (14 fields per record).")
+  cat("Values in the table below are reported at the field level (14 fields per record).")
   kableExtra::kbl(
     rfstate |>
     dplyr::mutate(proportion = paste0(round(proportion, 2)*100, "%")) |>
@@ -1139,6 +1139,7 @@ rffield <-
     )
 
 if(nrow(rffield) > 0) {
+  cat("Values in the table below are reported at the record level.")
   kableExtra::kbl(
     rffield |> 
       dplyr::mutate(proportion = paste0(round(proportion, 2)*100, "%")) |>
@@ -1667,7 +1668,7 @@ bad_issue_table <- NULL
 
 ## Future records
 
-Records below have an issue date and registration year indicating they should be sampled until next year.
+Records below have an issue date and registration year indicating they should be sampled next year.
 
 ```{r future_records}
 #| echo: false
@@ -1677,10 +1678,11 @@ if(nrow(dplyr::filter(issue_assignments, decision %in% c("postpone", "copy"))) >
     suppressMessages(
       issue_assignments |> 
         dplyr::filter(decision %in% c("postpone", "copy")) |>
-        dplyr::group_by(dl_state, registration_yr) |>
+        dplyr::group_by(dl_state) |>
         dplyr::count() |>
         dplyr::ungroup() |>
-        dplyr::arrange(dplyr::desc(n))
+        dplyr::arrange(dplyr::desc(n)) |> 
+        dplyr::rename(State = dl_state, `Number of records` = n)
       )
     )
 } else {
