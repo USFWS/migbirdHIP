@@ -1,6 +1,13 @@
 # migbirdHIP (dev version)
 
--   
+## Minor changes / bug fixes
+
+-   Template `dl_report.qmd`
+    - Excluded future data line from agenda tab
+    - Minor adjustments for edge cases in which summary variables are `NULL`
+    - Added clarification to table captions
+    - Eliminated irrelevant error and warning message printouts from rendered report
+- Edited `identicalBags()` function to exclude matching coots_snipe and rails_gallinules from MI in output; this state uses the response from one question to populate both fields.
 
 # migbirdHIP 1.2.8
 
