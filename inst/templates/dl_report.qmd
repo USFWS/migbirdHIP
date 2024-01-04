@@ -379,16 +379,18 @@ if(!is.null(identicalbags)) {
 
 if(!is.null(idb_filtered)) {
   if(nrow(idb_filtered) > 0) {
-  idb2 <-
-    idb_filtered |> 
-    dplyr::group_by(dl_state, spp1, spp2, value) |> 
-    dplyr::reframe(
-      files = length(unique(source_file)),
-      n = sum(n)) |> 
-    dplyr::mutate(
-      files = 
-        ifelse(files == 1, "1 file", paste0(files, " files")))
-  }
+    idb2 <-
+      idb_filtered |> 
+      dplyr::group_by(dl_state, spp1, spp2, value) |> 
+      dplyr::reframe(
+        files = length(unique(source_file)),
+        n = sum(n)) |> 
+      dplyr::mutate(
+        files = 
+          ifelse(files == 1, "1 file", paste0(files, " files")))
+  } else {
+    idb2 <- NULL
+    }
 } else {
   idb2 <- idb_filtered
 }
