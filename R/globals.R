@@ -119,4 +119,5 @@ globalVariables(
     "n_shift",
     "num_lines",
     "bags",
-    "state_strata"))
+    "state_strata",
+    "shifted"))

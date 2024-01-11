@@ -7,6 +7,9 @@
 #' @importFrom stringr str_extract
 #' @importFrom dplyr relocate
 #' @importFrom dplyr select
+#' @importFrom dplyr filter
+#' @importFrom tidyr unite
+#' @importFrom stringr str_remove_all
 #'
 #' @param data A raw data table created by \code{\link{read_hip}}
 #'
@@ -29,7 +32,18 @@ shiftCheck <-
       select(record_key, n_shift)
 
     if(nrow(shifted_data) > 0){
-      return(shifted_data)
+      # Summarize the line shifts to help with manual fixing
+      shift_summary <-
+        data |>
+        filter(record_key %in% shifted_data$record_key) |>
+        unite(shifted, title:zip, sep =  "", remove = F) |>
+        mutate(
+          culprit = str_remove_all(shifted, "[A-Z]|[0-9]|\\'|\\/|\\-|\\s")) |>
+        select(-shifted) |>
+        relocate(
+          all_of(c("source_file", "record_key", "culprit")), .before = "title")
+
+      return(shift_summary)
     } else {
       message("No line shifts detected.")
     }

@@ -1,5 +1,9 @@
 # migbirdHIP (dev version)
 
+## Major changes & new features
+
+-   Edited `shiftCheck()` to return a summary of shift errors rather than just a table of record id values.
+
 ## Minor changes / bug fixes
 
 -   Template `dl_report.qmd`
