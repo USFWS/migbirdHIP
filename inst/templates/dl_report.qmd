@@ -321,7 +321,13 @@ stratacheck_tbl <- migbirdHIP::strataCheck(final_data)
 
 stratacheck_tbl_non0 <- 
   stratacheck_tbl |> 
-  dplyr::filter(prop != "0%")
+  # Filter out bad bags that make up ~0% of a file
+  dplyr::filter(prop != "0%") |> 
+  # Filter out bad bags that are interchangeable for "no season" (e.g. received a 0 instead of a 1, or a 1 instead of a 0)
+  dplyr::filter(
+    !((state_strata == 0 & normal_strata == 1) | 
+        (state_strata == 1 & normal_strata == 0))
+  )
 
 # All horizontal validation
 all_h_valid <- migbirdHIP::validate(final_data, type = "horizontal", all = T) 
@@ -718,8 +724,8 @@ if(!is.null(stratacheck_tbl_non0)) {
       dplyr::rename(
         `State` = dl_state,
         Species = spp,
-        `Strata provided` = state_strata,
-        `Strata expected` = normal_strata,
+        `Bag provided` = state_strata,
+        `Bag expected` = normal_strata,
         Count = n,
         Proportion = prop)) |> 
     kableExtra::kable_styling(full_width = T) |> 
@@ -1469,8 +1475,8 @@ if(!is.null(stratacheck_tbl)) {
       dplyr::rename(
         `State` = dl_state,
         Species = spp,
-        `Strata provided` = state_strata,
-        `Strata expected` = normal_strata,
+        `Bag provided` = state_strata,
+        `Bag expected` = normal_strata,
         Count = n,
         Proportion = prop
       ),
