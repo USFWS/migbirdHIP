@@ -319,15 +319,20 @@ huntcheck <-
 # Strata check table
 stratacheck_tbl <- migbirdHIP::strataCheck(final_data)
 
-stratacheck_tbl_non0 <- 
-  stratacheck_tbl |> 
-  # Filter out bad bags that make up ~0% of a file
-  dplyr::filter(prop != "0%") |> 
-  # Filter out bad bags that are interchangeable for "no season" (e.g. received a 0 instead of a 1, or a 1 instead of a 0)
-  dplyr::filter(
-    !((state_strata == 0 & normal_strata == 1) | 
-        (state_strata == 1 & normal_strata == 0))
-  )
+if(is.null(stratacheck_tbl)) {
+  stratacheck_tbl_non0 <- NULL
+} else {
+  stratacheck_tbl_non0 <- 
+    stratacheck_tbl |> 
+    # Filter out bad bags that make up ~0% of a file
+    dplyr::filter(prop != "0%") |> 
+    # Filter out bad bags that are interchangeable for "no season" (e.g.
+    # received a 0 instead of a 1, or a 1 instead of a 0)
+    dplyr::filter(
+      !((state_strata == 0 & normal_strata == 1) | 
+          (state_strata == 1 & normal_strata == 0))
+    )
+}
 
 # All horizontal validation
 all_h_valid <- migbirdHIP::validate(final_data, type = "horizontal", all = T) 
@@ -711,7 +716,16 @@ if(nrow(huntcheck) > 0) {
 #| echo: false
 #| output: asis
 
-if(!is.null(stratacheck_tbl_non0)) {
+# stratacheck_tbl_non0
+# NULL:       no strata abnormalities
+# nrow == 0:  strata abnormalities not a concern
+# nrow > 0:   strata abnormalities reported
+
+if (is.null(stratacheck_tbl_non0)) { 
+  cat(paste0("✔️", " All bag values are correct."))
+} else if(nrow(stratacheck_tbl_non0) == 0) {
+  cat(paste0("❌", " Incorrect bag values detected (0% of file)."))
+} else if(nrow(stratacheck_tbl_non0) > 0) {
   cat(paste0("❌", " Incorrect bag values detected (> 0% of file)."))
   cat("\n\n")
   
@@ -732,8 +746,6 @@ if(!is.null(stratacheck_tbl_non0)) {
     kableExtra::row_spec(
       1:nrow(stratacheck_tbl_non0), extra_css = "padding: 3px;")
     
-} else { 
-  cat(paste0("✔️", " All bag values are correct."))
 }
 ```
 
@@ -743,9 +755,15 @@ if(!is.null(stratacheck_tbl_non0)) {
 #| echo: false
 #| output: asis
 
-if(!is.null(stratacheck_tbl_non0)) {
+
+if (is.null(stratacheck_tbl_non0)) { 
+  cat(paste0("✔️", " All bag values are correct."))
+} else if(nrow(stratacheck_tbl_non0) == 0) {
+  cat(paste0("❌", " Incorrect bag values detected (0% of file)."))
+} else if(nrow(stratacheck_tbl_non0) > 0) {
   cat(paste0("❌", " Incorrect bag values detected (> 0% of file)."))
   cat("\n\n")
+  
   if(nrow(stratacheck_tbl_non0) == 1) {
     cat(
       paste0(
@@ -791,8 +809,6 @@ if(!is.null(stratacheck_tbl_non0)) {
       )
     )
   }
-} else { 
-  cat(paste0("✔️", " All bag values are correct."))
 }
 
 stratacheck_tbl_non0 <- NULL

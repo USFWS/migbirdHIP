@@ -12,6 +12,7 @@
     - Added clarification to table captions
     - Eliminated irrelevant error and warning message printouts from rendered report
     - Remove inconsequential "bad bags" from Agenda tab; do not report 1s received instead of 0s, or 0s received instead of 1s
+    - Edited "bad bags" section of agenda tab to return a message in the edge case of 0% of a file containing bad bag values
 - Edited `identicalBags()` function to exclude matching coots_snipe and rails_gallinules from MI in output; this state uses the response from one question to populate both fields.
 
 # migbirdHIP 1.2.8
