@@ -154,7 +154,7 @@ bit <-
           "issue date before the first day of issuance (past records filtered out)",
         # Issue date is after issue_end (and is not 2 season state)
         decision == "future" ~ 
-          "issue date after end of issue window (bad)",
+          "issue date after end of issue window (future records to be sampled next season)",
         TRUE ~ NA_character_
       )
   ) |> 
@@ -1607,8 +1607,7 @@ if(nrow(dplyr::filter(issue_assignments, decision != "nochange") |> dplyr::filte
   
   bad_issue_table <-
     issue_assignments |>
-    dplyr::filter(decision != "nochange") |>
-    dplyr::filter(!(dl_state %in% c(migbirdHIP:::states_twoseason, "MS") & decision == "copy")) |> 
+    dplyr::filter(decision != "current" & dl_state != "MS") |>
     dplyr::select(dl_state, source_file, issue_date, registration_yr) |>
     dplyr::left_join(
       migbirdHIP:::licenses_ref |>
