@@ -3,6 +3,7 @@
 ## Major changes & new features
 
 -   Edited `shiftCheck()` to return a summary of shift errors rather than just a table of record id values.
+-   Edited `issueCheck()`, `issueAssign()`, and `issuePlot()` to accommodate new rules in evaluating if a record is current. All records are now current unless their `issue_date` falls before `issue_start` or after the last day of migratory bird hunting in the record's state.
 
 ## Minor changes / bug fixes
 
@@ -13,6 +14,7 @@
     - Eliminated irrelevant error and warning message printouts from rendered report
     - Remove inconsequential "bad bags" from Agenda tab; do not report 1s received instead of 0s, or 0s received instead of 1s
     - Edited "bad bags" section of agenda tab to return a message in the edge case of 0% of a file containing bad bag values
+    - Edited the Issuance tab to reflect new rules in evaluating if a record is current
 - Edited `identicalBags()` function to exclude matching coots_snipe and rails_gallinules from MI in output; this state uses the response from one question to populate both fields.
 
 # migbirdHIP 1.2.8

@@ -66,7 +66,10 @@ devtools::install_github("USFWS/migbirdHIP", quiet = T, upgrade = F, , build_vig
 
 The flowchart below is a visual guide to the order in which functions are used. Some functions are only used situationally and some issues with the data cannot be solved using a function at all. The general process of handling HIP data is demonstrated here; every function in the *migbirdHIP* package is included.
 
-<img src="image/migbirdHIP_flowchart.svg" alt="Overview of migbirdHIP functions in a flowchart format." width="100%" style="display: block; margin: auto;" />
+<div class="figure" style="text-align: center">
+<img src="image/migbirdHIP_flowchart.svg" alt="Overview of migbirdHIP functions in a flowchart format." width="100%" />
+<p class="caption">Overview of migbirdHIP functions in a flowchart format.</p>
+</div>
 
 ## Part A: Data Import and Cleaning
 
@@ -196,7 +199,10 @@ The `findDuplicates` function finds hunters that have more than one registration
 findDuplicates(DL1301_current)
 ```
 
-<img src="figure/findDuplicates-1.png" alt="Figure 1. Plot of types of duplicates." width="500" style="display: block; margin: auto;" />
+<div class="figure" style="text-align: center">
+<img src="figure/findDuplicates-1.png" alt="Figure 1. Plot of types of duplicates." width="500" />
+<p class="caption">Figure 1. Plot of types of duplicates.</p>
+</div>
 
 
 ```r
@@ -317,7 +323,7 @@ validate(DL1301_fixed, type = "horizontal")
 ##  4 MO20211229.txt 1        2697    3604       0.748
 ##  5 ME20211229.txt 1         112     151       0.742
 ##  6 NM20211229.txt 1         208     295       0.705
-##  7 ID20211229.txt 1        1762    2588       0.681
+##  7 ID20211229.txt 1        1760    2588       0.680
 ##  8 ND20211215.txt 1         130     204       0.637
 ##  9 CA20211229.txt 1        2003    3211       0.624
 ## 10 IN20211229.txt 1         416     690       0.603
@@ -433,8 +439,7 @@ pullErrors(DL1301_proofed, field = "suffix")
 ```
 
 ```
-##  [1] "MD"  "ESQ" "MAL" "MR"  "W"   "CJS" "CME" "M"   "SMI" "I�M" "MO" 
-## [12] "MS"  "MRS" "-"
+##  [1] "MD"  "ESQ" "MAL" "MR"  "W"   "CJS" "CME" "M"   "SMI" "I�M" "MO"  "MS"  "MRS" "-"
 ```
 
 Running `pullErrors` on a field that has no errors will return a message.
@@ -469,7 +474,7 @@ memory.limit(size = 55000)
 writeReport(
   raw_path = "C:/HIP/DL1301",
   temp_path = "C:/HIP/corrected_data",
-  year = 2019,
+  year = 2021,
   dl = "1301",
   dir = "C:/HIP/dl_reports",
   file = "DL1301_report")
@@ -486,7 +491,10 @@ The `outOfStateHunters` function plots and tabulates how many hunters registered
 outOfStateHunters(DL1301_proofed)
 ```
 
-<img src="figure/outofstate-1.png" alt="Figure 6. Plot of proportions of out-of-state hunters." width="500" style="display: block; margin: auto;" />
+<div class="figure" style="text-align: center">
+<img src="figure/outofstate-1.png" alt="Figure 6. Plot of proportions of out-of-state hunters." width="500" />
+<p class="caption">Figure 6. Plot of proportions of out-of-state hunters.</p>
+</div>
 
 ### youthHunters
 
@@ -497,7 +505,10 @@ The `youthHunters` function returns a table and plot of the number of hunters wi
 youthHunters(DL1301_proofed, year = 2021)
 ```
 
-<img src="figure/youth-1.png" alt="Figure 7. Plot of proportions of youth hunters." width="500" style="display: block; margin: auto;" />
+<div class="figure" style="text-align: center">
+<img src="figure/youth-1.png" alt="Figure 7. Plot of proportions of youth hunters." width="500" />
+<p class="caption">Figure 7. Plot of proportions of youth hunters.</p>
+</div>
 
 ### errorPlot_fields
 
@@ -508,7 +519,10 @@ The `errorPlot_fields` function can be run on all states...
 errorPlot_fields(DL1301_proofed, loc = "all", year = 2021)
 ```
 
-<img src="figure/errorfieldsplotall-1.png" alt="Figure 2. Plot of all location's errors by field name." width="500" style="display: block; margin: auto;" />
+<div class="figure" style="text-align: center">
+<img src="figure/errorfieldsplotall-1.png" alt="Figure 2. Plot of all location's errors by field name." width="500" />
+<p class="caption">Figure 2. Plot of all location's errors by field name.</p>
+</div>
 
 ... or it can be limited to just one.
 
@@ -517,7 +531,10 @@ errorPlot_fields(DL1301_proofed, loc = "all", year = 2021)
 errorPlot_fields(DL1301_proofed, loc = "LA", year = 2021)
 ```
 
-<img src="figure/errorfieldsplotsc-1.png" alt="Figure 3. Plot of Louisiana's errors by field name." width="500" style="display: block; margin: auto;" />
+<div class="figure" style="text-align: center">
+<img src="figure/errorfieldsplotsc-1.png" alt="Figure 3. Plot of Louisiana's errors by field name." width="500" />
+<p class="caption">Figure 3. Plot of Louisiana's errors by field name.</p>
+</div>
 
 The `youth` parameter can be set to TRUE for `errorPlot_fields` to view the proportion of "errors" created by youth hunters. Youth hunters are not included in the error plot if `youth = FALSE` (set as default).
 
@@ -526,7 +543,10 @@ The `youth` parameter can be set to TRUE for `errorPlot_fields` to view the prop
 errorPlot_fields(DL1301_proofed, year = 2021, youth = TRUE)
 ```
 
-<img src="figure/errorfieldsplotyouth-1.png" alt="Figure 4. Plot of all location's errors by field name, with stacked colors to indicate if there are youth hunters or Canadian zip codes in the data, two common causes of error." width="500" style="display: block; margin: auto;" />
+<div class="figure" style="text-align: center">
+<img src="figure/errorfieldsplotyouth-1.png" alt="Figure 4. Plot of all location's errors by field name, with stacked colors to indicate if there are youth hunters or Canadian zip codes in the data, two common causes of error." width="500" />
+<p class="caption">Figure 4. Plot of all location's errors by field name, with stacked colors to indicate if there are youth hunters or Canadian zip codes in the data, two common causes of error.</p>
+</div>
 
 It is possible to add any `ggplot2` components to these plots. For season total data specifically, the plot can be facet_wrapped using either dl_cycle or dl_date. The example below demonstrates how this package's functions can interact with the tidyverse and shows an example of an `errorPlot_fields` facet_wrap (using a subset of 4 download cycles)
 
@@ -551,7 +571,10 @@ The `errorPlot_states` function plots error proportions per state. You may optio
 errorPlot_states(DL1301_proofed)
 ```
 
-<img src="figure/errorplotstates-1.png" alt="Figure 5. Plot of proportion of error by state." width="500" style="display: block; margin: auto;" />
+<div class="figure" style="text-align: center">
+<img src="figure/errorplotstates-1.png" alt="Figure 5. Plot of proportion of error by state." width="500" />
+<p class="caption">Figure 5. Plot of proportion of error by state.</p>
+</div>
 
 ### errorPlot_dl
 
@@ -562,7 +585,10 @@ This function should not be used unless you want to visualize an entire season o
 errorPlot_dl(hipdata2020, loc = "MI")
 ```
 
-<img src="image/errorPlot_dl.png" alt="errorPlot_dl example output" width="70%" style="display: block; margin: auto;" />
+<div class="figure" style="text-align: center">
+<img src="image/errorPlot_dl.png" alt="errorPlot_dl example output" width="70%" />
+<p class="caption">errorPlot_dl example output</p>
+</div>
 
 ### errorTable
 
@@ -574,20 +600,20 @@ errorTable(DL1301_proofed)
 ```
 
 ```
-## # A tibble: 114 × 3
+## # A tibble: 120 × 3
 ##    dl_state error           error_count
 ##    <chr>    <chr>                 <int>
 ##  1 AK       registration_yr           1
 ##  2 AL       birth_date                2
 ##  3 AL       city                     13
-##  4 AL       email                     3
+##  4 AL       email                     4
 ##  5 AL       firstname                 5
 ##  6 AL       registration_yr        4791
 ##  7 AL       state                     1
 ##  8 AL       suffix                    5
 ##  9 AL       zip                      17
 ## 10 CA       birth_date              173
-## # ℹ 104 more rows
+## # ℹ 110 more rows
 ```
 
 Errors can be reported by only location by turning off the `field` parameter.
@@ -602,15 +628,15 @@ errorTable(DL1301_proofed, field = "none")
 ##    dl_state error_count
 ##    <chr>          <int>
 ##  1 AK                 1
-##  2 AL              4837
-##  3 CA               175
+##  2 AL              4838
+##  3 CA               177
 ##  4 CO                69
 ##  5 CT               420
-##  6 FL                32
+##  6 FL                35
 ##  7 GA                31
-##  8 IA                61
+##  8 IA                63
 ##  9 ID               179
-## 10 IN                59
+## 10 IN                61
 ## # ℹ 18 more rows
 ```
 
@@ -627,7 +653,7 @@ errorTable(DL1301_proofed, loc = "none")
 ##    <chr>                 <int>
 ##  1 birth_date             1308
 ##  2 city                     43
-##  3 email                   378
+##  3 email                   435
 ##  4 firstname                48
 ##  5 lastname                 14
 ##  6 registration_yr        7302
@@ -645,11 +671,12 @@ errorTable(DL1301_proofed, loc = "CA")
 ```
 
 ```
-## # A tibble: 2 × 3
+## # A tibble: 3 × 3
 ##   dl_state error      error_count
 ##   <chr>    <chr>            <int>
 ## 1 CA       birth_date         173
-## 2 CA       title                2
+## 2 CA       email                2
+## 3 CA       title                2
 ```
 
 Field can be specified.
@@ -677,7 +704,7 @@ errorTable(DL1301_proofed, loc = "CA", field = "none")
 ## # A tibble: 1 × 2
 ##   dl_state total_errors
 ##   <chr>           <int>
-## 1 CA                175
+## 1 CA                177
 ```
 
 Total errors for a field in a particular location can be pulled.
@@ -707,9 +734,9 @@ redFlags(DL1301_proofed, type = "state", threshold = 0.03)
 ##   <chr>           <int>         <dbl>      <dbl> <chr>       
 ## 1 CT                420          3094     0.120  error > 0.03
 ## 2 VT                365          4619     0.0732 error > 0.03
-## 3 AL               4837         62237     0.0721 error > 0.03
-## 4 LA               1817         23383     0.0721 error > 0.03
-## 5 WV                195          3921     0.0474 error > 0.03
+## 3 LA               1821         23379     0.0723 error > 0.03
+## 4 AL               4838         62236     0.0721 error > 0.03
+## 5 WV                212          3904     0.0515 error > 0.03
 ```
 
 <b>By field.</b>
@@ -738,13 +765,19 @@ Sometimes `read_hip` will throw one or more warnings. Warnings are usually benig
 
 This parsing failure occurs when a .txt file is missing the last two columns in the fixed-width file (registration_yr and email). For the offending file(s), these columns are filled with NA in the output tibble. No action must be taken.
 
-<img src="image/parsing_failure_1.png" alt="Example 1. Common warning that results after running read_hip with missing columns in fixed-width text files." width="60%" style="display: block; margin: auto;" />
+<div class="figure" style="text-align: center">
+<img src="image/parsing_failure_1.png" alt="Example 1. Common warning that results after running read_hip with missing columns in fixed-width text files." width="60%" />
+<p class="caption">Example 1. Common warning that results after running read_hip with missing columns in fixed-width text files.</p>
+</div>
 
 #### Example 2
 
 Another version of a parsing failure occurs when a file is missing the last column in last row of the fixed-width file. This value is set to NA in the output tibble. No action must be taken.
 
-<img src="image/parsing_failure_2.png" alt="Example 2. Common warning that results after running read_hip with a missing column in one row of a fixed-width text file." width="60%" style="display: block; margin: auto;" />
+<div class="figure" style="text-align: center">
+<img src="image/parsing_failure_2.png" alt="Example 2. Common warning that results after running read_hip with a missing column in one row of a fixed-width text file." width="60%" />
+<p class="caption">Example 2. Common warning that results after running read_hip with a missing column in one row of a fixed-width text file.</p>
+</div>
 
 ### Memory problems
 

@@ -145,22 +145,15 @@ issue_assignments <- migbirdHIP:::issueAssign(cleaned_data, params$year)
 
 bit <-
   issue_assignments |>
-  dplyr::select(dl_state, source_file, issue_date, registration_yr, issue_eval) |>
-  dplyr::left_join(
-    migbirdHIP:::licenses_ref |>
-      dplyr::select(
-        -c("hunting_season", "category")) |> 
-      dplyr::rename(dl_state = state),
-    by = "dl_state") |>  
+  dplyr::select(dl_state, source_file, issue_date, registration_yr, decision) |>
   dplyr::mutate(
-    issue_date = lubridate::mdy(issue_date),
     type = 
       dplyr::case_when(
         # Issue date is before the first day of the hunting season 
-        issue_date < issue_start ~ 
+        decision == "past" ~ 
           "issue date before the first day of issuance (past records filtered out)",
         # Issue date is after issue_end (and is not 2 season state)
-        issue_date > issue_end & issue_eval != "two season state" ~ 
+        decision == "future" ~ 
           "issue date after end of issue window (bad)",
         TRUE ~ NA_character_
       )
@@ -266,7 +259,7 @@ important_statistics <-
     dplyr::filter(
       !stringr::str_detect(
         value, 
-        "reg_yr_eval|Current registrations with|are blank|ID fields|provided state|write-out|past records|0 future|issue_date in the|Mississippi|100% of emails|00/00/0000|2s converted|0 records need to be postponed|single digit|non-MS records")
+        "Current registrations with|are blank|ID fields|provided state|write-out|past records|0 future|issue_date in the|Mississippi|100% of emails|00/00/0000|2s converted|0 records need to be postponed|single digit|non-MS records")
     ) |> 
     dplyr::mutate(
       value = 
@@ -1589,40 +1582,9 @@ vrep_all <- NULL
 
 # Issuance
 
-## Summary of registration year
-
-```{r reg_yr_check}
-#| echo: false
-
-suppressMessages(
-  reg_yr_summary <-
-    proofed_data |> 
-    dplyr::select(registration_yr, dl_state) |> 
-    # Filter out records from this year since we know they are good
-    dplyr::filter(registration_yr != as.character(params$year)) |> 
-    dplyr::group_by(registration_yr, dl_state) |> 
-    dplyr::summarize(n = dplyr::n()) |> 
-    dplyr::ungroup() |> 
-    dplyr::rename(
-      `Registration year` = registration_yr,
-      State = dl_state,
-      `Number of records` = n
-    )
-)
-
-if(nrow(reg_yr_summary) > 0){
-  cat(paste0("❌ Not all registration years = ", as.character(params$year), "."))
-  DT::datatable(reg_yr_summary)
-}else{
-  cat(paste0("✔️ All registration years = ", as.character(params$year), "."))
-}
-
-reg_yr_summary <- NULL
-```
-
 ## Non-current records
 
-Records below did not have an issue date that is current.
+Records below do not have an issue date that is current.
 
 ```{r bad_issue_dates_plot}
 #| echo: false
@@ -1695,11 +1657,11 @@ Records below have an issue date and registration year indicating they should be
 ```{r future_records}
 #| echo: false
 
-if(nrow(dplyr::filter(issue_assignments, decision %in% c("postpone", "copy"))) > 0){
+if(nrow(dplyr::filter(issue_assignments, decision == "future")) > 0){
   DT::datatable(
     suppressMessages(
       issue_assignments |> 
-        dplyr::filter(decision %in% c("postpone", "copy")) |>
+        dplyr::filter(decision == "future") |>
         dplyr::group_by(dl_state) |>
         dplyr::count() |>
         dplyr::ungroup() |>
