@@ -1665,7 +1665,14 @@ if(nrow(dplyr::filter(issue_assignments, decision == "future")) > 0){
         dplyr::count() |>
         dplyr::ungroup() |>
         dplyr::arrange(dplyr::desc(n)) |> 
-        dplyr::rename(State = dl_state, `Number of records` = n)
+        dplyr::left_join(
+          migbirdHIP:::licenses_ref |>
+            dplyr::select(dl_state = state, last_day_migbird_hunting),
+          by = "dl_state") |>
+        dplyr::select(
+          State = dl_state,
+          `Last day migbird hunting` = last_day_migbird_hunting,
+          `Number of records` = n)
       )
     )
 } else {
