@@ -18,6 +18,7 @@
     - Edited the Issuance tab to reflect new rules in evaluating if a record is current
 - Edited `identicalBags()` function to exclude matching coots_snipe and rails_gallinules from MI in output; this state uses the response from one question to populate both fields.
 - Edited `read_hip()` function to exclude "hold" subdirectories when reading season HIP data.
+- Updated R dependency to v4.4.0.
 
 # migbirdHIP 1.2.8
 
