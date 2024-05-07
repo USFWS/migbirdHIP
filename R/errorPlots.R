@@ -130,17 +130,7 @@ errorPlot_dl <-
 #'
 #' Create a bar plot of proportion of error per field. The plot defaults to all 49 states, but location can be specified.
 #'
-#' @importFrom dplyr mutate
-#' @importFrom stringr str_extract
-#' @importFrom dplyr select
-#' @importFrom tidyr separate_wider_delim
-#' @importFrom tidyr pivot_longer
-#' @importFrom tidyr starts_with
 #' @importFrom dplyr filter
-#' @importFrom dplyr group_by
-#' @importFrom dplyr summarize
-#' @importFrom dplyr ungroup
-#' @importFrom dplyr bind_rows
 #' @importFrom ggplot2 ggplot
 #' @importFrom ggplot2 aes
 #' @importFrom ggplot2 geom_bar
@@ -150,7 +140,6 @@ errorPlot_dl <-
 #' @importFrom ggplot2 theme_classic
 #' @importFrom ggplot2 theme
 #' @importFrom ggplot2 element_text
-#' @importFrom ggplot2 scale_fill_discrete
 #' @importFrom ggplot2 expansion
 #'
 #' @param x A proofed data table created by \code{\link{proof}}
