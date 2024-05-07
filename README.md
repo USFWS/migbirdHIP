@@ -5,9 +5,9 @@
 
 ## Overview
 
-The migbirdHIP package provides an easy-to-use set of R functions for
-the U.S. Fish and Wildlife Service Migratory Bird Program to process,
-clean, and visualize [Harvest Information
+The migbirdHIP package provides a set of R functions for the U.S. Fish
+and Wildlife Service Migratory Bird Program to process, clean, and
+visualize [Harvest Information
 Program](https://www.fws.gov/harvestsurvey) data.
 
 Tasks that can be accomplished with this package include:
