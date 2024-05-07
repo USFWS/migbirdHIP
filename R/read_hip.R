@@ -72,6 +72,8 @@ read_hip <-
       as_tibble_col(column_name = "filepath") |>
       # Don't process permit files
       filter(!str_detect(filepath, "permit")) |>
+      # Don't process hold files
+      filter(!str_detect(filepath, "hold")) |>
       # Identify blank files
       mutate(
         filepath = str_replace(filepath, "TXT", "txt"),
