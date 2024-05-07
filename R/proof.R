@@ -121,15 +121,13 @@ proof <-
         keyed_x |>
           filter(!str_extract(zip, "^[0-9]{5}") %in% zip_code_ref$zipcode) |>
           mutate(error = "zip"),
-        # Birth date should only ever be between 100 and 16 years go, since
-        # hunters do not have to register if less than 16 years of age & years
-        # from earlier than 100 years ago are unlikely
+        # Birth date should only ever be between 100 and 0 years ago
         keyed_x |>
           filter(
             as.numeric(
               str_extract(birth_date, "(?<=\\/)[0-9]{4}")) < year - 100 |
               as.numeric(
-                str_extract(birth_date, "(?<=\\/)[0-9]{4}")) > year - 16) |>
+                str_extract(birth_date, "(?<=\\/)[0-9]{4}")) > year - 0) |>
           mutate(error = "birth_date"),
         # Hunting migratory birds should only be = 1 or 2
         keyed_x |>

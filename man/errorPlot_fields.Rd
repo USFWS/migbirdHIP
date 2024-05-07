@@ -4,7 +4,7 @@
 \alias{errorPlot_fields}
 \title{Plot HIP errors by field}
 \usage{
-errorPlot_fields(x, loc = "all", year, youth = FALSE)
+errorPlot_fields(x, loc = "all", year)
 }
 \arguments{
 \item{x}{A proofed data table created by \code{\link{proof}}}
@@ -18,8 +18,6 @@ errorPlot_fields(x, loc = "all", year, youth = FALSE)
 }}
 
 \item{year}{The year in which the HIP data were collected.}
-
-\item{youth}{Optional. If set to TRUE, will plot youth hunters in addition to normal birth date errors.}
 }
 \description{
 Create a bar plot of proportion of error per field. The plot defaults to all 49 states, but location can be specified.

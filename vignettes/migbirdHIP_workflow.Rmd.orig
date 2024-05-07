@@ -399,12 +399,6 @@ errorPlot_fields(DL1301_proofed, loc = "all", year = 2021)
 errorPlot_fields(DL1301_proofed, loc = "LA", year = 2021)
 ```
 
-The `youth` parameter can be set to TRUE for `errorPlot_fields` to view the proportion of "errors" created by youth hunters. Youth hunters are not included in the error plot if `youth = FALSE` (set as default).
-
-```{r errorfieldsplotyouth, fig.cap = "Figure 4. Plot of all location's errors by field name, with stacked colors to indicate if there are youth hunters or Canadian zip codes in the data, two common causes of error.", fig.width = 6, fig.height = 3.6, dpi = 300, out.width = 500, fig.align = "center"}
-errorPlot_fields(DL1301_proofed, year = 2021, youth = TRUE)
-```
-
 It is possible to add any `ggplot2` components to these plots. For season total data specifically, the plot can be facet_wrapped using either dl_cycle or dl_date. The example below demonstrates how this package's functions can interact with the tidyverse and shows an example of an `errorPlot_fields` facet_wrap (using a subset of 4 download cycles)
 
 ```{r errorfieldsfacet, eval = FALSE}

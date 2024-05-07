@@ -4,6 +4,7 @@
 
 -   Edited `shiftCheck()` to return a summary of shift errors rather than just a table of record id values.
 -   Edited `issueCheck()`, `issueAssign()`, and `issuePlot()` to accommodate new rules in evaluating if a record is current. All records are now current unless their `issue_date` falls before `issue_start` or after the last day of migratory bird hunting in the record's state.
+-   Edited `proof()` and `errorPlot_fields()` to no longer flag and/or plot youth hunters (hunters with birth year < 16 years ago).
 
 ## Minor changes / bug fixes
 

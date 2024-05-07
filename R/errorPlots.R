@@ -162,7 +162,6 @@ errorPlot_dl <-
 #'  \item AL, AK, AZ, AR, CA, CO, CT, DE, DC, FL, GA, ID, IL, IN, IA, KS, KY, LA, ME, MD, MA, MI, MN, MS, MO, MT, NE, NV, NH, NJ, NM, NY, NC, ND, OH, OK, OR, PA, RI, SC, SD, TN, TX, UT, VT, VA, WA, WV, WI, WY}
 #'  }
 #' @param year The year in which the HIP data were collected.
-#' @param youth Optional. If set to TRUE, will plot youth hunters in addition to normal birth date errors.
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}
@@ -170,7 +169,7 @@ errorPlot_dl <-
 #' @export
 
 errorPlot_fields <-
-  function(x, loc = "all", year, youth = FALSE){
+  function(x, loc = "all", year) {
     if(!loc %in% c(unique(x$dl_state), "all")) {
 
       message(
@@ -181,94 +180,10 @@ errorPlot_fields <-
           " that submitted data for this download include:\n",
           paste(unique(x$dl_state), collapse = ", "))
       )
-    } else {
-      if (loc != "all") {
+    } else if (loc != "all") {
         x <-
           x |>
           filter(dl_state == loc)
-      }
-      if (youth == TRUE) {
-
-        # Plot *with* special legend colors
-
-        # Step 1: table of errors
-        table_1 <-
-          x |>
-          mutate(
-            special =
-              ifelse(
-                str_extract(birth_date, "(?<=\\/)[0-9]{4}$") > year - 16,
-                "Youth Hunter",
-                NA)) |>
-          select(errors, special) |>
-          # Pull errors apart, delimited by hyphens
-          separate_wider_delim(
-            errors, delim = "-", names_sep = "_", too_few = "align_start") |>
-          # Transform errors into a single column
-          pivot_longer(starts_with("errors"), names_to = "name") |>
-          filter(!is.na(value)) |>
-          select(errors = value, special)
-
-        # Step 2: table of errors with proportions calculated -- the youth
-        # errors must be row bound in
-        table_2 <-
-          table_1 |>
-          group_by(errors) |>
-          # Count number of correct and incorrect values
-          summarize(count_errors = sum(!is.na(errors))) |>
-          ungroup() |>
-          filter(errors != "birth_date") |>
-          bind_rows(
-            table_1 |>
-              group_by(errors, special) |>
-              summarize(
-                count_errors = sum(!is.na(errors)), .groups = "drop") |>
-              filter(errors == "birth_date")) |>
-          # Calculate error proportion
-          mutate(
-            total = nrow(x),
-            proportion = count_errors / nrow(x))
-
-        # Labels for bar plot (birth_date color stack doesn't cooperate with
-        # positioning 2 labels, so we only label that field once at the top of
-        # the bar)
-        barlabels <-
-          table_2 |>
-          select(-c("special", "total")) |>
-          group_by(errors) |>
-          mutate(
-            count_errors = sum(count_errors),
-            proportion = sum(proportion)) |>
-          ungroup()
-
-        # Plot
-        fields_plot <-
-          table_2 |>
-          ggplot() +
-          geom_bar(
-            aes(
-              x = reorder(errors, proportion),
-              y = proportion,
-              fill = special),
-            stat = "identity") +
-          geom_text(
-            aes(x = barlabels$errors,
-                y = barlabels$proportion,
-                label = barlabels$count_errors,
-                angle = 90),
-            vjust = 0.2, hjust = -0.2) +
-          labs(
-            x = "Field",
-            y = "Error proportion",
-            fill = "Specifics") +
-          scale_y_continuous(expand = expansion(mult = c(-0, 0.25))) +
-          theme_classic() +
-          theme(
-            axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1)) +
-          scale_fill_discrete(
-            labels = "Youth Hunter", breaks = "Youth Hunter")
-
-      } else {
 
         # Plot all states without special legend colors
 
@@ -289,16 +204,14 @@ errorPlot_fields <-
           theme_classic() +
           theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
 
-      }
-      if (loc == "all") {
-        return(
-          fields_plot +
-            labs(title = "Error proportion per field"))
-      } else {
-        return(
-          fields_plot +
-            labs(title = paste0("Error proportion per field in ", loc)))
-      }
+    } else if (loc == "all") {
+      return(
+        fields_plot +
+          labs(title = "Error proportion per field"))
+    } else {
+      return(
+        fields_plot +
+          labs(title = paste0("Error proportion per field in ", loc)))
     }
   }
 

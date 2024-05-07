@@ -1751,7 +1751,7 @@ fixed_dupes <- NULL
 #| echo: false
 #| fig.align: center
 
-migbirdHIP::errorPlot_fields(proofed_data, year = params$year, youth = T)
+migbirdHIP::errorPlot_fields(proofed_data, year = params$year)
 ```
 
 ### After correction
@@ -1785,37 +1785,21 @@ x_order <-
 
 table_1 <-
   final_data |>
-  dplyr::mutate(
-    birth_year = 
-      stringr::str_extract(birth_date, "(?<=\\/)[0-9]{4}$"),
-    special =
-      ifelse(
-        birth_year > params$year - 16,
-        "Youth Hunter",
-        NA)) |>
-  dplyr::select(errors, special) |>
+  dplyr::select(errors) |>
   # Pull errors apart, delimited by hyphens
   tidyr::separate(errors, into = as.character(c(1:25)), sep = "-") |>
   # Transform errors into a single column
   tidyr::pivot_longer(1:25, names_to = "name") |>
-  dplyr::select(errors = value, special) |>
+  dplyr::select(errors = value) |>
   dplyr::filter(!is.na(errors))
 
-# Step 2: table of errors with proportions calculated -- the youth
-# errors must be row bound in
+# Step 2: table of errors with proportions calculated 
 table_2 <-
   table_1 |>
   dplyr::group_by(errors) |>
   # Count number of correct and incorrect values
   dplyr::summarize(count_errors = sum(!is.na(errors))) |>
   dplyr::ungroup() |>
-  dplyr::filter(errors != "birth_date") |>
-  dplyr::bind_rows(
-    table_1 |>
-      dplyr::group_by(errors, special) |>
-      dplyr::summarize(count_errors = sum(!is.na(errors))) |>
-      dplyr::ungroup() |>
-      dplyr::filter(errors == "birth_date")) |>
   # Calculate error proportion
   dplyr::mutate(
     total = nrow(final_data),
@@ -1866,8 +1850,7 @@ x_order |>
     expand = ggplot2::expansion(mult = c(-0, 0.25))) +
   ggplot2::theme_classic() +
   ggplot2::theme(
-    axis.text.x = ggplot2::element_text(angle = 45, vjust = 1, hjust = 1)) +
-  ggplot2::scale_fill_discrete(labels = "Youth Hunter", breaks = "Youth Hunter")
+    axis.text.x = ggplot2::element_text(angle = 45, vjust = 1, hjust = 1)) 
 
 x_order <- NULL
 table_1 <- NULL
