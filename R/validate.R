@@ -34,6 +34,8 @@
 #'  }
 #' @param all Should all species groups be checked (TRUE)? If set to FALSE (default), then only ducks will be vertically checked and only ducks, geese, and coots_snipe will be horizontally checked.
 #'
+#' @seealso [investigate()] to look into vertical repetition.
+#'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}
 #'

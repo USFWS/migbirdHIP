@@ -23,6 +23,9 @@ After cleaning the data with \code{\link{clean}}, check to make sure the data do
 \references{
 \url{https://github.com/USFWS/migbirdHIP}
 }
+\seealso{
+\code{\link[=investigate]{investigate()}} to look into vertical repetition.
+}
 \author{
 Abby Walter, \email{abby_walter@fws.gov}
 }
