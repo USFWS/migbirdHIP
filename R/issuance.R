@@ -25,6 +25,13 @@
 issueCheck <-
   function(data, year, plot = FALSE){
 
+    # Fail if incorrect year supplied
+    stopifnot("Error: `year` parameter must be numeric." = is.numeric(year))
+    stopifnot("Error: Incorrect value supplied for `year` parameter. Please use a 4-digit year in the 2020s, e.g. 2024." = str_detect(year, "^202[0-9]{1}$"))
+
+    # Fail if incorrect plot supplied
+    stopifnot("Error: Please supply TRUE or FALSE for `plot` parameter." = plot %in% c(TRUE, FALSE, T, F))
+
     # Determine the destination of each record
     issue_assignments <- issueAssign(data, year)
 
@@ -143,6 +150,11 @@ issueCheck <-
 
 issueAssign <-
   function(data, year) {
+
+    # Fail if incorrect year supplied
+    stopifnot("Error: `year` parameter must be numeric." = is.numeric(year))
+    stopifnot("Error: Incorrect value supplied for `year` parameter. Please use a 4-digit year in the 2020s, e.g. 2024." = str_detect(year, "^202[0-9]{1}$"))
+
     data |>
       # Join in licensing dates
       left_join(
@@ -214,6 +226,11 @@ issueAssign <-
 
 issuePlot <-
   function(assigned_data, year) {
+
+    # Fail if incorrect year supplied
+    stopifnot("Error: `year` parameter must be numeric." = is.numeric(year))
+    stopifnot("Error: Incorrect value supplied for `year` parameter. Please use a 4-digit year in the 2020s, e.g. 2024." = str_detect(year, "^202[0-9]{1}$"))
+
     rectangles <-
       tibble(
         season = c(paste(year-1, year, sep = "-"),

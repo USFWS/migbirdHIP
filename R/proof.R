@@ -16,6 +16,7 @@
 #' @importFrom dplyr group_by
 #' @importFrom dplyr ungroup
 #' @importFrom dplyr n
+#' @importFrom stringr str_detect
 #' @importFrom stringr str_extract
 #' @importFrom stringr str_remove_all
 #' @importFrom stringr str_length
@@ -30,6 +31,10 @@
 
 proof <-
   function(x, year){
+
+    # Fail if incorrect year supplied
+    stopifnot("Error: `year` parameter must be numeric." = is.numeric(year))
+    stopifnot("Error: Incorrect value supplied for `year` parameter. Please use a 4-digit year in the 2020s, e.g. 2024." = str_detect(year, "^202[0-9]{1}$"))
 
     # Combine US State, District and Territory abbreviations with Canada
     # abbreviations
