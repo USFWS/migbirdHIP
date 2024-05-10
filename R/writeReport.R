@@ -28,6 +28,17 @@ writeReport <-
       if(length(find.package("DT", quiet = T)) == 0)
         stop("Install package DT to render this report.", call. = F))
 
+    # Fail if incorrect year supplied
+    stopifnot("Error: `year` parameter must be numeric." = is.numeric(year))
+    stopifnot("Error: Incorrect value supplied for `year` parameter. Please use a 4-digit year in the 2020s, e.g. 2024." = str_detect(year, "^202[0-9]{1}$"))
+
+    # Fail if incorrect dl supplied
+    stopifnot("Error: `dl` parameter must be string." = is.character(dl))
+    stopifnot("Error: Incorrect value supplied for `dl` parameter. Please use a 4-character download cycle, e.g. '0901'." = str_detect(dl, "^[0-9]{4}$"))
+
+    # Fail if incorrect file supplied
+    stopifnot("Error: `file` parameter must not contain a period or a file suffix. Please supply a plain file name, e.g. 'dl1501_report_2023'." = !str_detect(file, "\\."))
+
     # Add a final "/" to path if not included already
     if(!str_detect(raw_path, "\\/$")) {
       raw_path <- paste0(raw_path, "/")
