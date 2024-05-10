@@ -32,6 +32,9 @@
 write_hip <-
   function(x, path, split = TRUE){
 
+    # Fail if incorrect split supplied
+    stopifnot("Error: Please supply TRUE or FALSE for `split` parameter." = split %in% c(TRUE, FALSE, T, F))
+
     # Add a final "/" if not included already
     if(!str_detect(path, "\\/$")) {
       path <- paste0(path, "/")

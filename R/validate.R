@@ -272,14 +272,14 @@ investigate <-
   function(x, loc, period_type, period, species){
 
     # Fail if incorrect loc supplied
-    stopifnot("Error: Incorrect value supplied for loc. Please supply a 2-letter state abbreviation for one of the contiguous 49 states." = loc %in% state.abb[state.abb != "HI"])
-    
+    stopifnot("Error: Incorrect value supplied for `loc.`. Please supply a 2-letter state abbreviation for one of the contiguous 49 states." = loc %in% datasets::state.abb[datasets::state.abb != "HI"])
+
     # Fail if incorrect period_type supplied
-    stopifnot("Error: Incorrect value supplied for period_type. Please supply 'dl_date' or 'dl_cycle'." = period_type %in% c("dl_date", "dl_cycle"))
-    
+    stopifnot("Error: Incorrect value supplied for `period_type`. Please supply 'dl_date' or 'dl_cycle'." = period_type %in% c("dl_date", "dl_cycle"))
+
     # Fail if incorrect species supplied
-    stopifnot("Error: Incorrect value supplied for species. Please supply one of: ducks_bag, geese_bag, dove_bag, woodcock_bag, coots_snipe, rails_gallinules, cranes, band_tailed_pigeon, brant, seaducks." = species %in% c("ducks_bag", "geese_bag", "dove_bag", "woodcock_bag", "coots_snipe", "rails_gallinules", "cranes", "band_tailed_pigeon", "brant", "seaducks"))
-    
+    stopifnot("Error: Incorrect value supplied for `species`. Please supply one of: ducks_bag, geese_bag, dove_bag, woodcock_bag, coots_snipe, rails_gallinules, cranes, band_tailed_pigeon, brant, seaducks." = species %in% c("ducks_bag", "geese_bag", "dove_bag", "woodcock_bag", "coots_snipe", "rails_gallinules", "cranes", "band_tailed_pigeon", "brant", "seaducks"))
+
     # Pull requested value
     investigated_x <-
       x |>

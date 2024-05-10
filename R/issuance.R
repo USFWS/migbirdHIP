@@ -141,6 +141,7 @@ issueCheck <-
 #' @importFrom lubridate interval
 #' @importFrom lubridate %within%
 #' @importFrom dplyr select
+#' @importFrom stringr str_detect
 #'
 #' @param data The object created after cleaning data with \code{\link{clean}}
 #' @param year The year of the HIP season (e.g. 2022 for the 2022-2023 season)
@@ -197,6 +198,7 @@ issueAssign <-
 #'
 #' The internal \code{issuePlot} function plots the output of \code{\link{issueAssign}}.
 #'
+#' @importFrom stringr str_detect
 #' @importFrom dplyr filter
 #' @importFrom dplyr select
 #' @importFrom dplyr left_join

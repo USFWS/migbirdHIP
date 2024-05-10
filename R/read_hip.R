@@ -47,21 +47,18 @@ read_hip <-
     if(str_detect(path, "DL") & season == TRUE) {
       message("Are you sure you supplied a season path?")
     }
-    # Error for bad state
-    if(!state %in% c(NA, datasets::state.abb[datasets::state.abb != "HI"])) {
-      message(
-        paste0(
-          "Error: Please supply a valid 2-letter state abbreviation for ",
-          "`state` parameter."))
-    }
-    # Error for bad season
-    if(!season %in% c(TRUE, FALSE, T, F)) {
-      message("Error: Please supply TRUE or FALSE for `season` parameter.")
-    }
-    # Error for bad sumlines
-    if(!sumlines %in% c(TRUE, FALSE, T, F)) {
-      message("Error: Please supply TRUE or FALSE for `sumlines` parameter.")
-    }
+
+    # Fail if incorrect unique supplied
+    stopifnot("Error: Please supply TRUE or FALSE for `unique` parameter." = unique %in% c(TRUE, FALSE, T, F))
+
+    # Fail if incorrect state supplied
+    stopifnot("Error: Incorrect value supplied for `state`. Please supply a 2-letter state abbreviation for one of the contiguous 49 states." = state %in% datasets::state.abb[datasets::state.abb != "HI"])
+
+    # Fail if incorrect season supplied
+    stopifnot("Error: Please supply TRUE or FALSE for `season` parameter." = season %in% c(TRUE, FALSE, T, F))
+
+    # Fail if incorrect sumlines supplied
+    stopifnot("Error: Please supply TRUE or FALSE for `sumlines` parameter." = sumlines %in% c(TRUE, FALSE, T, F))
 
     # Create a tibble of the HIP .txt files to be read from the provided
     # directory

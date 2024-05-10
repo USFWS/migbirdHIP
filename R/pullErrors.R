@@ -12,7 +12,7 @@
 #' @param x A proofed data table created by \code{\link{proof}}
 #' @param field Field that should be pulled. One of the fields from the following list may be supplied:
 #' \itemize{
-#' \item title, firstname, middle, lastname, suffix, address, city, state, zip, birth_date, issue_date, hunt_mig_birds, ducks_bag, geese_bag, dove_bag, woodcock_bag, coots_snipe, rails_gallinules, cranes, band_tailed_pigeon, brant, seaducks, registration_year, email}
+#' \item title, firstname, middle, lastname, suffix, address, city, state, zip, birth_date, issue_date, hunt_mig_birds, ducks_bag, geese_bag, dove_bag, woodcock_bag, coots_snipe, rails_gallinules, cranes, band_tailed_pigeon, brant, seaducks, registration_yr, email}
 #' @param distinct If FALSE, returns all error values; if TRUE (default), only returns unique values.
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
@@ -22,6 +22,12 @@
 
 pullErrors <-
   function(x, field, distinct = TRUE){
+
+    # Fail if incorrect field supplied
+    stopifnot("Error: Incorrect value supplied for `field` parameter. Please supply one of: title, firstname, middle, lastname, suffix, address, city, state, zip, birth_date, issue_date, hunt_mig_birds, ducks_bag, geese_bag, dove_bag, woodcock_bag, coots_snipe, rails_gallinules, cranes, band_tailed_pigeon, brant, seaducks, registration_yr, email." = field %in% c("title", "firstname", "middle", "lastname", "suffix", "address", "city", "state", "zip", "birth_date", "issue_date", "hunt_mig_birds", "ducks_bag", "geese_bag", "dove_bag", "woodcock_bag", "coots_snipe", "rails_gallinules", "cranes", "band_tailed_pigeon", "brant", "seaducks", "registration_yr", "email"))
+
+    # Fail if incorrect distinct supplied
+    stopifnot("Error: Please supply TRUE or FALSE for `distinct` parameter." = distinct %in% c(TRUE, FALSE, T, F))
 
     acceptable_fields <-
       names(x)[match("title", names(x)):match("email", names(x))]

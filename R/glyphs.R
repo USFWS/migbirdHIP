@@ -7,17 +7,22 @@
 #' @importFrom dplyr mutate
 #' @importFrom dplyr filter
 #' @importFrom dplyr arrange
+#' @importFrom stringr str_detect
 #'
 #' @param data The tibble created after reading in data with \code{\link{read_hip}}
 #' @param field Field that should be checked for non-UTF-8 characters. One of the fields from the following list may be supplied:
 #' \itemize{
-#' \item title, firstname, middle, lastname, suffix, address, city, state, zip, birth_date, issue_date, hunt_mig_birds, ducks_bag, geese_bag, dove_bag, woodcock_bag, coots_snipe, rails_gallinules, cranes, band_tailed_pigeon, brant, seaducks, registration_year, email}
+#' \item title, firstname, middle, lastname, suffix, address, city, state, zip, birth_date, issue_date, hunt_mig_birds, ducks_bag, geese_bag, dove_bag, woodcock_bag, coots_snipe, rails_gallinules, cranes, band_tailed_pigeon, brant, seaducks, registration_yr, email}
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}
 
 glyphFinder <-
   function(data, field){
+
+    # Fail if incorrect field supplied
+    stopifnot("Error: Incorrect value supplied for `field` parameter. Please supply one of: title, firstname, middle, lastname, suffix, address, city, state, zip, birth_date, issue_date, hunt_mig_birds, ducks_bag, geese_bag, dove_bag, woodcock_bag, coots_snipe, rails_gallinules, cranes, band_tailed_pigeon, brant, seaducks, registration_yr, email." = field %in% c("title", "firstname", "middle", "lastname", "suffix", "address", "city", "state", "zip", "birth_date", "issue_date", "hunt_mig_birds", "ducks_bag", "geese_bag", "dove_bag", "woodcock_bag", "coots_snipe", "rails_gallinules", "cranes", "band_tailed_pigeon", "brant", "seaducks", "registration_yr", "email"))
+
     data |>
       select(source_file, record_key, !!sym(field)) |>
       mutate(check = is.na(iconv(!!sym(field), "UTF-8", "UTF-8"))) |>

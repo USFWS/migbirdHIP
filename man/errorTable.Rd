@@ -22,7 +22,7 @@ errorTable(x, loc = "all", field = "all")
 \itemize{
 \item If loc = "none", field must be "all". Otherwise, choose one of the following values:
 \itemize{
-\item title, firstname, middle, lastname, suffix, address, city, state, zip, birth_date, issue_date, hunt_mig_birds, ducks_bag, geese_bag, dove_bag, woodcock_bag, coots_snipe, rails_gallinules, cranes, band_tailed_pigeon, brant, seaducks, registration_year, email}
+\item title, firstname, middle, lastname, suffix, address, city, state, zip, birth_date, issue_date, hunt_mig_birds, ducks_bag, geese_bag, dove_bag, woodcock_bag, coots_snipe, rails_gallinules, cranes, band_tailed_pigeon, brant, seaducks, registration_yr, email}
 \item all - All fields in the data
 \item none - Table will not include field in its output
 }}

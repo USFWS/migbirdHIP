@@ -8,6 +8,7 @@
 #' @importFrom dplyr desc
 #' @importFrom dplyr select
 #' @importFrom dplyr relocate
+#' @importFrom stringr str_detect
 #'
 #' @param x A proofed data table created by \code{\link{proof}}
 #' @param type Type of tibble to report. Acceptable values include:
@@ -24,6 +25,14 @@
 
 redFlags <-
   function(x, type, threshold = 0) {
+
+    # Fail if incorrect type supplied
+    stopifnot("Error: Please supply 'state' or 'field' for `type` parameter." = type %in% c("state", "field"))
+
+    # Fail if incorrect threshold supplied
+    stopifnot("Error: `threshold` parameter must be numeric." = is.numeric(threshold))
+    stopifnot("Error: Please supply a value between 0 and 1 for the `threshold` parameter." = (0 <= threshold & threshold <= 1))
+
     if (type == "state") {
 
       # State red flags

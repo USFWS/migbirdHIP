@@ -33,6 +33,9 @@
 outOfStateHunters <-
   function(x, output = "plot"){
 
+    # Fail if incorrect output supplied
+    stopifnot("Error: Incorrect value supplied for `output` parameter. Please choose: 'plot' or 'table'." = output %in% c("plot", "table"))
+
     # Tibble of hunters from out-of-state
 
     out_of_staters <-
@@ -141,6 +144,10 @@ outOfStateHunters <-
 
 youthHunters <-
   function(x, year){
+
+    # Fail if incorrect year supplied
+    stopifnot("Error: `year` parameter must be numeric." = is.numeric(year))
+    stopifnot("Error: Incorrect value supplied for `year` parameter. Please use a 4-digit year in the 2020s, e.g. 2024." = str_detect(year, "^202[0-9]{1}$"))
 
     # Make a table of total number of hunters per state
     total_hunters <-

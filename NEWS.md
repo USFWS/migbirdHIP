@@ -19,6 +19,7 @@
 - Edited `identicalBags()` function to exclude matching coots_snipe and rails_gallinules from MI in output; this state uses the response from one question to populate both fields.
 - Edited `read_hip()` function to exclude "hold" subdirectories when reading season HIP data.
 - Updated R dependency to v4.4.0.
+- Added programmatic `stopifnot()` to all functions to safeguard against running with incorrect/invalid parameters.
 
 # migbirdHIP 1.2.8
 

@@ -28,7 +28,7 @@
 #'  \itemize{
 #'  \item If loc = "none", field must be "all". Otherwise, choose one of the following values:
 #'  \itemize{
-#'  \item title, firstname, middle, lastname, suffix, address, city, state, zip, birth_date, issue_date, hunt_mig_birds, ducks_bag, geese_bag, dove_bag, woodcock_bag, coots_snipe, rails_gallinules, cranes, band_tailed_pigeon, brant, seaducks, registration_year, email}
+#'  \item title, firstname, middle, lastname, suffix, address, city, state, zip, birth_date, issue_date, hunt_mig_birds, ducks_bag, geese_bag, dove_bag, woodcock_bag, coots_snipe, rails_gallinules, cranes, band_tailed_pigeon, brant, seaducks, registration_yr, email}
 #'  \item all - All fields in the data
 #'  \item none - Table will not include field in its output
 #'  }
@@ -41,28 +41,14 @@
 errorTable <-
   function(x, loc = "all", field = "all"){
 
-    acceptable_fields <-
-      c(names(x)[match("title", names(x)):match("email", names(x))],
-        "all", "none")
+    # Fail if incorrect loc supplied
+    stopifnot("Error: Incorrect value supplied for `loc` parameter. Please supply a two-letter state abbreviation of a `dl_state` value contained within the data, 'all', or 'none'." = loc %in% c(unique(x$dl_state), "all", "none"))
 
-    if(!loc %in% c(unique(x$dl_state), "all", "none")) {
-      message(
-        paste0(
-          "Error! The value supplied to the `loc` parameter is incorrect.",
-          " Please supply a two-letter state abbreviation for the `loc`",
-          " parameter, or `loc = 'all'` to plot all available states. States",
-          " that submitted data for this download include:\n",
-          paste(unique(x$dl_state), collapse = ", "))
-      )
-    } else if (loc == "none" & field != "all"){
+    # Fail if incorrect field supplied
+    stopifnot("Error: Incorrect value supplied for `field` parameter. Please supply one of: title, firstname, middle, lastname, suffix, address, city, state, zip, birth_date, issue_date, hunt_mig_birds, ducks_bag, geese_bag, dove_bag, woodcock_bag, coots_snipe, rails_gallinules, cranes, band_tailed_pigeon, brant, seaducks, registration_yr, email." = field %in% c("title", "firstname", "middle", "lastname", "suffix", "address", "city", "state", "zip", "birth_date", "issue_date", "hunt_mig_birds", "ducks_bag", "geese_bag", "dove_bag", "woodcock_bag", "coots_snipe", "rails_gallinules", "cranes", "band_tailed_pigeon", "brant", "seaducks", "registration_yr", "email"))
+
+    if (loc == "none" & field != "all"){
       message("Error! If `loc = 'none'` then `field` must be 'all'.")
-    } else if(!field %in% acceptable_fields) {
-      message(
-        paste0(
-          "Error! The value supplied to the `field` parameter is incorrect.",
-          " Please supply one of the following possible values:\n",
-          paste(acceptable_fields, collapse = ", "), ".")
-      )
     } else {
 
       # Initial summary table
