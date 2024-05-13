@@ -4,10 +4,10 @@
 \alias{issueCheck}
 \title{Check issue dates and license years}
 \usage{
-issueCheck(data, year, plot = FALSE)
+issueCheck(x, year, plot = FALSE)
 }
 \arguments{
-\item{data}{The object created after cleaning data with \code{\link{clean}}}
+\item{x}{The object created after cleaning data with \code{\link{clean}}}
 
 \item{year}{The year of the HIP season (e.g. 2022 for the 2022-2023 season)}
 

@@ -9,7 +9,7 @@ findDuplicates(x, return = "plot")
 \arguments{
 \item{x}{A current data table created by \code{\link{issueCheck}}}
 
-\item{return}{Option to return either a plot or a table; default value is "plot"}
+\item{return}{Return a "plot" (default) or "table"}
 }
 \description{
 Determine how many duplicate records are in the data. Plot and tabulate which fields are duplicates of individual hunters (i.e. data grouped by first name, last name, state, and birth date, registration year, and download state).

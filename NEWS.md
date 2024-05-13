@@ -20,6 +20,11 @@
 - Edited `read_hip()` function to exclude "hold" subdirectories when reading season HIP data.
 - Updated R dependency to v4.4.0.
 - Added programmatic `stopifnot()` to all functions to safeguard against running with incorrect/invalid parameters.
+- Reduced variation in parameter names:
+    - `distinct` changed to `unique` for `pullErrors()`
+    - `output` changed to `return` for `outOfStateHunters()`
+    - `assigned_data` changed to `x` for `issuePlot()`
+    - `data` changed to `x` for `glyphCheck()`, `glyphFinder()`, `issueAssign()`, `issueCheck()`, and `shiftCheck()`
 
 # migbirdHIP 1.2.8
 

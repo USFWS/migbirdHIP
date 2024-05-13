@@ -4,10 +4,10 @@
 \alias{glyphCheck}
 \title{Find non-UTF-8 glyphs/characters in any field}
 \usage{
-glyphCheck(data)
+glyphCheck(x)
 }
 \arguments{
-\item{data}{The tibble created after reading in data with \code{\link{read_hip}}}
+\item{x}{The tibble created after reading in data with \code{\link{read_hip}}}
 }
 \description{
 Pull and view any non-UTF-8 characters in the raw data. This function iterates \code{\link{glyphFinder}} over the entire tibble.

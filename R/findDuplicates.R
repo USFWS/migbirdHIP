@@ -36,7 +36,7 @@
 #' @importFrom stats reorder
 #'
 #' @param x A current data table created by \code{\link{issueCheck}}
-#' @param return Option to return either a plot or a table; default value is "plot"
+#' @param return Return a "plot" (default) or "table"
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}
@@ -44,7 +44,7 @@
 #' @export
 
 findDuplicates <-
-  function(x, return = "plot"){
+  function(x, return = "plot") {
 
     # Fail if incorrect return supplied
     stopifnot("Error: Incorrect value supplied for `return` parameter. Please choose: 'table' or 'plot'." = return %in% c("table", "plot"))

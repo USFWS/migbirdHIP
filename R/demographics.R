@@ -23,7 +23,7 @@
 #' @importFrom ggplot2 element_text
 #'
 #' @param x A proofed data table created by \code{\link{proof}}
-#' @param output "plot" (default) or "table"
+#' @param return Return a "plot" (default) or "table"
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}
@@ -31,10 +31,10 @@
 #' @export
 
 outOfStateHunters <-
-  function(x, output = "plot"){
+  function(x, return = "plot") {
 
-    # Fail if incorrect output supplied
-    stopifnot("Error: Incorrect value supplied for `output` parameter. Please choose: 'plot' or 'table'." = output %in% c("plot", "table"))
+    # Fail if incorrect return supplied
+    stopifnot("Error: Incorrect value supplied for `return` parameter. Please choose: 'plot' or 'table'." = return %in% c("plot", "table"))
 
     # Tibble of hunters from out-of-state
 
@@ -74,7 +74,7 @@ outOfStateHunters <-
         )
       )
 
-    if(output == "plot"){
+    if(return == "plot") {
 
       # Out of state hunter proportion plot
 
@@ -105,14 +105,9 @@ outOfStateHunters <-
 
       print(oos_plot)
 
-    }else if(output == "table"){
-
+    } else if(return == "table") {
       return(oos_proportion)
-
-    }else{
-      message("Error: `output` must be 'plot' or 'table'.")
     }
-
   }
 
 #' Youth hunters

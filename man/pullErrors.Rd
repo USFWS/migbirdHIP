@@ -4,7 +4,7 @@
 \alias{pullErrors}
 \title{Pull flagged errors}
 \usage{
-pullErrors(x, field, distinct = TRUE)
+pullErrors(x, field, unique = TRUE)
 }
 \arguments{
 \item{x}{A proofed data table created by \code{\link{proof}}}
@@ -13,7 +13,7 @@ pullErrors(x, field, distinct = TRUE)
 \itemize{
 \item title, firstname, middle, lastname, suffix, address, city, state, zip, birth_date, issue_date, hunt_mig_birds, ducks_bag, geese_bag, dove_bag, woodcock_bag, coots_snipe, rails_gallinules, cranes, band_tailed_pigeon, brant, seaducks, registration_yr, email}}
 
-\item{distinct}{If FALSE, returns all error values; if TRUE (default), only returns unique values.}
+\item{unique}{If FALSE, returns all error values; if TRUE (default), only returns unique values.}
 }
 \description{
 Pull and view errors that have been flagged for a particular field. This function allows you to easily see what the \code{\link{proof}} function has determined to be unacceptable data.

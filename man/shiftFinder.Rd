@@ -4,10 +4,10 @@
 \alias{shiftFinder}
 \title{Find frame shifts}
 \usage{
-shiftFinder(data)
+shiftFinder(x)
 }
 \arguments{
-\item{data}{A raw data table created by \code{\link{read_hip}}}
+\item{x}{A raw data table created by \code{\link{read_hip}}}
 }
 \description{
 The internal \code{shiftFinder} function finds any rows that have a line shift error.

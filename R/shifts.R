@@ -11,7 +11,7 @@
 #' @importFrom tidyr unite
 #' @importFrom stringr str_remove_all
 #'
-#' @param data A raw data table created by \code{\link{read_hip}}
+#' @param x A raw data table created by \code{\link{read_hip}}
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}
@@ -19,10 +19,10 @@
 #' @export
 
 shiftCheck <-
-  function(data){
+  function(x){
 
     shifted_data <-
-      shiftFinder(data) |>
+      shiftFinder(x) |>
       mutate(
         n_shift =
           str_length(
@@ -34,7 +34,7 @@ shiftCheck <-
     if(nrow(shifted_data) > 0){
       # Summarize the line shifts to help with manual fixing
       shift_summary <-
-        data |>
+        x |>
         filter(record_key %in% shifted_data$record_key) |>
         unite(shifted, title:zip, sep =  "", remove = F) |>
         mutate(
@@ -56,12 +56,12 @@ shiftCheck <-
 #' @importFrom dplyr filter
 #' @importFrom stringr str_detect
 #'
-#' @param data A raw data table created by \code{\link{read_hip}}
+#' @param x A raw data table created by \code{\link{read_hip}}
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}
 
 shiftFinder <-
-  function(data){
-    filter(data, !str_detect(birth_date, "^[0-9]{2}\\/[0-9]{2}\\/[0-9]{4}$"))
+  function(x){
+    filter(x, !str_detect(birth_date, "^[0-9]{2}\\/[0-9]{2}\\/[0-9]{4}$"))
   }
