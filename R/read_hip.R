@@ -52,7 +52,7 @@ read_hip <-
     stopifnot("Error: Please supply TRUE or FALSE for `unique` parameter." = unique %in% c(TRUE, FALSE, T, F))
 
     # Fail if incorrect state supplied
-    stopifnot("Error: Incorrect value supplied for `state`. Please supply a 2-letter state abbreviation for one of the contiguous 49 states." = state %in% datasets::state.abb[datasets::state.abb != "HI"])
+    stopifnot("Error: Incorrect value supplied for `state`. Please supply a 2-letter state abbreviation for one of the contiguous 49 states." = state %in% c(NA, datasets::state.abb[datasets::state.abb != "HI"]))
 
     # Fail if incorrect season supplied
     stopifnot("Error: Please supply TRUE or FALSE for `season` parameter." = season %in% c(TRUE, FALSE, T, F))
