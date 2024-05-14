@@ -439,8 +439,8 @@ pullErrors(DL1301_proofed, field = "suffix")
 ```
 
 ```
-##  [1] "MD"  "ESQ" "MAL" "MR"  "W"   "CJS" "CME" "M"   "SMI" "I�M" "MO"  "MS"  "MRS"
-## [14] "-"
+##  [1] "MD"  "ESQ" "MAL" "MR"  "W"   "CJS" "CME" "M"   "SMI" "I�M" "MO"  "MS" 
+## [13] "MRS" "-"
 ```
 
 Running `pullErrors` on a field that has no errors will return a message.
