@@ -216,8 +216,8 @@ errorPlot_states <-
   function(x, threshold = NA) {
 
     # Fail if incorrect threshold supplied
-    stopifnot("Error: `threshold` parameter must be numeric." = is.numeric(threshold))
-    stopifnot("Error: Please supply a value between 0 and 1 for the `threshold` parameter." = (0 <= threshold & threshold <= 1))
+    stopifnot("Error: `threshold` parameter must be numeric." = (is.numeric(threshold) | is.na(threshold)))
+    stopifnot("Error: Please supply a value between 0 and 1 for the `threshold` parameter." = ((0 <= threshold & threshold <= 1) | is.na(threshold)))
 
     # Generate a table of error proportions
     state_tbl <- errorLevel_errors_state(x)
