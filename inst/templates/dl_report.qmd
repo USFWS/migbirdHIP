@@ -242,7 +242,7 @@ bad_issue <-
   dplyr::filter(
     !stringr::str_detect(
       issue_date, 
-      "(0[1-9]|1[0-2])\\/(0[1-9]|[12][0-9]|3[01])\\/(2022|2023|2024)")) |> 
+      "(0[1-9]|1[0-2])\\/(0[1-9]|[12][0-9]|3[01])\\/(2023|2024|2025)")) |> 
   dplyr::group_by(source_file, dl_state, file_total, issue_date) |> 
   dplyr::count() |> 
   dplyr::ungroup() |> 
