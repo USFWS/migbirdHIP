@@ -323,7 +323,7 @@ validate(DL1301_fixed, type = "horizontal")
 ##  4 MO20211229.txt 1        2697    3604       0.748
 ##  5 ME20211229.txt 1         112     151       0.742
 ##  6 NM20211229.txt 1         208     295       0.705
-##  7 ID20211229.txt 1        1764    2588       0.682
+##  7 ID20211229.txt 1        1762    2588       0.681
 ##  8 ND20211215.txt 1         130     204       0.637
 ##  9 CA20211229.txt 1        2003    3211       0.624
 ## 10 IN20211229.txt 1         416     690       0.603
@@ -519,9 +519,10 @@ The `errorPlot_fields` function can be run on all states...
 errorPlot_fields(DL1301_proofed, loc = "all", year = 2021)
 ```
 
-```
-## Error in errorPlot_fields(DL1301_proofed, loc = "all", year = 2021): object 'fields_plot' not found
-```
+<div class="figure" style="text-align: center">
+<img src="figure/errorfieldsplotall-1.png" alt="Figure 2. Plot of all location's errors by field name." width="500" />
+<p class="caption">Figure 2. Plot of all location's errors by field name.</p>
+</div>
 
 ... or it can be limited to just one.
 
@@ -529,6 +530,11 @@ errorPlot_fields(DL1301_proofed, loc = "all", year = 2021)
 ```r
 errorPlot_fields(DL1301_proofed, loc = "LA", year = 2021)
 ```
+
+<div class="figure" style="text-align: center">
+<img src="figure/errorfieldsplotsc-1.png" alt="Figure 3. Plot of Louisiana's errors by field name." width="500" />
+<p class="caption">Figure 3. Plot of Louisiana's errors by field name.</p>
+</div>
 
 It is possible to add any `ggplot2` components to these plots. For season total data specifically, the plot can be facet_wrapped using either dl_cycle or dl_date. The example below demonstrates how this package's functions can interact with the tidyverse and shows an example of an `errorPlot_fields` facet_wrap (using a subset of 4 download cycles)
 
