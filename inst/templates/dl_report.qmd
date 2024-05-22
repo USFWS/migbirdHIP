@@ -1917,7 +1917,7 @@ et <-
 if(et$error[1] != "birth_date"){
   err1 <- 
     migbirdHIP::pullErrors(
-      proofed_data, field = et$error[1], distinct = FALSE) |> 
+      proofed_data, field = et$error[1], unique = FALSE) |> 
     tibble::as_tibble() |> 
     dplyr::mutate(
       value = stringi::stri_enc_toutf8(value, is_unknown_8bit = T, validate = T)) |>
@@ -1928,7 +1928,7 @@ if(et$error[1] != "birth_date"){
   }else{
   err1 <- 
     migbirdHIP::pullErrors(
-      proofed_data, field = et$error[1], distinct = FALSE) |> 
+      proofed_data, field = et$error[1], unique = FALSE) |> 
     tibble::as_tibble() |> 
     dplyr::mutate(value = stringr::str_extract(value, ".{4}$")) |> 
     dplyr::group_by(value) |> 
@@ -1948,7 +1948,7 @@ DT::datatable(err1)
 if(et$error[2] != "birth_date"){
   err2 <- 
     migbirdHIP::pullErrors(
-      proofed_data, field = et$error[2], distinct = FALSE) |> 
+      proofed_data, field = et$error[2], unique = FALSE) |> 
     tibble::as_tibble() |> 
     dplyr::mutate(
       value = 
@@ -1960,7 +1960,7 @@ if(et$error[2] != "birth_date"){
   }else{
   err2 <- 
     migbirdHIP::pullErrors(
-      proofed_data, field = et$error[2], distinct = FALSE) |> 
+      proofed_data, field = et$error[2], unique = FALSE) |> 
     tibble::as_tibble() |> 
     dplyr::mutate(value = stringr::str_extract(value, ".{4}$")) |> 
     dplyr::group_by(value) |> 
@@ -1980,7 +1980,7 @@ DT::datatable(err2)
 if(et$error[3] != "birth_date"){
   err3 <- 
     migbirdHIP::pullErrors(
-      proofed_data, field = et$error[3], distinct = FALSE) |> 
+      proofed_data, field = et$error[3], unique = FALSE) |> 
     tibble::as_tibble() |> 
     dplyr::mutate(
       value = 
@@ -1992,7 +1992,7 @@ if(et$error[3] != "birth_date"){
   }else{
   err3 <- 
     migbirdHIP::pullErrors(
-      proofed_data, field = et$error[3], distinct = FALSE) |> 
+      proofed_data, field = et$error[3], unique = FALSE) |> 
     tibble::as_tibble() |>  
     dplyr::mutate(value = stringr::str_extract(value, ".{4}$")) |> 
     dplyr::group_by(value) |> 
