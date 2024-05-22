@@ -20,9 +20,6 @@
 glyphFinder <-
   function(x, field){
 
-    # Fail if incorrect field supplied
-    stopifnot("Error: Incorrect value supplied for `field` parameter. Please supply one of: title, firstname, middle, lastname, suffix, address, city, state, zip, birth_date, issue_date, hunt_mig_birds, ducks_bag, geese_bag, dove_bag, woodcock_bag, coots_snipe, rails_gallinules, cranes, band_tailed_pigeon, brant, seaducks, registration_yr, email." = field %in% c("title", "firstname", "middle", "lastname", "suffix", "address", "city", "state", "zip", "birth_date", "issue_date", "hunt_mig_birds", "ducks_bag", "geese_bag", "dove_bag", "woodcock_bag", "coots_snipe", "rails_gallinules", "cranes", "band_tailed_pigeon", "brant", "seaducks", "registration_yr", "email"))
-
     x |>
       select(source_file, record_key, !!sym(field)) |>
       mutate(check = is.na(iconv(!!sym(field), "UTF-8", "UTF-8"))) |>
