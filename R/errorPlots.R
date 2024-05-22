@@ -158,25 +158,27 @@ errorPlot_fields <-
       x <-
         x |>
         filter(dl_state == loc)
+    }
 
-      # Plot all states without special legend colors
-      fields_plot <-
-        errorLevel_errors_field(x) |>
-        # Plot
-        ggplot() +
-        geom_bar(
-          aes(x = reorder(errors, proportion), y = proportion),
-          stat = "identity") +
-        geom_text(
-          aes(x = errors, y = proportion, label = count_errors, angle = 90),
-          vjust = 0.2, hjust = -0.2) +
-        labs(
-          x = "Field",
-          y = "Error proportion") +
-        scale_y_continuous(expand = expansion(mult = c(-0, 0.25))) +
-        theme_classic() +
-        theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
-    } else if (loc == "all") {
+    # Plot all states without special legend colors
+    fields_plot <-
+      errorLevel_errors_field(x) |>
+      # Plot
+      ggplot() +
+      geom_bar(
+        aes(x = reorder(errors, proportion), y = proportion),
+        stat = "identity") +
+      geom_text(
+        aes(x = errors, y = proportion, label = count_errors, angle = 90),
+        vjust = 0.2, hjust = -0.2) +
+      labs(
+        x = "Field",
+        y = "Error proportion") +
+      scale_y_continuous(expand = expansion(mult = c(-0, 0.25))) +
+      theme_classic() +
+      theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
+
+    if (loc == "all") {
       return(
         fields_plot +
           labs(title = "Error proportion per field"))
