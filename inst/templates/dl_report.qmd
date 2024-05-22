@@ -1810,7 +1810,7 @@ table_2 <-
 # the bar)
 barlabels <-
   table_2 |>
-  dplyr::select(-c("special", "total")) |>
+  dplyr::select(-total) |>
   dplyr::group_by(errors) |>
   dplyr::mutate(
     count_errors = sum(count_errors),
@@ -1832,8 +1832,7 @@ x_order |>
   ggplot2::geom_bar(
     ggplot2::aes(
       x = stats::reorder(errors, order), 
-      y = proportion, 
-      fill = special),
+      y = proportion),
     stat = "identity") +
   ggplot2::geom_text(
     ggplot2::aes(x = errors,
@@ -1844,8 +1843,7 @@ x_order |>
   ggplot2::labs(
     x = "Field",
     y = "Error proportion",
-    title = "Error proportion per field",
-    fill = "Specifics") +
+    title = "Error proportion per field") +
   ggplot2::scale_y_continuous(
     expand = ggplot2::expansion(mult = c(-0, 0.25))) +
   ggplot2::theme_classic() +
