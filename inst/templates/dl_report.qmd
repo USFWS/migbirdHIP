@@ -1153,7 +1153,7 @@ rffield <-
       threshold = 0.01)
     )
 
-if(nrow(rffield) > 0) {
+if(!is.null(rffield)) {
   cat("Values in the table below are reported at the record level.")
   kableExtra::kbl(
     rffield |> 
