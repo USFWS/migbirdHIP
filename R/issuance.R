@@ -33,6 +33,12 @@ issueCheck <-
     # Fail if incorrect plot supplied
     stopifnot("Error: Please supply TRUE or FALSE for `plot` parameter." = plot %in% c(TRUE, FALSE, T, F))
 
+    # Return message if all values in record_key field are NA (causes problems
+    # with joining later)
+    if (is.na(unique(x$record_key))) {
+      message("Error: All values in record_key are NA.")
+    }
+
     # Determine the destination of each record
     issue_assignments <- issueAssign(x, year)
 

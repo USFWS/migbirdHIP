@@ -8,6 +8,7 @@
     - Sort errors by descending in "causes of errors by state" table
     - Eliminated breaking error in report rendering if there is no field exceeding the error threshold
 - Edited `read_hip()` to catch file names with incorrect MMDDYYYY or DDMMYYYY date format
+- Edited `issueCheck()` to return error for NA values in `record_key` field
 
 # migbirdHIP 1.3.0
 
