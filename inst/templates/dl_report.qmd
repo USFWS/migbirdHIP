@@ -2039,6 +2039,7 @@ migbirdHIP::errorPlot_states(final_data)
 
 DT::datatable(
   migbirdHIP::errorTable(proofed_data, loc = "all") |> 
+    dplyr::arrange(dplyr::desc(error_count)) |> 
     dplyr::rename(
       State = dl_state,
       Error = error,
@@ -2053,6 +2054,7 @@ DT::datatable(
 
 DT::datatable(
   migbirdHIP::errorTable(final_data, loc = "all") |> 
+    dplyr::arrange(dplyr::desc(error_count)) |> 
     dplyr::rename(
       State = dl_state,
       Error = error,
