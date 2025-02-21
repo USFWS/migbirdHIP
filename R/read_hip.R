@@ -248,6 +248,21 @@ read_hip <-
             distinct())
       }
 
+      # Return a message if file name date is formatted as MMDDYYYY or DDMMYYYY
+      if(!str_detect(pulled_data$dl_date, "^202") &
+         str_detect(pulled_data$dl_date, "^[0-9]{4}202")) {
+        message(
+          paste0("Error: MMDDYYYY or DDMMYYYY format suspected in dl_date.",
+                 " Please fix the source file name(s)."))
+
+        print(
+          pulled_data |>
+            select(dl_date, source_file) |>
+            filter(!str_detect(dl_date, "^202") &
+                     str_detect(dl_date, "^[0-9]{4}202")) |>
+            distinct())
+      }
+
       # Return a message if all emails are missing from a file
       if(nrow(
         pulled_data |>

@@ -4,6 +4,11 @@
 
 ## Minor changes / bug fixes
 
+- Template `dl_report.qmd`
+    - Sort errors by descending in "causes of errors by state" table
+    - Eliminated breaking error in report rendering if there is no field exceeding the error threshold
+- Edited `read_hip()` to catch file names with incorrect MMDDYYYY or DDMMYYYY date format
+
 # migbirdHIP 1.3.0
 
 ## Major changes & new features
