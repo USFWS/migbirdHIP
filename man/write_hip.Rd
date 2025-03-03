@@ -4,12 +4,14 @@
 \alias{write_hip}
 \title{Modify corrected data table format and write as csv}
 \usage{
-write_hip(x, path, split = TRUE)
+write_hip(x, path, type, split = TRUE)
 }
 \arguments{
 \item{x}{The object created after correcting data with \code{\link{correct}}}
 
 \item{path}{The file path and file name to write the final table}
+
+\item{type}{The type of HIP file being written out, one of: "HIP", "BT", or "CR"}
 
 \item{split}{Split the output into one .csv file per .txt file? Default is TRUE.}
 }

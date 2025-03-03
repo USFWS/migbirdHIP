@@ -22,6 +22,7 @@
 #'
 #' @param x The object created after correcting data with \code{\link{correct}}
 #' @param path The file path and file name to write the final table
+#' @param type The type of HIP file being written out, one of: "HIP", "BT", or "CR"
 #' @param split Split the output into one .csv file per .txt file? Default is TRUE.
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
@@ -30,14 +31,112 @@
 #' @export
 
 write_hip <-
-  function(x, path, split = TRUE){
-
-    # Fail if incorrect split supplied
-    stopifnot("Error: Please supply TRUE or FALSE for `split` parameter." = split %in% c(TRUE, FALSE, T, F))
+  function(x, path, type, split = TRUE){
 
     # Add a final "/" if not included already
     if(!str_detect(path, "\\/$")) {
       path <- paste0(path, "/")
+    }
+
+    # Fail if incorrect split supplied
+    stopifnot(
+      "Error: Please supply TRUE or FALSE for `split` parameter." =
+        split %in% c(TRUE, FALSE, T, F))
+
+    # Fail if incorrect type supplied
+    stopifnot(
+      "Error: Please supply one of 'HIP', 'BT', or 'CR' for `type` parameter." =
+        type %in% c("HIP", "BT", "CR"))
+
+    # Fail if HIP file does not contain record_type = HIP
+    if (type == "HIP") {
+      stopifnot(
+        "Error: HIP files must contain record_type = HIP." =
+          unique(x$record_type) == "HIP")
+    }
+
+    if (type == "BT") {
+      # Fail if BT permit file does not contain record_type = HIP
+      stopifnot(
+        "Error: BTPI permit files must contain record_type = HIP." =
+          unique(x$record_type) == "HIP")
+
+      # Fail if BT permit file does not contain 2 for BT
+      stopifnot(
+        "Error: BTPI permit files must contain band_tailed_pigeon = 2." =
+          unique(x$band_tailed_pigeon) == "2")
+
+      # Fail if BT permit file does not contain non-0 values for DV
+      stopifnot(
+        "Error: BTPI permit files must have values other than 0 in dove_bag." =
+          length(unique(x$dove_bag)) > 1)
+
+      # Fail if any bag field other than BT or DV is not 0
+      stopifnot(
+        "Error: Ducks bag must be 0 in BTPI permit files." =
+          unique(x$ducks_bag) == 0)
+      stopifnot(
+        "Error: Geese bag must be 0 in BTPI permit files." =
+          unique(x$geese_bag) == 0)
+      stopifnot(
+        "Error: Woodcock bag must be 0 in BTPI permit files." =
+          unique(x$woodcock_bag) == 0)
+      stopifnot(
+        "Error: Coots_snipe bag must be 0 in BTPI permit files." =
+          unique(x$coots_snipe) == 0)
+      stopifnot(
+        "Error: Rails_gallinules bag must be 0 in BTPI permit files." =
+          unique(x$rails_gallinules) == 0)
+      stopifnot(
+        "Error: Cranes bag must be 0 in BTPI permit files." =
+          unique(x$cranes) == 0)
+      stopifnot(
+        "Error: Brant bag must be 0 in BTPI permit files." =
+          unique(x$brant) == 0)
+      stopifnot(
+        "Error: Sea ducks bag must be 0 in BTPI permit files." =
+          unique(x$seaducks) == 0)
+    }
+
+    if (type == "CR") {
+      # Fail if CR permit file does not contain record_type = PMT
+      stopifnot(
+        "Error: CR permit files must contain record_type = PMT." =
+          unique(x$record_type) == "PMT")
+
+      # Fail if CR permit file does not contain 2 for CR
+      stopifnot(
+        "Error: CR permit files must contain cranes = 2." =
+          unique(x$cranes) == "2")
+
+      # Fail if any bag field other than CR is not 0
+      stopifnot(
+        "Error: Ducks bag must be 0 in CR permit files." =
+          unique(x$ducks_bag) == 0)
+      stopifnot(
+        "Error: Geese bag must be 0 in CR permit files." =
+          unique(x$geese_bag) == 0)
+      stopifnot(
+        "Error: Dove bag must be 0 in CR permit files." =
+          unique(x$dove_bag) == 0)
+      stopifnot(
+        "Error: Woodcock bag must be 0 in CR permit files." =
+          unique(x$woodcock_bag) == 0)
+      stopifnot(
+        "Error: Coots_snipe bag must be 0 in CR permit files." =
+          unique(x$coots_snipe) == 0)
+      stopifnot(
+        "Error: Rails_gallinules bag must be 0 in CR permit files." =
+          unique(x$rails_gallinules) == 0)
+      stopifnot(
+        "Error: Band tailed pigeon bag must be 0 in CR permit files." =
+          unique(x$band_tailed_pigeon) == 0)
+      stopifnot(
+        "Error: Brant bag must be 0 in CR permit files." =
+          unique(x$brant) == 0)
+      stopifnot(
+        "Error: Sea ducks bag must be 0 in CR permit files." =
+          unique(x$seaducks) == 0)
     }
 
     stratanames <-
@@ -124,20 +223,18 @@ write_hip <-
         Q_bt_pigeons = band_tailed_pigeon,
         Q_brant = brant,
         Q_seaducks = seaducks) |>
+      # Only include file names in the "source_file" field, not folder names.
+      # The field theoretically shouldn't include DL folder names if the package
+      # functions are run on a download-by-download basis, but this will tidy
+      # the field values just in case it's needed
       mutate(
-        # Only include file names in the "source_file" field, not folder names.
-        # The field theoretically shouldn't include DL folder names if the
-        # package functions are run on a download-by-download basis, but this
-        # will tidy the field values just in case it's needed
         source_file =
           ifelse(
             str_detect(source_file, "\\/"),
             str_remove(source_file, "^.+(?=\\/)"),
             source_file)) |>
-      mutate(
-        # Do one last pass through source_file to remove the last "/", couldn't
-        # pipe a dot above
-        source_file = str_remove(source_file, "\\/"))
+      # Remove the last "/" (couldn't pipe a dot above)
+      mutate(source_file = str_remove(source_file, "\\/"))
 
     if(split == TRUE) {
       # Split data and write each input file to its own output file
@@ -148,13 +245,14 @@ write_hip <-
         1:length(final_list),
         ~fwrite(
           final_list[[.x]],
-          file = str_replace(
-            paste0(path,
-                   final_list[[.x]] |>
-                     distinct(source_file) |>
-                     pull()),
-            ".txt$",
-            ".csv"),
+          file =
+            str_replace(
+              paste0(path,
+                     final_list[[.x]] |>
+                       distinct(source_file) |>
+                       pull()),
+              "\\.(txt|xlsx|xls)$",
+              ".csv"),
           na = ""))
     } else {
       # Write data to a single csv

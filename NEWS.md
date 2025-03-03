@@ -2,6 +2,10 @@
 
 ## Major changes & new features
 
+- Edited `write_hip()` to include more checks before files are written out, including:
+    - New `type` param conditionally checks `record_type` field and `cranes`, `band_tailed_pigeon`, and `dove_bag` fields depending on the user input
+    - `.xlsx` and `.xls` file extensions are converted to `.csv` 
+
 ## Minor changes / bug fixes
 
 - Template `dl_report.qmd`
