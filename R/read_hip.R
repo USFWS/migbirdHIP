@@ -249,8 +249,8 @@ read_hip <-
       }
 
       # Return a message if file name date is formatted as MMDDYYYY or DDMMYYYY
-      if(!str_detect(pulled_data$dl_date, "^202") &
-         str_detect(pulled_data$dl_date, "^[0-9]{4}202")) {
+      if(FALSE %in% str_detect(pulled_data$dl_date, "^202") &
+         TRUE %in% str_detect(pulled_data$dl_date, "^[0-9]{4}202")) {
         message(
           paste0("Error: MMDDYYYY or DDMMYYYY format suspected in dl_date.",
                  " Please fix the source file name(s)."))
