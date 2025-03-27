@@ -1,31 +1,11 @@
 #' Clean data
 #'
-#' After reading the data with \code{\link{read_hip}}, do basic data cleaning.
+#' After reading the data with \code{\link{read_hip}}, reformat and clean the HIP registrations.
 #'
-#' @importFrom dplyr group_by
-#' @importFrom dplyr mutate
-#' @importFrom dplyr ungroup
-#' @importFrom dplyr case_when
 #' @importFrom dplyr mutate_all
-#' @importFrom dplyr filter
-#' @importFrom dplyr if_all
-#' @importFrom dplyr if_any
-#' @importFrom tidyr all_of
-#' @importFrom dplyr select
-#' @importFrom stringr str_to_upper
-#' @importFrom stringr str_detect
-#' @importFrom stringr str_extract
-#' @importFrom stringr str_remove_all
-#' @importFrom stringr str_remove
-#' @importFrom stringr str_replace
 #' @importFrom stringr str_trim
-#' @importFrom dplyr left_join
-#' @importFrom dplyr reframe
-#' @importFrom dplyr n
-#' @importFrom dplyr arrange
-#' @importFrom dplyr distinct
 #'
-#' @param x The object created after reading in data with \code{\link{read_hip}}
+#' @param raw_df The object created after reading in data with \code{\link{read_hip}}
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}
@@ -33,59 +13,242 @@
 #' @export
 
 clean <-
-  function(x){
+  function(raw_df) {
 
-    cleaned_x <-
-      x |>
+    # Convert firstname, lastname, and suffix to upper case
+    names_uppercased <- namesToUppercase(raw_df)
+
+    # Filter out any record if any bag value is not a 1-digit number
+    bags_checked <- bagsFilter(names_uppercased)
+
+    # Filter out records if firstname, lastname, city of residence, state of
+    # residence, or date of birth are missing -- records discarded because these
+    # are needed to identify individuals. Filter out any other additional
+    # records if they are missing a value for email AND elements of a physical
+    # address that are required to determine where to mail a letter.
+    PII_checked <- missingPIIFilter(bags_checked)
+
+    # Delete suffixes from the lastname field and/or firstname field and move
+    # them to the suffix field. Catches values from 1-20 in Roman numerals and
+    # numeric, excluding XVIII since the db limit is 4 characters. Delete
+    # periods and commas from suffixes.
+    suffixes_moved <- moveSuffixes(PII_checked)
+
+    # Change any character that's not a letter to NA in the from middle
+    # initial field
+    middle_initials_fixed <- fixMiddleInitials(suffixes_moved)
+
+    # Remove ending hyphen from zip codes with 5 digits
+    # Remove final 0 from zip codes with length of 10 digits
+    # Insert a hyphen in continuous 9 digit zip codes
+    # Insert a hyphen in 9 digit zip codes with a middle space
+    # Remove trailing -0000
+    # Remove trailing -___
+    zips_formatted <- formatZip(middle_initials_fixed)
+
+    # Check that the zip code for each address is associated with the correct
+    # state
+    zipCheck(zips_formatted)
+
+    # If any OR HuntY = 0 for solo permit, change HuntY to 2
+    oregon_hunty_checked <- special_OregonHuntYCheck(zips_formatted)
+
+    # Delete white space around strings
+    white_space_deleted <- oregon_hunty_checked |> mutate_all(str_trim)
+
+    # If any permit file states submitted a 2 for crane and/or
+    # band_tailed_pigeon, change the 2 to a 0
+    permit_state_strata_fixed <- strataFix(white_space_deleted)
+
+    return(permit_state_strata_fixed)
+  }
+
+#' Names to uppercase
+#'
+#' The internal \code{namesToUppercase} function converts name elements to uppercase for easier string cleaning.
+#'
+#' @importFrom dplyr mutate
+#' @importFrom stringr str_to_upper
+#'
+#' @param raw_df The object created after reading in data with \code{\link{read_hip}}
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
+
+namesToUppercase <-
+  function(raw_df) {
+
+    names_to_uppercase <-
+      raw_df |>
+      # Convert name elements to uppercase for easier string cleaning
+      mutate(
+        firstname = str_to_upper(firstname),
+        lastname = str_to_upper(lastname),
+        suffix = str_to_upper(suffix))
+
+    return(names_to_uppercase)
+  }
+
+#' Filter out bad bags
+#'
+#' The internal \code{bagsFilter} function filters out any record if any bag value is not a 1-digit number.
+#'
+#' @importFrom dplyr filter
+#' @importFrom dplyr if_any
+#' @importFrom tidyr all_of
+#' @importFrom stringr str_detect
+#'
+#' @param raw_df The object created after reading in data with \code{\link{read_hip}}
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
+
+bagsFilter <-
+  function(raw_df) {
+
+    bags_checked <-
       # Filter out any record if any bag value is not a 1-digit number
-      filter(!if_any(all_of(ref_bagfields), ~!str_detect(.x, "^[0-9]{1}$"))) |>
+      raw_df |>
+      filter(!if_any(all_of(ref_bagfields), ~!str_detect(.x, "^[0-9]{1}$")))
+
+    return(bags_checked)
+  }
+
+#' Missing PII filter
+#'
+#' The internal \code{missingPIIFilter} function filters out HIP registrations that are missing critical pieces of contact information.
+#'
+#' @importFrom dplyr filter
+#' @importFrom dplyr if_all
+#' @importFrom dplyr if_any
+#'
+#' @param raw_df The object created after reading in data with \code{\link{read_hip}}
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
+
+missingPIIFilter <-
+  function(raw_df) {
+    PII_checked <-
+      raw_df |>
       # Filter out records if firstname, lastname, city of residence, state of
       # residence, or date of birth are missing -- records discarded because
       # these are needed to identify individuals
       filter(
         !if_any(
           c("firstname", "lastname", "state", "birth_date"), ~is.na(.x))) |>
-      # Discard additional records if they are missing a value for email AND
-      # elements of a physical address that are required to determine where
+      # Filter out any additional records if they are missing a value for email
+      # AND elements of a physical address that are required to determine where
+      # to mail a letter
       filter(!if_all(c("address", "email"), ~is.na(.x))) |>
-      filter(!if_all(c("city", "zip", "email"), ~is.na(.x))) |>
+      filter(!if_all(c("city", "zip", "email"), ~is.na(.x)))
+
+    return(PII_checked)
+  }
+
+#' Move suffixes
+#'
+#' The internal \code{moveSuffixes} function moves suffixes from first name or last name columns into the suffix column and performs other cleaning steps. This function catches values from 1 to 20 in Roman numerals and numeric, excluding
+# XVIII since the database limit is 4 characters.
+#'
+#' @importFrom dplyr mutate
+#' @importFrom dplyr case_when
+#' @importFrom stringr str_detect
+#' @importFrom stringr str_extract
+#' @importFrom stringr str_remove_all
+#' @importFrom stringr str_remove
+#'
+#' @param raw_df The object created after reading in data with \code{\link{read_hip}}
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
+
+moveSuffixes <-
+  function(raw_df) {
+
+    suffix_regex <-
+      paste0(
+        "(?<=\\s)(JR|SR|I{1,3}|IV|VI{0,3}|I{0,1}X|XI{1,3}|XI{0,1}V|XVI{1,2}|XI",
+        "{0,1}X|1ST|2ND|3RD|[4-9]TH|1[0-9]TH|20TH)\\.?$")
+
+    suffixes_moved <-
+      raw_df |>
       mutate(
-        # Names to uppercase for easier stringr
-        firstname = str_to_upper(firstname),
-        lastname = str_to_upper(lastname),
         # Extract suffixes from lastname and firstname cols to suffix col
         # Catches values from 1-20 in Roman numerals and numeric, excluding
         # XVIII since the db limit is 4 characters
         suffix =
           case_when(
             # Lastname
-            str_detect(lastname, "(?<=\\s)(JR|SR|I{1,3}|IV|VI{0,3}|I{0,1}X|XI{1,3}|XI{0,1}V|XVI{1,2}|XI{0,1}X|1ST|2ND|3RD|[4-9]TH|1[0-9]TH|20TH)\\.?$") ~
-              str_extract(lastname, "(?<=\\s)(JR|SR|I{1,3}|IV|VI{0,3}|I{0,1}X|XI{1,3}|XI{0,1}V|XVI{1,2}|XI{0,1}X|1ST|2ND|3RD|[4-9]TH|1[0-9]TH|20TH)\\.?$"),
+            str_detect(lastname, suffix_regex) ~
+              str_extract(lastname, suffix_regex),
             # Firstname
-            str_detect(firstname, "(?<=\\s)(JR|SR|I{1,3}|IV|VI{0,3}|I{0,1}X|XI{1,3}|XI{0,1}V|XVI{1,2}|XI{0,1}X|1ST|2ND|3RD|[4-9]TH|1[0-9]TH|20TH)\\.?$") ~
-              str_extract(firstname, "(?<=\\s)(JR|SR|I{1,3}|IV|VI{0,3}|I{0,1}X|XI{1,3}|XI{0,1}V|XVI{1,2}|XI{0,1}X|1ST|2ND|3RD|[4-9]TH|1[0-9]TH|20TH)\\.?$"),
+            str_detect(firstname, suffix_regex) ~
+              str_extract(firstname, suffix_regex),
             TRUE ~ suffix),
-        # The original suffixes aren't uppercase, convert them to upper
-        suffix = str_to_upper(suffix),
         # Delete periods and commas from suffixes
         suffix = str_remove_all(suffix, "\\.|\\,"),
         # Delete suffixes from lastname col (includes 1-20 in Roman numerals and
         # numeric, excluding XVIII since the db limit is 4 characters)
         lastname =
           ifelse(
-            str_detect(lastname, "(?<=\\s)(JR|SR|I{1,3}|IV|VI{0,3}|I{0,1}X|XI{1,3}|XI{0,1}V|XVI{1,2}|XI{0,1}X|1ST|2ND|3RD|[4-9]TH|1[0-9]TH|20TH)\\.?$"),
-            str_remove(lastname, "(?<=\\s)(JR|SR|I{1,3}|IV|VI{0,3}|I{0,1}X|XI{1,3}|XI{0,1}V|XVI{1,2}|XI{0,1}X|1ST|2ND|3RD|[4-9]TH|1[0-9]TH|20TH)\\.?$"),
+            str_detect(lastname, suffix_regex),
+            str_remove(lastname, suffix_regex),
             lastname),
         # Delete suffixes from firstname col (includes 1-20 in Roman numerals
         # and numeric, excluding XVIII since the db limit is 4 characters)
         firstname =
           ifelse(
-            str_detect(firstname, "(?<=\\s)(JR|SR|I{1,3}|IV|VI{0,3}|I{0,1}X|XI{1,3}|XI{0,1}V|XVI{1,2}|XI{0,1}X|1ST|2ND|3RD|[4-9]TH|1[0-9]TH|20TH)\\.?$"),
-            str_remove(firstname, "(?<=\\s)(JR|SR|I{1,3}|IV|VI{0,3}|I{0,1}X|XI{1,3}|XI{0,1}V|XVI{1,2}|XI{0,1}X|1ST|2ND|3RD|[4-9]TH|1[0-9]TH|20TH)\\.?$"),
-            firstname),
-        # Remove anything that's not a letter from middle initial col
-        middle = ifelse(str_detect(middle, "[^A-Z]"), NA, middle),
-        # Zip code correction
+            str_detect(firstname, suffix_regex),
+            str_remove(firstname, suffix_regex),
+            firstname))
+
+    return(suffixes_moved)
+  }
+
+#' Fix middle initials
+#'
+#' The internal \code{fixMiddleInitials} function changes non-alphabetic characters in the middle initial column to NA.
+#'
+#' @importFrom stringr str_detect
+#'
+#' @param raw_df The object created after reading in data with \code{\link{read_hip}}
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
+
+fixMiddleInitials <-
+  function(raw_df) {
+    middle_initials_fixed <-
+      raw_df |>
+      # Change any character that's not a letter to NA in the from middle
+      # initial field
+      mutate(middle = ifelse(str_detect(middle, "[^A-Z]"), NA, middle))
+
+    return(middle_initials_fixed)
+  }
+
+#' Format zip codes
+#'
+#' The internal \code{formatZip} function formats zip codes.
+#'
+#' @importFrom dplyr mutate
+#' @importFrom stringr str_detect
+#' @importFrom stringr str_extract
+#' @importFrom stringr str_remove
+#' @importFrom stringr str_replace
+#'
+#' @param raw_df The object created after reading in data with \code{\link{read_hip}}
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
+
+formatZip <-
+  function(raw_df) {
+    zips_formatted <-
+      raw_df |>
+      # Zip code format corrections
+      mutate(
         zip =
           # Remove ending hyphen from zip codes with 5 digits
           ifelse(
@@ -125,8 +288,29 @@ clean <-
           ifelse(
             str_detect(zip, "\\-\\_+"),
             str_remove(zip, "\\-\\_+"),
-            zip),
-        # If any OR HuntY = 0 for solo permit, change HuntY to 2
+            zip)
+      )
+
+    return(zips_formatted)
+  }
+
+#' Oregon HuntY check
+#'
+#' The internal \code{special_OregonHuntYCheck} function changes any registration from Oregon with HuntY == "0" to "2" if one or more of the band_tailed_pigeon, brant, or seaducks fields indicate hunting.
+#'
+#' @importFrom dplyr mutate
+#'
+#' @param raw_df The object created after reading in data with \code{\link{read_hip}}
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
+
+special_OregonHuntYCheck <-
+  function(raw_df) {
+    oregon_hunty_checked <-
+      raw_df |>
+      # If any OR HuntY = 0 for solo permit, change HuntY to 2
+      mutate(
         hunt_mig_birds =
           ifelse(
             dl_state == "OR" &
@@ -136,13 +320,35 @@ clean <-
                   as.numeric(seaducks)) > 2,
             "2",
             hunt_mig_birds)
-          ) |>
-      # Delete white space around strings again
-      mutate_all(str_trim)
+      )
+  }
 
+#' Check if zip codes are associated with the correct state
+#'
+#' The internal \code{zipCheck} function checks to see if zip codes in hunter addresses match the address state.
+#'
+#' @importFrom dplyr group_by
+#' @importFrom dplyr mutate
+#' @importFrom dplyr ungroup
+#' @importFrom dplyr filter
+#' @importFrom dplyr select
+#' @importFrom dplyr left_join
+#' @importFrom dplyr reframe
+#' @importFrom dplyr n
+#' @importFrom dplyr arrange
+#' @importFrom dplyr desc
+#' @importFrom dplyr distinct
+#'
+#' @param raw_df The object created after reading in data with \code{\link{read_hip}}
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
+
+zipCheck <-
+  function(raw_df) {
     # Proof the zip codes -- are they associated with the correct states?
     zipcheck <-
-      cleaned_x |>
+      raw_df |>
       left_join(
         zip_code_ref |>
           distinct(zip = zipcode, zipState = state),
@@ -168,10 +374,79 @@ clean <-
 
       print(zipcheck)
     }
-
-    # If any permit file states submitted a 2 for crane and/or
-    # band_tailed_pigeon, change the 2 to a 0
-    cleaned_x <- strataFix(cleaned_x)
-
-    return(cleaned_x)
   }
+
+#' Fix permit strata
+#'
+#' The internal \code{strataFix} function is used inside of \code{\link{clean}} to edit strata for states that submit permit files separately from HIP. If records from these states submit a "2" for the band_tailed_pigeon or crane field, they will be mistakenly identified as permit records. The \code{strataFix} function changes band_tailed_pigeon and/or crane "2" values to "0" so that they are classified as HIP records until permit files are received later in the hunting season.
+#'
+#' @importFrom dplyr filter
+#' @importFrom dplyr count
+#' @importFrom dplyr mutate
+#' @importFrom dplyr bind_rows
+#'
+#' @param raw_df An intermediate object created inside of \code{\link{clean}}
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
+
+strataFix <-
+  function(raw_df) {
+    bad_bt_2s <-
+      raw_df |>
+      filter(
+        dl_state %in%
+          pmt_files$dl_state[pmt_files$spp == "band_tailed_pigeon"] &
+          band_tailed_pigeon == "2") |>
+      count(dl_state)
+
+    bad_cr_2s <-
+      raw_df |>
+      filter(
+        dl_state %in%
+          pmt_files$dl_state[pmt_files$spp == "cranes"] &
+          cranes == "2") |>
+      count(dl_state)
+
+    if(nrow(bad_bt_2s) > 0 | nrow(bad_cr_2s) > 0) {
+
+      corrected_pmt_strata <-
+        raw_df |>
+        mutate(
+          band_tailed_pigeon =
+            ifelse(
+              dl_state %in%
+                pmt_files$dl_state[pmt_files$spp == "band_tailed_pigeon"] &
+                band_tailed_pigeon == "2",
+              "0",
+              band_tailed_pigeon
+            ),
+          cranes =
+            ifelse(
+              dl_state %in%
+                pmt_files$dl_state[pmt_files$spp == "cranes"] &
+                cranes == "2",
+              "0",
+              cranes
+            )
+        )
+
+      message("2s converted to 0s for permit file states:")
+      print(
+        bind_rows(
+          bad_bt_2s |> mutate(spp = "band_tailed_pigeon"),
+          bad_cr_2s |> mutate(spp = "cranes")
+        )
+      )
+
+      return(corrected_pmt_strata)
+
+    } else {
+      message(
+        paste0(
+          "No 2s received for band_tailed_pigeon or crane from permit file",
+          " states."))
+      return(raw_df)
+    }
+  }
+

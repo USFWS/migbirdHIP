@@ -4,10 +4,12 @@ CMD
 DDMMYYYY
 DL
 FWS
+HuntY
 MH
 MMDDYYYY
 NL
 ORCID
+PII
 PMT
 RMarkdown
 Rbuildignore
@@ -47,6 +49,7 @@ mig
 migbirdHarvestData
 noemail
 outOfStateHunters
+param
 pre
 programmatically
 pullErrors
