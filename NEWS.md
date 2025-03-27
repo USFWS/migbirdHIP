@@ -4,6 +4,7 @@
 
 - In an effort to improve the maintainability of the package code, steps were made toward modularity, clarity, and unit testing in some of the larger functions.
     - `clean()` was broken down into 9 minor internal functions (1 previously used: `strataFix()`; and 8 new functions: `namesToUppercase()`, `bagsFilter()`, `missingPIIFilter()`, `moveSuffixes()`, `fixMiddleInitials()`, `formatZip()`, `zipCheck()`, and `special_OregonHuntYCheck()`)
+- `sumLines()` deprecated and `read_hip()` param `sumlines` eliminated; no longer used and not considered useful moving forward
 - Edited `write_hip()` to include more checks before files are written out, including:
     - New `type` param conditionally checks `record_type` field and `cranes`, `band_tailed_pigeon`, and `dove_bag` fields depending on the user input
     - `.xlsx` and `.xls` file extensions are converted to `.csv` 

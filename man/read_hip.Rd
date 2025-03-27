@@ -4,7 +4,7 @@
 \alias{read_hip}
 \title{Read in data}
 \usage{
-read_hip(path, unique = TRUE, state = NA, season = FALSE, sumlines = FALSE)
+read_hip(path, unique = TRUE, state = NA, season = FALSE)
 }
 \arguments{
 \item{path}{File path to the folder containing HIP .txt files}
@@ -16,8 +16,6 @@ read_hip(path, unique = TRUE, state = NA, season = FALSE, sumlines = FALSE)
 \item AL, AK, AZ, AR, CA, CO, CT, DE, DC, FL, GA, ID, IL, IN, IA, KS, KY, LA, ME, MD, MA, MI, MN, MS, MO, MT, NE, NV, NH, NJ, NM, NY, NC, ND, OH, OK, OR, PA, RI, SC, SD, TN, TX, UT, VT, VA, WA, WV, WI, WY}}
 
 \item{season}{If set as TRUE, selects only folders starting with "DL" in a a season's upper-level directory}
-
-\item{sumlines}{If set as TRUE, runs \code{\link{sumLines}} and returns a list of any files that were not fully read in}
 }
 \description{
 Compile data from state-exported text files by providing a path to the download directory.

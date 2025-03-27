@@ -29,7 +29,6 @@
 #' \itemize{
 #' \item AL, AK, AZ, AR, CA, CO, CT, DE, DC, FL, GA, ID, IL, IN, IA, KS, KY, LA, ME, MD, MA, MI, MN, MS, MO, MT, NE, NV, NH, NJ, NM, NY, NC, ND, OH, OK, OR, PA, RI, SC, SD, TN, TX, UT, VT, VA, WA, WV, WI, WY}
 #' @param season If set as TRUE, selects only folders starting with "DL" in a a season's upper-level directory
-#' @param sumlines If set as TRUE, runs \code{\link{sumLines}} and returns a list of any files that were not fully read in
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}
@@ -37,7 +36,7 @@
 #' @export
 
 read_hip <-
-  function(path, unique = TRUE, state = NA, season = FALSE, sumlines = FALSE) {
+  function(path, unique = TRUE, state = NA, season = FALSE) {
 
     # Add a final "/" if not included already
     if(!str_detect(path, "\\/$")) {
@@ -167,24 +166,6 @@ read_hip <-
         pulled_data <- distinct(pulled_data)
       }
 
-      # Check for missing lines. Were all lines of data read in?
-      if(sumlines == TRUE) {
-
-        # Suppress incomplete final line warnings
-        suppressWarnings(
-          missing_lines <-
-            pulled_data |>
-            count(source_file) |>
-            left_join(sumLines(path), by = "source_file") |>
-            filter(n != num_lines)
-        )
-
-        if(nrow(missing_lines) > 0) {
-          message("Error: One or more files was not fully read.")
-          print(missing_lines)
-        }
-      }
-
       # Return a message for records with blank or NA values in firstname,
       # lastname, state, or birth date
       raw_nas <-
@@ -305,39 +286,4 @@ read_hip <-
 
       return(pulled_data)
     }
-  }
-
-#' Sum lines of new data
-#'
-#' The internal \code{sumLines} function returns a data frame containing the sums of the number of lines in new download files. It is used inside of \code{\link{read_hip}} to return a message for any file that did not have all its lines read in.
-#'
-#' @importFrom stringr str_detect
-#'
-#' @param path File path to the download folder containing HIP .txt files
-#'
-#' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
-
-sumLines <-
-  function(path) {
-
-    # Add a final "/" if not included already
-    if(!str_detect(path, "\\/$")){
-      path <- paste0(path, "/")
-    }
-
-    # Create a vector of the HIP .txt files to be read from the provided
-    # directory
-    # For reading data from a download cycle for ALL states available
-    dl_files <- list.files(path, pattern = "\\.txt|.TXT$")
-
-    sum_lines <- c()
-
-    for (i in seq_along(dl_files)){
-      con <- file(paste0(path, dl_files[i]))
-      sum_lines[i] <- length(readLines(con))
-      close(con)
-    }
-
-    return(data.frame(source_file = dl_files, num_lines = sum_lines))
   }
