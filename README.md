@@ -40,6 +40,26 @@ Tasks that can be accomplished with this package include:
 devtools::install_github("USFWS/migbirdHIP", build_vignettes = T)
 ```
 
+## Releases
+
+Below are the definitive package versions used for each hunting season.
+To install a past release, use the example below and substitute the
+appropriate version number.
+
+``` r
+devtools::install_github("USFWS/migbirdHIP@v1.2.8", build_vignettes = T)
+```
+
+- dev - 2025-2026
+- [v1.3.0](https://github.com/USFWS/migbirdHIP/releases/tag/v1.3.0) -
+  2024-2025
+- [v1.2.8](https://github.com/USFWS/migbirdHIP/releases/tag/v1.2.8) -
+  2023-2024
+- [v1.2.7](https://github.com/USFWS/migbirdHIP/releases/tag/v1.2.7) -
+  2022-2023
+- [v1.2.4](https://github.com/USFWS/migbirdHIP/releases/tag/v1.2.4) -
+  2021-2022
+
 ## Vignette
 
 ``` r
