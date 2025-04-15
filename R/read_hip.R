@@ -2,7 +2,6 @@
 #'
 #' Compile data from state-exported text files by providing a path to the download directory.
 #'
-#' @importFrom tibble as_tibble_col
 #' @importFrom dplyr mutate
 #' @importFrom dplyr filter
 #' @importFrom dplyr pull
@@ -19,7 +18,6 @@
 #' @importFrom readr read_fwf
 #' @importFrom readr fwf_widths
 #' @importFrom stringr str_detect
-#' @importFrom stringr str_replace
 #' @importFrom stringr str_extract
 #' @importFrom stringr str_remove
 #'
@@ -42,248 +40,611 @@ read_hip <-
     if(!str_detect(path, "\\/$")) {
       path <- paste0(path, "/")
     }
+
     # Error for possibly wrong path
     if(str_detect(path, "DL") & season == TRUE) {
       message("Are you sure you supplied a season path?")
     }
 
     # Fail if incorrect unique supplied
-    stopifnot("Error: Please supply TRUE or FALSE for `unique` parameter." = unique %in% c(TRUE, FALSE, T, F))
+    stopifnot(
+      "Please supply TRUE or FALSE for `unique`." =
+        unique %in% c(TRUE, FALSE, T, F))
 
     # Fail if incorrect state supplied
-    stopifnot("Error: Incorrect value supplied for `state`. Please supply a 2-letter state abbreviation for one of the contiguous 49 states." = state %in% c(NA, datasets::state.abb[datasets::state.abb != "HI"]))
+    stopifnot(
+      "Use a 2-letter abbreviation for `state`, e.g. 'DE'." =
+        state %in% c(NA, datasets::state.abb[datasets::state.abb != "HI"]))
 
     # Fail if incorrect season supplied
-    stopifnot("Error: Please supply TRUE or FALSE for `season` parameter." = season %in% c(TRUE, FALSE, T, F))
-
-    # Fail if incorrect sumlines supplied
-    stopifnot("Error: Please supply TRUE or FALSE for `sumlines` parameter." = sumlines %in% c(TRUE, FALSE, T, F))
+    stopifnot(
+      "Please supply TRUE or FALSE for `season`." =
+        season %in% c(TRUE, FALSE, T, F))
 
     # Create a tibble of the HIP .txt files to be read from the provided
     # directory
-    files <-
-      list.files(
-        path, recursive = {{season}}, pattern = "*\\.txt$", ignore.case = TRUE,
-        full.names = TRUE) |>
-      as_tibble_col(column_name = "filepath") |>
+    file_list <-
+      listFiles(path, season) |>
       # Don't process permit files
-      filter(!str_detect(filepath, "permit")) |>
+      ignorePermits() |>
       # Don't process hold files
-      filter(!str_detect(filepath, "hold")) |>
+      ignoreHolds() |>
       # Identify blank files
+      idBlankFiles() |>
+      # Drop blank files
+      dropBlankFiles()
+
+    # Filter files to include only specified state (state param NA by default)
+    if (!is.na(state)) {
+      file_list <- filter(file_list, str_detect(filepath, state))
+    }
+
+    # Create a vector of file paths
+    file_list_vector <- file_list$filepath
+
+    # Stop if there are no files to read in
+    stopifnot("No file(s) to read in." = length(file_list_vector) != 0)
+
+    # Stop if any file name date is formatted as MMDDYYYY or DDMMYYYY
+    date_test <- checkFileNameDateFormat(file_list_vector)
+    stopifnot("Incorrect date format in file name." = is.null(date_test))
+
+    # Stop if any file name contains a state abbreviation not found in the list
+    # of 49 continental US states
+    state_test <- checkFileNameStateAbbr(file_list_vector)
+    stopifnot("Bad state abbreviation in file name." = is.null(state_test))
+
+    # Read in HIP data
+    pulled_data <-
+      map(
+        1:length(file_list_vector),
+        function(i) {
+          # Compile each state's file into one table
+          read_fwf(
+            file_list_vector[i],
+            fwf_widths(c(1, 15, 1, 20, 3, 60, 20, 2, 10, 10, 10,
+                         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4, NA)),
+            col_types = "cccccccccccccccccccccccc",
+            na = c("N/A", "")) |>
+            mutate(
+              # Add the download state as a column
+              dl_state =
+                str_extract(
+                  file_list_vector[i], "[A-Z]{2}(?=[0-9]{8}\\.txt)"),
+              # Add the download date as a column
+              dl_date =
+                str_extract(
+                  file_list_vector[i], "(?<=[A-Z]{2})[0-9]{8}(?=\\.txt)"),
+              # Add the source file as a column
+              source_file =
+                str_remove(file_list_vector[i], path),
+              # Add the download cycle as a column
+              dl_cycle =
+                str_extract(file_list_vector[i], "(?<=DL).+(?=\\/)"))
+        }) |>
+      # Row bind data from each file into one tibble
+      list_rbind() |>
+      # Rename columns
+      rename(
+        title = 1,
+        firstname = 2,
+        middle = 3,
+        lastname = 4,
+        suffix = 5,
+        address = 6,
+        city = 7,
+        state = 8,
+        zip = 9,
+        birth_date = 10,
+        issue_date = 11,
+        hunt_mig_birds = 12,
+        ducks_bag = 13,
+        geese_bag = 14,
+        dove_bag = 15,
+        woodcock_bag = 16,
+        coots_snipe = 17,
+        rails_gallinules = 18,
+        cranes = 19,
+        band_tailed_pigeon = 20,
+        brant = 21,
+        seaducks = 22,
+        registration_yr = 23,
+        email = 24) |>
+      # Add a download key
+      group_by(dl_date, dl_state) |>
+      mutate(dl_key = paste0("dl_", cur_group_id())) |>
+      ungroup() |>
+      # Add a record key
+      mutate(record_key = paste0("record_", row_number()))
+
+    # Remove exact duplicates
+    if (unique == TRUE) {
+      pulled_data <- distinct(pulled_data)
+    }
+
+    # Return messages to console for important issues
+    readMessages(pulled_data)
+
+    return(pulled_data)
+  }
+
+#' List files
+#'
+#' The internal \code{listFiles} function is used inside of \code{\link{read_hip}} and creates a tibble of the HIP .txt files to be read in from the provided directory.
+#'
+#' @importFrom tibble as_tibble_col
+#'
+#' @param path File path to the folder containing HIP .txt files
+#' @param season If set as TRUE, selects only folders starting with "DL" in a a season's upper-level directory
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
+
+listFiles <-
+  function(path, season) {
+
+    # Create a tibble of the HIP .txt files to be read from the provided
+    # directory
+    file_list <-
+      list.files(
+        path,
+        recursive = {{season}},
+        pattern = "*\\.txt$",
+        ignore.case = TRUE,
+        full.names = TRUE) |>
+      as_tibble_col(column_name = "filepath")
+
+    return(file_list)
+  }
+
+#' Ignore permit files
+#'
+#' The internal \code{ignorePermits} function is used inside of \code{\link{read_hip}} to filter out permit files from the file list.
+#'
+#' @importFrom dplyr filter
+#' @importFrom stringr str_detect
+#'
+#' @param filelist The file list tibble created by \code{\link{listFiles}}
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
+
+ignorePermits <-
+  function(filelist) {
+
+    # Don't process permit files
+    file_list_without_permits <-
+      filelist |>
+      filter(!str_detect(filepath, "permit"))
+
+    return(file_list_without_permits)
+  }
+
+#' Ignore hold files
+#'
+#' The internal \code{ignoreHolds} function is used inside of \code{\link{read_hip}} to filter out hold files from the file list.
+#'
+#' @importFrom dplyr filter
+#' @importFrom stringr str_detect
+#'
+#' @param filelist The file list tibble created by \code{\link{listFiles}}
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
+
+ignoreHolds <-
+  function(filelist) {
+
+    # Don't process hold files
+    file_list_without_holds <-
+      filelist |>
+      filter(!str_detect(filepath, "hold"))
+
+    return(file_list_without_holds)
+  }
+
+#' Identify blank files
+#'
+#' The internal \code{idBlankFiles} function is used inside of \code{\link{read_hip}} to identify files in the list that contain no data.
+#'
+#' @importFrom dplyr mutate
+#' @importFrom stringr str_replace
+#'
+#' @param filelist The file list tibble created by \code{\link{listFiles}}
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
+
+idBlankFiles <-
+  function(filelist) {
+
+    # Identify blank files
+    file_list_with_blanks_id <-
+      filelist |>
       mutate(
         filepath = str_replace(filepath, "TXT", "txt"),
-        check =
-          ifelse(
-            file.size(filepath) == 0,
-            "blank",
-            ""))
+        check = ifelse(file.size(filepath) == 0, "blank", ""))
 
-    # Filter files to include only specified state
-    if(!is.na(state)) {
-      files <- filter(files, str_detect(filepath, state))
-    }
+    return(file_list_with_blanks_id)
+  }
+
+#' Drop blank files
+#'
+#' The internal \code{dropBlankFiles} function is used inside of \code{\link{read_hip}} to return an error message if blank files exist in the directory, and remove them from the file list so they are not read in.
+#'
+#' @importFrom dplyr filter
+#' @importFrom dplyr pull
+#'
+#' @param filelist The file list tibble created by \code{\link{listFiles}}
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
+
+dropBlankFiles <-
+  function(filelist) {
+
     # Error for blank files
-    if("blank" %in% files$check) {
+    if("blank" %in% filelist$check) {
       message("Error: One or more files are blank in the directory.")
-      print(filter(files, check == "blank"))
+      print(filter(filelist, check == "blank"))
     }
 
     # Filter out blank files from the paths list
-    files <- filter(files, check != "blank") |> pull(filepath)
+    filelist_without_blanks <-
+      filelist |>
+      filter(check != "blank")
 
-    # Message if there are no files to read in
-    if(length(files) == 0) {
+    return(filelist_without_blanks)
+  }
+
+#' Check HIP file name date formatting
+#'
+#' The internal \code{checkFileNameDateFormat} function is used inside of \code{\link{read_hip}} to return an error message if any file does not have a date formatted as YYYYMMDD.
+#'
+#' @importFrom stringr str_extract
+#' @importFrom stringr str_detect
+#'
+#' @param file_list_vector A file list vector
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
+
+checkFileNameDateFormat <-
+  function(file_list_vector) {
+
+    # Extract all dates from file names in the file_list_vector
+    dl_date_test <-
+      str_extract(file_list_vector, "(?<=[A-Z]{2})[0-9]{8}(?=\\.txt)")
+
+    if (FALSE %in% str_detect(dl_date_test, "^202") &
+        TRUE %in% str_detect(dl_date_test, "^[0-9]{4}202")) {
       message(
         paste0(
-          "Error: No file(s) to read in. Did you specify a state that did not ",
-          "submit data?"))
+          "Error: MMDDYYYY or DDMMYYYY format suspected in dl_date.",
+          " Please fix the source file name(s)."
+        )
+      )
+
+      bad_dates <- dl_date_test[str_detect(dl_date_test, "^[0-9]{4}202") &
+                                  !str_detect(dl_date_test, "^202")]
+
+      for (i in 1:length(bad_dates)) {
+        print(
+          file_list_vector[str_detect(file_list_vector, bad_dates[i])]
+        )
+      }
+      return("error")
     } else {
+      return(NULL)
+    }
+  }
 
-      # Read data from filepaths
-      pulled_data <-
-        map(
-          1:length(files),
-          function(i) {
-            # Compile each state's file into one table
-            read_fwf(
-              files[i],
-              fwf_widths(c(1, 15, 1, 20, 3, 60, 20, 2, 10, 10, 10,
-                           1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4, NA)),
-              col_types = "cccccccccccccccccccccccc",
-              na = c("N/A", "")) |>
-              mutate(
-                # Add the download state as a column
-                dl_state =
-                  str_extract(
-                    files[i], "[A-Z]{2}(?=[0-9]{8}\\.txt)"),
-                # Add the download date as a column
-                dl_date =
-                  str_extract(
-                    files[i], "(?<=[A-Z]{2})[0-9]{8}(?=\\.txt)"),
-                # Add the source file as a column
-                source_file =
-                  str_remove(files[i], path),
-                # Add the download cycle as a column
-                dl_cycle =
-                  str_extract(files[i], "(?<=DL).+(?=\\/)"))
-          }) |>
-        list_rbind() |>
-        rename(
-          title = 1,
-          firstname = 2,
-          middle = 3,
-          lastname = 4,
-          suffix = 5,
-          address = 6,
-          city = 7,
-          state = 8,
-          zip = 9,
-          birth_date = 10,
-          issue_date = 11,
-          hunt_mig_birds = 12,
-          ducks_bag = 13,
-          geese_bag = 14,
-          dove_bag = 15,
-          woodcock_bag = 16,
-          coots_snipe = 17,
-          rails_gallinules = 18,
-          cranes = 19,
-          band_tailed_pigeon = 20,
-          brant = 21,
-          seaducks = 22,
-          registration_yr = 23,
-          email = 24) |>
-        # Add a download key
-        group_by(dl_date, dl_state) |>
-        mutate(dl_key = paste0("dl_", cur_group_id())) |>
-        ungroup() |>
-        # Add a record key
-        mutate(record_key = paste0("record_", row_number()))
+#' Check HIP file name state abbreviations
+#'
+#' The internal \code{checkFileNameStateAbbr} function is used inside of \code{\link{read_hip}} to return an error message if any file does not have an state abbreviation from the expected 49 continental states.
+#'
+#' @importFrom stringr str_extract
+#'
+#' @param file_list_vector A file list vector
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
 
-      # Remove exact duplicates
-      if(unique == TRUE){
-        pulled_data <- distinct(pulled_data)
-      }
+checkFileNameStateAbbr <-
+  function(file_list_vector) {
 
-      # Return a message for records with blank or NA values in firstname,
-      # lastname, state, or birth date
-      raw_nas <-
-        pulled_data |>
-        group_by(dl_state) |>
-        mutate(n_total = n()) |>
-        ungroup() |>
-        filter(
-          is.na(firstname)|is.na(lastname)|is.na(state)|is.na(birth_date)) |>
-        group_by(dl_state) |>
-        reframe(n = n(), prop = round(n/n_total, 2)) |>
-        distinct() |>
-        filter(n >= 100 | prop >= 0.1)
+    # Extract all state abbreviations from file names in the file_list_vector
+    state_test <-
+      unique(str_extract(file_list_vector, "[A-Z]{2}(?=[0-9]{8}\\.txt$)"))
 
-      if(nrow(raw_nas) > 0) {
-        message(
-          paste0("Error: NA values detected in one or more ID fields ",
-                 "(firstname, lastname, state, birth date) for >10% of a file ",
-                 "and/or >100 records."))
-
-        print(raw_nas)
-      }
-
-      # Return a message if any records contain a bag value that is not a
-      # 1-digit number
-      nondigit_bags <-
-        pulled_data |>
-        filter(if_any(all_of(ref_bagfields), ~!str_detect(.x, "^[0-9]{1}$")))
-
-      if(nrow(nondigit_bags) > 0) {
-        message(
-          paste0(
-            "Error: One or more records detected with a value other than a ",
-            "single digit; these records will be filtered out in clean()."))
-        print(
-          nondigit_bags |>
-            unite(bags, matches(ref_bagfields), sep = " ") |>
-            select(source_file, record_key, bags)
-          )
-      }
-
-      # Return a message if there is an NA in dl_state
-      if(TRUE %in% is.na(pulled_data$dl_state)) {
-        message("Error: One or more more NA values detected in dl_state.")
-
-        print(
-          pulled_data |>
-            distinct(dl_state, source_file) |>
-            filter(is.na(dl_state))
+    # Return a message if there is a dl_state not found in the list of 49
+    # continental US states
+    if (FALSE %in%
+        (state_test %in% datasets::state.abb[datasets::state.abb != "HI"])
+    ) {
+      message(
+        paste(
+          "Error: One or more files contains a state abbreviation not in the",
+          "list of expected 49 continental US states."
         )
-      }
+      )
 
-      # Return a message if there is an NA in dl_date
-      if(TRUE %in% is.na(pulled_data$dl_date)) {
-        message("Error: One or more more NA values detected in dl_date.")
+      print(
+        state_test[!state_test %in%
+                     datasets::state.abb[datasets::state.abb != "HI"]])
 
-        print(
-          pulled_data |>
-            select(dl_date, source_file) |>
-            filter(is.na(dl_date)) |>
-            distinct())
-      }
+      return("error")
+    } else {
+      return(NULL)
+    }
+  }
 
-      # Return a message if file name date is formatted as MMDDYYYY or DDMMYYYY
-      if(FALSE %in% str_detect(pulled_data$dl_date, "^202") &
-         TRUE %in% str_detect(pulled_data$dl_date, "^[0-9]{4}202")) {
-        message(
-          paste0("Error: MMDDYYYY or DDMMYYYY format suspected in dl_date.",
-                 " Please fix the source file name(s)."))
+#' Return messages to console for common or catastrophic read_hip issues
+#'
+#' The internal \code{readMessages} function is used inside of \code{\link{read_hip}} to return messages for missing PII, missing email addresses, all-zero bag records, non-numeric bag values, NAs in dl_state, and NAs in dl_date.
+#'
+#' @param pulled_data The product of \code{\link{read_hip}}
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
 
-        print(
-          pulled_data |>
-            select(dl_date, source_file) |>
-            filter(!str_detect(dl_date, "^202") &
-                     str_detect(dl_date, "^[0-9]{4}202")) |>
-            distinct())
-      }
+readMessages <-
+  function(pulled_data) {
 
-      # Return a message if all emails are missing from a file
-      if(nrow(
-        pulled_data |>
-        group_by(source_file) |>
-        summarize(n_emails = length(unique(email))) |>
-        ungroup() |>
-        filter(n_emails == 1)) > 0) {
-        message("Error: One or more files are missing 100% of emails.")
+    # Return a message for records with blank or NA values in firstname,
+    # lastname, state, or birth date
+    missingPIIMessage(pulled_data)
 
-        print(
-          pulled_data |>
-            group_by(source_file) |>
-            summarize(n_emails = length(unique(email))) |>
-            ungroup() |>
-            filter(n_emails == 1) |>
-            select(source_file))
-      }
+    # Return a message if all emails are missing from a file
+    missingEmailsMessage(pulled_data)
 
-      # Check if all dl_states are acceptable
-      # States in the data
-      dl_states_in_data <- distinct(pulled_data, dl_state)
+    # Return a message if any record contains all-zero bag values
+    zeroBagsMessage(pulled_data)
 
-      # Return a message if there is a dl_state not found in the list of 49
-      # continental US states
-      if(FALSE %in%
-         (dl_states_in_data |> pull(dl_state) %in%
-          datasets::state.abb[datasets::state.abb != "HI"])) {
-        message(
-          paste0("Error: One or more dl_state values do not belong in the ",
-                 "list of expected 49 continental US states."))
+    # Return a message if any record contains all-NA bag values
+    naBagsMessage(pulled_data)
 
-        print(
-          dl_states_in_data |>
-            filter(
-              !dl_state %in% datasets::state.abb[datasets::state.abb != "HI"]
-            ) |>
-            pull()
+    # Return a message if any record contains a bag value that is not a
+    # 1-digit number
+    nonDigitBagsMessage(pulled_data)
+
+    # Return a message if there is an NA in dl_state
+    dlStateNAMessage(pulled_data)
+
+    # Return a message if there is an NA in dl_date
+    dlDateNAMessage(pulled_data)
+
+  }
+
+#' Return message for records with blank or NA values in firstname, lastname, state, or birth date
+#'
+#' The internal \code{missingPIIMessage} function is used inside of \code{\link{readMessages}}
+#'
+#' @importFrom dplyr group_by
+#' @importFrom dplyr mutate
+#' @importFrom dplyr n
+#' @importFrom dplyr ungroup
+#' @importFrom dplyr filter
+#' @importFrom dplyr reframe
+#' @importFrom dplyr distinct
+#'
+#' @inheritParams readMessages
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
+
+missingPIIMessage <-
+  function(pulled_data) {
+
+    # Return a message for records with blank or NA values in firstname,
+    # lastname, state, or birth date
+    raw_nas <-
+      pulled_data |>
+      group_by(dl_state) |>
+      mutate(n_total = n()) |>
+      ungroup() |>
+      filter(
+        is.na(firstname)|is.na(lastname)|is.na(state)|is.na(birth_date)) |>
+      group_by(dl_state) |>
+      reframe(n = n(), prop = round(n/n_total, 2)) |>
+      distinct() |>
+      filter(n >= 100 | prop >= 0.1)
+
+    if (nrow(raw_nas) > 0) {
+      message(
+        paste(
+          "Error: NA values detected in one or more ID fields",
+          "(firstname, lastname, state, birth date) for >10% of a file",
+          "and/or >100 records."
         )
-      }
+      )
 
-      return(pulled_data)
+      print(raw_nas)
+    }
+  }
+
+#' Return message if all emails are missing from a file
+#'
+#' The internal \code{missingEmailsMessage} function is used inside of \code{\link{readMessages}}
+#'
+#' @importFrom dplyr group_by
+#' @importFrom dplyr summarize
+#' @importFrom dplyr ungroup
+#' @importFrom dplyr filter
+#' @importFrom dplyr select
+#'
+#' @inheritParams readMessages
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
+
+missingEmailsMessage <-
+  function(pulled_data) {
+
+    # Return a message if all emails are missing from a file
+    missing <-
+      pulled_data |>
+      group_by(source_file) |>
+      summarize(n_emails = length(unique(email))) |>
+      ungroup() |>
+      filter(n_emails == 1)
+
+    if (nrow(missing) > 0) {
+      message("Error: One or more files are missing 100% of emails.")
+
+      print(missing |> select(source_file))
+    }
+  }
+
+#' Return message if any record has a "0" in every bag field
+#'
+#' The internal \code{zeroBagsMessage} function is used inside of \code{\link{readMessages}}
+#'
+#' @importFrom dplyr filter
+#' @importFrom dplyr if_all
+#' @importFrom dplyr all_of
+#' @importFrom dplyr select
+#'
+#' @inheritParams readMessages
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
+
+zeroBagsMessage <-
+  function(pulled_data) {
+
+    # Return a message if any record has a "0" in every bag field
+    zero_bags <-
+      pulled_data |>
+      # Find any records that have a "0" in every bag field
+      filter(if_all(all_of(ref_bagfields), ~ .x == "0"))
+
+    if (nrow(zero_bags) > 0) {
+      message("Error: One or more records has a '0' in every bag field.")
+
+      print(zero_bags |> select(source_file, record_key))
+    }
+  }
+
+#' Return message if any record has an NA in every bag field
+#'
+#' The internal \code{naBagsMessage} function is used inside of \code{\link{readMessages}}
+#'
+#' @importFrom dplyr filter
+#' @importFrom dplyr if_all
+#' @importFrom dplyr all_of
+#' @importFrom dplyr select
+#'
+#' @inheritParams readMessages
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
+
+naBagsMessage <-
+  function(pulled_data) {
+
+    # Return a message if any record has a "0" in every bag field
+    NA_bags <-
+      pulled_data |>
+      # Find any records that have a "0" in every bag field
+      filter(if_all(all_of(ref_bagfields), ~is.na(.x)))
+
+    if (nrow(NA_bags) > 0) {
+      message("Error: One or more records has an NA in every bag field.")
+
+      print(NA_bags |> select(source_file, record_key))
+    }
+  }
+
+#' Return message if any record contains a bag value that is not a 1-digit number
+#'
+#' The internal \code{nonDigitBagsMessage} function is used inside of \code{\link{readMessages}}
+#'
+#' @importFrom dplyr filter
+#' @importFrom dplyr if_any
+#' @importFrom dplyr all_of
+#' @importFrom stringr str_detect
+#' @importFrom tidyr unite
+#' @importFrom dplyr matches
+#' @importFrom dplyr select
+#'
+#' @inheritParams readMessages
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
+
+nonDigitBagsMessage <-
+  function(pulled_data) {
+
+    # Return a message if any record contains a bag value that is not a 1-digit
+    # number
+    nondigit_bags <-
+      pulled_data |>
+      filter(if_any(all_of(ref_bagfields), ~!str_detect(.x, "^[0-9]{1}$")))
+
+    if (nrow(nondigit_bags) > 0) {
+      message(
+        paste(
+          "Error: One or more records detected with a value other than a",
+          "single digit; these records will be filtered out in clean()."
+        )
+      )
+      print(
+        nondigit_bags |>
+          unite(bags, matches(ref_bagfields), sep = " ") |>
+          select(source_file, record_key, bags)
+      )
+    }
+  }
+
+#' Return message if there is an NA in dl_state
+#'
+#' The internal \code{dlStateNAMessage} function is used inside of \code{\link{readMessages}}
+#'
+#' @importFrom dplyr distinct
+#' @importFrom dplyr filter
+#'
+#' @inheritParams readMessages
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
+
+dlStateNAMessage <-
+  function(pulled_data) {
+
+    # Return a message if there is an NA in dl_state
+    if (TRUE %in% is.na(pulled_data$dl_state)) {
+      message("Error: One or more more NA values detected in dl_state.")
+
+      print(pulled_data |>
+              distinct(dl_state, source_file) |>
+              filter(is.na(dl_state)))
+    }
+  }
+
+#' Return message if there is an NA in dl_date
+#'
+#' The internal \code{dlDateNAMessage} function is used inside of \code{\link{readMessages}}
+#'
+#' @importFrom dplyr select
+#' @importFrom dplyr distinct
+#' @importFrom dplyr filter
+#'
+#' @inheritParams readMessages
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
+
+dlDateNAMessage <-
+  function(pulled_data) {
+
+    # Return a message if there is an NA in dl_date
+    if (TRUE %in% is.na(pulled_data$dl_date)) {
+      message("Error: One or more more NA values detected in dl_date.")
+
+      print(pulled_data |>
+              select(dl_date, source_file) |>
+              filter(is.na(dl_date)) |>
+              distinct())
     }
   }

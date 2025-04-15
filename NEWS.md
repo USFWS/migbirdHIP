@@ -3,6 +3,7 @@
 ## Major changes & new features
 
 - In an effort to improve the maintainability of the package code, steps were made toward modularity, clarity, and unit testing in some of the larger functions.
+    - `read_hip()` was broken down into 15 new minor internal functions (`listFiles()`, `ignorePermits()`, `ignoreHolds()`, `idBlankFiles()`, `dropBlankFiles()`, `checkFileNameDateFormat()`, `checkFileNameStateAbbr()`, `readMessages()`, `missingPIIMessage()`, `missingEmailsMessage()`, `zeroBagsMessage()`, `naBagsMessage()`, `nonDigitBagsMessage()`, `dlStateNAMessage()`, and `dlDateNAMessage()`). More strict requirements must be met for data to be successfully read (e.g. instead of returning a message that file names are incorrectly formatted, this would stop the process). The `zeroBagsMessage()` internal function is a new feature of `read_hip()` that checks for records with all-zero bag values and returns a message to the console if they are detected, which helps solve issue #18.
     - `clean()` was broken down into 9 minor internal functions (1 previously used: `strataFix()`; and 8 new functions: `namesToUppercase()`, `bagsFilter()`, `missingPIIFilter()`, `moveSuffixes()`, `fixMiddleInitials()`, `formatZip()`, `zipCheck()`, and `special_OregonHuntYCheck()`)
 - `sumLines()` deprecated and `read_hip()` param `sumlines` eliminated; no longer used and not considered useful moving forward
 - Edited `write_hip()` to include more checks before files are written out, including:
@@ -16,6 +17,7 @@
     - Eliminated breaking error in report rendering if there is no field exceeding the error threshold
 - Edited `read_hip()` to catch file names with incorrect MMDDYYYY or DDMMYYYY date format
 - Edited `issueCheck()` to return error for NA values in `record_key` field
+- Added release tags to README
 
 # migbirdHIP 1.3.0
 
