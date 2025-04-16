@@ -161,7 +161,8 @@ bit <-
   dplyr::filter(!is.na(type)) |> 
   dplyr::mutate(message = paste("Records with", type, sep = " ")) |>
   dplyr::count(dl_state, message) |> 
-  dplyr::arrange(dplyr::desc(n)) 
+  dplyr::arrange(dplyr::desc(n)) |> 
+  dplyr::mutate(n = format.default(n, big.mark = ","))
 
 split_bit <- split(bit, bit$message)
   
@@ -329,9 +330,6 @@ if(is.null(stratacheck_tbl)) {
 
 # All horizontal validation
 all_h_valid <- migbirdHIP::validate(final_data, type = "horizontal", all = T) 
-
-# All 0s
-all_h_valid_0s <- all_h_valid |> dplyr::filter(h_value == "0")
 
 # Horizontal repetition for 100% of file
 all_h_valid_100 <- all_h_valid |> dplyr::filter(prop_repeat == 1)
@@ -891,29 +889,6 @@ if(!is.null(idb2)) {
 }
 
 cat("\n\n")
-cat("### All zero bags")
-cat("\n\n")
-if(nrow(all_h_valid_0s) > 0) {
-  cat(
-    paste0(
-      "❌", 
-      " Repeated 0s detected across bag fields. These records have been removed from the final data."))
-  cat("\n\n")
-  writeLines( 
-    unlist(
-      purrr::map(
-        1:nrow(all_h_valid_0s),
-          ~paste0(
-            "* ", all_h_valid_0s$source_file[.x], " with ", 
-            all_h_valid_0s$h_rep[.x], " record(s)")
-      )
-    )
-  )  
-} else {
-  cat(paste0("✔️", " No horizontally repeated 0s detected."))
-}
-  
-cat("\n\n")
 cat("### Horizontal repetition")
 cat("\n\n")
 if(nrow(all_h_valid_100) > 0) {
@@ -1090,8 +1065,8 @@ if(nrow(duplicates) > 0) {
   cat(
     paste0(
       "❌",
-      " Out of ", nrow(cleaned_data), " records, ", 
-      sum(duplicates$n_dupes), " (", 
+      " Out of ", format.default(nrow(cleaned_data), big.mark = ","), " records, ", 
+      format.default(sum(duplicates$n_dupes), big.mark = ","), " (", 
       dupe_prop, ") were duplicated.")
   )
   cat("\n\n")
@@ -1151,8 +1126,8 @@ if(!is.null(rfstate)) {
     dplyr::mutate(proportion = paste0(round(proportion, 2)*100, "%")) |>
     dplyr::select(
       State = dl_state,
-      `Error count` = count_errors,
-      `Correct count` = count_correct,
+      `Error count` = format.default(count_errors, big.mark = ","),
+      `Correct count` = format.default(count_correct, big.mark = ","),
       Proportion = proportion)
     ) |>
     kableExtra::kable_styling(full_width = F) |> 
@@ -1185,8 +1160,8 @@ if(!is.null(rffield)) {
       dplyr::mutate(proportion = paste0(round(proportion, 2)*100, "%")) |>
       dplyr::select(
         Field = errors,
-        `Error count` = count_errors,
-        `Correct count` = count_correct,
+        `Error count` = format.default(count_errors, big.mark = ","),
+        `Correct count` = format.default(count_correct, big.mark = ","),
         Proportion = proportion
       )
     ) |>
@@ -1882,43 +1857,6 @@ barlabels <- NULL
 
 ```
 
-### Bad zip codes
-
-```{r badzips}
-#| echo: false
-
-# Summarize number of bad zip codes
-zipcheck <- 
-  final_data |> 
-  dplyr::select(dl_state, state, zip) |> 
-  dplyr::filter(!state %in% migbirdHIP:::abbr_canada) |> 
-  dplyr::left_join(
-    migbirdHIP:::zip_code_ref |>
-      dplyr::select(zip = zipcode, zipState = state),
-    by = "zip") |>
-  dplyr::filter(state != zipState) |> 
-  dplyr::group_by(dl_state, state, zip, zipState) |> 
-  dplyr::count() |> 
-  dplyr::ungroup() |>
-  dplyr::arrange(dplyr::desc(n)) |> 
-  dplyr::rename(
-    `Download state` = dl_state,
-    `Address state` = state,
-    `Zip code` = zip,
-    `Actual state` = zipState
-  ) 
-
-if(nrow(zipcheck) > 0){
-  cat("The following table shows records in the final data with zip codes that do not match the address state.")
-  
-  DT::datatable(zipcheck)
-}else{
-  cat("✔️ No bad zip codes detected.")
-}
-
-zipcheck <- NULL
-  
-```
 :::
 
 ```{r errortable}
@@ -2029,6 +1967,44 @@ if(et$error[3] != "birth_date"){
 DT::datatable(err3)
 ```
 :::
+
+## Bad zip codes
+
+```{r badzips}
+#| echo: false
+
+# Summarize number of bad zip codes
+zipcheck <- 
+  final_data |> 
+  dplyr::select(dl_state, state, zip) |> 
+  dplyr::filter(!state %in% migbirdHIP:::abbr_canada) |> 
+  dplyr::left_join(
+    migbirdHIP:::zip_code_ref |>
+      dplyr::select(zip = zipcode, zipState = state),
+    by = "zip") |>
+  dplyr::filter(state != zipState) |> 
+  dplyr::group_by(dl_state, state, zip, zipState) |> 
+  dplyr::count() |> 
+  dplyr::ungroup() |>
+  dplyr::arrange(dplyr::desc(n)) |> 
+  dplyr::rename(
+    `Download state` = dl_state,
+    `Address state` = state,
+    `Zip code` = zip,
+    `Actual state` = zipState
+  ) 
+
+if(nrow(zipcheck) > 0){
+  cat("The following table shows records in the final data with zip codes that do not match the address state.")
+  
+  DT::datatable(zipcheck)
+}else{
+  cat("✔️ No bad zip codes detected.")
+}
+
+zipcheck <- NULL
+  
+```
 
 ## By state
 
