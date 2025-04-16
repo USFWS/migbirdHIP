@@ -4,9 +4,6 @@
 #'
 #' @importFrom dplyr mutate
 #' @importFrom dplyr case_when
-#' @importFrom dplyr filter
-#' @importFrom dplyr if_all
-#' @importFrom tidyr all_of
 #' @importFrom stringr str_detect
 #' @importFrom stringr str_replace
 #' @importFrom stringr str_remove
@@ -29,9 +26,6 @@ correct <-
 
     corrected_x <-
       x |>
-      # Filter out any records that have a "0" in every bag field; as a side
-      # effect, also filters out records with NA for every bag field
-      filter(!if_all(all_of(ref_bagfields), ~ .x == "0")) |>
       mutate(
         # Change NAs in errors col to "none" so that str_detect functions work
         errors =

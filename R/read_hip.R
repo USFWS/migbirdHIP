@@ -517,10 +517,15 @@ zeroBagsMessage <-
     zero_bags <-
       pulled_data |>
       # Find any records that have a "0" in every bag field
-      filter(if_all(all_of(ref_bagfields), ~ .x == "0"))
+      filter(if_all(all_of(ref_bagfields), \(x) x == "0"))
 
     if (nrow(zero_bags) > 0) {
-      message("Error: One or more records has a '0' in every bag field.")
+      message(
+        paste(
+          "Error: One or more records has a '0' in every bag field; these",
+          "records will be filtered out in clean()."
+        )
+      )
 
       print(zero_bags |> select(source_file, record_key))
     }
@@ -543,11 +548,11 @@ zeroBagsMessage <-
 naBagsMessage <-
   function(pulled_data) {
 
-    # Return a message if any record has a "0" in every bag field
+    # Return a message if any record has an NA in every bag field
     NA_bags <-
       pulled_data |>
-      # Find any records that have a "0" in every bag field
-      filter(if_all(all_of(ref_bagfields), ~is.na(.x)))
+      # Find any records that have an NA in every bag field
+      filter(if_all(all_of(ref_bagfields), \(x) is.na(x)))
 
     if (nrow(NA_bags) > 0) {
       message("Error: One or more records has an NA in every bag field.")
@@ -580,7 +585,7 @@ nonDigitBagsMessage <-
     # number
     nondigit_bags <-
       pulled_data |>
-      filter(if_any(all_of(ref_bagfields), ~!str_detect(.x, "^[0-9]{1}$")))
+      filter(if_any(all_of(ref_bagfields), \(x) !str_detect(x, "^[0-9]{1}$")))
 
     if (nrow(nondigit_bags) > 0) {
       message(

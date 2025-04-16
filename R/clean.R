@@ -19,14 +19,17 @@ clean <-
     names_uppercased <- namesToUppercase(raw_df)
 
     # Filter out any record if any bag value is not a 1-digit number
-    bags_checked <- bagsFilter(names_uppercased)
+    non_digit_bags_removed <- nonDigitBagsFilter(names_uppercased)
+
+    # Filter out any record with all-NA or all-0 bag values
+    NA_and_zero_bags_removed <- naAndZeroBagsFilter(non_digit_bags_removed)
 
     # Filter out records if firstname, lastname, city of residence, state of
     # residence, or date of birth are missing -- records discarded because these
     # are needed to identify individuals. Filter out any other additional
     # records if they are missing a value for email AND elements of a physical
     # address that are required to determine where to mail a letter.
-    PII_checked <- missingPIIFilter(bags_checked)
+    PII_checked <- missingPIIFilter(NA_and_zero_bags_removed)
 
     # Delete suffixes from the lastname field and/or firstname field and move
     # them to the suffix field. Catches values from 1-20 in Roman numerals and
@@ -70,7 +73,7 @@ clean <-
 #' @importFrom dplyr mutate
 #' @importFrom stringr str_to_upper
 #'
-#' @param raw_df The object created after reading in data with \code{\link{read_hip}}
+#' @inheritParams clean
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}
@@ -89,27 +92,51 @@ namesToUppercase <-
     return(names_to_uppercase)
   }
 
-#' Filter out bad bags
+#' Filter out non-digit bags
 #'
-#' The internal \code{bagsFilter} function filters out any record if any bag value is not a 1-digit number.
+#' The internal \code{nonDigitBagsFilter} function filters out any record if any bag value is not a 1-digit number.
 #'
 #' @importFrom dplyr filter
 #' @importFrom dplyr if_any
 #' @importFrom tidyr all_of
 #' @importFrom stringr str_detect
 #'
-#' @param raw_df The object created after reading in data with \code{\link{read_hip}}
+#' @inheritParams clean
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}
 
-bagsFilter <-
+nonDigitBagsFilter <-
   function(raw_df) {
 
     bags_checked <-
       # Filter out any record if any bag value is not a 1-digit number
       raw_df |>
-      filter(!if_any(all_of(ref_bagfields), ~!str_detect(.x, "^[0-9]{1}$")))
+      filter(!if_any(all_of(ref_bagfields), \(x) !str_detect(x, "^[0-9]{1}$")))
+
+    return(bags_checked)
+  }
+
+#' Filter out all-NA and all-zero bag records
+#'
+#' The internal \code{naAndZeroBagsFilter} function filters out records if they contain all-NA or all-zero bag values.
+#'
+#' @importFrom dplyr filter
+#' @importFrom dplyr if_all
+#' @importFrom tidyr all_of
+#'
+#' @inheritParams clean
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
+
+naAndZeroBagsFilter <-
+  function(raw_df) {
+
+    bags_checked <-
+      # Filter out any record if any bag value is not a 1-digit number
+      raw_df |>
+      filter(!if_all(all_of(ref_bagfields), \(x) x == "0"))
 
     return(bags_checked)
   }
@@ -122,7 +149,7 @@ bagsFilter <-
 #' @importFrom dplyr if_all
 #' @importFrom dplyr if_any
 #'
-#' @param raw_df The object created after reading in data with \code{\link{read_hip}}
+#' @inheritParams clean
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}
@@ -136,12 +163,12 @@ missingPIIFilter <-
       # these are needed to identify individuals
       filter(
         !if_any(
-          c("firstname", "lastname", "state", "birth_date"), ~is.na(.x))) |>
+          c("firstname", "lastname", "state", "birth_date"), \(x) is.na(x))) |>
       # Filter out any additional records if they are missing a value for email
       # AND elements of a physical address that are required to determine where
       # to mail a letter
-      filter(!if_all(c("address", "email"), ~is.na(.x))) |>
-      filter(!if_all(c("city", "zip", "email"), ~is.na(.x)))
+      filter(!if_all(c("address", "email"), \(x) is.na(x))) |>
+      filter(!if_all(c("city", "zip", "email"), \(x) is.na(x)))
 
     return(PII_checked)
   }
@@ -158,7 +185,7 @@ missingPIIFilter <-
 #' @importFrom stringr str_remove_all
 #' @importFrom stringr str_remove
 #'
-#' @param raw_df The object created after reading in data with \code{\link{read_hip}}
+#' @inheritParams clean
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}
@@ -212,7 +239,7 @@ moveSuffixes <-
 #'
 #' @importFrom stringr str_detect
 #'
-#' @param raw_df The object created after reading in data with \code{\link{read_hip}}
+#' @inheritParams clean
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}
@@ -238,7 +265,7 @@ fixMiddleInitials <-
 #' @importFrom stringr str_remove
 #' @importFrom stringr str_replace
 #'
-#' @param raw_df The object created after reading in data with \code{\link{read_hip}}
+#' @inheritParams clean
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}
@@ -300,7 +327,7 @@ formatZip <-
 #'
 #' @importFrom dplyr mutate
 #'
-#' @param raw_df The object created after reading in data with \code{\link{read_hip}}
+#' @inheritParams clean
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}
@@ -339,7 +366,7 @@ special_OregonHuntYCheck <-
 #' @importFrom dplyr desc
 #' @importFrom dplyr distinct
 #'
-#' @param raw_df The object created after reading in data with \code{\link{read_hip}}
+#' @inheritParams clean
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}
