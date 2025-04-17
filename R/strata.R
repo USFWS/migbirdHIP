@@ -21,7 +21,7 @@
 #' @importFrom dplyr n
 #' @importFrom purrr list_rbind
 #'
-#' @param x The object created after fixing data with \code{\link{fixDuplicates}}
+#' @param deduplicated_data The object created after fixing data with \code{\link{fixDuplicates}}
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}
@@ -29,11 +29,11 @@
 #' @export
 
 strataCheck <-
-  function(x){
+  function(deduplicated_data){
 
     # Filter out solo inline permits
-    x <-
-      x |>
+    deduplicated_data <-
+      deduplicated_data |>
       filter(
         !(dl_state == "OR" &
             ducks_bag == "0" &
@@ -76,7 +76,7 @@ strataCheck <-
     # Do any species strata in the HIP data fall outside what is expected in the
     # hip_bags_ref?
     strata_x <-
-      x |>
+      deduplicated_data |>
       select(dl_state, all_of(ref_bagfields)) |>
       group_by(dl_state) |>
       pivot_longer(
@@ -114,18 +114,18 @@ strataCheck <-
           left_join(
             map(
               1:nrow(strata_x),
-              ~x |>
-                select(dl_state, sym(strata_x[[.x,2]])) |>
-                filter(dl_state == strata_x[[.x,1]]) |>
+              \(x) deduplicated_data |>
+                select(dl_state, sym(strata_x[[x,2]])) |>
+                filter(dl_state == strata_x[[x,1]]) |>
                 mutate(n_state = n()) |>
-                filter(!!sym(strata_x[[.x,2]]) == strata_x[[.x,3]]) |>
+                filter(!!sym(strata_x[[x,2]]) == strata_x[[x,3]]) |>
                 mutate(
                   n_bad_strata = n(),
-                  spp = strata_x[[.x,2]]) |>
-                select(-sym(strata_x[[.x,2]])) |>
+                  spp = strata_x[[x,2]]) |>
+                select(-sym(strata_x[[x,2]])) |>
                 mutate(
                   prop = paste0(round(n_bad_strata/n_state, 2)*100,"%"),
-                  state_strata = strata_x[[.x,3]]) |>
+                  state_strata = strata_x[[x,3]]) |>
                 distinct(dl_state, spp, state_strata, n = n_bad_strata, prop)
             ) |>
               list_rbind(),
