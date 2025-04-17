@@ -4,10 +4,10 @@
 \alias{namesToUppercase}
 \title{Names to uppercase}
 \usage{
-namesToUppercase(raw_df)
+namesToUppercase(raw_data)
 }
 \arguments{
-\item{raw_df}{The object created after reading in data with \code{\link{read_hip}}}
+\item{raw_data}{The object created after reading in data with \code{\link{read_hip}}}
 }
 \description{
 The internal \code{namesToUppercase} function converts name elements to uppercase for easier string cleaning.

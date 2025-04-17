@@ -4,10 +4,10 @@
 \alias{nonDigitBagsFilter}
 \title{Filter out non-digit bags}
 \usage{
-nonDigitBagsFilter(raw_df)
+nonDigitBagsFilter(raw_data)
 }
 \arguments{
-\item{raw_df}{The object created after reading in data with \code{\link{read_hip}}}
+\item{raw_data}{The object created after reading in data with \code{\link{read_hip}}}
 }
 \description{
 The internal \code{nonDigitBagsFilter} function filters out any record if any bag value is not a 1-digit number.

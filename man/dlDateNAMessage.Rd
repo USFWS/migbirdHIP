@@ -4,10 +4,10 @@
 \alias{dlDateNAMessage}
 \title{Return message if there is an NA in dl_date}
 \usage{
-dlDateNAMessage(pulled_data)
+dlDateNAMessage(raw_data)
 }
 \arguments{
-\item{pulled_data}{The product of \code{\link{read_hip}}}
+\item{raw_data}{The product of \code{\link{read_hip}}}
 }
 \description{
 The internal \code{dlDateNAMessage} function is used inside of \code{\link{readMessages}}

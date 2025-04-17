@@ -5,7 +5,7 @@
 #' @importFrom dplyr mutate_all
 #' @importFrom stringr str_trim
 #'
-#' @param raw_df The object created after reading in data with \code{\link{read_hip}}
+#' @param raw_data The object created after reading in data with \code{\link{read_hip}}
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}
@@ -13,10 +13,10 @@
 #' @export
 
 clean <-
-  function(raw_df) {
+  function(raw_data) {
 
     zips_formatted <-
-      raw_df |>
+      raw_data |>
       # Convert firstname, lastname, and suffix to upper case
       namesToUppercase() |>
       # Filter out any record if any bag value is not a 1-digit number
@@ -76,17 +76,14 @@ clean <-
 #' @references \url{https://github.com/USFWS/migbirdHIP}
 
 namesToUppercase <-
-  function(raw_df) {
+  function(raw_data) {
 
-    names_to_uppercase <-
-      raw_df |>
-      # Convert name elements to uppercase for easier string cleaning
+    # Convert name elements to uppercase for easier string cleaning
+    raw_data |>
       mutate(
         firstname = str_to_upper(firstname),
         lastname = str_to_upper(lastname),
         suffix = str_to_upper(suffix))
-
-    return(names_to_uppercase)
   }
 
 #' Filter out non-digit bags
@@ -104,14 +101,11 @@ namesToUppercase <-
 #' @references \url{https://github.com/USFWS/migbirdHIP}
 
 nonDigitBagsFilter <-
-  function(raw_df) {
+  function(raw_data) {
 
-    bags_checked <-
-      # Filter out any record if any bag value is not a 1-digit number
-      raw_df |>
+    # Filter out any record if any bag value is not a 1-digit number
+    raw_data |>
       filter(!if_any(all_of(ref_bagfields), \(x) !str_detect(x, "^[0-9]{1}$")))
-
-    return(bags_checked)
   }
 
 #' Filter out all-NA and all-zero bag records
@@ -128,14 +122,12 @@ nonDigitBagsFilter <-
 #' @references \url{https://github.com/USFWS/migbirdHIP}
 
 naAndZeroBagsFilter <-
-  function(raw_df) {
+  function(raw_data) {
 
-    bags_checked <-
-      # Filter out any record if any bag value is not a 1-digit number
-      raw_df |>
+    # Filter out any record if any bag value is not a 1-digit number
+    raw_data |>
       filter(!if_all(all_of(ref_bagfields), \(x) x == "0"))
 
-    return(bags_checked)
   }
 
 #' Missing PII filter
@@ -152,9 +144,9 @@ naAndZeroBagsFilter <-
 #' @references \url{https://github.com/USFWS/migbirdHIP}
 
 missingPIIFilter <-
-  function(raw_df) {
-    PII_checked <-
-      raw_df |>
+  function(raw_data) {
+
+    raw_data |>
       # Filter out records if firstname, lastname, city of residence, state of
       # residence, or date of birth are missing -- records discarded because
       # these are needed to identify individuals
@@ -167,7 +159,6 @@ missingPIIFilter <-
       filter(!if_all(c("address", "email"), \(x) is.na(x))) |>
       filter(!if_all(c("city", "zip", "email"), \(x) is.na(x)))
 
-    return(PII_checked)
   }
 
 #' Move suffixes
@@ -188,7 +179,7 @@ missingPIIFilter <-
 #' @references \url{https://github.com/USFWS/migbirdHIP}
 
 moveSuffixes <-
-  function(raw_df) {
+  function(raw_data) {
 
     suffix_regex <-
       paste0(
@@ -196,7 +187,7 @@ moveSuffixes <-
         "{0,1}X|1ST|2ND|3RD|[4-9]TH|1[0-9]TH|20TH)\\.?$")
 
     suffixes_moved <-
-      raw_df |>
+      raw_data |>
       mutate(
         # Extract suffixes from lastname and firstname cols to suffix col
         # Catches values from 1-20 in Roman numerals and numeric, excluding
@@ -242,14 +233,13 @@ moveSuffixes <-
 #' @references \url{https://github.com/USFWS/migbirdHIP}
 
 fixMiddleInitials <-
-  function(raw_df) {
-    middle_initials_fixed <-
-      raw_df |>
-      # Change any character that's not a letter to NA in the from middle
-      # initial field
+  function(raw_data) {
+
+    # Change any character that's not a letter to NA in the from middle
+    # initial field
+    raw_data |>
       mutate(middle = ifelse(str_detect(middle, "[^A-Z]"), NA, middle))
 
-    return(middle_initials_fixed)
   }
 
 #' Format zip codes
@@ -268,9 +258,10 @@ fixMiddleInitials <-
 #' @references \url{https://github.com/USFWS/migbirdHIP}
 
 formatZip <-
-  function(raw_df) {
+  function(raw_data) {
+
     zips_formatted <-
-      raw_df |>
+      raw_data |>
       # Zip code format corrections
       mutate(
         zip =
@@ -330,10 +321,10 @@ formatZip <-
 #' @references \url{https://github.com/USFWS/migbirdHIP}
 
 special_OregonHuntYCheck <-
-  function(raw_df) {
-    oregon_hunty_checked <-
-      raw_df |>
-      # If any OR HuntY = 0 for solo permit, change HuntY to 2
+  function(raw_data) {
+
+    # If any OR HuntY = 0 for solo permit, change HuntY to 2
+    raw_data |>
       mutate(
         hunt_mig_birds =
           ifelse(
@@ -369,10 +360,11 @@ special_OregonHuntYCheck <-
 #' @references \url{https://github.com/USFWS/migbirdHIP}
 
 zipCheck <-
-  function(raw_df) {
+  function(raw_data) {
+
     # Proof the zip codes -- are they associated with the correct states?
     zipcheck <-
-      raw_df |>
+      raw_data |>
       left_join(
         zip_code_ref |>
           distinct(zip = zipcode, zipState = state),
@@ -409,15 +401,16 @@ zipCheck <-
 #' @importFrom dplyr mutate
 #' @importFrom dplyr bind_rows
 #'
-#' @param raw_df An intermediate object created inside of \code{\link{clean}}
+#' @inheritParams clean
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}
 
 strataFix <-
-  function(raw_df) {
+  function(raw_data) {
+
     bad_bt_2s <-
-      raw_df |>
+      raw_data |>
       filter(
         dl_state %in%
           pmt_files$dl_state[pmt_files$spp == "band_tailed_pigeon"] &
@@ -425,7 +418,7 @@ strataFix <-
       count(dl_state)
 
     bad_cr_2s <-
-      raw_df |>
+      raw_data |>
       filter(
         dl_state %in%
           pmt_files$dl_state[pmt_files$spp == "cranes"] &
@@ -435,7 +428,7 @@ strataFix <-
     if(nrow(bad_bt_2s) > 0 | nrow(bad_cr_2s) > 0) {
 
       corrected_pmt_strata <-
-        raw_df |>
+        raw_data |>
         mutate(
           band_tailed_pigeon =
             ifelse(
@@ -470,7 +463,7 @@ strataFix <-
         paste0(
           "No 2s received for band_tailed_pigeon or crane from permit file",
           " states."))
-      return(raw_df)
+      return(raw_data)
     }
   }
 

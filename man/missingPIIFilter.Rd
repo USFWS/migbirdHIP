@@ -4,10 +4,10 @@
 \alias{missingPIIFilter}
 \title{Missing PII filter}
 \usage{
-missingPIIFilter(raw_df)
+missingPIIFilter(raw_data)
 }
 \arguments{
-\item{raw_df}{The object created after reading in data with \code{\link{read_hip}}}
+\item{raw_data}{The object created after reading in data with \code{\link{read_hip}}}
 }
 \description{
 The internal \code{missingPIIFilter} function filters out HIP registrations that are missing critical pieces of contact information.

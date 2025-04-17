@@ -4,10 +4,10 @@
 \alias{zeroBagsMessage}
 \title{Return message if any record has a "0" in every bag field}
 \usage{
-zeroBagsMessage(pulled_data)
+zeroBagsMessage(raw_data)
 }
 \arguments{
-\item{pulled_data}{The product of \code{\link{read_hip}}}
+\item{raw_data}{The product of \code{\link{read_hip}}}
 }
 \description{
 The internal \code{zeroBagsMessage} function is used inside of \code{\link{readMessages}}

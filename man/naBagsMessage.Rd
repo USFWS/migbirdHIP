@@ -4,10 +4,10 @@
 \alias{naBagsMessage}
 \title{Return message if any record has an NA in every bag field}
 \usage{
-naBagsMessage(pulled_data)
+naBagsMessage(raw_data)
 }
 \arguments{
-\item{pulled_data}{The product of \code{\link{read_hip}}}
+\item{raw_data}{The product of \code{\link{read_hip}}}
 }
 \description{
 The internal \code{naBagsMessage} function is used inside of \code{\link{readMessages}}

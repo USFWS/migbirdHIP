@@ -95,7 +95,7 @@ read_hip <-
     stopifnot("Bad state abbreviation in file name." = is.null(state_test))
 
     # Read in HIP data
-    pulled_data <-
+    raw_data <-
       map(
         1:length(file_list_vector),
         function(i) {
@@ -159,13 +159,13 @@ read_hip <-
 
     # Remove exact duplicates
     if (unique == TRUE) {
-      pulled_data <- distinct(pulled_data)
+      raw_data <- distinct(raw_data)
     }
 
     # Return messages to console for important issues
-    readMessages(pulled_data)
+    readMessages(raw_data)
 
-    return(pulled_data)
+    return(raw_data)
   }
 
 #' List files
@@ -185,16 +185,14 @@ listFiles <-
 
     # Create a tibble of the HIP .txt files to be read from the provided
     # directory
-    file_list <-
-      list.files(
-        path,
-        recursive = {{season}},
-        pattern = "*\\.txt$",
-        ignore.case = TRUE,
-        full.names = TRUE) |>
-      as_tibble_col(column_name = "filepath")
+    list.files(
+      path,
+      recursive = {{season}},
+      pattern = "*\\.txt$",
+      ignore.case = TRUE,
+      full.names = TRUE) |>
+    as_tibble_col(column_name = "filepath")
 
-    return(file_list)
   }
 
 #' Ignore permit files
@@ -213,11 +211,8 @@ ignorePermits <-
   function(filelist) {
 
     # Don't process permit files
-    file_list_without_permits <-
-      filelist |>
+    filelist |>
       filter(!str_detect(filepath, "permit"))
-
-    return(file_list_without_permits)
   }
 
 #' Ignore hold files
@@ -236,11 +231,8 @@ ignoreHolds <-
   function(filelist) {
 
     # Don't process hold files
-    file_list_without_holds <-
-      filelist |>
+    filelist |>
       filter(!str_detect(filepath, "hold"))
-
-    return(file_list_without_holds)
   }
 
 #' Identify blank files
@@ -259,13 +251,10 @@ idBlankFiles <-
   function(filelist) {
 
     # Identify blank files
-    file_list_with_blanks_id <-
-      filelist |>
+    filelist |>
       mutate(
         filepath = str_replace(filepath, "TXT", "txt"),
         check = ifelse(file.size(filepath) == 0, "blank", ""))
-
-    return(file_list_with_blanks_id)
   }
 
 #' Drop blank files
@@ -383,36 +372,36 @@ checkFileNameStateAbbr <-
 #'
 #' The internal \code{readMessages} function is used inside of \code{\link{read_hip}} to return messages for missing PII, missing email addresses, all-zero bag records, non-numeric bag values, NAs in dl_state, and NAs in dl_date.
 #'
-#' @param pulled_data The product of \code{\link{read_hip}}
+#' @param raw_data The product of \code{\link{read_hip}}
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}
 
 readMessages <-
-  function(pulled_data) {
+  function(raw_data) {
 
     # Return a message for records with blank or NA values in firstname,
     # lastname, state, or birth date
-    missingPIIMessage(pulled_data)
+    missingPIIMessage(raw_data)
 
     # Return a message if all emails are missing from a file
-    missingEmailsMessage(pulled_data)
+    missingEmailsMessage(raw_data)
 
     # Return a message if any record contains all-zero bag values
-    zeroBagsMessage(pulled_data)
+    zeroBagsMessage(raw_data)
 
     # Return a message if any record contains all-NA bag values
-    naBagsMessage(pulled_data)
+    naBagsMessage(raw_data)
 
     # Return a message if any record contains a bag value that is not a
     # 1-digit number
-    nonDigitBagsMessage(pulled_data)
+    nonDigitBagsMessage(raw_data)
 
     # Return a message if there is an NA in dl_state
-    dlStateNAMessage(pulled_data)
+    dlStateNAMessage(raw_data)
 
     # Return a message if there is an NA in dl_date
-    dlDateNAMessage(pulled_data)
+    dlDateNAMessage(raw_data)
 
   }
 
@@ -434,12 +423,12 @@ readMessages <-
 #' @references \url{https://github.com/USFWS/migbirdHIP}
 
 missingPIIMessage <-
-  function(pulled_data) {
+  function(raw_data) {
 
     # Return a message for records with blank or NA values in firstname,
     # lastname, state, or birth date
     raw_nas <-
-      pulled_data |>
+      raw_data |>
       group_by(dl_state) |>
       mutate(n_total = n()) |>
       ungroup() |>
@@ -479,11 +468,11 @@ missingPIIMessage <-
 #' @references \url{https://github.com/USFWS/migbirdHIP}
 
 missingEmailsMessage <-
-  function(pulled_data) {
+  function(raw_data) {
 
     # Return a message if all emails are missing from a file
     missing <-
-      pulled_data |>
+      raw_data |>
       group_by(source_file) |>
       summarize(n_emails = length(unique(email))) |>
       ungroup() |>
@@ -511,11 +500,11 @@ missingEmailsMessage <-
 #' @references \url{https://github.com/USFWS/migbirdHIP}
 
 zeroBagsMessage <-
-  function(pulled_data) {
+  function(raw_data) {
 
     # Return a message if any record has a "0" in every bag field
     zero_bags <-
-      pulled_data |>
+      raw_data |>
       # Find any records that have a "0" in every bag field
       filter(if_all(all_of(ref_bagfields), \(x) x == "0"))
 
@@ -546,11 +535,11 @@ zeroBagsMessage <-
 #' @references \url{https://github.com/USFWS/migbirdHIP}
 
 naBagsMessage <-
-  function(pulled_data) {
+  function(raw_data) {
 
     # Return a message if any record has an NA in every bag field
     NA_bags <-
-      pulled_data |>
+      raw_data |>
       # Find any records that have an NA in every bag field
       filter(if_all(all_of(ref_bagfields), \(x) is.na(x)))
 
@@ -579,12 +568,12 @@ naBagsMessage <-
 #' @references \url{https://github.com/USFWS/migbirdHIP}
 
 nonDigitBagsMessage <-
-  function(pulled_data) {
+  function(raw_data) {
 
     # Return a message if any record contains a bag value that is not a 1-digit
     # number
     nondigit_bags <-
-      pulled_data |>
+      raw_data |>
       filter(if_any(all_of(ref_bagfields), \(x) !str_detect(x, "^[0-9]{1}$")))
 
     if (nrow(nondigit_bags) > 0) {
@@ -615,13 +604,13 @@ nonDigitBagsMessage <-
 #' @references \url{https://github.com/USFWS/migbirdHIP}
 
 dlStateNAMessage <-
-  function(pulled_data) {
+  function(raw_data) {
 
     # Return a message if there is an NA in dl_state
-    if (TRUE %in% is.na(pulled_data$dl_state)) {
+    if (TRUE %in% is.na(raw_data$dl_state)) {
       message("Error: One or more more NA values detected in dl_state.")
 
-      print(pulled_data |>
+      print(raw_data |>
               distinct(dl_state, source_file) |>
               filter(is.na(dl_state)))
     }
@@ -641,13 +630,13 @@ dlStateNAMessage <-
 #' @references \url{https://github.com/USFWS/migbirdHIP}
 
 dlDateNAMessage <-
-  function(pulled_data) {
+  function(raw_data) {
 
     # Return a message if there is an NA in dl_date
-    if (TRUE %in% is.na(pulled_data$dl_date)) {
+    if (TRUE %in% is.na(raw_data$dl_date)) {
       message("Error: One or more more NA values detected in dl_date.")
 
-      print(pulled_data |>
+      print(raw_data |>
               select(dl_date, source_file) |>
               filter(is.na(dl_date)) |>
               distinct())

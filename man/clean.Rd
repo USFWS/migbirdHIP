@@ -4,10 +4,10 @@
 \alias{clean}
 \title{Clean data}
 \usage{
-clean(raw_df)
+clean(raw_data)
 }
 \arguments{
-\item{raw_df}{The object created after reading in data with \code{\link{read_hip}}}
+\item{raw_data}{The object created after reading in data with \code{\link{read_hip}}}
 }
 \description{
 After reading the data with \code{\link{read_hip}}, reformat and clean the HIP registrations.

@@ -4,10 +4,10 @@
 \alias{readMessages}
 \title{Return messages to console for common or catastrophic read_hip issues}
 \usage{
-readMessages(pulled_data)
+readMessages(raw_data)
 }
 \arguments{
-\item{pulled_data}{The product of \code{\link{read_hip}}}
+\item{raw_data}{The product of \code{\link{read_hip}}}
 }
 \description{
 The internal \code{readMessages} function is used inside of \code{\link{read_hip}} to return messages for missing PII, missing email addresses, all-zero bag records, non-numeric bag values, NAs in dl_state, and NAs in dl_date.

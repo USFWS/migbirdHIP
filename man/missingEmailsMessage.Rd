@@ -4,10 +4,10 @@
 \alias{missingEmailsMessage}
 \title{Return message if all emails are missing from a file}
 \usage{
-missingEmailsMessage(pulled_data)
+missingEmailsMessage(raw_data)
 }
 \arguments{
-\item{pulled_data}{The product of \code{\link{read_hip}}}
+\item{raw_data}{The product of \code{\link{read_hip}}}
 }
 \description{
 The internal \code{missingEmailsMessage} function is used inside of \code{\link{readMessages}}

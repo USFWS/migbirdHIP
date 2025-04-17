@@ -4,10 +4,10 @@
 \alias{nonDigitBagsMessage}
 \title{Return message if any record contains a bag value that is not a 1-digit number}
 \usage{
-nonDigitBagsMessage(pulled_data)
+nonDigitBagsMessage(raw_data)
 }
 \arguments{
-\item{pulled_data}{The product of \code{\link{read_hip}}}
+\item{raw_data}{The product of \code{\link{read_hip}}}
 }
 \description{
 The internal \code{nonDigitBagsMessage} function is used inside of \code{\link{readMessages}}

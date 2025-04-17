@@ -4,10 +4,10 @@
 \alias{missingPIIMessage}
 \title{Return message for records with blank or NA values in firstname, lastname, state, or birth date}
 \usage{
-missingPIIMessage(pulled_data)
+missingPIIMessage(raw_data)
 }
 \arguments{
-\item{pulled_data}{The product of \code{\link{read_hip}}}
+\item{raw_data}{The product of \code{\link{read_hip}}}
 }
 \description{
 The internal \code{missingPIIMessage} function is used inside of \code{\link{readMessages}}

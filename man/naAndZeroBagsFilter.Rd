@@ -4,10 +4,10 @@
 \alias{naAndZeroBagsFilter}
 \title{Filter out all-NA and all-zero bag records}
 \usage{
-naAndZeroBagsFilter(raw_df)
+naAndZeroBagsFilter(raw_data)
 }
 \arguments{
-\item{raw_df}{The object created after reading in data with \code{\link{read_hip}}}
+\item{raw_data}{The object created after reading in data with \code{\link{read_hip}}}
 }
 \description{
 The internal \code{naAndZeroBagsFilter} function filters out records if they contain all-NA or all-zero bag values.

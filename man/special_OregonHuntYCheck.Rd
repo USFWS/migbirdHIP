@@ -4,10 +4,10 @@
 \alias{special_OregonHuntYCheck}
 \title{Oregon HuntY check}
 \usage{
-special_OregonHuntYCheck(raw_df)
+special_OregonHuntYCheck(raw_data)
 }
 \arguments{
-\item{raw_df}{The object created after reading in data with \code{\link{read_hip}}}
+\item{raw_data}{The object created after reading in data with \code{\link{read_hip}}}
 }
 \description{
 The internal \code{special_OregonHuntYCheck} function changes any registration from Oregon with HuntY == "0" to "2" if one or more of the band_tailed_pigeon, brant, or seaducks fields indicate hunting.
