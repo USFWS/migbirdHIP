@@ -15,53 +15,50 @@
 clean <-
   function(raw_df) {
 
-    # Convert firstname, lastname, and suffix to upper case
-    names_uppercased <- namesToUppercase(raw_df)
-
-    # Filter out any record if any bag value is not a 1-digit number
-    non_digit_bags_removed <- nonDigitBagsFilter(names_uppercased)
-
-    # Filter out any record with all-NA or all-0 bag values
-    NA_and_zero_bags_removed <- naAndZeroBagsFilter(non_digit_bags_removed)
-
-    # Filter out records if firstname, lastname, city of residence, state of
-    # residence, or date of birth are missing -- records discarded because these
-    # are needed to identify individuals. Filter out any other additional
-    # records if they are missing a value for email AND elements of a physical
-    # address that are required to determine where to mail a letter.
-    PII_checked <- missingPIIFilter(NA_and_zero_bags_removed)
-
-    # Delete suffixes from the lastname field and/or firstname field and move
-    # them to the suffix field. Catches values from 1-20 in Roman numerals and
-    # numeric, excluding XVIII since the db limit is 4 characters. Delete
-    # periods and commas from suffixes.
-    suffixes_moved <- moveSuffixes(PII_checked)
-
-    # Change any character that's not a letter to NA in the from middle
-    # initial field
-    middle_initials_fixed <- fixMiddleInitials(suffixes_moved)
-
-    # Remove ending hyphen from zip codes with 5 digits
-    # Remove final 0 from zip codes with length of 10 digits
-    # Insert a hyphen in continuous 9 digit zip codes
-    # Insert a hyphen in 9 digit zip codes with a middle space
-    # Remove trailing -0000
-    # Remove trailing -___
-    zips_formatted <- formatZip(middle_initials_fixed)
+    zips_formatted <-
+      raw_df |>
+      # Convert firstname, lastname, and suffix to upper case
+      namesToUppercase() |>
+      # Filter out any record if any bag value is not a 1-digit number
+      nonDigitBagsFilter() |>
+      # Filter out any record with all-NA or all-0 bag values
+      naAndZeroBagsFilter() |>
+      # Filter out records if firstname, lastname, city of residence, state of
+      # residence, or date of birth are missing -- records discarded because
+      # these are needed to identify individuals. Filter out any other
+      # additional records if they are missing a value for email AND elements of
+      # a physical address that are required to determine where to mail a
+      # letter.
+      missingPIIFilter() |>
+      # Delete suffixes from the lastname field and/or firstname field and move
+      # them to the suffix field. Catches values from 1-20 in Roman numerals and
+      # numeric, excluding XVIII since the db limit is 4 characters. Delete
+      # periods and commas from suffixes.
+      moveSuffixes() |>
+      # Change any character that's not a letter to NA in the from middle
+      # initial field
+      fixMiddleInitials() |>
+      # Remove ending hyphen from zip codes with 5 digits
+      # Remove final 0 from zip codes with length of 10 digits
+      # Insert a hyphen in continuous 9 digit zip codes
+      # Insert a hyphen in 9 digit zip codes with a middle space
+      # Remove trailing -0000
+      # Remove trailing -___
+      formatZip()
 
     # Check that the zip code for each address is associated with the correct
     # state
     zipCheck(zips_formatted)
 
-    # If any OR HuntY = 0 for solo permit, change HuntY to 2
-    oregon_hunty_checked <- special_OregonHuntYCheck(zips_formatted)
-
-    # Delete white space around strings
-    white_space_deleted <- oregon_hunty_checked |> mutate_all(str_trim)
-
-    # If any permit file states submitted a 2 for crane and/or
-    # band_tailed_pigeon, change the 2 to a 0
-    permit_state_strata_fixed <- strataFix(white_space_deleted)
+    permit_state_strata_fixed <-
+      zips_formatted |>
+      # If any OR HuntY = 0 for solo permit, change HuntY to 2
+      special_OregonHuntYCheck() |>
+      # Delete white space around strings
+      mutate_all(str_trim) |>
+      # If any permit file states submitted a 2 for crane and/or
+      # band_tailed_pigeon, change the 2 to a 0
+      strataFix()
 
     return(permit_state_strata_fixed)
   }
