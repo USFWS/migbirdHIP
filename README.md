@@ -18,8 +18,6 @@ Tasks that can be accomplished with this package include:
 - `glyphCheck` identifies non-UTF-8 characters
 - `shiftCheck` finds line shift errors
 - `strataCheck` identifies any new or unexpected strata
-- `validate` checks for table-wide repetition
-- `identicalBags` checks for matching columns within files
 - `issueCheck` looks for records that should be processed later
 - `findDuplicates` identifies duplicate HIP records
 - `fixDuplicates` resolves duplicate HIP records
@@ -27,8 +25,6 @@ Tasks that can be accomplished with this package include:
 - `correct` systematically fixes erroneous values
 - Error visualization with `errorPlot_dl`, `errorPlot_fields`, and
   `errorPlot_states`
-- Exploration of specific errors with `youthHunters` and
-  `outOfStateHunters`
 - Detailed error reporting with `errorTable`, `pullErrors`, and
   `redFlags`
 - Automated report writing with `writeReport`
