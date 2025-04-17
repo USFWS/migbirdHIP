@@ -4,10 +4,10 @@
 \alias{glyphFinder}
 \title{Find non-UTF-8 glyphs/characters in a field}
 \usage{
-glyphFinder(pulled_data, field)
+glyphFinder(raw_data, field)
 }
 \arguments{
-\item{pulled_data}{The tibble created after reading in data with \code{\link{read_hip}}}
+\item{raw_data}{The tibble created after reading in data with \code{\link{read_hip}}}
 
 \item{field}{Field that should be checked for non-UTF-8 characters. One of the fields from the following list may be supplied:
 \itemize{
