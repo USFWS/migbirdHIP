@@ -4,10 +4,10 @@
 \alias{errorPlot_dl}
 \title{Plot errors across download cycles}
 \usage{
-errorPlot_dl(x, loc = "all")
+errorPlot_dl(proofed_data, loc = "all")
 }
 \arguments{
-\item{x}{A proofed data table created by \code{\link{proof}} or \code{\link{correct}}}
+\item{proofed_data}{The object created after error flagging data with \code{\link{proof}} or \code{\link{correct}}}
 
 \item{loc}{Which location the error data should be plotted for. Acceptable values include:
 \itemize{

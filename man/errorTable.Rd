@@ -4,10 +4,10 @@
 \alias{errorTable}
 \title{Table of errors}
 \usage{
-errorTable(x, loc = "all", field = "all")
+errorTable(proofed_data, loc = "all", field = "all")
 }
 \arguments{
-\item{x}{A proofed data table created by \code{\link{proof}}}
+\item{proofed_data}{The object created after error flagging data with \code{\link{proof}} or \code{\link{correct}}}
 
 \item{loc}{Which location the error data should be tabulated by. Acceptable values include:
 \itemize{

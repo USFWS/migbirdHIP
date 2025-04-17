@@ -23,7 +23,7 @@
 #' @importFrom ggplot2 theme_classic
 #' @importFrom ggplot2 theme
 #'
-#' @param x A proofed data table created by \code{\link{proof}} or \code{\link{correct}}
+#' @param proofed_data The object created after error flagging data with \code{\link{proof}} or \code{\link{correct}}
 #' @param loc Which location the error data should be plotted for. Acceptable values include:
 #'  \itemize{
 #'  \item all - All states, provinces, and/or territories that exist in the data
@@ -38,15 +38,15 @@
 #' @export
 
 errorPlot_dl <-
-  function(x, loc = "all") {
+  function(proofed_data, loc = "all") {
 
     # Fail if incorrect loc supplied
-    stopifnot("Error: Incorrect value supplied for `loc` parameter. Please supply a two-letter state abbreviation of a `dl_state` value contained within the data, or 'all'." = loc %in% c(unique(x$dl_state), "all"))
+    stopifnot("Error: Incorrect value supplied for `loc` parameter. Please supply a two-letter state abbreviation of a `dl_state` value contained within the data, or 'all'." = loc %in% c(unique(proofed_data$dl_state), "all"))
 
     if(loc == "all") {
       # Plot for all states
       dl_plot <-
-        x |>
+        proofed_data |>
         select(errors, dl_cycle) |>
         # Pull errors apart, delimited by hyphens
         separate_wider_delim(
@@ -77,7 +77,7 @@ errorPlot_dl <-
       } else {
         # Plot for specified state
         dl_plot <-
-          x |>
+          proofed_data |>
           # Keep data only for specified state
           filter(dl_state == loc) |>
           select(errors, dl_cycle) |>
@@ -129,7 +129,7 @@ errorPlot_dl <-
 #' @importFrom ggplot2 element_text
 #' @importFrom ggplot2 expansion
 #'
-#' @param x A proofed data table created by \code{\link{proof}}
+#' @param proofed_data The object created after error flagging data with \code{\link{proof}} or \code{\link{correct}}
 #' @param loc The location that errors should be plotted for. Acceptable values include:
 #'  \itemize{
 #'  \item all - All states, provinces, and/or territories that exist in the data
@@ -145,24 +145,24 @@ errorPlot_dl <-
 #' @export
 
 errorPlot_fields <-
-  function(x, loc = "all", year) {
+  function(proofed_data, loc = "all", year) {
 
     # Fail if incorrect loc supplied
-    stopifnot("Error: Incorrect value supplied for `loc` parameter. Please supply a two-letter state abbreviation of a `dl_state` value contained within the data, or 'all'." = loc %in% c(unique(x$dl_state), "all"))
+    stopifnot("Error: Incorrect value supplied for `loc` parameter. Please supply a two-letter state abbreviation of a `dl_state` value contained within the data, or 'all'." = loc %in% c(unique(proofed_data$dl_state), "all"))
 
     # Fail if incorrect year supplied
     stopifnot("Error: `year` parameter must be numeric." = is.numeric(year))
     stopifnot("Error: Incorrect value supplied for `year` parameter. Please use a 4-digit year in the 2020s, e.g. 2024." = str_detect(year, "^202[0-9]{1}$"))
 
     if (loc != "all") {
-      x <-
-        x |>
+      proofed_data <-
+        proofed_data |>
         filter(dl_state == loc)
     }
 
     # Plot all states without special legend colors
     fields_plot <-
-      errorLevel_errors_field(x) |>
+      errorLevel_errors_field(proofed_data) |>
       # Plot
       ggplot() +
       geom_bar(
@@ -206,7 +206,7 @@ errorPlot_fields <-
 #' @importFrom ggplot2 theme_classic
 #' @importFrom ggplot2 element_text
 #'
-#' @param x A proofed data table created by \code{\link{proof}}
+#' @param proofed_data The object created after error flagging data with \code{\link{proof}} or \code{\link{correct}}
 #' @param threshold Optional. A decimal value above which error proportions should be plotted.
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
@@ -215,14 +215,14 @@ errorPlot_fields <-
 #' @export
 
 errorPlot_states <-
-  function(x, threshold = NA) {
+  function(proofed_data, threshold = NA) {
 
     # Fail if incorrect threshold supplied
     stopifnot("Error: `threshold` parameter must be numeric." = (is.numeric(threshold) | is.na(threshold)))
     stopifnot("Error: Please supply a value between 0 and 1 for the `threshold` parameter." = ((0 <= threshold & threshold <= 1) | is.na(threshold)))
 
     # Generate a table of error proportions
-    state_tbl <- errorLevel_errors_state(x)
+    state_tbl <- errorLevel_errors_state(proofed_data)
 
     if(is.na(threshold)) {
 
@@ -319,14 +319,14 @@ errorPlot_states <-
 #' @importFrom dplyr n
 #' @importFrom dplyr distinct
 #'
-#' @param x A proofed data table created by \code{\link{proof}}
+#' @param proofed_data The object created after error flagging data with \code{\link{proof}} or \code{\link{correct}}
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}
 
 errorLevel_errors_state <-
-  function(x){
-    x |>
+  function(proofed_data){
+    proofed_data |>
       select(errors, dl_state) |>
       group_by(dl_state) |>
       mutate(total_records = n()) |>
@@ -357,14 +357,14 @@ errorLevel_errors_state <-
 #' @importFrom dplyr ungroup
 #' @importFrom dplyr mutate
 #'
-#' @param x A proofed data table created by \code{\link{proof}}
+#' @param proofed_data The object created after error flagging data with \code{\link{proof}} or \code{\link{correct}}
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}
 
 errorLevel_errors_field <-
-  function(x){
-    x |>
+  function(proofed_data){
+    proofed_data |>
       select(errors) |>
       # Pull errors apart, delimited by hyphens
       separate_longer_delim(errors, delim = "-") |>
@@ -375,8 +375,8 @@ errorLevel_errors_field <-
       ungroup() |>
       # Calculate error proportion
       mutate(
-        total = nrow(x),
-        proportion = count_errors / nrow(x))
+        total = nrow(proofed_data),
+        proportion = count_errors / nrow(proofed_data))
   }
 
 #' Calculate record-level errors by state
@@ -389,14 +389,14 @@ errorLevel_errors_field <-
 #' @importFrom dplyr ungroup
 #' @importFrom dplyr distinct
 #'
-#' @param x A proofed data table created by \code{\link{proof}}
+#' @param proofed_data The object created after error flagging data with \code{\link{proof}} or \code{\link{correct}}
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}
 
 recordLevel_errors_state <-
-  function(x) {
-    x |>
+  function(proofed_data) {
+    proofed_data |>
       select(errors, dl_state) |>
       group_by(dl_state) |>
       mutate(

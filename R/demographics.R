@@ -22,7 +22,7 @@
 #' @importFrom ggplot2 theme
 #' @importFrom ggplot2 element_text
 #'
-#' @param x A proofed data table created by \code{\link{proof}}
+#' @param proofed_data The object created after error flagging data with \code{\link{proof}} or \code{\link{correct}}
 #' @param return Return a "plot" (default) or "table"
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
@@ -31,7 +31,7 @@
 #' @export
 
 outOfStateHunters <-
-  function(x, return = "plot") {
+  function(proofed_data, return = "plot") {
 
     # Fail if incorrect return supplied
     stopifnot("Error: Incorrect value supplied for `return` parameter. Please choose: 'plot' or 'table'." = return %in% c("plot", "table"))
@@ -42,7 +42,7 @@ outOfStateHunters <-
       suppressWarnings(
         # Suppress summarize groups message
         suppressMessages(
-          x |>
+          proofed_data |>
             select(state, dl_state) |>
             # Filter to out-of-staters
             filter(state != dl_state) |>
@@ -59,7 +59,7 @@ outOfStateHunters <-
       suppressWarnings(
         # Suppress summarize .groups message
         suppressMessages(
-          x |>
+          proofed_data |>
             select(dl_state) |>
             group_by(dl_state) |>
             summarize(n_total = n()) |>
@@ -129,7 +129,7 @@ outOfStateHunters <-
 #' @importFrom ggplot2 element_text
 #' @importFrom stats reorder
 #'
-#' @param x A proofed data table created by \code{\link{proof}}
+#' @param proofed_data The object created after error flagging data with \code{\link{proof}} or \code{\link{correct}}
 #' @param year The year in which the Harvest Information Program data were collected
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
@@ -138,7 +138,7 @@ outOfStateHunters <-
 #' @export
 
 youthHunters <-
-  function(x, year){
+  function(proofed_data, year){
 
     # Fail if incorrect year supplied
     stopifnot("Error: `year` parameter must be numeric." = is.numeric(year))
@@ -148,7 +148,7 @@ youthHunters <-
     total_hunters <-
       # Suppress group message from summarize function
       suppressMessages(
-        x |>
+        proofed_data |>
           group_by(dl_state) |>
           summarize(total_registered = n()) |>
           ungroup())
@@ -156,7 +156,7 @@ youthHunters <-
     # Count number and calculate proportion of youth hunters by state
     # Suppress group message from summarize function
     suppressMessages(
-      x |>
+      proofed_data |>
         select(dl_state, birth_date) |>
         mutate(birth_year = str_extract(birth_date, "(?<=\\/)[0-9]{4}$")) |>
         filter(birth_year > year - 16) |>

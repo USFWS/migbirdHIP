@@ -4,10 +4,10 @@
 \alias{pullErrors}
 \title{Pull flagged errors}
 \usage{
-pullErrors(x, field, unique = TRUE)
+pullErrors(proofed_data, field, unique = TRUE)
 }
 \arguments{
-\item{x}{A proofed data table created by \code{\link{proof}}}
+\item{proofed_data}{The object created after error flagging data with \code{\link{proof}}}
 
 \item{field}{Field that should be pulled. One of the fields from the following list may be supplied:
 \itemize{

@@ -4,10 +4,10 @@
 \alias{errorLevel_errors_state}
 \title{Calculate error-level errors by state}
 \usage{
-errorLevel_errors_state(x)
+errorLevel_errors_state(proofed_data)
 }
 \arguments{
-\item{x}{A proofed data table created by \code{\link{proof}}}
+\item{proofed_data}{The object created after error flagging data with \code{\link{proof}} or \code{\link{correct}}}
 }
 \description{
 The internal \code{errorLevel_errors_state} function calculates a summary table of the count of errors, count of correct values, and proportion of erroneous values by state.

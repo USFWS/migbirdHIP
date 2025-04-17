@@ -10,7 +10,7 @@
 #' @importFrom dplyr relocate
 #' @importFrom stringr str_detect
 #'
-#' @param x A proofed data table created by \code{\link{proof}}
+#' @param proofed_data A proofed data table created by \code{\link{proof}}
 #' @param type Type of tibble to report. Acceptable values include:
 #'  \itemize{
 #'  \item state
@@ -24,7 +24,7 @@
 #' @export
 
 redFlags <-
-  function(x, type, threshold = 0) {
+  function(proofed_data, type, threshold = 0) {
 
     # Fail if incorrect type supplied
     stopifnot("Error: Please supply 'state' or 'field' for `type` parameter." = type %in% c("state", "field"))
@@ -37,7 +37,7 @@ redFlags <-
 
       # State red flags
       rf <-
-        errorLevel_errors_state(x) |>
+        errorLevel_errors_state(proofed_data) |>
         mutate(
           flag =
             ifelse(
@@ -57,7 +57,7 @@ redFlags <-
 
       # Field red flags
       rf <-
-        errorLevel_errors_field(x) |>
+        errorLevel_errors_field(proofed_data) |>
         mutate(
           count_correct = total - count_errors,
           flag =

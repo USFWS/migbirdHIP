@@ -4,10 +4,10 @@
 \alias{errorLevel_errors_field}
 \title{Calculate error-level errors by field}
 \usage{
-errorLevel_errors_field(x)
+errorLevel_errors_field(proofed_data)
 }
 \arguments{
-\item{x}{A proofed data table created by \code{\link{proof}}}
+\item{proofed_data}{The object created after error flagging data with \code{\link{proof}} or \code{\link{correct}}}
 }
 \description{
 The internal \code{errorLevel_errors_field} function calculates a summary table of the count of errors and proportion of erroneous values by field.

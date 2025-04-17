@@ -49,7 +49,7 @@ correct <-
 #' @importFrom dplyr mutate
 #' @importFrom stringr str_detect
 #'
-#' @inheritParams correct
+#' @param proofed_data The object created after error flagging data with \code{\link{proof}}
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}
@@ -70,7 +70,7 @@ correctTitle <-
 #' @importFrom dplyr mutate
 #' @importFrom stringr str_detect
 #'
-#' @inheritParams correct
+#' @param proofed_data The object created after error flagging data with \code{\link{proof}}
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}
@@ -95,7 +95,7 @@ correctSuffix <-
 #' @importFrom stringr str_remove
 #' @importFrom stringr str_remove_all
 #'
-#' @inheritParams correct
+#' @param proofed_data The object created after error flagging data with \code{\link{proof}}
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}

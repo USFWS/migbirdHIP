@@ -4,10 +4,10 @@
 \alias{recordLevel_errors_state}
 \title{Calculate record-level errors by state}
 \usage{
-recordLevel_errors_state(x)
+recordLevel_errors_state(proofed_data)
 }
 \arguments{
-\item{x}{A proofed data table created by \code{\link{proof}}}
+\item{proofed_data}{The object created after error flagging data with \code{\link{proof}} or \code{\link{correct}}}
 }
 \description{
 The internal \code{recordLevel_errors_state} function calculates a summary table of the count of records with errors, count of records with no errors, and proportion of erroneous records by state.

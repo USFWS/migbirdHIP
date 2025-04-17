@@ -4,10 +4,10 @@
 \alias{findDuplicates}
 \title{Find duplicates}
 \usage{
-findDuplicates(x, return = "plot")
+findDuplicates(current_data, return = "plot")
 }
 \arguments{
-\item{x}{A current data table created by \code{\link{issueCheck}}}
+\item{current_data}{The object created after filtering to current data with \code{\link{issueCheck}}}
 
 \item{return}{Return a "plot" (default) or "table"}
 }

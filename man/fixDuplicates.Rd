@@ -4,10 +4,10 @@
 \alias{fixDuplicates}
 \title{Fix duplicates}
 \usage{
-fixDuplicates(x)
+fixDuplicates(current_data)
 }
 \arguments{
-\item{x}{A current data table created by \code{\link{issueCheck}}}
+\item{current_data}{The object created after filtering to current data with \code{\link{issueCheck}}}
 }
 \description{
 Resolve duplicate HIP records.

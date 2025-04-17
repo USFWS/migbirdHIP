@@ -4,10 +4,10 @@
 \alias{youthHunters}
 \title{Youth hunters}
 \usage{
-youthHunters(x, year)
+youthHunters(proofed_data, year)
 }
 \arguments{
-\item{x}{A proofed data table created by \code{\link{proof}}}
+\item{proofed_data}{The object created after error flagging data with \code{\link{proof}} or \code{\link{correct}}}
 
 \item{year}{The year in which the Harvest Information Program data were collected}
 }

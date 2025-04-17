@@ -4,10 +4,10 @@
 \alias{proof}
 \title{Flag errors}
 \usage{
-proof(x, year)
+proof(deduplicated_data, year)
 }
 \arguments{
-\item{x}{The object created after cleaning data with \code{\link{clean}}}
+\item{deduplicated_data}{The object created after deduplicating data with \code{\link{fixDuplicates}}}
 
 \item{year}{The year in which the Harvest Information Program data were collected}
 }

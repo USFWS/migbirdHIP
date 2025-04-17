@@ -21,7 +21,7 @@
 #' @importFrom stringr str_remove_all
 #' @importFrom stringr str_length
 #'
-#' @param x The object created after cleaning data with \code{\link{clean}}
+#' @param deduplicated_data The object created after deduplicating data with \code{\link{fixDuplicates}}
 #' @param year The year in which the Harvest Information Program data were collected
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
@@ -30,7 +30,7 @@
 #' @export
 
 proof <-
-  function(x, year){
+  function(deduplicated_data, year){
 
     # Fail if incorrect year supplied
     stopifnot("Error: `year` parameter must be numeric." = is.numeric(year))
@@ -43,7 +43,7 @@ proof <-
 
     # Create a record key so that the errors can be joined in later
     keyed_x <-
-      x |>
+      deduplicated_data |>
       mutate(temp_key = paste0("row_", row_number()))
 
     markup <-

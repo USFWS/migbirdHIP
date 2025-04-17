@@ -20,7 +20,7 @@
 #' @importFrom lubridate mdy
 #' @importFrom purrr pmap_chr
 #'
-#' @param x A current data table created by \code{\link{issueCheck}}
+#' @param current_data The object created after filtering to current data with \code{\link{issueCheck}}
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}
@@ -28,13 +28,13 @@
 #' @export
 
 fixDuplicates <-
-  function(x){
+  function(current_data) {
 
     # --------------------------------------------------------------------------
     # PART 1: Identify duplicate records
 
     duplicates <-
-      x |>
+      current_data |>
       # Group by firstname, lastname, state, birth date, download state, and
       # registration year to determine each unique hunter
       group_by(
@@ -791,7 +791,7 @@ fixDuplicates <-
 
     resolved_duplicates <-
       # Remove duplicates from the input frame
-      x |>
+      current_data |>
       group_by(
         firstname, lastname, state, birth_date, dl_state, registration_yr) |>
       mutate(
@@ -835,7 +835,7 @@ fixDuplicates <-
     # Error checker #12
     if(
       n_distinct(
-        x |>
+        current_data |>
         select(
           firstname, lastname, state, birth_date, dl_state, registration_yr)) !=
       n_distinct(
@@ -849,7 +849,7 @@ fixDuplicates <-
           " process."))
       print(
         anti_join(
-          x |>
+          current_data |>
             distinct(
               firstname,
               lastname,

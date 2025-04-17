@@ -21,7 +21,7 @@
 #' @importFrom dplyr n
 #' @importFrom purrr list_rbind
 #'
-#' @param deduplicated_data The object created after fixing data with \code{\link{fixDuplicates}}
+#' @param deduplicated_data The object created after deduplicating data with \code{\link{fixDuplicates}}
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}

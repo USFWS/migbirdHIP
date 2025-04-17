@@ -4,10 +4,10 @@
 \alias{outOfStateHunters}
 \title{Find out-of-state hunters}
 \usage{
-outOfStateHunters(x, return = "plot")
+outOfStateHunters(proofed_data, return = "plot")
 }
 \arguments{
-\item{x}{A proofed data table created by \code{\link{proof}}}
+\item{proofed_data}{The object created after error flagging data with \code{\link{proof}} or \code{\link{correct}}}
 
 \item{return}{Return a "plot" (default) or "table"}
 }

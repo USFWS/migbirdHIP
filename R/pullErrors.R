@@ -9,7 +9,7 @@
 #' @importFrom stringr str_detect
 #' @importFrom rlang sym
 #'
-#' @param x A proofed data table created by \code{\link{proof}}
+#' @param proofed_data The object created after error flagging data with \code{\link{proof}}
 #' @param field Field that should be pulled. One of the fields from the following list may be supplied:
 #' \itemize{
 #' \item title, firstname, middle, lastname, suffix, address, city, state, zip, birth_date, issue_date, hunt_mig_birds, ducks_bag, geese_bag, dove_bag, woodcock_bag, coots_snipe, rails_gallinules, cranes, band_tailed_pigeon, brant, seaducks, registration_yr, email}
@@ -21,7 +21,7 @@
 #' @export
 
 pullErrors <-
-  function(x, field, unique = TRUE){
+  function(proofed_data, field, unique = TRUE){
 
     # Fail if incorrect field supplied
     stopifnot("Error: Incorrect value supplied for `field` parameter. Please supply one of: title, firstname, middle, lastname, suffix, address, city, state, zip, birth_date, issue_date, hunt_mig_birds, ducks_bag, geese_bag, dove_bag, woodcock_bag, coots_snipe, rails_gallinules, cranes, band_tailed_pigeon, brant, seaducks, registration_yr, email." = field %in% c("title", "firstname", "middle", "lastname", "suffix", "address", "city", "state", "zip", "birth_date", "issue_date", "hunt_mig_birds", "ducks_bag", "geese_bag", "dove_bag", "woodcock_bag", "coots_snipe", "rails_gallinules", "cranes", "band_tailed_pigeon", "brant", "seaducks", "registration_yr", "email"))
@@ -30,7 +30,7 @@ pullErrors <-
     stopifnot("Error: Please supply TRUE or FALSE for `unique` parameter." = unique %in% c(TRUE, FALSE, T, F))
 
     acceptable_fields <-
-      names(x)[match("title", names(x)):match("email", names(x))]
+      names(proofed_data)[match("title", names(proofed_data)):match("email", names(proofed_data))]
 
     if(!field %in% acceptable_fields) {
       message(
@@ -41,7 +41,7 @@ pullErrors <-
     } else {
 
       pulled_error <-
-        x |>
+        proofed_data |>
         select(!!sym(field), errors) |>
         filter(str_detect(errors, field)) |>
         select(!!sym(field))

@@ -4,10 +4,10 @@
 \alias{errorPlot_states}
 \title{Plot errors by state}
 \usage{
-errorPlot_states(x, threshold = NA)
+errorPlot_states(proofed_data, threshold = NA)
 }
 \arguments{
-\item{x}{A proofed data table created by \code{\link{proof}}}
+\item{proofed_data}{The object created after error flagging data with \code{\link{proof}} or \code{\link{correct}}}
 
 \item{threshold}{Optional. A decimal value above which error proportions should be plotted.}
 }

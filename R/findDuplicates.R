@@ -35,7 +35,7 @@
 #' @importFrom dplyr summarize
 #' @importFrom stats reorder
 #'
-#' @param x A current data table created by \code{\link{issueCheck}}
+#' @param current_data The object created after filtering to current data with \code{\link{issueCheck}}
 #' @param return Return a "plot" (default) or "table"
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
@@ -44,14 +44,14 @@
 #' @export
 
 findDuplicates <-
-  function(x, return = "plot") {
+  function(current_data, return = "plot") {
 
     # Fail if incorrect return supplied
     stopifnot("Error: Incorrect value supplied for `return` parameter. Please choose: 'table' or 'plot'." = return %in% c("table", "plot"))
 
     # List of permit records
     pmts <-
-      x |>
+      current_data |>
       # Classify solo permit records as PMT
       mutate(
         across(
@@ -69,7 +69,7 @@ findDuplicates <-
       filter(record_type == "PMT") |>
       pull(record_key)
       duplicates <-
-      x |>
+      current_data |>
       # Filter out permits
       filter(!record_key %in% pmts) |>
       # Create a row key

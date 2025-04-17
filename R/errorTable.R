@@ -15,7 +15,7 @@
 #' @importFrom dplyr ungroup
 #' @importFrom stringr str_detect
 #'
-#' @param x A proofed data table created by \code{\link{proof}}
+#' @param proofed_data The object created after error flagging data with \code{\link{proof}} or \code{\link{correct}}
 #' @param loc Which location the error data should be tabulated by. Acceptable values include:
 #'  \itemize{
 #'  \item One of the following abbreviations:
@@ -39,10 +39,10 @@
 #' @export
 
 errorTable <-
-  function(x, loc = "all", field = "all"){
+  function(proofed_data, loc = "all", field = "all"){
 
     # Fail if incorrect loc supplied
-    stopifnot("Error: Incorrect value supplied for `loc` parameter. Please supply a two-letter state abbreviation of a `dl_state` value contained within the data, 'all', or 'none'." = loc %in% c(unique(x$dl_state), "all", "none"))
+    stopifnot("Error: Incorrect value supplied for `loc` parameter. Please supply a two-letter state abbreviation of a `dl_state` value contained within the data, 'all', or 'none'." = loc %in% c(unique(proofed_data$dl_state), "all", "none"))
 
     # Fail if incorrect field supplied
     stopifnot("Error: Incorrect value supplied for `field` parameter. Please supply one of: all, none, title, firstname, middle, lastname, suffix, address, city, state, zip, birth_date, issue_date, hunt_mig_birds, ducks_bag, geese_bag, dove_bag, woodcock_bag, coots_snipe, rails_gallinules, cranes, band_tailed_pigeon, brant, seaducks, registration_yr, email." = field %in% c("all", "none", "title", "firstname", "middle", "lastname", "suffix", "address", "city", "state", "zip", "birth_date", "issue_date", "hunt_mig_birds", "ducks_bag", "geese_bag", "dove_bag", "woodcock_bag", "coots_snipe", "rails_gallinules", "cranes", "band_tailed_pigeon", "brant", "seaducks", "registration_yr", "email"))
@@ -53,7 +53,7 @@ errorTable <-
 
       # Initial summary table
       initial_tbl <-
-        x |>
+        proofed_data |>
         select(errors, dl_state) |>
         filter(!is.na(errors)) |>
         # Pull errors apart, delimited by hyphens
@@ -125,7 +125,7 @@ errorTable <-
         } else if(!str_detect(loc, "none|all") & !str_detect(field, "none|all")) {
 
           # Summary table for a particular state and particular field name
-          if(loc %in% unique(x$dl_state)) {
+          if(loc %in% unique(proofed_data$dl_state)) {
 
             statefield <-
               initial_tbl |>

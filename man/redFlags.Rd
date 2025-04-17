@@ -4,10 +4,10 @@
 \alias{redFlags}
 \title{Pull bad data}
 \usage{
-redFlags(x, type, threshold = 0)
+redFlags(proofed_data, type, threshold = 0)
 }
 \arguments{
-\item{x}{A proofed data table created by \code{\link{proof}}}
+\item{proofed_data}{A proofed data table created by \code{\link{proof}}}
 
 \item{type}{Type of tibble to report. Acceptable values include:
 \itemize{
