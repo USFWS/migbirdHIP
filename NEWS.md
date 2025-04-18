@@ -10,6 +10,7 @@
     - `recordLevel_errors_state()` function deleted from package since it was not being used
 - `{tibble}` no longer a required import
 - `redFlags()` no longer exported (used only in the download report), moved to the `errorPlots.R` script instead of being in its own file
+- Renamed `renameFiles()` to `fileRename()` and moved from `renameFiles.R` to `files.R` to be grouped with `fileCheck()` (previously in `fileCheck.R`)
 - `validate()`, `investigate()`, and `identicalBags()` removed from R package
 - In an effort to improve the maintainability of the package code, steps were made toward modularity, clarity, and unit testing in some of the larger functions.
     - `findDuplicates()` and `fixDuplicates()` renamed to `duplicateFinder()` and `duplicateFix()` to mirror naming conventions of other functions with the subject of the verb coming first (e.g. `glyphFinder()`, `glyphCheck()`) 
