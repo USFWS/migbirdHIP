@@ -35,6 +35,22 @@ params:
 
 library(migbirdHIP)
 library(sf) # Required to render map, otherwise get errors from indirect call
+
+# A list of all packages required for this template:
+# - DT (in DESCRIPTION list of Suggests)
+# - data.table (in DESCRIPTION list of Imports)
+# - dplyr (in DESCRIPTION list of Imports)
+# - ggplot2 (in DESCRIPTION list of Imports)
+# - kableExtra (in DESCRIPTION list of Suggests)
+# - lubridate (in DESCRIPTION list of Imports)
+# - datasets (base R)
+# - migbirdHIP 
+# - purrr (in DESCRIPTION list of Imports)
+# - quarto (in DESCRIPTION list of Imports)
+# - sf (in DESCRIPTION list of Suggests)
+# - stringi (in DESCRIPTION list of Suggests)
+# - stringr (in DESCRIPTION list of Imports)
+# - tidyr (in DESCRIPTION list of Imports)
 ```
 
 ```{r read_data}
@@ -256,7 +272,7 @@ important_statistics <-
   dplyr::bind_rows(
     message_log |> 
     unlist() |> 
-    tibble::as_tibble() |> 
+    dplyr::as_tibble() |> 
     dplyr::filter(
       !stringr::str_detect(
         value, 
@@ -275,26 +291,28 @@ rm(`%>%`)
 
 # Blank files
 blanks <-
-  tibble::tibble(
-    list.files(
-      params$raw_path, recursive = F, pattern = "*\\.txt$", 
-      ignore.case = T, full.names = TRUE) |>
-    tibble::as_tibble_col(column_name = "filepath") |>
-    # Don't process permit files
-    dplyr::filter(!stringr::str_detect(filepath, "permit")) |>
-    # Identify blank files
-    dplyr::mutate(
-      check =
-        ifelse(
-          file.size(filepath) == 0,
-          "blank",
-          ""))
-  ) |> 
-    dplyr::filter(check == "blank") |> 
-    dplyr::transmute(
-      files = 
-        stringr::str_extract(
-          filepath, "[A-Z]{2}[0-9]{8}\\.(txt|TXT)"))
+  dplyr::tibble(
+    filepath =
+      list.files(
+        params$raw_path, 
+        recursive = F, 
+        pattern = "*\\.txt$", 
+        ignore.case = T, 
+        full.names = TRUE)) |>
+  # Don't process permit files
+  dplyr::filter(!stringr::str_detect(filepath, "permit")) |>
+  # Identify blank files
+  dplyr::mutate(
+    check =
+      ifelse(
+        file.size(filepath) == 0,
+        "blank",
+        "")) |> 
+  dplyr::filter(check == "blank") |> 
+  dplyr::transmute(
+    files = 
+      stringr::str_extract(
+        filepath, "[A-Z]{2}[0-9]{8}\\.(txt|TXT)"))
 
 # HuntY check table
 huntcheck <-
@@ -973,7 +991,7 @@ files_received <-
     # Get all of the received files up to and including this download
     list.files(
       stringr::str_remove(params$raw_path, "\\/D.+"), recursive = T) |> 
-    tibble::as_tibble() |> 
+    dplyr::as_tibble() |> 
     tidyr::separate(value, into = c("dl", "file"), sep = "/", extra = "drop") |> 
     tidyr::separate(file, into = c("state", "date"), sep = 2, extra = "drop") |> 
     dplyr::select(-date) |> 
@@ -1002,7 +1020,7 @@ files_received <-
     dplyr::select(state, lag) |> 
     # Add an ID for the hex map
     dplyr::left_join(
-      tibble::tibble(
+      dplyr::tibble(
         state = datasets::state.abb,
         id = datasets::state.name),
       by = "state"
@@ -1585,7 +1603,7 @@ if(et$error[1] != "birth_date"){
   err1 <- 
     migbirdHIP::pullErrors(
       proofed_data, field = et$error[1], unique = FALSE) |> 
-    tibble::as_tibble() |> 
+    dplyr::as_tibble() |> 
     dplyr::mutate(
       value = stringi::stri_enc_toutf8(value, is_unknown_8bit = T, validate = T)) |>
     dplyr::group_by(value) |> 
@@ -1596,7 +1614,7 @@ if(et$error[1] != "birth_date"){
   err1 <- 
     migbirdHIP::pullErrors(
       proofed_data, field = et$error[1], unique = FALSE) |> 
-    tibble::as_tibble() |> 
+    dplyr::as_tibble() |> 
     dplyr::mutate(value = stringr::str_extract(value, ".{4}$")) |> 
     dplyr::group_by(value) |> 
     dplyr::summarize(count = dplyr::n()) |> 
@@ -1616,7 +1634,7 @@ if(et$error[2] != "birth_date"){
   err2 <- 
     migbirdHIP::pullErrors(
       proofed_data, field = et$error[2], unique = FALSE) |> 
-    tibble::as_tibble() |> 
+    dplyr::as_tibble() |> 
     dplyr::mutate(
       value = 
         stringi::stri_enc_toutf8(value, is_unknown_8bit = T, validate = T)) |>
@@ -1628,7 +1646,7 @@ if(et$error[2] != "birth_date"){
   err2 <- 
     migbirdHIP::pullErrors(
       proofed_data, field = et$error[2], unique = FALSE) |> 
-    tibble::as_tibble() |> 
+    dplyr::as_tibble() |> 
     dplyr::mutate(value = stringr::str_extract(value, ".{4}$")) |> 
     dplyr::group_by(value) |> 
     dplyr::summarize(count = dplyr::n()) |> 
@@ -1648,7 +1666,7 @@ if(et$error[3] != "birth_date"){
   err3 <- 
     migbirdHIP::pullErrors(
       proofed_data, field = et$error[3], unique = FALSE) |> 
-    tibble::as_tibble() |> 
+    dplyr::as_tibble() |> 
     dplyr::mutate(
       value = 
         stringi::stri_enc_toutf8(value, is_unknown_8bit = T, validate = T)) |>
@@ -1660,7 +1678,7 @@ if(et$error[3] != "birth_date"){
   err3 <- 
     migbirdHIP::pullErrors(
       proofed_data, field = et$error[3], unique = FALSE) |> 
-    tibble::as_tibble() |>  
+    dplyr::as_tibble() |>  
     dplyr::mutate(value = stringr::str_extract(value, ".{4}$")) |> 
     dplyr::group_by(value) |> 
     dplyr::summarize(count = dplyr::n()) |> 
