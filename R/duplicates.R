@@ -9,7 +9,6 @@
 #' @importFrom dplyr arrange
 #' @importFrom dplyr bind_rows
 #' @importFrom dplyr across
-#' @importFrom dplyr vars
 #' @importFrom dplyr matches
 #' @importFrom dplyr all_of
 #' @importFrom dplyr select
