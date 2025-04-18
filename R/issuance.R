@@ -212,7 +212,7 @@ issueAssign <-
 #' @importFrom dplyr rename
 #' @importFrom dplyr distinct
 #' @importFrom lubridate mdy
-#' @importFrom tibble tibble
+#' @importFrom dplyr tibble
 #' @importFrom ggplot2 aes
 #' @importFrom ggplot2 labs
 #' @importFrom ggplot2 ggplot

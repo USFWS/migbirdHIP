@@ -4,7 +4,7 @@
 #'
 #' @importFrom dplyr mutate
 #' @importFrom dplyr select
-#' @importFrom tibble as_tibble
+#' @importFrom dplyr as_tibble
 #' @importFrom dplyr row_number
 #' @importFrom dplyr bind_rows
 #' @importFrom dplyr distinct

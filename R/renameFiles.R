@@ -11,7 +11,7 @@
 #' @importFrom stringr str_to_upper
 #' @importFrom stringr str_replace
 #' @importFrom stringr str_extract
-#' @importFrom tibble as_tibble
+#' @importFrom dplyr as_tibble
 #' @importFrom tidyr separate_wider_position
 #' @importFrom tidyr unite
 #'

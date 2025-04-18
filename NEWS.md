@@ -2,6 +2,7 @@
 
 ## Major changes & new features
 
+- `{tibble}` no longer a required import
 - `redFlags()` no longer exported, used only in the download report; called in the template as an internal function.
 - `validate()`, `investigate()`, and `identicalBags()` removed from R package
 - In an effort to improve the maintainability of the package code, steps were made toward modularity, clarity, and unit testing in some of the larger functions.

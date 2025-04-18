@@ -172,7 +172,7 @@ read_hip <-
 #'
 #' The internal \code{listFiles} function is used inside of \code{\link{read_hip}} and creates a tibble of the HIP .txt files to be read in from the provided directory.
 #'
-#' @importFrom tibble as_tibble_col
+#' @importFrom dplyr tibble
 #'
 #' @param path File path to the folder containing HIP .txt files
 #' @param season If set as TRUE, selects only folders starting with "DL" in a a season's upper-level directory
@@ -185,14 +185,15 @@ listFiles <-
 
     # Create a tibble of the HIP .txt files to be read from the provided
     # directory
-    list.files(
-      path,
-      recursive = {{season}},
-      pattern = "*\\.txt$",
-      ignore.case = TRUE,
-      full.names = TRUE) |>
-    as_tibble_col(column_name = "filepath")
-
+    tibble(
+      filepath =
+        list.files(
+          path,
+          recursive = {{season}},
+          pattern = "*\\.txt$",
+          ignore.case = TRUE,
+          full.names = TRUE)
+    )
   }
 
 #' Ignore permit files
