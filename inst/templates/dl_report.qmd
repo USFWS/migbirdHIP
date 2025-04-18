@@ -117,7 +117,7 @@ fixed_dates_data <- NULL
 
 current_data <- catch_messages(migbirdHIP::issueCheck(cleaned_data, params$year))
 
-fixed_data <- catch_messages(migbirdHIP::fixDuplicates(current_data))
+fixed_data <- catch_messages(migbirdHIP::duplicateFix(current_data))
 
 proofed_data <- migbirdHIP::proof(fixed_data, year = params$year)
 
@@ -1433,27 +1433,27 @@ issue_assignments <- NULL
 ## Duplicate records
 
 ::: panel-tabset
-## Before fixDuplicates (all 49 states)
+## Before duplicateFix (all 49 states)
 
 ```{r before_fixduplicates}
 #| fig.align: center
 #| echo: false
 
-migbirdHIP::plotDuplicates(current_data)
+migbirdHIP::duplicatePlot(current_data)
 
 current_data <- NULL
 ```
 
-## After fixDuplicates (all 49 states)
+## After duplicateFix (all 49 states)
 
 ```{r after_fixduplicates}
 #| echo: false
 #| fig.align: center
 
-fixed_dupes <- migbirdHIP::findDuplicates(proofed_data)
+fixed_dupes <- migbirdHIP::duplicateFinder(proofed_data)
 
 if(!is.null(fixed_dupes)) {
-  migbirdHIP::plotDuplicates(proofed_data)
+  migbirdHIP::duplicatePlot(proofed_data)
   
   DT::datatable(fixed_dupes)
 } 

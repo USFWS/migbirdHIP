@@ -19,12 +19,12 @@ Tasks that can be accomplished with this package include:
 - `shiftCheck` finds line shift errors
 - `strataCheck` identifies any new or unexpected strata
 - `issueCheck` looks for records that should be processed later
-- `findDuplicates` identifies duplicate HIP records
-- `fixDuplicates` resolves duplicate HIP records
+- `duplicateFinder` identifies duplicate HIP records
+- `duplicateFix` resolves duplicate HIP records
 - `proof` checks values for errors
 - `correct` systematically fixes erroneous values
-- Error visualization with `errorPlot_dl`, `errorPlot_fields`, and
-  `errorPlot_states`
+- Error visualization with `errorPlotDL`, `errorPlotFields`, and
+  `errorPlotStates`
 - Detailed error table reporting with `errorTable` and `pullErrors`
 - Automated report writing with `writeReport`
 - Custom .csv writing with `write_hip`

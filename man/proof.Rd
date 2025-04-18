@@ -7,7 +7,7 @@
 proof(deduplicated_data, year)
 }
 \arguments{
-\item{deduplicated_data}{The object created after deduplicating data with \code{\link{fixDuplicates}}}
+\item{deduplicated_data}{The object created after deduplicating data with \code{\link{duplicateFix}}}
 
 \item{year}{The year in which the Harvest Information Program data were collected}
 }

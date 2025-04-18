@@ -21,7 +21,7 @@
 #' @importFrom stringr str_remove_all
 #' @importFrom stringr str_length
 #'
-#' @param deduplicated_data The object created after deduplicating data with \code{\link{fixDuplicates}}
+#' @param deduplicated_data The object created after deduplicating data with \code{\link{duplicateFix}}
 #' @param year The year in which the Harvest Information Program data were collected
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
