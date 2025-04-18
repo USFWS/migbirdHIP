@@ -909,9 +909,6 @@ duplicateFix <-
 duplicateFinder <-
   function(current_data) {
 
-    # Fail if incorrect return supplied
-    stopifnot("Error: Incorrect value supplied for `return` parameter. Please choose: 'table' or 'plot'." = return %in% c("table", "plot"))
-
     # List of permit records
     pmts <-
       current_data |>
@@ -1058,13 +1055,17 @@ duplicateFinder <-
       distinct()
 
     if(nrow(dupl_tibble) == 0) {
-
       message(
         paste(
           "There are", duplicate_individuals,
           "registrations with duplicates;", nrow(duplicates),
           "total duplicated records."))
     } else {
+      message(
+        paste(
+          "There are", duplicate_individuals,
+          "registrations with duplicates;", nrow(duplicates),
+          "total duplicated records."))
 
       dupl_table <-
         dupl_tibble |>
@@ -1073,12 +1074,6 @@ duplicateFinder <-
         ungroup()
 
       return(dupl_table)
-
-      message(
-        paste(
-          "There are", duplicate_individuals,
-          "registrations with duplicates;", nrow(duplicates),
-          "total duplicated records."))
     }
   }
 
