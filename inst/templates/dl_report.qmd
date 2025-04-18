@@ -1439,7 +1439,7 @@ issue_assignments <- NULL
 #| fig.align: center
 #| echo: false
 
-migbirdHIP::findDuplicates(current_data)
+migbirdHIP::plotDuplicates(current_data)
 
 current_data <- NULL
 ```
@@ -1450,10 +1450,10 @@ current_data <- NULL
 #| echo: false
 #| fig.align: center
 
-fixed_dupes <- migbirdHIP::findDuplicates(proofed_data, return = "table")
+fixed_dupes <- migbirdHIP::findDuplicates(proofed_data)
 
 if(!is.null(fixed_dupes)) {
-  migbirdHIP::findDuplicates(proofed_data)
+  migbirdHIP::plotDuplicates(proofed_data)
   
   DT::datatable(fixed_dupes)
 } 
@@ -1473,7 +1473,7 @@ fixed_dupes <- NULL
 #| echo: false
 #| fig.align: center
 
-migbirdHIP::errorPlot_fields(proofed_data, year = params$year)
+migbirdHIP::errorPlotFields(proofed_data, year = params$year)
 ```
 
 ### After correction
@@ -1737,7 +1737,7 @@ zipcheck <- NULL
 #| echo: false
 #| fig.align: center
 
-migbirdHIP::errorPlot_states(proofed_data)
+migbirdHIP::errorPlotStates(proofed_data)
 ```
 
 ### After correction
@@ -1746,7 +1746,7 @@ migbirdHIP::errorPlot_states(proofed_data)
 #| echo: false
 #| fig.align: center
 
-migbirdHIP::errorPlot_states(final_data)
+migbirdHIP::errorPlotStates(final_data)
 
 ```
 :::

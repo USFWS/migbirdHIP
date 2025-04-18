@@ -1,42 +1,27 @@
 #' Find duplicates
 #'
-#' Determine how many duplicate records are in the data. Plot and tabulate which fields are duplicates of individual hunters (i.e. data grouped by first name, last name, state, and birth date, registration year, and download state).
+#' Determine how many duplicate records are in the data and return a table.
 #'
 #' @importFrom dplyr mutate
-#' @importFrom dplyr row_number
+#' @importFrom dplyr across
+#' @importFrom dplyr all_of
+#' @importFrom dplyr matches
+#' @importFrom dplyr filter
+#' @importFrom dplyr pull
 #' @importFrom dplyr group_by
 #' @importFrom dplyr n
-#' @importFrom dplyr n_distinct
 #' @importFrom dplyr ungroup
-#' @importFrom dplyr filter
 #' @importFrom dplyr arrange
 #' @importFrom dplyr select
-#' @importFrom dplyr distinct
+#' @importFrom dplyr n_distinct
 #' @importFrom dplyr cur_group_id
-#' @importFrom dplyr across
-#' @importFrom dplyr vars
-#' @importFrom dplyr matches
-#' @importFrom dplyr all_of
+#' @importFrom dplyr row_number
 #' @importFrom stringr str_detect
 #' @importFrom stringr str_remove
-#' @importFrom dplyr case_when
-#' @importFrom ggplot2 ggplot
-#' @importFrom ggplot2 aes
-#' @importFrom ggplot2 geom_bar
-#' @importFrom ggplot2 geom_text
-#' @importFrom ggplot2 labs
-#' @importFrom ggplot2 scale_y_continuous
-#' @importFrom ggplot2 expansion
-#' @importFrom ggplot2 theme_classic
-#' @importFrom ggplot2 theme
-#' @importFrom ggplot2 element_text
-#' @importFrom ggplot2 after_stat
-#' @importFrom dplyr count
 #' @importFrom dplyr summarize
-#' @importFrom stats reorder
+#' @importFrom dplyr distinct
 #'
 #' @param current_data The object created after filtering to current data with \code{\link{issueCheck}}
-#' @param return Return a "plot" (default) or "table"
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}
@@ -44,7 +29,7 @@
 #' @export
 
 findDuplicates <-
-  function(current_data, return = "plot") {
+  function(current_data) {
 
     # Fail if incorrect return supplied
     stopifnot("Error: Incorrect value supplied for `return` parameter. Please choose: 'table' or 'plot'." = return %in% c("table", "plot"))
@@ -193,61 +178,103 @@ findDuplicates <-
       ungroup() |>
       select(hunter_key, dupl, dl_state) |>
       distinct()
+
       if(nrow(dupl_tibble) == 0) {
+
         message(
-        paste(
-          "There are", duplicate_individuals,
-          "registrations with duplicates;", nrow(duplicates),
-          "total duplicated records.", sep = " "))
+          paste(
+            "There are", duplicate_individuals,
+            "registrations with duplicates;", nrow(duplicates),
+            "total duplicated records."))
       } else {
-      if(return == "plot") {
-          dupl_plot <-
-          dupl_tibble |>
-          # Bin into generic "2+ fields" if more than one field contributes to
-          # a duplicate
-          mutate(
-            dupl =
-              case_when(
-                str_detect(dupl, "[a-z|a-z\\_a-z|a-z|a-z\\_a-z\\_a-z|a-z\\_a-z]{1,}\\-[a-z|a-z\\_a-z]{1,}\\-[a-z|a-z\\_a-z]{1,}\\-[a-z|a-z\\_a-z]{1,}\\-[a-z|a-z\\_a-z]{1,}") ~ "2+ fields", #5+ fields
-                str_detect(dupl, "[a-z|a-z\\_a-z]{1,}\\-[a-z|a-z\\_a-z]{1,}\\-[a-z|a-z\\_a-z]{1,}\\-[a-z|a-z\\_a-z]{1,}") ~ "2+ fields", #4 fields
-                str_detect(dupl, "[a-z|a-z\\_a-z]{1,}\\-[a-z|a-z\\_a-z]{1,}\\-[a-z|a-z\\_a-z]{1,}") ~ "2+ fields", #3 fields
-                str_detect(dupl, "[a-z|a-z\\_a-z]{1,}\\-[a-z|a-z\\_a-z]{1,}") ~ "2+ fields",
-                TRUE ~ dupl)
-          ) |>
-          # Make a new col to reorder the bars
-          group_by(dupl) |>
-          mutate(total_count = n()) |>
-          ungroup() |>
-          ggplot(aes(x = reorder(dupl, -total_count))) +
-          geom_bar(stat = "count") +
-          geom_text(
-            aes(
-              x = dupl,
-              label = after_stat(count),
-              angle = 90),
-            stat = "count",
-            vjust = 0.2,
-            hjust = -0.2) +
-          labs(
-            x = "Inconsistent field(s) for duplicated hunters",
-            y = "Count",
-            title = "Types of duplicates") +
-          scale_y_continuous(expand = expansion(mult = c(-0, 0.2))) +
-          theme_classic() +
-          theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
-          return(dupl_plot)
-        } else if(return == "table") {
-          dupl_table <-
+
+        dupl_table <-
           dupl_tibble |>
           group_by(dupl) |>
           summarize(count = n()) |>
           ungroup()
-          return(dupl_table)
-          message(
+
+        return(dupl_table)
+
+        message(
           paste(
             "There are", duplicate_individuals,
             "registrations with duplicates;", nrow(duplicates),
-            "total duplicated records.", sep = " "))
-        }
-    }
-}
+            "total duplicated records."))
+      }
+  }
+
+#' Plot duplicates
+#'
+#' Plot which fields are duplicates of individual hunters.
+#'
+#' @importFrom dplyr mutate
+#' @importFrom dplyr case_when
+#' @importFrom stringr str_detect
+#' @importFrom dplyr group_by
+#' @importFrom dplyr n
+#' @importFrom ggplot2 ggplot
+#' @importFrom ggplot2 aes
+#' @importFrom stats reorder
+#' @importFrom ggplot2 geom_bar
+#' @importFrom ggplot2 geom_text
+#' @importFrom ggplot2 after_stat
+#' @importFrom ggplot2 labs
+#' @importFrom ggplot2 scale_y_continuous
+#' @importFrom ggplot2 expansion
+#' @importFrom ggplot2 theme_classic
+#' @importFrom ggplot2 theme
+#' @importFrom ggplot2 element_text
+#'
+#' @param current_data The object created after filtering to current data with \code{\link{issueCheck}}
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @export
+
+plotDuplicates <-
+  function(current_data) {
+
+    dupl_tibble <- findDuplicates(current_data)
+
+    dupl_plot <-
+      dupl_tibble |>
+      # Bin into generic "2+ fields" if more than one field contributes to a
+      # duplicate
+      mutate(
+        dupl =
+          case_when(
+            # 5+ fields
+            str_detect(dupl, "[a-z|a-z\\_a-z|a-z|a-z\\_a-z\\_a-z|a-z\\_a-z]{1,}\\-[a-z|a-z\\_a-z]{1,}\\-[a-z|a-z\\_a-z]{1,}\\-[a-z|a-z\\_a-z]{1,}\\-[a-z|a-z\\_a-z]{1,}") ~ "2+ fields",
+            # 4 fields
+            str_detect(dupl, "[a-z|a-z\\_a-z]{1,}\\-[a-z|a-z\\_a-z]{1,}\\-[a-z|a-z\\_a-z]{1,}\\-[a-z|a-z\\_a-z]{1,}") ~ "2+ fields",
+            # 3 fields
+            str_detect(dupl, "[a-z|a-z\\_a-z]{1,}\\-[a-z|a-z\\_a-z]{1,}\\-[a-z|a-z\\_a-z]{1,}") ~ "2+ fields",
+            str_detect(dupl, "[a-z|a-z\\_a-z]{1,}\\-[a-z|a-z\\_a-z]{1,}") ~ "2+ fields",
+            TRUE ~ dupl)
+      ) |>
+      # Make a new col to reorder the bars
+      group_by(dupl) |>
+      mutate(total_count = n()) |>
+      ungroup() |>
+      ggplot(aes(x = reorder(dupl, -total_count))) +
+      geom_bar(stat = "count") +
+      geom_text(
+        aes(
+          x = dupl,
+          label = after_stat(count),
+          angle = 90),
+        stat = "count",
+        vjust = 0.2,
+        hjust = -0.2) +
+      labs(
+        x = "Inconsistent field(s) for duplicated hunters",
+        y = "Count",
+        title = "Types of duplicates") +
+      scale_y_continuous(expand = expansion(mult = c(-0, 0.2))) +
+      theme_classic() +
+      theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
+
+    return(dupl_plot)
+  }

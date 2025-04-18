@@ -53,7 +53,7 @@ clean <-
     permit_state_strata_fixed <-
       zips_formatted |>
       # If any OR HuntY = 0 for solo permit, change HuntY to 2
-      special_OregonHuntYCheck() |>
+      specialOregonHuntYCheck() |>
       # Delete white space around strings
       mutate_all(str_trim) |>
       # If any permit file states submitted a 2 for crane and/or
@@ -311,7 +311,7 @@ formatZip <-
 
 #' Oregon HuntY check
 #'
-#' The internal \code{special_OregonHuntYCheck} function changes any registration from Oregon with HuntY == "0" to "2" if one or more of the band_tailed_pigeon, brant, or seaducks fields indicate hunting.
+#' The internal \code{specialOregonHuntYCheck} function changes any registration from Oregon with HuntY == "0" to "2" if one or more of the band_tailed_pigeon, brant, or seaducks fields indicate hunting.
 #'
 #' @importFrom dplyr mutate
 #'
@@ -320,7 +320,7 @@ formatZip <-
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}
 
-special_OregonHuntYCheck <-
+specialOregonHuntYCheck <-
   function(raw_data) {
 
     # If any OR HuntY = 0 for solo permit, change HuntY to 2

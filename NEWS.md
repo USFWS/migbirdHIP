@@ -2,12 +2,17 @@
 
 ## Major changes & new features
 
+- Almost all data params changed to be less ambiguous (e.g. `x` now `cleaned_data`, `proofed_data`, etc)
+- Functions renamed to camel case except `read_hip()` and `write_hip()`:
+    - `errorPlot_fields()`, `errorPlot_states()`, and `errorPlot_dl()` now named `errorPlotFields()`, `errorPlotStates()`, `errorPlotDL()`
 - `{tibble}` no longer a required import
 - `redFlags()` no longer exported, used only in the download report; called in the template as an internal function.
 - `validate()`, `investigate()`, and `identicalBags()` removed from R package
 - In an effort to improve the maintainability of the package code, steps were made toward modularity, clarity, and unit testing in some of the larger functions.
+    - `findDuplicates()` no longer outputs a plot
+        - New `plotDuplicates()` function created
     - `read_hip()` was broken down into 15 new minor internal functions (`listFiles()`, `ignorePermits()`, `ignoreHolds()`, `idBlankFiles()`, `dropBlankFiles()`, `checkFileNameDateFormat()`, `checkFileNameStateAbbr()`, `readMessages()`, `missingPIIMessage()`, `missingEmailsMessage()`, `zeroBagsMessage()`, `naBagsMessage()`, `nonDigitBagsMessage()`, `dlStateNAMessage()`, and `dlDateNAMessage()`). More strict requirements must be met for data to be successfully read (e.g. instead of returning a message that file names are incorrectly formatted, this would stop the process). The `zeroBagsMessage()` internal function is a new feature of `read_hip()` that checks for records with all-zero bag values and returns a message to the console if they are detected.
-    - `clean()` was broken down into 10 minor internal functions (1 previously used: `strataFix()`; and 9 new functions: `namesToUppercase()`, `nonDigitBagsFilter()`, `naAndZeroBagsFilter()`, `missingPIIFilter()`, `moveSuffixes()`, `fixMiddleInitials()`, `formatZip()`, `zipCheck()`, and `special_OregonHuntYCheck()`)
+    - `clean()` was broken down into 10 minor internal functions (1 previously used: `strataFix()`; and 9 new functions: `namesToUppercase()`, `nonDigitBagsFilter()`, `naAndZeroBagsFilter()`, `missingPIIFilter()`, `moveSuffixes()`, `fixMiddleInitials()`, `formatZip()`, `zipCheck()`, and `specialOregonHuntYCheck()`)
     - `correct()` 
         - Broken down into 3 minor internal functions (`correctEmail()`, `correctTitle()`, `correctSuffix()`)
         - No longer filters out all-0 bag records (this now happens in `clean()` via `naAndZeroBagsFilter()`)

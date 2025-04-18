@@ -37,7 +37,7 @@
 #'
 #' @export
 
-errorPlot_dl <-
+errorPlotDL <-
   function(proofed_data, loc = "all") {
 
     # Fail if incorrect loc supplied
@@ -144,7 +144,7 @@ errorPlot_dl <-
 #'
 #' @export
 
-errorPlot_fields <-
+errorPlotFields <-
   function(proofed_data, loc = "all", year) {
 
     # Fail if incorrect loc supplied
@@ -162,7 +162,7 @@ errorPlot_fields <-
 
     # Plot all states without special legend colors
     fields_plot <-
-      errorLevel_errors_field(proofed_data) |>
+      errorLevelErrorsByField(proofed_data) |>
       # Plot
       ggplot() +
       geom_bar(
@@ -214,7 +214,7 @@ errorPlot_fields <-
 #'
 #' @export
 
-errorPlot_states <-
+errorPlotStates <-
   function(proofed_data, threshold = NA) {
 
     # Fail if incorrect threshold supplied
@@ -222,7 +222,7 @@ errorPlot_states <-
     stopifnot("Error: Please supply a value between 0 and 1 for the `threshold` parameter." = ((0 <= threshold & threshold <= 1) | is.na(threshold)))
 
     # Generate a table of error proportions
-    state_tbl <- errorLevel_errors_state(proofed_data)
+    state_tbl <- errorLevelErrorsByState(proofed_data)
 
     if(is.na(threshold)) {
 
@@ -305,7 +305,7 @@ errorPlot_states <-
 
 #' Calculate error-level errors by state
 #'
-#' The internal \code{errorLevel_errors_state} function calculates a summary table of the count of errors, count of correct values, and proportion of erroneous values by state.
+#' The internal \code{errorLevelErrorsByState} function calculates a summary table of the count of errors, count of correct values, and proportion of erroneous values by state.
 #'
 #' @importFrom dplyr select
 #' @importFrom dplyr group_by
@@ -324,7 +324,7 @@ errorPlot_states <-
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}
 
-errorLevel_errors_state <-
+errorLevelErrorsByState <-
   function(proofed_data){
     proofed_data |>
       select(errors, dl_state) |>
@@ -347,7 +347,7 @@ errorLevel_errors_state <-
 
 #' Calculate error-level errors by field
 #'
-#' The internal \code{errorLevel_errors_field} function calculates a summary table of the count of errors and proportion of erroneous values by field.
+#' The internal \code{errorLevelErrorsByField} function calculates a summary table of the count of errors and proportion of erroneous values by field.
 #'
 #' @importFrom dplyr select
 #' @importFrom tidyr separate_longer_delim
@@ -362,7 +362,7 @@ errorLevel_errors_state <-
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}
 
-errorLevel_errors_field <-
+errorLevelErrorsByField <-
   function(proofed_data){
     proofed_data |>
       select(errors) |>
@@ -379,36 +379,84 @@ errorLevel_errors_field <-
         proportion = count_errors / nrow(proofed_data))
   }
 
-#' Calculate record-level errors by state
+#' Pull bad data
 #'
-#' The internal \code{recordLevel_errors_state} function calculates a summary table of the count of records with errors, count of records with no errors, and proportion of erroneous records by state.
+#' Create a tibble of error data by state or field. Data are reported using a threshold of proportion of error.
 #'
-#' @importFrom dplyr select
-#' @importFrom dplyr group_by
 #' @importFrom dplyr mutate
-#' @importFrom dplyr ungroup
-#' @importFrom dplyr distinct
+#' @importFrom dplyr filter
+#' @importFrom dplyr arrange
+#' @importFrom dplyr desc
+#' @importFrom dplyr select
+#' @importFrom dplyr relocate
+#' @importFrom stringr str_detect
 #'
-#' @param proofed_data The object created after error flagging data with \code{\link{proof}} or \code{\link{correct}}
+#' @param proofed_data A proofed data table created by \code{\link{proof}}
+#' @param type Type of tibble to report. Acceptable values include:
+#'  \itemize{
+#'  \item state
+#'  \item field
+#'  }
+#' @param threshold Value above which errors should be tabulated
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}
 
-recordLevel_errors_state <-
-  function(proofed_data) {
-    proofed_data |>
-      select(errors, dl_state) |>
-      group_by(dl_state) |>
-      mutate(
-        count_records_w_error = sum(!is.na(errors)),
-        count_records_correct = sum(is.na(errors))
-      ) |>
-      ungroup() |>
-      select(-errors) |>
-      distinct() |>
-      # Calculate the proportion
-      mutate(
-        proportion =
-          count_records_w_error/(count_records_w_error + count_records_correct))
+redFlags <-
+  function(proofed_data, type, threshold = 0) {
 
+    # Fail if incorrect type supplied
+    stopifnot("Error: Please supply 'state' or 'field' for `type` parameter." = type %in% c("state", "field"))
+
+    # Fail if incorrect threshold supplied
+    stopifnot("Error: `threshold` parameter must be numeric." = is.numeric(threshold))
+    stopifnot("Error: Please supply a value between 0 and 1 for the `threshold` parameter." = (0 <= threshold & threshold <= 1))
+
+    if (type == "state") {
+
+      # State red flags
+      rf <-
+        errorLevelErrorsByState(proofed_data) |>
+        mutate(
+          flag =
+            ifelse(
+              proportion > threshold,
+              paste0("error > ", threshold),
+              NA)) |>
+        # Filter out errors that didn't exceed the threshold
+        filter(!is.na(flag)) |>
+        arrange(desc(proportion))
+
+      if (nrow(rf) > 0) {
+        return(rf)
+      } else {
+        message("No states with error exceeding the threshold.")
+      }
+    } else if (type == "field") {
+
+      # Field red flags
+      rf <-
+        errorLevelErrorsByField(proofed_data) |>
+        mutate(
+          count_correct = total - count_errors,
+          flag =
+            ifelse(
+              proportion > threshold,
+              paste0("error > ", threshold),
+              NA)) |>
+        select(-total) |>
+        relocate(count_correct, .before = proportion) |>
+        # Filter out errors that didn't exceed the threshold
+        filter(!is.na(flag)) |>
+        arrange(desc(proportion))
+
+      if (nrow(rf) > 0) {
+        return(rf)
+      } else {
+        message("No fields with error exceeding the threshold.")
+      }
+    } else {
+      message("Error: Invalid type provided.")
+    }
   }
+
