@@ -11,7 +11,7 @@
 #' @importFrom dplyr filter
 #' @importFrom tidyr separate_wider_delim
 #' @importFrom tidyr pivot_longer
-#' @importFrom tidyr starts_with
+#' @importFrom dplyr starts_with
 #' @importFrom ggplot2 ggplot
 #' @importFrom ggplot2 aes
 #' @importFrom ggplot2 geom_bar
@@ -313,7 +313,7 @@ errorPlot_states <-
 #' @importFrom dplyr ungroup
 #' @importFrom tidyr separate_wider_delim
 #' @importFrom tidyr pivot_longer
-#' @importFrom tidyr starts_with
+#' @importFrom dplyr starts_with
 #' @importFrom dplyr filter
 #' @importFrom dplyr reframe
 #' @importFrom dplyr n

@@ -92,7 +92,7 @@ namesToUppercase <-
 #'
 #' @importFrom dplyr filter
 #' @importFrom dplyr if_any
-#' @importFrom tidyr all_of
+#' @importFrom dplyr all_of
 #' @importFrom stringr str_detect
 #'
 #' @inheritParams clean
@@ -114,7 +114,7 @@ nonDigitBagsFilter <-
 #'
 #' @importFrom dplyr filter
 #' @importFrom dplyr if_all
-#' @importFrom tidyr all_of
+#' @importFrom dplyr all_of
 #'
 #' @inheritParams clean
 #'

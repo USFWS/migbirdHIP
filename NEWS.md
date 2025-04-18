@@ -23,7 +23,7 @@
     - Eliminated breaking error in report rendering if there is no field exceeding the error threshold
     - Removed all-0 bag section from the Agenda tab
     - Added comma formatting to long numbers 
-    - On the Errors tab, moved the "Bad zip codes" section to its own subheader after "Causes of errors for top 3 fields"
+    - On the Errors tab, moved the "Bad zip codes" section to its own sub-header after "Causes of errors for top 3 fields"
 - Edited `read_hip()` to catch file names with incorrect MMDDYYYY or DDMMYYYY date format
 - Edited `issueCheck()` to return error for NA values in `record_key` field
 - Added release tags to README
