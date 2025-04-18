@@ -14,7 +14,7 @@
 #' @importFrom lubridate mdy
 #' @importFrom stringr str_detect
 #'
-#' @param x The object created after cleaning data with \code{\link{clean}}
+#' @param clean_data The object created after cleaning data with \code{\link{clean}}
 #' @param year The year of the HIP season (e.g. 2022 for the 2022-2023 season)
 #' @param plot Create a plot? Default is FALSE
 #'
@@ -24,7 +24,7 @@
 #' @export
 
 issueCheck <-
-  function(x, year, plot = FALSE){
+  function(clean_data, year, plot = FALSE){
 
     # Fail if incorrect year supplied
     stopifnot("Error: `year` parameter must be numeric." = is.numeric(year))
@@ -35,19 +35,19 @@ issueCheck <-
 
     # Return message if all values in record_key field are NA (causes problems
     # with joining later)
-    if (is.na(unique(x$record_key))) {
+    if (is.na(unique(clean_data$record_key))) {
       message("Error: All values in record_key are NA.")
     }
 
     # Determine the destination of each record
-    issue_assignments <- issueAssign(x, year)
+    issue_assignments <- issueAssign(clean_data, year)
 
     # Return message for future registration years being changed to the current
     # year for registrations with a current issue_date (e.g. current record with
     # registration_yr = X changed to X-1)
     eval_yrs <-
       left_join(
-        x |>
+        clean_data |>
           select(record_key, dl_state, orig_yr = registration_yr),
         issue_assignments |>
           select(record_key, eval_yr = registration_yr),
@@ -67,7 +67,7 @@ issueCheck <-
       )
     }
     # Return message if any issue_date is after the file was submitted
-    if(nrow(filter(x, mdy(issue_date) > ymd(dl_date))) > 0) {
+    if(nrow(filter(clean_data, mdy(issue_date) > ymd(dl_date))) > 0) {
       message(
         "Error: issue_date in the future detected (relative to file name).")
       print(
@@ -76,7 +76,7 @@ issueCheck <-
       )
     }
     # Return message if issue_date = "00/00/0000" detected
-    if(TRUE %in% str_detect(x$issue_date, "00/00/0000")) {
+    if(TRUE %in% str_detect(clean_data$issue_date, "00/00/0000")) {
       message("Error: issue_date value of 00/00/0000 detected.")
     }
     # Return message if "bad issue dates" detected
@@ -150,20 +150,20 @@ issueCheck <-
 #' @importFrom dplyr select
 #' @importFrom stringr str_detect
 #'
-#' @param x The object created after cleaning data with \code{\link{clean}}
+#' @param clean_data The object created after cleaning data with \code{\link{clean}}
 #' @param year The year of the HIP season (e.g. 2022 for the 2022-2023 season)
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}
 
 issueAssign <-
-  function(x, year) {
+  function(clean_data, year) {
 
     # Fail if incorrect year supplied
     stopifnot("Error: `year` parameter must be numeric." = is.numeric(year))
     stopifnot("Error: Incorrect value supplied for `year` parameter. Please use a 4-digit year in the 2020s, e.g. 2024." = str_detect(year, "^202[0-9]{1}$"))
 
-    x |>
+    clean_data |>
       # Join in licensing dates
       left_join(
         licenses_ref |>
@@ -227,14 +227,14 @@ issueAssign <-
 #' @importFrom ggplot2 theme
 #' @importFrom ggplot2 theme_classic
 #'
-#' @param x The object created by \code{\link{issueAssign}}
+#' @param issue_assigned_data The object created by \code{\link{issueAssign}}
 #' @param year The year of the HIP season (e.g. 2022 for the 2022-2023 season)
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}
 
 issuePlot <-
-  function(x, year) {
+  function(issue_assigned_data, year) {
 
     # Fail if incorrect year supplied
     stopifnot("Error: `year` parameter must be numeric." = is.numeric(year))
@@ -256,7 +256,7 @@ issuePlot <-
         ymax = Inf)
 
     badplot_data <-
-      x |>
+      issue_assigned_data |>
       filter(decision != "current" & dl_state != "MS") |>
       select(dl_state, source_file, issue_date, registration_yr, decision) |>
       left_join(

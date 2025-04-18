@@ -4,10 +4,10 @@
 \alias{issueAssign}
 \title{Assign decisions to records on how to process them using issue dates and license years}
 \usage{
-issueAssign(x, year)
+issueAssign(clean_data, year)
 }
 \arguments{
-\item{x}{The object created after cleaning data with \code{\link{clean}}}
+\item{clean_data}{The object created after cleaning data with \code{\link{clean}}}
 
 \item{year}{The year of the HIP season (e.g. 2022 for the 2022-2023 season)}
 }

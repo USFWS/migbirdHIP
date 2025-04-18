@@ -4,10 +4,10 @@
 \alias{issuePlot}
 \title{Plot issue date errors}
 \usage{
-issuePlot(x, year)
+issuePlot(issue_assigned_data, year)
 }
 \arguments{
-\item{x}{The object created by \code{\link{issueAssign}}}
+\item{issue_assigned_data}{The object created by \code{\link{issueAssign}}}
 
 \item{year}{The year of the HIP season (e.g. 2022 for the 2022-2023 season)}
 }
