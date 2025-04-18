@@ -32,7 +32,8 @@ glyphFinder <-
 #'
 #' Pull and view any non-UTF-8 characters in the raw data. This function iterates \code{\link{glyphFinder}} over the entire tibble.
 #'
-#' @importFrom purrr map_dfr
+#' @importFrom purrr map
+#' @importFrom purrr list_rbind
 #' @importFrom dplyr rename
 #' @importFrom dplyr mutate
 #' @importFrom dplyr relocate
@@ -50,7 +51,7 @@ glyphCheck <-
   function(raw_data) {
 
     checked <-
-      map_dfr(
+      map(
         names(raw_data),
         \(x) glyphFinder(raw_data, x) |>
           rename(value = !!sym(x)) |>
@@ -58,7 +59,8 @@ glyphCheck <-
             field = x,
             value = as.character(value)) |>
           relocate(field, .before = "value")
-      ) |>
+        ) |>
+      list_rbind() |>
       filter(!is.na(value)) |>
       arrange(source_file)
 

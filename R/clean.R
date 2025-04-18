@@ -2,7 +2,9 @@
 #'
 #' After reading the data with \code{\link{read_hip}}, reformat and clean the HIP registrations.
 #'
-#' @importFrom dplyr mutate_all
+#' @importFrom dplyr mutate
+#' @importFrom dplyr across
+#' @importFrom dplyr everything
 #' @importFrom stringr str_trim
 #'
 #' @param raw_data The object created after reading in data with \code{\link{read_hip}}
@@ -55,7 +57,7 @@ clean <-
       # If any OR HuntY = 0 for solo permit, change HuntY to 2
       specialOregonHuntYCheck() |>
       # Delete white space around strings
-      mutate_all(str_trim) |>
+      mutate(across(everything(), \(x) str_trim(x))) |>
       # If any permit file states submitted a 2 for crane and/or
       # band_tailed_pigeon, change the 2 to a 0
       permitStrataFix()
