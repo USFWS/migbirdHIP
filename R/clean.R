@@ -35,8 +35,8 @@ clean <-
       # numeric, excluding XVIII since the db limit is 4 characters. Delete
       # periods and commas from suffixes.
       moveSuffixes() |>
-      # Change any character that's not a letter to NA in the from middle
-      # initial field
+      # Change any character that's not a letter to NA in the middle initial
+      # field
       fixMiddleInitials() |>
       # Remove ending hyphen from zip codes with 5 digits
       # Remove final 0 from zip codes with length of 10 digits
