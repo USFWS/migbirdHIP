@@ -58,7 +58,7 @@ clean <-
       mutate_all(str_trim) |>
       # If any permit file states submitted a 2 for crane and/or
       # band_tailed_pigeon, change the 2 to a 0
-      strataFix()
+      permitStrataFix()
 
     return(permit_state_strata_fixed)
   }
@@ -394,7 +394,7 @@ zipCheck <-
 
 #' Fix permit strata
 #'
-#' The internal \code{strataFix} function is used inside of \code{\link{clean}} to edit strata for states that submit permit files separately from HIP. If records from these states submit a "2" for the band_tailed_pigeon or crane field, they will be mistakenly identified as permit records. The \code{strataFix} function changes band_tailed_pigeon and/or crane "2" values to "0" so that they are classified as HIP records until permit files are received later in the hunting season.
+#' The internal \code{permitStrataFix} function is used inside of \code{\link{clean}} to edit strata for states that submit permit files separately from HIP. If records from these states submit a "2" for the band_tailed_pigeon or crane field, they will be mistakenly identified as permit records. The \code{permitStrataFix} function changes band_tailed_pigeon and/or crane "2" values to "0" so that they are classified as HIP records until permit files are received later in the hunting season.
 #'
 #' @importFrom dplyr filter
 #' @importFrom dplyr count
@@ -406,7 +406,7 @@ zipCheck <-
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}
 
-strataFix <-
+permitStrataFix <-
   function(raw_data) {
 
     bad_bt_2s <-
