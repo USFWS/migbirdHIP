@@ -25,8 +25,7 @@ Tasks that can be accomplished with this package include:
 - `correct` systematically fixes erroneous values
 - Error visualization with `errorPlot_dl`, `errorPlot_fields`, and
   `errorPlot_states`
-- Detailed error reporting with `errorTable`, `pullErrors`, and
-  `redFlags`
+- Detailed error table reporting with `errorTable` and `pullErrors`
 - Automated report writing with `writeReport`
 - Custom .csv writing with `write_hip`
 

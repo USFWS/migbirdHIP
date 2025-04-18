@@ -895,7 +895,7 @@ States with more than 1% error before correction
 
 rfstate <-
   suppressMessages(
-    migbirdHIP::redFlags(
+    migbirdHIP:::redFlags(
       proofed_data, 
       type = "state", 
       threshold = 0.01) 
@@ -929,7 +929,7 @@ Fields with more than 1% error before correction
 
 rffield <-
   suppressMessages(
-    migbirdHIP::redFlags(
+    migbirdHIP:::redFlags(
       proofed_data, 
       type = "field", 
       threshold = 0.01)
