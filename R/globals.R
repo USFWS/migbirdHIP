@@ -58,7 +58,7 @@ globalVariables(
     "rowkey",
     "h_test",
     "h_validate",
-    "normal_strata",
+    "expected_bag_value",
     "birth_year",
     "special",
     "total",
@@ -118,5 +118,7 @@ globalVariables(
     "n_shift",
     "num_lines",
     "bags",
-    "state_strata",
-    "shifted"))
+    "bad_bag_value",
+    "shifted",
+    "n_bad_bags",
+    "n_state"))
