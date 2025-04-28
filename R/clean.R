@@ -52,7 +52,7 @@ clean <-
     # state
     zipCheck(zips_formatted)
 
-    permit_state_strata_fixed <-
+    permit_state_bags_fixed <-
       zips_formatted |>
       # If any OR HuntY = 0 for solo permit, change HuntY to 2
       specialOregonHuntYCheck() |>
@@ -60,9 +60,9 @@ clean <-
       mutate(across(everything(), \(x) str_trim(x))) |>
       # If any permit file states submitted a 2 for crane and/or
       # band_tailed_pigeon, change the 2 to a 0
-      permitStrataFix()
+      permitBagFix()
 
-    return(permit_state_strata_fixed)
+    return(permit_state_bags_fixed)
   }
 
 #' Names to uppercase
@@ -394,9 +394,9 @@ zipCheck <-
     }
   }
 
-#' Fix permit strata
+#' Fix permit bag values
 #'
-#' The internal \code{permitStrataFix} function is used inside of \code{\link{clean}} to edit strata for states that submit permit files separately from HIP. If records from these states submit a "2" for the band_tailed_pigeon or crane field, they will be mistakenly identified as permit records. The \code{permitStrataFix} function changes band_tailed_pigeon and/or crane "2" values to "0" so that they are classified as HIP records until permit files are received later in the hunting season.
+#' The internal \code{permitBagFix} function is used inside of \code{\link{clean}} to edit bag values for states that submit permit files separately from HIP. If records from these states submit a "2" for the band_tailed_pigeon or crane field, they will be mistakenly identified as permit records. The \code{permitBagFix} function changes band_tailed_pigeon and/or crane "2" values to "0" so that they are classified as HIP records until permit files are received later in the hunting season.
 #'
 #' @importFrom dplyr filter
 #' @importFrom dplyr count
@@ -408,7 +408,7 @@ zipCheck <-
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}
 
-permitStrataFix <-
+permitBagFix <-
   function(raw_data) {
 
     bad_bt_2s <-
@@ -429,7 +429,7 @@ permitStrataFix <-
 
     if(nrow(bad_bt_2s) > 0 | nrow(bad_cr_2s) > 0) {
 
-      corrected_pmt_strata <-
+      corrected_pmt_bags <-
         raw_data |>
         mutate(
           band_tailed_pigeon =
@@ -458,7 +458,7 @@ permitStrataFix <-
         )
       )
 
-      return(corrected_pmt_strata)
+      return(corrected_pmt_bags)
 
     } else {
       message(
