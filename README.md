@@ -17,7 +17,7 @@ Tasks that can be accomplished with this package include:
 - `fileCheck` makes sure all files are new
 - `glyphCheck` identifies non-UTF-8 characters
 - `shiftCheck` finds line shift errors
-- `strataCheck` identifies any new or unexpected strata
+- `bagCheck` identifies any new or unexpected bag values
 - `issueCheck` looks for records that should be processed later
 - `duplicateFinder` identifies duplicate HIP records
 - `duplicateFix` resolves duplicate HIP records
