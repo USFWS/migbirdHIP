@@ -30,6 +30,8 @@ correct <-
       correctTitle() |>
       # Suffix correction (change to NA if error detected)
       correctSuffix() |>
+      # Correct middle initial (change to NA if error detected)
+      correctMiddleInitial() |>
       # Change "none"s back to NAs in errors col
       mutate(errors = ifelse(errors == "none", NA, errors)) |>
       # Email correction
@@ -81,6 +83,27 @@ correctSuffix <-
     # Change suffix to NA if error detected
     proofed_data |>
       mutate(suffix = ifelse(str_detect(errors, "suffix"), NA, suffix))
+
+  }
+
+#' Correct middle initials
+#'
+#' The internal \code{correctMiddleInitial} function changes non-alphabetic characters in the middle initial column to NA.
+#'
+#' @importFrom stringr str_detect
+#'
+#' @param proofed_data The object created after error flagging data with \code{\link{proof}}
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
+
+correctMiddleInitial <-
+  function(proofed_data) {
+
+    # Change any character that's not a letter to NA in the from middle
+    # initial field
+    proofed_data |>
+      mutate(middle = ifelse(str_detect(errors, "middle"), NA, middle))
 
   }
 

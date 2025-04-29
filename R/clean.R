@@ -2,11 +2,6 @@
 #'
 #' After reading the data with \code{\link{read_hip}}, reformat and clean the HIP registrations.
 #'
-#' @importFrom dplyr mutate
-#' @importFrom dplyr across
-#' @importFrom dplyr everything
-#' @importFrom stringr str_trim
-#'
 #' @param raw_data The object created after reading in data with \code{\link{read_hip}}
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
@@ -17,16 +12,12 @@
 clean <-
   function(raw_data) {
 
-    zips_formatted <-
+    cleaned_data <-
       raw_data |>
-      # Convert firstname, lastname, and suffix to upper case
-      namesToUppercase() |>
       # Filter out any record if any bag value is not a 1-digit number
       nonDigitBagsFilter() |>
       # Filter out any record with all-NA or all-0 bag values
       naAndZeroBagsFilter() |>
-      # Filter out any test records
-      testRecordFilter() |>
       # Filter out records if firstname, lastname, city of residence, state of
       # residence, or date of birth are missing -- records discarded because
       # these are needed to identify individuals. Filter out any other
@@ -34,37 +25,33 @@ clean <-
       # a physical address that are required to determine where to mail a
       # letter.
       missingPIIFilter() |>
+      # Convert firstname, lastname, and suffix to upper case
+      namesToUppercase() |>
+      # Filter out any test records
+      testRecordFilter() |>
       # Delete suffixes from the lastname field and/or firstname field and move
       # them to the suffix field. Catches values from 1-20 in Roman numerals and
       # numeric, excluding XVIII since the db limit is 4 characters. Delete
       # periods and commas from suffixes.
       moveSuffixes() |>
-      # Change any character that's not a letter to NA in the middle initial
-      # field
-      fixMiddleInitials() |>
       # Remove ending hyphen from zip codes with 5 digits
       # Remove final 0 from zip codes with length of 10 digits
       # Insert a hyphen in continuous 9 digit zip codes
       # Insert a hyphen in 9 digit zip codes with a middle space
       # Remove trailing -0000
       # Remove trailing -___
-      formatZip()
-
-    # Check that the zip code for each address is associated with the correct
-    # state
-    zipCheck(zips_formatted)
-
-    permit_state_bags_fixed <-
-      zips_formatted |>
+      formatZip() |>
       # If any OR HuntY = 0 for solo permit, change HuntY to 2
       specialOregonHuntYCheck() |>
-      # Delete white space around strings
-      mutate(across(everything(), \(x) str_trim(x))) |>
       # If any permit file states submitted a 2 for crane and/or
       # band_tailed_pigeon, change the 2 to a 0
       permitBagFix()
 
-    return(permit_state_bags_fixed)
+    # Check that the zip code for each address is associated with the correct
+    # state
+    zipCheck(cleaned_data)
+
+    return(cleaned_data)
   }
 
 #' Names to uppercase
@@ -128,7 +115,7 @@ nonDigitBagsFilter <-
 naAndZeroBagsFilter <-
   function(raw_data) {
 
-    # Filter out any record if any bag value is not a 1-digit number
+    # Filter out any record if any bag value is NA or "0"
     raw_data |>
       filter(!if_all(all_of(ref_bagfields), \(x) x == "0"))
 
@@ -196,6 +183,9 @@ missingPIIFilter <-
 #' @importFrom stringr str_extract
 #' @importFrom stringr str_remove_all
 #' @importFrom stringr str_remove
+#' @importFrom dplyr across
+#' @importFrom dplyr contains
+#' @importFrom stringr str_trim
 #'
 #' @inheritParams clean
 #'
@@ -240,30 +230,11 @@ moveSuffixes <-
           ifelse(
             str_detect(firstname, suffix_regex),
             str_remove(firstname, suffix_regex),
-            firstname))
+            firstname)) |>
+      # Delete white space around names due to moving the suffixes
+      mutate(across(contains("name"), \(x) str_trim(x)))
 
     return(suffixes_moved)
-  }
-
-#' Fix middle initials
-#'
-#' The internal \code{fixMiddleInitials} function changes non-alphabetic characters in the middle initial column to NA.
-#'
-#' @importFrom stringr str_detect
-#'
-#' @inheritParams clean
-#'
-#' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
-
-fixMiddleInitials <-
-  function(raw_data) {
-
-    # Change any character that's not a letter to NA in the from middle
-    # initial field
-    raw_data |>
-      mutate(middle = ifelse(str_detect(middle, "[^A-Z]"), NA, middle))
-
   }
 
 #' Format zip codes
