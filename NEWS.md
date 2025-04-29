@@ -7,7 +7,7 @@
     - Moved suffix regex reference vector from `moveSuffixes()` to `constants.R` as `REGEX_SUFFIXES`
 - Added `testRecordMessage()` to `read_hip()` and `testRecordFilter()` to `clean()` to find and filter out any testing records mistakenly sent to us by the states.
 - Renamed `strataCheck()` to `bagCheck()` and renamed `strata.R` to `bags.R`
-    - `bagCheck()` was broken down into 2 new minor internal functions (`summarizeBadBags()` and `filterOutOregonPermits()`)
+    - `bagCheck()` was broken up into 1 additional internal function, `summarizeBadBags()`
     - Standardized using the phrase "bag values" over the term "strata"; HIP records contain bag values until they are written out and strata are assigned.
 - Deleted demographic-oriented `outOfStateHunters()` and `youthHunters()` functions because they are not used
 - Almost all data params changed to be less ambiguous (e.g. `x` now `cleaned_data`, `proofed_data`, etc)

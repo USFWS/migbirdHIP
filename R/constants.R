@@ -14,9 +14,29 @@ LOGIC_INLINE_PMT_DNH <-
   expr(
     dl_state %in% c("OR", "WA") &
       hunt_mig_birds != "2" &
+      ducks_bag == "0" &
+      geese_bag == "0" &
+      dove_bag == "0" &
+      woodcock_bag == "0" &
+      coots_snipe == "0" &
+      rails_gallinules == "0" &
       sum(as.numeric(band_tailed_pigeon),
           as.numeric(brant),
           as.numeric(seaducks)) >= 2)
+
+# Define inline permits
+LOGIC_INLINE_PMT <-
+  expr(
+    dl_state %in% c("OR", "WA") &
+      ducks_bag == "0" &
+      geese_bag == "0" &
+      dove_bag == "0" &
+      woodcock_bag == "0" &
+      coots_snipe == "0" &
+      rails_gallinules == "0" &
+      (band_tailed_pigeon == "2" |
+         brant == "2" |
+         seaducks == "2"))
 
 # Define a test record
 LOGIC_TEST_RECORD <-

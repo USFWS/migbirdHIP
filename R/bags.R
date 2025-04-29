@@ -31,7 +31,8 @@ bagCheck <-
   function(deduplicated_data){
 
     # Filter out in-line permits
-    deduplicated_data <- filterOutOregonPermits(deduplicated_data)
+    deduplicated_data <-
+      deduplicated_data |> filter(!(!!LOGIC_INLINE_PMT))
 
     # Reformat hip_bags_ref
     mini_hip_bags_ref <-
@@ -145,31 +146,3 @@ summarizeBadBags <-
         bad_bag_value = bad_bag_values[[x,3]]) |>
       distinct(dl_state, spp, bad_bag_value, n = n_bad_bags, prop)
   }
-
-#' Filter out Oregon in-line permit records
-#'
-#' The internal \code{filterOutOregonPermits} function removes Oregon in-line permits inside of \code{\link{bagCheck}}.
-#'
-#' @importFrom dplyr filter
-#'
-#' @inheritParams bagCheck
-#'
-#' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
-
-filterOutOregonPermits <-
-  function(deduplicated_data) {
-    deduplicated_data |>
-      filter(
-        !(dl_state == "OR" &
-            ducks_bag == "0" &
-            geese_bag == "0" &
-            dove_bag == "0" &
-            woodcock_bag == "0" &
-            coots_snipe == "0" &
-            rails_gallinules == "0" &
-            (band_tailed_pigeon == "2" |
-               brant == "2" |
-               seaducks == "2")))
-  }
-
