@@ -83,9 +83,6 @@ namesToUppercase <-
 #' The internal \code{nonDigitBagsFilter} function filters out any record if any bag value is not a 1-digit number.
 #'
 #' @importFrom dplyr filter
-#' @importFrom dplyr if_any
-#' @importFrom dplyr all_of
-#' @importFrom stringr str_detect
 #'
 #' @inheritParams clean
 #'
@@ -96,8 +93,7 @@ nonDigitBagsFilter <-
   function(raw_data) {
 
     # Filter out any record if any bag value is not a 1-digit number
-    raw_data |>
-      filter(!if_any(all_of(REF_BAG_FIELDS), \(x) !str_detect(x, "^[0-9]{1}$")))
+    raw_data |> filter(!(!!LOGIC_NONDIGIT_BAGS))
   }
 
 #' Filter out all-NA and all-zero bag records
@@ -117,9 +113,7 @@ naAndZeroBagsFilter <-
   function(raw_data) {
 
     # Filter out any record if any bag value is NA or "0"
-    raw_data |>
-      filter(!if_all(all_of(REF_BAG_FIELDS), \(x) x == "0"))
-
+    raw_data |> filter(!(!!LOGIC_ZERO_BAGS))
   }
 
 #' Filter out test records
@@ -137,9 +131,7 @@ testRecordFilter <-
   function(raw_data) {
 
     # Filter out test records
-    raw_data |>
-      # Identify test record through searching first name and last name
-      filter(!(firstname == "TEST" & lastname == "TEST"))
+    raw_data |> filter(!(!!LOGIC_TEST_RECORD))
   }
 
 #' Missing PII filter
@@ -196,11 +188,6 @@ missingPIIFilter <-
 moveSuffixes <-
   function(raw_data) {
 
-    suffix_regex <-
-      paste0(
-        "(?<=\\s)(JR|SR|I{1,3}|IV|VI{0,3}|I{0,1}X|XI{1,3}|XI{0,1}V|XVI{1,2}|XI",
-        "{0,1}X|1ST|2ND|3RD|[4-9]TH|1[0-9]TH|20TH)\\.?$")
-
     suffixes_moved <-
       raw_data |>
       mutate(
@@ -210,11 +197,11 @@ moveSuffixes <-
         suffix =
           case_when(
             # Lastname
-            str_detect(lastname, suffix_regex) ~
-              str_extract(lastname, suffix_regex),
+            str_detect(lastname, REF_SUFFIXES) ~
+              str_extract(lastname, REF_SUFFIXES),
             # Firstname
-            str_detect(firstname, suffix_regex) ~
-              str_extract(firstname, suffix_regex),
+            str_detect(firstname, REF_SUFFIXES) ~
+              str_extract(firstname, REF_SUFFIXES),
             TRUE ~ suffix),
         # Delete periods and commas from suffixes
         suffix = str_remove_all(suffix, "\\.|\\,"),
@@ -222,15 +209,15 @@ moveSuffixes <-
         # numeric, excluding XVIII since the db limit is 4 characters)
         lastname =
           ifelse(
-            str_detect(lastname, suffix_regex),
-            str_remove(lastname, suffix_regex),
+            str_detect(lastname, REF_SUFFIXES),
+            str_remove(lastname, REF_SUFFIXES),
             lastname),
         # Delete suffixes from firstname col (includes 1-20 in Roman numerals
         # and numeric, excluding XVIII since the db limit is 4 characters)
         firstname =
           ifelse(
-            str_detect(firstname, suffix_regex),
-            str_remove(firstname, suffix_regex),
+            str_detect(firstname, REF_SUFFIXES),
+            str_remove(firstname, REF_SUFFIXES),
             firstname)) |>
       # Delete white space around names due to moving the suffixes
       mutate(across(contains("name"), \(x) str_trim(x)))

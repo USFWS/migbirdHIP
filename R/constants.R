@@ -2,6 +2,10 @@
 #' @importFrom dplyr bind_rows
 #' @importFrom dplyr tibble
 #' @importFrom lubridate ymd
+#' @importFrom dplyr if_any
+#' @importFrom dplyr if_all
+#' @importFrom dplyr all_of
+#' @importFrom stringr str_detect
 
 # Define variables to evaluate data consistently across functions
 
@@ -13,6 +17,25 @@ LOGIC_INLINE_PMT_DNH <-
       sum(as.numeric(band_tailed_pigeon),
           as.numeric(brant),
           as.numeric(seaducks)) >= 2)
+
+# Define a test record
+LOGIC_TEST_RECORD <-
+  expr(firstname == "TEST" & lastname == "TEST")
+
+# Define non-digit bag records
+LOGIC_NONDIGIT_BAGS <-
+  expr(if_any(all_of(REF_BAG_FIELDS), \(x) !str_detect(x, "^[0-9]{1}$")))
+
+# Define all-zero bag records
+LOGIC_ZERO_BAGS <-
+  expr(if_all(all_of(REF_BAG_FIELDS), \(x) x == "0"))
+
+# Define suffixes using regular expressions. Includes values from 1-20 in Roman
+# numerals and numeric, excluding XVIII (limit is 4 characters)
+REF_SUFFIXES <-
+  paste0(
+    "(?<=\\s)(JR|SR|I{1,3}|IV|VI{0,3}|I{0,1}X|XI{1,3}|XI{0,1}V|XVI{1,2}|XI",
+    "{0,1}X|1ST|2ND|3RD|[4-9]TH|1[0-9]TH|20TH)\\.?$")
 
 # List of Harvest Information Program species/species group fields containing
 # bag values

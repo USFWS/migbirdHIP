@@ -513,7 +513,7 @@ testRecordMessage <-
       # Convert firstname, lastname, and suffix to upper case
       namesToUppercase() |>
       # Identify test record through searching first name and last name
-      filter(firstname == "TEST" & lastname == "TEST")
+      filter(!!LOGIC_TEST_RECORD)
 
     if (nrow(bad_test_records) > 0) {
       message(
@@ -550,7 +550,7 @@ zeroBagsMessage <-
     zero_bags <-
       raw_data |>
       # Find any records that have a "0" in every bag field
-      filter(if_all(all_of(REF_BAG_FIELDS), \(x) x == "0"))
+      filter(!!LOGIC_ZERO_BAGS)
 
     if (nrow(zero_bags) > 0) {
       message(
@@ -618,7 +618,7 @@ nonDigitBagsMessage <-
     # number
     nondigit_bags <-
       raw_data |>
-      filter(if_any(all_of(REF_BAG_FIELDS), \(x) !str_detect(x, "^[0-9]{1}$")))
+      filter(!!LOGIC_NONDIGIT_BAGS)
 
     if (nrow(nondigit_bags) > 0) {
       message(
