@@ -46,9 +46,10 @@ clean <-
       # If any OR or WA hunt_mig_birds != 2 for presumed solo permit, change
       # hunt_mig_birds to 2
       inLinePermitDNHFix() |>
-      # If any permit file states submitted a 2 for crane and/or
-      # band_tailed_pigeon, change the 2 to a 0
-      permitBagFix()
+      # If any permit file state submitted 2 for crane, change to 0
+      cranePermitBagFix() |>
+      # If any permit file state submitted 2 for band_tailed_pigeon, change to 0
+      btpiPermitBagFix()
 
     # Check that the zip code for each address is associated with the correct
     # state
@@ -143,11 +144,11 @@ moveSuffixes <-
         suffix =
           case_when(
             # Lastname
-            str_detect(lastname, REF_SUFFIXES) ~
-              str_extract(lastname, REF_SUFFIXES),
+            str_detect(lastname, REGEX_SUFFIXES) ~
+              str_extract(lastname, REGEX_SUFFIXES),
             # Firstname
-            str_detect(firstname, REF_SUFFIXES) ~
-              str_extract(firstname, REF_SUFFIXES),
+            str_detect(firstname, REGEX_SUFFIXES) ~
+              str_extract(firstname, REGEX_SUFFIXES),
             TRUE ~ suffix),
         # Delete periods and commas from suffixes
         suffix = str_remove_all(suffix, "\\.|\\,"),
@@ -155,15 +156,15 @@ moveSuffixes <-
         # numeric, excluding XVIII since the db limit is 4 characters)
         lastname =
           ifelse(
-            str_detect(lastname, REF_SUFFIXES),
-            str_remove(lastname, REF_SUFFIXES),
+            str_detect(lastname, REGEX_SUFFIXES),
+            str_remove(lastname, REGEX_SUFFIXES),
             lastname),
         # Delete suffixes from firstname col (includes 1-20 in Roman numerals
         # and numeric, excluding XVIII since the db limit is 4 characters)
         firstname =
           ifelse(
-            str_detect(firstname, REF_SUFFIXES),
-            str_remove(firstname, REF_SUFFIXES),
+            str_detect(firstname, REGEX_SUFFIXES),
+            str_remove(firstname, REGEX_SUFFIXES),
             firstname)) |>
       # Delete white space around names due to moving the suffixes
       mutate(across(contains("name"), \(x) str_trim(x)))
@@ -318,9 +319,9 @@ zipCheck <-
     }
   }
 
-#' Fix permit bag values
+#' Fix crane permit bag values
 #'
-#' The internal \code{permitBagFix} function is used inside of \code{\link{clean}} to edit bag values for states that submit permit files separately from HIP. If records from these states submit a "2" for the band_tailed_pigeon or crane field, they will be mistakenly identified as permit records. The \code{permitBagFix} function changes band_tailed_pigeon and/or crane "2" values to "0" so that they are classified as HIP records until permit files are received later in the hunting season.
+#' The internal \code{cranePermitBagFix} function is used inside of \code{\link{clean}} to edit bag values for states that submit permit files separately from HIP. If records from these states submit a "2" for the crane field, they will be mistakenly identified as permit records. This function changes crane "2" values to "0" so that they are classified as HIP records until permit files are received later in the hunting season.
 #'
 #' @importFrom dplyr filter
 #' @importFrom dplyr count
@@ -332,38 +333,21 @@ zipCheck <-
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}
 
-permitBagFix <-
+cranePermitBagFix <-
   function(raw_data) {
-
-    bad_bt_2s <-
-      raw_data |>
-      filter(
-        dl_state %in%
-          REF_PMT_FILES$dl_state[REF_PMT_FILES$spp == "band_tailed_pigeon"] &
-          band_tailed_pigeon == "2") |>
-      count(dl_state)
 
     bad_cr_2s <-
       raw_data |>
       filter(
-        dl_state %in%
-          REF_PMT_FILES$dl_state[REF_PMT_FILES$spp == "cranes"] &
+        dl_state %in% REF_PMT_FILES$dl_state[REF_PMT_FILES$spp == "cranes"] &
           cranes == "2") |>
       count(dl_state)
 
-    if(nrow(bad_bt_2s) > 0 | nrow(bad_cr_2s) > 0) {
+    if(nrow(bad_cr_2s) > 0) {
 
       corrected_pmt_bags <-
         raw_data |>
         mutate(
-          band_tailed_pigeon =
-            ifelse(
-              dl_state %in%
-                REF_PMT_FILES$dl_state[REF_PMT_FILES$spp == "band_tailed_pigeon"] &
-                band_tailed_pigeon == "2",
-              "0",
-              band_tailed_pigeon
-            ),
           cranes =
             ifelse(
               dl_state %in%
@@ -375,21 +359,63 @@ permitBagFix <-
         )
 
       message("2s converted to 0s for permit file states:")
-      print(
-        bind_rows(
-          bad_bt_2s |> mutate(spp = "band_tailed_pigeon"),
-          bad_cr_2s |> mutate(spp = "cranes")
-        )
-      )
+      print(bad_cr_2s |> mutate(spp = "cranes"))
 
       return(corrected_pmt_bags)
 
     } else {
-      message(
-        paste0(
-          "No 2s received for band_tailed_pigeon or crane from permit file",
-          " states."))
+      message("No 2s received for crane from permit file states.")
       return(raw_data)
     }
   }
 
+#' Fix band-tailed pigeon permit bag values
+#'
+#' The internal \code{btpiPermitBagFix} function is used inside of \code{\link{clean}} to edit bag values for states that submit permit files separately from HIP. If records from these states submit a "2" for the band_tailed_pigeon field, they will be mistakenly identified as permit records. This function changes band_tailed_pigeon "2" values to "0" so that they are classified as HIP records until permit files are received later in the hunting season.
+#'
+#' @importFrom dplyr filter
+#' @importFrom dplyr count
+#' @importFrom dplyr mutate
+#' @importFrom dplyr bind_rows
+#'
+#' @inheritParams clean
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
+
+btpiPermitBagFix <-
+  function(raw_data) {
+
+    bad_bt_2s <-
+      raw_data |>
+      filter(
+        dl_state %in%
+          REF_PMT_FILES$dl_state[REF_PMT_FILES$spp == "band_tailed_pigeon"] &
+          band_tailed_pigeon == "2") |>
+      count(dl_state)
+
+    if(nrow(bad_bt_2s) > 0) {
+
+      corrected_pmt_bags <-
+        raw_data |>
+        mutate(
+          band_tailed_pigeon =
+            ifelse(
+              dl_state %in%
+                REF_PMT_FILES$dl_state[REF_PMT_FILES$spp == "band_tailed_pigeon"] &
+                band_tailed_pigeon == "2",
+              "0",
+              band_tailed_pigeon
+            )
+        )
+
+      message("2s converted to 0s for permit file states:")
+      print(bad_bt_2s |> mutate(spp = "band_tailed_pigeon"))
+
+      return(corrected_pmt_bags)
+
+    } else {
+      message("No 2s received for band_tailed_pigeon from permit file states.")
+      return(raw_data)
+    }
+  }
