@@ -407,6 +407,9 @@ readMessages <-
     # Return a message if there is an NA in dl_date
     dlDateNAMessage(raw_data)
 
+    # Return a message if in-line permit does not have hunt_mig_birds == 2
+    inLinePermitDNHMessage(raw_data)
+
   }
 
 #' Return message for records with blank or NA values in firstname, lastname, state, or birth date
@@ -681,5 +684,43 @@ dlDateNAMessage <-
               select(dl_date, source_file) |>
               filter(is.na(dl_date)) |>
               distinct())
+    }
+  }
+
+#' In-line permit did-not-hunt message
+#'
+#' The internal \code{inLinePermitDNHMessage} function returns a message for in-line permit records from OR or WA that indicate they did not hunt.
+#'
+#' @importFrom dplyr filter
+#' @importFrom dplyr count
+#'
+#' @inheritParams readMessages
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
+
+inLinePermitDNHMessage <-
+  function(raw_data) {
+
+    # If any OR or WA hunt_mig_birds != "2" for presumed solo permit, return a
+    # message
+    inline_pmt_dnh <-
+      raw_data |>
+      filter(!is.na(band_tailed_pigeon) &
+               !is.na(brant) &
+               !is.na(seaducks)) |>
+      filter(!!LOGIC_INLINE_PMT_DNH) |>
+      count(source_file, hunt_mig_birds, band_tailed_pigeon, brant, seaducks)
+
+    if (nrow(inline_pmt_dnh) > 0) {
+      message(
+        paste(
+          "Error:", sum(inline_pmt_dnh$n), "in-line permit records",
+          "from OR and/or WA do not contain hunt_mig_birds == 2; they will be",
+          "edited in clean()."
+        )
+      )
+
+      print(inline_pmt_dnh)
     }
   }

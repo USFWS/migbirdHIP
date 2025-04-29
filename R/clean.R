@@ -41,8 +41,9 @@ clean <-
       # Remove trailing -0000
       # Remove trailing -___
       formatZip() |>
-      # If any OR HuntY = 0 for solo permit, change HuntY to 2
-      specialOregonHuntYCheck() |>
+      # If any OR or WA hunt_mig_birds != 2 for presumed solo permit, change
+      # hunt_mig_birds to 2
+      inLinePermitDNHFix() |>
       # If any permit file states submitted a 2 for crane and/or
       # band_tailed_pigeon, change the 2 to a 0
       permitBagFix()
@@ -304,9 +305,9 @@ formatZip <-
     return(zips_formatted)
   }
 
-#' Oregon HuntY check
+#' In-line permit did-not-hunt fix
 #'
-#' The internal \code{specialOregonHuntYCheck} function changes any registration from Oregon with HuntY == "0" to "2" if one or more of the band_tailed_pigeon, brant, or seaducks fields indicate hunting.
+#' The internal \code{inLinePermitDNHFix} function changes any presumed solo permit from OR or WA indicating "did not hunt" in the hunt_mig_birds field if one or more of the band_tailed_pigeon, brant, or seaducks fields indicate hunting.
 #'
 #' @importFrom dplyr mutate
 #'
@@ -315,19 +316,16 @@ formatZip <-
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}
 
-specialOregonHuntYCheck <-
+inLinePermitDNHFix <-
   function(raw_data) {
 
-    # If any OR HuntY = 0 for solo permit, change HuntY to 2
+    # If any OR or WA hunt_mig_birds != "2" for presumed solo permit, change
+    # hunt_mig_birds to 2
     raw_data |>
       mutate(
         hunt_mig_birds =
           ifelse(
-            dl_state == "OR" &
-              hunt_mig_birds == "0" &
-              sum(as.numeric(band_tailed_pigeon),
-                  as.numeric(brant),
-                  as.numeric(seaducks)) >= 2,
+            !!LOGIC_INLINE_PMT_DNH,
             "2",
             hunt_mig_birds)
       )
