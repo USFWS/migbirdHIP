@@ -2,6 +2,8 @@
 #'
 #' After reading the data with \code{\link{read_hip}}, reformat and clean the HIP registrations.
 #'
+#' @importFrom dplyr filter
+#'
 #' @param raw_data The object created after reading in data with \code{\link{read_hip}}
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
@@ -15,9 +17,9 @@ clean <-
     cleaned_data <-
       raw_data |>
       # Filter out any record if any bag value is not a 1-digit number
-      nonDigitBagsFilter() |>
+      filter(!(!!LOGIC_NONDIGIT_BAGS)) |>
       # Filter out any record with all-NA or all-0 bag values
-      naAndZeroBagsFilter() |>
+      filter(!(!!LOGIC_ZERO_BAGS)) |>
       # Filter out records if firstname, lastname, city of residence, state of
       # residence, or date of birth are missing -- records discarded because
       # these are needed to identify individuals. Filter out any other
@@ -28,7 +30,7 @@ clean <-
       # Convert firstname, lastname, and suffix to upper case
       namesToUppercase() |>
       # Filter out any test records
-      testRecordFilter() |>
+      filter(!(!!LOGIC_TEST_RECORD)) |>
       # Delete suffixes from the lastname field and/or firstname field and move
       # them to the suffix field. Catches values from 1-20 in Roman numerals and
       # numeric, excluding XVIII since the db limit is 4 characters. Delete
@@ -76,62 +78,6 @@ namesToUppercase <-
         firstname = str_to_upper(firstname),
         lastname = str_to_upper(lastname),
         suffix = str_to_upper(suffix))
-  }
-
-#' Filter out non-digit bags
-#'
-#' The internal \code{nonDigitBagsFilter} function filters out any record if any bag value is not a 1-digit number.
-#'
-#' @importFrom dplyr filter
-#'
-#' @inheritParams clean
-#'
-#' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
-
-nonDigitBagsFilter <-
-  function(raw_data) {
-
-    # Filter out any record if any bag value is not a 1-digit number
-    raw_data |> filter(!(!!LOGIC_NONDIGIT_BAGS))
-  }
-
-#' Filter out all-NA and all-zero bag records
-#'
-#' The internal \code{naAndZeroBagsFilter} function filters out records if they contain all-NA or all-zero bag values.
-#'
-#' @importFrom dplyr filter
-#' @importFrom dplyr if_all
-#' @importFrom dplyr all_of
-#'
-#' @inheritParams clean
-#'
-#' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
-
-naAndZeroBagsFilter <-
-  function(raw_data) {
-
-    # Filter out any record if any bag value is NA or "0"
-    raw_data |> filter(!(!!LOGIC_ZERO_BAGS))
-  }
-
-#' Filter out test records
-#'
-#' The internal \code{testRecordFilter} function filters out records if they contain all-NA or all-zero bag values.
-#'
-#' @importFrom dplyr filter
-#'
-#' @inheritParams clean
-#'
-#' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
-
-testRecordFilter <-
-  function(raw_data) {
-
-    # Filter out test records
-    raw_data |> filter(!(!!LOGIC_TEST_RECORD))
   }
 
 #' Missing PII filter
