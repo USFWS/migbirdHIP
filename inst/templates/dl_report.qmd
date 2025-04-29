@@ -328,21 +328,21 @@ huntcheck <-
   dplyr::mutate(prop = round(n/total, 2)) |> 
   dplyr::arrange(dplyr::desc(prop))
 
-# Strata check table
-stratacheck_tbl <- migbirdHIP::strataCheck(final_data)
+# Bag check table
+bagcheck_tbl <- migbirdHIP::bagCheck(final_data)
 
-if(is.null(stratacheck_tbl)) {
-  stratacheck_tbl_non0 <- NULL
+if(is.null(bagcheck_tbl)) {
+  bagcheck_tbl_non0 <- NULL
 } else {
-  stratacheck_tbl_non0 <- 
-    stratacheck_tbl |> 
+  bagcheck_tbl_non0 <- 
+    bagcheck_tbl |> 
     # Filter out bad bags that make up ~0% of a file
     dplyr::filter(prop != "0%") |> 
     # Filter out bad bags that are interchangeable for "no season" (e.g.
     # received a 0 instead of a 1, or a 1 instead of a 0)
     dplyr::filter(
-      !((state_strata == 0 & normal_strata == 1) | 
-          (state_strata == 1 & normal_strata == 0))
+      !((bad_bag_value == 0 & expected_bag_value == 1) | 
+          (bad_bag_value == 1 & expected_bag_value == 0))
     )
 }
 
@@ -675,25 +675,25 @@ if(nrow(huntcheck) > 0) {
 
 ### Table
 
-```{r stratacheck_agenda_tbl}
+```{r bagcheck_agenda_tbl}
 #| echo: false
 #| output: asis
 
-# stratacheck_tbl_non0
-# NULL:       no strata abnormalities
-# nrow == 0:  strata abnormalities not a concern
-# nrow > 0:   strata abnormalities reported
+# bagcheck_tbl_non0
+# NULL:       no bag abnormalities
+# nrow == 0:  bag abnormalities not a concern
+# nrow > 0:   bag abnormalities reported
 
-if (is.null(stratacheck_tbl_non0)) { 
+if (is.null(bagcheck_tbl_non0)) { 
   cat(paste0("✔️", " All bag values are correct."))
-} else if(nrow(stratacheck_tbl_non0) == 0) {
+} else if(nrow(bagcheck_tbl_non0) == 0) {
   cat(paste0("❌", " Incorrect bag values detected (0% of file)."))
-} else if(nrow(stratacheck_tbl_non0) > 0) {
+} else if(nrow(bagcheck_tbl_non0) > 0) {
   cat(paste0("❌", " Incorrect bag values detected (> 0% of file)."))
   cat("\n\n")
   
   kableExtra::kbl(
-    stratacheck_tbl_non0 |> 
+    bagcheck_tbl_non0 |> 
       dplyr::mutate(
         nprop = as.numeric(stringr::str_extract(prop, "[0-9]{1,3}"))) |>
       dplyr::arrange(dplyr::desc(nprop)) |> 
@@ -701,69 +701,69 @@ if (is.null(stratacheck_tbl_non0)) {
       dplyr::rename(
         `State` = dl_state,
         Species = spp,
-        `Bag provided` = state_strata,
-        `Bag expected` = normal_strata,
+        `Bag provided` = bad_bag_value,
+        `Bag expected` = expected_bag_value,
         Count = n,
         Proportion = prop)) |> 
     kableExtra::kable_styling(full_width = T) |> 
     kableExtra::row_spec(
-      1:nrow(stratacheck_tbl_non0), extra_css = "padding: 3px;")
+      1:nrow(bagcheck_tbl_non0), extra_css = "padding: 3px;")
     
 }
 ```
 
 ### Bullets
 
-```{r stratacheck_agenda_bullets}
+```{r bagcheck_agenda_bullets}
 #| echo: false
 #| output: asis
 
 
-if (is.null(stratacheck_tbl_non0)) { 
+if (is.null(bagcheck_tbl_non0)) { 
   cat(paste0("✔️", " All bag values are correct."))
-} else if(nrow(stratacheck_tbl_non0) == 0) {
+} else if(nrow(bagcheck_tbl_non0) == 0) {
   cat(paste0("❌", " Incorrect bag values detected (0% of file)."))
-} else if(nrow(stratacheck_tbl_non0) > 0) {
+} else if(nrow(bagcheck_tbl_non0) > 0) {
   cat(paste0("❌", " Incorrect bag values detected (> 0% of file)."))
   cat("\n\n")
   
-  if(nrow(stratacheck_tbl_non0) == 1) {
+  if(nrow(bagcheck_tbl_non0) == 1) {
     cat(
       paste0(
-        "* ", stratacheck_tbl_non0$dl_state, " reported ", 
-        stratacheck_tbl_non0$state_strata, " for ", 
-        stratacheck_tbl_non0$prop, " of ", 
-        stratacheck_tbl_non0$spp, 
-        " (expected ", stratacheck_tbl_non0$normal_strata, ").")
+        "* ", bagcheck_tbl_non0$dl_state, " reported ", 
+        bagcheck_tbl_non0$bad_bag_value, " for ", 
+        bagcheck_tbl_non0$prop, " of ", 
+        bagcheck_tbl_non0$spp, 
+        " (expected ", bagcheck_tbl_non0$expected_bag_value, ").")
     )
-  } else if(nrow(stratacheck_tbl_non0) > 1) {
-    stratacheck_split <- 
+  } else if(nrow(bagcheck_tbl_non0) > 1) {
+    bagcheck_split <- 
       split(
-        stratacheck_tbl_non0 |> 
+        bagcheck_tbl_non0 |> 
           dplyr::mutate(
             value = 
               ifelse(
                 prop == "100%", 
                 prop, 
                 paste0(prop, " (n = ", n, ")"))), 
-        stratacheck_tbl_non0$dl_state)
+        bagcheck_tbl_non0$dl_state)
     
     writeLines(
       unlist(
         purrr::map(
-          1:length(stratacheck_split),
+          1:length(bagcheck_split),
           function(x) {
             list(
-              paste0("* ", names(stratacheck_split[x])),
+              paste0("* ", names(bagcheck_split[x])),
               purrr::map(
-                1:nrow(stratacheck_split[[x]]),
+                1:nrow(bagcheck_split[[x]]),
                 function(y) {
                   paste0(
                     "    + ",  
-                    stratacheck_split[[x]]$state_strata[y], " for ", 
-                    stratacheck_split[[x]]$value[y], " of ", 
-                    stratacheck_split[[x]]$spp[y], 
-                    " (expected ", stratacheck_split[[x]]$normal_strata[y], ")")
+                    bagcheck_split[[x]]$bad_bag_value[y], " for ", 
+                    bagcheck_split[[x]]$value[y], " of ", 
+                    bagcheck_split[[x]]$spp[y], 
+                    " (expected ", bagcheck_split[[x]]$expected_bag_value[y], ")")
                 }
               )
             )
@@ -774,7 +774,7 @@ if (is.null(stratacheck_tbl_non0)) {
   }
 }
 
-stratacheck_tbl_non0 <- NULL
+bagcheck_tbl_non0 <- NULL
 ```
 
 :::
@@ -893,7 +893,7 @@ if(nrow(duplicates) > 0) {
 cat("\n\n")
 
 idb2_split <- NULL
-stratacheck_split <- NULL
+bagcheck_split <- NULL
 vrep_100 <- NULL
 vrep_100_split <- NULL
 blanks <- NULL
@@ -1240,7 +1240,7 @@ emails_missing |>
 
 ```
 
-# Strata
+# Bag Values
 
 ## HuntY response check
 
@@ -1267,16 +1267,16 @@ if(nrow(huntcheck) > 0) {
 huntcheck <- NULL
 ```
 
-## Strata check
+## Bag check
 
-Export the strata issues table as a CSV, Excel, or PDF document by clicking a button below.
+Export the bag value issues table as a CSV, Excel, or PDF document by clicking a button below.
 
-```{r stratacheck}
+```{r bagcheck}
 #| echo: false
 
-if(!is.null(stratacheck_tbl)) { 
+if(!is.null(bagcheck_tbl)) { 
   DT::datatable(
-    stratacheck_tbl |> 
+    bagcheck_tbl |> 
       dplyr::mutate(
         nprop = as.numeric(stringr::str_extract(prop, "[0-9]{1,3}"))) |>
       dplyr::arrange(dplyr::desc(nprop)) |> 
@@ -1284,8 +1284,8 @@ if(!is.null(stratacheck_tbl)) {
       dplyr::rename(
         `State` = dl_state,
         Species = spp,
-        `Bag provided` = state_strata,
-        `Bag expected` = normal_strata,
+        `Bag provided` = bad_bag_value,
+        `Bag expected` = expected_bag_value,
         Count = n,
         Proportion = prop
       ),
@@ -1296,10 +1296,10 @@ if(!is.null(stratacheck_tbl)) {
         buttons = c("csv", "excel", "pdf"))
     )
 } else {
-  cat("✔️ No strata abnormalities detected.")
+  cat("✔️ No bag abnormalities detected.")
 }
 
-stratacheck_tbl <- NULL
+bagcheck_tbl <- NULL
 ```
 
 # Issuance
