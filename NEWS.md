@@ -3,6 +3,7 @@
 ## Major changes & new features
 
 - Created `constants.R` to define variables in a central place and thus evaluate data consistently across functions; e.g., `inLinePermitDNHMessage()` and `inLinePermitDNHFix()` both use `LOGIC_INLINE_PMT_DNH` to evaluate data using the same logical condition.
+    - Moved `ref_bagfields`, `abbr_usa`, `abbr_canada`, `pmt_inline`, and `pmt_files` from package internal data `sysdata.rda` to the `constants.R` file, for transparency and to reduce the number of objects to be included internally; now named with uppercase letters to indicate they are internal reference data objects (`REF_BAG_FIELDS`, `REF_ABBR_USA`, `REF_ABBR_CANADA`, `REF_PMT_INLINE`, `REF_PMT_FILES`)
 - Added `testRecordMessage()` to `read_hip()` and `testRecordFilter()` to `clean()` to find and filter out any testing records mistakenly sent to us by the states.
 - Renamed `strataCheck()` to `bagCheck()` and renamed `strata.R` to `bags.R`
     - `bagCheck()` was broken down into 2 new minor internal functions (`summarizeBadBags()` and `filterOutOregonPermits()`)

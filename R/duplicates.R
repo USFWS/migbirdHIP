@@ -114,7 +114,7 @@ duplicateFix <-
         # Check records for all 0s or all 1s
         x_bags =
           pmap_chr(
-            select(sdbr_dupes, all_of(ref_bagfields)),
+            select(sdbr_dupes, all_of(REF_BAG_FIELDS)),
             ~case_when(
               # Look for 0s in every species column
               all(c(...) == "0") ~ "zeros",
@@ -301,7 +301,7 @@ duplicateFix <-
         # Check records for all 0s or all 1s
         x_bags =
           pmap_chr(
-            select(seaduck_dupes, all_of(ref_bagfields)),
+            select(seaduck_dupes, all_of(REF_BAG_FIELDS)),
             ~case_when(
               # Look for 0s in every species column
               all(c(...) == "0") ~ "zeros",
@@ -427,7 +427,7 @@ duplicateFix <-
       filter(
         !(dl_state %in% states_sdbr) &
         !(dl_state %in% states_seaducks) &
-        !(dl_state %in% unique(pmt_inline$dl_state))) |>
+        !(dl_state %in% unique(REF_PMT_INLINE$dl_state))) |>
       # Repeat duplicate checking
       group_by(duplicate) |>
       mutate(
@@ -454,7 +454,7 @@ duplicateFix <-
       filter(
         !(dl_state %in% states_sdbr) &
         !(dl_state %in% states_seaducks) &
-          !(dl_state %in% unique(pmt_inline$dl_state))) |> distinct(duplicate)
+          !(dl_state %in% unique(REF_PMT_INLINE$dl_state))) |> distinct(duplicate)
     o2 <- other_dupes |> distinct(duplicate)
 
     # Error checker #5a
@@ -486,7 +486,7 @@ duplicateFix <-
         # Check records for all 0s or all 1s
         x_bags =
           pmap_chr(
-            select(other_dupes, all_of(ref_bagfields)),
+            select(other_dupes, all_of(REF_BAG_FIELDS)),
             ~case_when(
               # Look for 0s in every species column
               all(c(...) == "0") ~ "zeros",
@@ -587,7 +587,7 @@ duplicateFix <-
         anti_join(
           duplicates |>
             filter(!(dl_state %in% states_seaducks) &
-                     !(dl_state %in% unique(pmt_inline$dl_state))),
+                     !(dl_state %in% unique(REF_PMT_INLINE$dl_state))),
           other_dupes,
           by = c("duplicate"))
       )}
@@ -605,7 +605,7 @@ duplicateFix <-
     permit_dupes <-
       duplicates |>
       # Filter the duplicates to those that occur in permit states
-      filter(dl_state %in% unique(pmt_inline$dl_state)) |>
+      filter(dl_state %in% unique(REF_PMT_INLINE$dl_state)) |>
       # Set "." to NA in take fields & make those fields numeric
       mutate(
         across(
@@ -676,7 +676,7 @@ duplicateFix <-
         # Check records for all 0s or all 1s
         x_bags =
           pmap_chr(
-            select(hip_dupes, all_of(ref_bagfields)),
+            select(hip_dupes, all_of(REF_BAG_FIELDS)),
             ~case_when(
               # Look for 0s in every species column
               all(c(...) == "0") ~ "zeros",
@@ -756,7 +756,7 @@ duplicateFix <-
       print(
         anti_join(
           duplicates |>
-            filter(dl_state %in% unique(pmt_inline$dl_state)),
+            filter(dl_state %in% unique(REF_PMT_INLINE$dl_state)),
           hip_dupes,
           by = c("duplicate"))
       )}
@@ -818,7 +818,7 @@ duplicateFix <-
           ~as.character(.x)),
         record_type =
           ifelse(
-            other_sum == 0 & special_sum > 0 & dl_state %in% unique(pmt_inline$dl_state),
+            other_sum == 0 & special_sum > 0 & dl_state %in% unique(REF_PMT_INLINE$dl_state),
             "PMT",
             record_type)) |>
       select(-c(other_sum, special_sum)) |>
@@ -915,7 +915,7 @@ duplicateFinder <-
       # Classify solo permit records as PMT
       mutate(
         across(
-          all_of(ref_bagfields),
+          all_of(REF_BAG_FIELDS),
           ~as.numeric(.x)),
         other_sum =
           rowSums(across(matches("bag|coots|rails")), na.rm = T),
@@ -923,7 +923,7 @@ duplicateFinder <-
           rowSums(across(matches("cranes|band|brant|seaducks")), na.rm = T),
         record_type =
           ifelse(
-            other_sum == 0 & special_sum > 0 & dl_state %in% unique(pmt_inline$dl_state),
+            other_sum == 0 & special_sum > 0 & dl_state %in% unique(REF_PMT_INLINE$dl_state),
             "PMT",
             NA)) |>
       filter(record_type == "PMT") |>

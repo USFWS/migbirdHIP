@@ -194,7 +194,7 @@ bit <- NULL
 canada_records <-
   final_data |> 
   dplyr::select(state) |> 
-  dplyr::filter(state %in% migbirdHIP:::abbr_canada) |> 
+  dplyr::filter(state %in% migbirdHIP:::REF_ABBR_CANADA) |> 
   nrow()
 
 # Missing emails
@@ -369,7 +369,7 @@ pmts <-
       rowSums(dplyr::across(dplyr::matches("cranes|band|brant|seaducks")), na.rm = T),
     record_type =
       ifelse(
-        other_sum == 0 & special_sum > 0 & dl_state %in% unique(migbirdHIP:::pmt_inline$dl_state),
+        other_sum == 0 & special_sum > 0 & dl_state %in% unique(migbirdHIP:::REF_PMT_INLINE$dl_state),
         "PMT",
         NA)) |>
   dplyr::filter(record_type == "PMT") |>
@@ -1699,7 +1699,7 @@ DT::datatable(err3)
 zipcheck <- 
   final_data |> 
   dplyr::select(dl_state, state, zip) |> 
-  dplyr::filter(!state %in% migbirdHIP:::abbr_canada) |> 
+  dplyr::filter(!state %in% migbirdHIP:::REF_ABBR_CANADA) |> 
   dplyr::left_join(
     migbirdHIP:::zip_code_ref |>
       dplyr::select(zip = zipcode, zipState = state),

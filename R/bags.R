@@ -41,16 +41,16 @@ bagCheck <-
       mutate(stateBagValue  = as.character(stateBagValue))
 
     # The following nested joins remove all values that are not 0 or 1 from
-    # hip_bags_ref for state/species combinations in pmt_files (e.g. 2s are not
-    # acceptable in regular HIP pre-processing for CO cranes, so this resulting
-    # tibble will only contain a line for CO cranes = 1). This rule is also
-    # applied in internal function `permitBagFix()`, please refer to that
+    # hip_bags_ref for state/species combinations in REF_PMT_FILES (e.g. 2s are
+    # not acceptable in regular HIP pre-processing for CO cranes, so this
+    # resulting tibble will only contain a line for CO cranes = 1). This rule is
+    # also applied in internal function `permitBagFix()`, please refer to that
     # function if this comment is still unclear.
     non_pmt_file_bags_ref <-
       anti_join(
         mini_hip_bags_ref,
         mini_hip_bags_ref |>
-          inner_join(pmt_files |> select(-value)) |>
+          inner_join(REF_PMT_FILES |> select(-value)) |>
           filter(!stateBagValue %in% c("0", "1"))
       )
 
@@ -66,7 +66,7 @@ bagCheck <-
     # the hip_bags_ref?
     bad_bag_values <-
       deduplicated_data |>
-      select(dl_state, all_of(ref_bagfields)) |>
+      select(dl_state, all_of(REF_BAG_FIELDS)) |>
       group_by(dl_state) |>
       pivot_longer(
         cols = !contains("dl"),
@@ -84,11 +84,11 @@ bagCheck <-
       # permitBagFix) for btpi and cranes
       filter(
         !(dl_state %in%
-            pmt_files$dl_state[pmt_files$spp == "band_tailed_pigeon"] &
+            REF_PMT_FILES$dl_state[REF_PMT_FILES$spp == "band_tailed_pigeon"] &
           spp == "band_tailed_pigeon" &
             bad_bag_value == "0")) |>
       filter(
-        !(dl_state %in% pmt_files$dl_state[pmt_files$spp == "cranes"] &
+        !(dl_state %in% REF_PMT_FILES$dl_state[REF_PMT_FILES$spp == "cranes"] &
             spp == "cranes" &
             bad_bag_value == "0"))
 

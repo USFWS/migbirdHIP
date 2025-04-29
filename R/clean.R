@@ -97,7 +97,7 @@ nonDigitBagsFilter <-
 
     # Filter out any record if any bag value is not a 1-digit number
     raw_data |>
-      filter(!if_any(all_of(ref_bagfields), \(x) !str_detect(x, "^[0-9]{1}$")))
+      filter(!if_any(all_of(REF_BAG_FIELDS), \(x) !str_detect(x, "^[0-9]{1}$")))
   }
 
 #' Filter out all-NA and all-zero bag records
@@ -118,7 +118,7 @@ naAndZeroBagsFilter <-
 
     # Filter out any record if any bag value is NA or "0"
     raw_data |>
-      filter(!if_all(all_of(ref_bagfields), \(x) x == "0"))
+      filter(!if_all(all_of(REF_BAG_FIELDS), \(x) x == "0"))
 
   }
 
@@ -406,7 +406,7 @@ permitBagFix <-
       raw_data |>
       filter(
         dl_state %in%
-          pmt_files$dl_state[pmt_files$spp == "band_tailed_pigeon"] &
+          REF_PMT_FILES$dl_state[REF_PMT_FILES$spp == "band_tailed_pigeon"] &
           band_tailed_pigeon == "2") |>
       count(dl_state)
 
@@ -414,7 +414,7 @@ permitBagFix <-
       raw_data |>
       filter(
         dl_state %in%
-          pmt_files$dl_state[pmt_files$spp == "cranes"] &
+          REF_PMT_FILES$dl_state[REF_PMT_FILES$spp == "cranes"] &
           cranes == "2") |>
       count(dl_state)
 
@@ -426,7 +426,7 @@ permitBagFix <-
           band_tailed_pigeon =
             ifelse(
               dl_state %in%
-                pmt_files$dl_state[pmt_files$spp == "band_tailed_pigeon"] &
+                REF_PMT_FILES$dl_state[REF_PMT_FILES$spp == "band_tailed_pigeon"] &
                 band_tailed_pigeon == "2",
               "0",
               band_tailed_pigeon
@@ -434,7 +434,7 @@ permitBagFix <-
           cranes =
             ifelse(
               dl_state %in%
-                pmt_files$dl_state[pmt_files$spp == "cranes"] &
+                REF_PMT_FILES$dl_state[REF_PMT_FILES$spp == "cranes"] &
                 cranes == "2",
               "0",
               cranes

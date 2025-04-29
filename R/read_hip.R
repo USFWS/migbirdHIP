@@ -550,7 +550,7 @@ zeroBagsMessage <-
     zero_bags <-
       raw_data |>
       # Find any records that have a "0" in every bag field
-      filter(if_all(all_of(ref_bagfields), \(x) x == "0"))
+      filter(if_all(all_of(REF_BAG_FIELDS), \(x) x == "0"))
 
     if (nrow(zero_bags) > 0) {
       message(
@@ -585,7 +585,7 @@ naBagsMessage <-
     NA_bags <-
       raw_data |>
       # Find any records that have an NA in every bag field
-      filter(if_all(all_of(ref_bagfields), \(x) is.na(x)))
+      filter(if_all(all_of(REF_BAG_FIELDS), \(x) is.na(x)))
 
     if (nrow(NA_bags) > 0) {
       message("Error: One or more records has an NA in every bag field.")
@@ -618,7 +618,7 @@ nonDigitBagsMessage <-
     # number
     nondigit_bags <-
       raw_data |>
-      filter(if_any(all_of(ref_bagfields), \(x) !str_detect(x, "^[0-9]{1}$")))
+      filter(if_any(all_of(REF_BAG_FIELDS), \(x) !str_detect(x, "^[0-9]{1}$")))
 
     if (nrow(nondigit_bags) > 0) {
       message(
@@ -629,7 +629,7 @@ nonDigitBagsMessage <-
       )
       print(
         nondigit_bags |>
-          unite(bags, matches(ref_bagfields), sep = " ") |>
+          unite(bags, matches(REF_BAG_FIELDS), sep = " ") |>
           select(source_file, record_key, bags)
       )
     }
