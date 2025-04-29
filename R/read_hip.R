@@ -388,6 +388,9 @@ readMessages <-
     # Return a message if all emails are missing from a file
     missingEmailsMessage(raw_data)
 
+    # Return a message if "TEST" is found in firstname or lastname field
+    testRecordMessage(raw_data)
+
     # Return a message if any record contains all-zero bag values
     zeroBagsMessage(raw_data)
 
@@ -483,6 +486,43 @@ missingEmailsMessage <-
       message("Error: One or more files are missing 100% of emails.")
 
       print(missing |> select(source_file))
+    }
+  }
+
+#' Return message if test record is found
+#'
+#' The internal \code{testRecordMessage} function is used inside of \code{\link{readMessages}}
+#'
+#' @importFrom dplyr filter
+#' @importFrom dplyr select
+#'
+#' @inheritParams readMessages
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
+
+testRecordMessage <-
+  function(raw_data) {
+
+    # Return a message if test records are found
+    bad_test_records <-
+      raw_data |>
+      # Convert firstname, lastname, and suffix to upper case
+      namesToUppercase() |>
+      # Identify test record through searching first name and last name
+      filter(firstname == "TEST" & lastname == "TEST")
+
+    if (nrow(bad_test_records) > 0) {
+      message(
+        paste(
+          "Error: One or more records contain 'TEST' in first name and last",
+          "name fields."
+        )
+      )
+
+      print(
+        bad_test_records |>
+          select(source_file, record_key, firstname, lastname))
     }
   }
 

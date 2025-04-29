@@ -25,6 +25,8 @@ clean <-
       nonDigitBagsFilter() |>
       # Filter out any record with all-NA or all-0 bag values
       naAndZeroBagsFilter() |>
+      # Filter out any test records
+      testRecordFilter() |>
       # Filter out records if firstname, lastname, city of residence, state of
       # residence, or date of birth are missing -- records discarded because
       # these are needed to identify individuals. Filter out any other
@@ -130,6 +132,26 @@ naAndZeroBagsFilter <-
     raw_data |>
       filter(!if_all(all_of(ref_bagfields), \(x) x == "0"))
 
+  }
+
+#' Filter out test records
+#'
+#' The internal \code{testRecordFilter} function filters out records if they contain all-NA or all-zero bag values.
+#'
+#' @importFrom dplyr filter
+#'
+#' @inheritParams clean
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
+
+testRecordFilter <-
+  function(raw_data) {
+
+    # Filter out test records
+    raw_data |>
+      # Identify test record through searching first name and last name
+      filter(!(firstname == "TEST" & lastname == "TEST"))
   }
 
 #' Missing PII filter

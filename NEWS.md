@@ -2,6 +2,7 @@
 
 ## Major changes & new features
 
+- Added `testRecordMessage()` to `read_hip()` and `testRecordFilter()` to `clean()` to find and filter out any testing records mistakenly sent to us by the states.
 - Renamed `strataCheck()` to `bagCheck()` and renamed `strata.R` to `bags.R`
     - `bagCheck()` was broken down into 2 new minor internal functions (`summarizeBadBags()` and `filterOutOregonPermits()`)
     - Standardized using the phrase "bag values" over the term "strata"; HIP records contain bag values until they are written out and strata are assigned.
