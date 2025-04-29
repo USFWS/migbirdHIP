@@ -1001,7 +1001,7 @@ files_received <-
     dplyr::filter(stringr::str_detect(dl, "^[0-9]{4}$")) |> 
     dplyr::mutate(dl = as.numeric(dl)) |> 
     # Discard any downloads before 0800 and keep only actual states
-    dplyr::filter(dl >= 800 & state %in% datasets::state.abb) |> 
+    dplyr::filter(dl >= 800 & state %in% migbirdHIP:::REF_ABBR_49_STATES) |> 
     # Filter out downloads that occur after this one
     dplyr::filter(dl <= as.numeric(params$dl)) |> 
     dplyr::group_by(dl) |> 

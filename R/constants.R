@@ -32,7 +32,7 @@ LOGIC_ZERO_BAGS <-
 
 # Define suffixes using regular expressions. Includes values from 1-20 in Roman
 # numerals and numeric, excluding XVIII (limit is 4 characters)
-REF_SUFFIXES <-
+REGEX_SUFFIXES <-
   paste0(
     "(?<=\\s)(JR|SR|I{1,3}|IV|VI{0,3}|I{0,1}X|XI{1,3}|XI{0,1}V|XVI{1,2}|XI",
     "{0,1}X|1ST|2ND|3RD|[4-9]TH|1[0-9]TH|20TH)\\.?$")
@@ -59,6 +59,9 @@ REF_ABBR_USA <-
 REF_ABBR_CANADA <-
   c("AB", "BC", "MB", "NB", "NL", "NS", "NT", "NU", "ON", "PE", "PQ", "QC",
     "SK", "YT")
+
+# Continental 49 state abbreviations
+REF_ABBR_49_STATES <- datasets::state.abb[datasets::state.abb != "HI"]
 
 # Permit state expected bag values (files received separately from HIP process)
 REF_PMT_FILES <-

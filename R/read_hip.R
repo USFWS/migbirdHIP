@@ -54,7 +54,7 @@ read_hip <-
     # Fail if incorrect state supplied
     stopifnot(
       "Use a 2-letter abbreviation for `state`, e.g. 'DE'." =
-        state %in% c(NA, datasets::state.abb[datasets::state.abb != "HI"]))
+        state %in% c(NA, REF_ABBR_49_STATES))
 
     # Fail if incorrect season supplied
     stopifnot(
@@ -350,7 +350,7 @@ checkFileNameStateAbbr <-
     # Return a message if there is a dl_state not found in the list of 49
     # continental US states
     if (FALSE %in%
-        (state_test %in% datasets::state.abb[datasets::state.abb != "HI"])
+        (state_test %in% REF_ABBR_49_STATES)
     ) {
       message(
         paste(
@@ -359,9 +359,7 @@ checkFileNameStateAbbr <-
         )
       )
 
-      print(
-        state_test[!state_test %in%
-                     datasets::state.abb[datasets::state.abb != "HI"]])
+      print(state_test[!state_test %in% REF_ABBR_49_STATES])
 
       return("error")
     } else {

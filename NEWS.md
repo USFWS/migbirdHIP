@@ -4,6 +4,7 @@
 
 - Created `constants.R` to define variables in a central place and thus evaluate data consistently across functions; e.g., `inLinePermitDNHMessage()` and `inLinePermitDNHFix()` both use `LOGIC_INLINE_PMT_DNH` to evaluate data using the same logical condition.
     - Moved `ref_bagfields`, `abbr_usa`, `abbr_canada`, `pmt_inline`, and `pmt_files` from package internal data `sysdata.rda` to the `constants.R` file, for transparency and to reduce the number of objects to be included internally; now named with uppercase letters to indicate they are internal reference data objects (`REF_BAG_FIELDS`, `REF_ABBR_USA`, `REF_ABBR_CANADA`, `REF_PMT_INLINE`, `REF_PMT_FILES`)
+    - Moved suffix regex reference vector from `moveSuffixes()` to `constants.R` as `REGEX_SUFFIXES`
 - Added `testRecordMessage()` to `read_hip()` and `testRecordFilter()` to `clean()` to find and filter out any testing records mistakenly sent to us by the states.
 - Renamed `strataCheck()` to `bagCheck()` and renamed `strata.R` to `bags.R`
     - `bagCheck()` was broken down into 2 new minor internal functions (`summarizeBadBags()` and `filterOutOregonPermits()`)
@@ -24,7 +25,7 @@
         - New `duplicatePlot()` function added
         - All functions related to duplicates moved to `duplicates.R` (previously separated into `findDuplicates.R` and `fixDuplicates.R`)
     - `read_hip()` was broken down into 17 new minor internal functions (`listFiles()`, `ignorePermits()`, `ignoreHolds()`, `idBlankFiles()`, `dropBlankFiles()`, `checkFileNameDateFormat()`, `checkFileNameStateAbbr()`, `readMessages()`, `missingPIIMessage()`, `missingEmailsMessage()`, `testRecordMessage()`, `zeroBagsMessage()`, `naBagsMessage()`, `nonDigitBagsMessage()`, `inLinePermitDNHMessage()`, `dlStateNAMessage()`, and `dlDateNAMessage()`). More strict requirements must be met for data to be successfully read (e.g. instead of returning a message that file names are incorrectly formatted, this would stop the process). The `zeroBagsMessage()` internal function is a new feature of `read_hip()` that checks for records with all-zero bag values and returns a message to the console if they are detected.
-    - `clean()` was broken down into 10 minor internal functions (1 previously used: `strataFix()` renamed as `permitBagFix()`; and 6 new functions: `namesToUppercase()`, `missingPIIFilter()`, `moveSuffixes()`, `formatZip()`, `zipCheck()`, and `inLinePermitDNHFix()`)
+    - `clean()` was broken down into 8 minor internal functions (2 previously used: `strataFix()` split into `cranePermitBagFix()` and `btpiPermitBagFix()`; and 6 new functions: `namesToUppercase()`, `missingPIIFilter()`, `moveSuffixes()`, `formatZip()`, `zipCheck()`, and `inLinePermitDNHFix()`)
         - No longer changes middle initial values (this now happens in `correct()` via `correctMiddleInitial()`)
     - `correct()` 
         - Broken down into 4 minor internal functions (`correctEmail()`, `correctTitle()`, `correctSuffix()`, `correctMiddleInitial()`))
