@@ -327,7 +327,7 @@ specialOregonHuntYCheck <-
               hunt_mig_birds == "0" &
               sum(as.numeric(band_tailed_pigeon),
                   as.numeric(brant),
-                  as.numeric(seaducks)) > 2,
+                  as.numeric(seaducks)) >= 2,
             "2",
             hunt_mig_birds)
       )
