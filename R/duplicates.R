@@ -30,55 +30,65 @@ duplicateFix <-
     # Create a tibble of duplicate records with a duplicate id field
     duplicates <- duplicateID(current_data)
 
-    # --------------------------------------------------------------------------
-    # PART 2: Sea duck AND brant states duplicate resolution
-
-    # For sea duck AND brant states, we handle duplicates by:
+    # Sea duck and brant states duplicate resolution
     # 1. Keep record(s) with the most recent issue date.
-    # 2. Exclude records with all 1s or all 0s in bag columns from consideration.
-    # 3. Keep any records that have a 2 for either brant or sea duck.
-    # 4. If more than one record remains, choose to keep one randomly.
+    # 2. Evaluate if records contain 1s in all bag columns and if records have a
+    #    2 for either brant or sea duck (states_sdbr) or just seaduck
+    #    (states_seaducks; aka Maine).
+    # 3. Keep a record if it's the only one in its group that has a 2 in
+    #    seaduck or brant columns, or if it's the only one in its group that is
+    #    not-all-1s
+    # 4. If more than one record remains per group, choose to keep one randomly.
 
+    # Sea Duck and Brant states duplicate resolution
     sdbr_dupes <-
       duplicates |>
-      # Filter to sea duck AND brant states
-      filter(dl_state %in% states_sdbr) |>
+      # Filter to sea duck and brant states
+      filter(dl_state %in% c(states_sdbr, states_seaducks)) |>
+      # Keep records with the most recent issue_date
       duplicateNewest() |>
+      # Check records for "1" in every bag field
       duplicateAllOnes() |>
-      # Check records for 2 in brant or seaduck field
-      mutate(x_sdbrs = ifelse(brant == "2"|seaducks == "2", "keeper", NA)) |>
-      # Convert x_bags if "keeper" to the number of records in the group with
-      # the "keeper" value; otherwise, indicate 0s or 1s
-      group_by(duplicate_id, x_bags) |>
-      mutate(x_bags = ifelse(x_bags == "keeper", as.character(n()), x_bags)) |>
-      ungroup() |>
-      # Convert x_sdbrs that passed the check above to equal the number of
-      # records in the group that count as "keeper"
-      group_by(duplicate_id, x_sdbrs) |>
+      # Check records for "2" in brant or seaduck field
       mutate(
-        x_sdbrs =
-          ifelse(!is.na(x_sdbrs), as.character(n()), x_sdbrs)) |>
+        sd_or_br_has_2 =
+          case_when(
+            dl_state %in% states_sdbr & brant == "2" ~ "has_2",
+            dl_state %in% states_sdbr & seaducks == "2" ~ "has_2",
+            dl_state %in% states_seaducks & seaducks == "2" ~ "has_2",
+            TRUE ~ "no_2")) |>
+      # If record doesn't have 1s in every bag field, put the group size (number
+      # of records in the set of duplicates that are not all-1s); if record DOES
+      # have 1s in every bag field, put "all_1s"
+      duplicateAllOnesGroupSize() |>
+      # If record has 2 in brant, seaduck, or both, put the group size (number
+      # of records in the set of duplicates that have hunted brant and/or
+      # seaducks); if record DOES NOT have a 2 in brant or seaduck, put "no_2"
+      group_by(duplicate_id, sd_or_br_has_2) |>
+      mutate(
+        sd_or_br_has_2_group_size =
+          ifelse(sd_or_br_has_2 == "has_2", as.character(n()), "no_2")) |>
       ungroup() |>
-      # Make decisions on which record to keep for each group
+      # Make decision on which record to keep for each group, or mark the set as
+      # "duplicate" to randomly sample later
       group_by(duplicate_id) |>
       mutate(
         decision =
           case_when(
             # When there's only 1 record per group, keep it
-            n() == 1 ~ "keeper",
-            # When there's a record in a group and it's the only one that passed
-            # the bag and sdbr checks above, keep it
-            x_bags == 1 & x_sdbrs == 1 ~ "keeper",
+            n() == 1 ~ "keeper_single",
+            # Keep a record if it's the only one in its group that has a 2 in
+            # seaduck or brant columns
+            sd_or_br_has_2_group_size == 1 ~ "keeper_sd_or_br_has_2",
+            # For rare cases that still have two or more records: keep a record if
+            # it's the only one in its group with the not all 1s bag values
+            all_ones_group_size == 1 ~ "keeper_not_all_1s",
             # When there isn't a 1 value in any of the checking columns, it's a
             # duplicate still and we will need to randomly choose which record
             # in the group to keep later
-            !(1 %in% x_bags)&!(1 %in% x_sdbrs) ~ "dupl",
-            # If there is a 1 in the sdbr checks col, then that record is the
-            # one we want to keep
-            x_sdbrs == 1 ~ "keeper",
-            # For rare cases that have two records: keep the record with the not
-            # all 1s bag values (unsure if needed)
-            x_bags == 1 ~ "keeper",
+            !(1 %in% all_ones_group_size) &
+              !(1 %in% sd_or_br_has_2_group_size) ~
+              "duplicate",
             TRUE ~ NA_character_)) |>
       # If NA records have another qualifying record in their group, drop them
       mutate(
@@ -91,120 +101,32 @@ duplicateFix <-
       filter(decision != "drop")
 
     # Get the final frame with 1 record per hunter
-    if(nrow(filter(sdbr_dupes, decision == "dupl")) > 0){
+    if(nrow(filter(sdbr_dupes, decision == "duplicate")) > 0){
       sdbr_dupes <-
         bind_rows(
-          # Handle "dupl"s; randomly keep one per group using slice_sample()
+          # Handle "duplicate"s; randomly keep one per group using slice_sample()
           sdbr_dupes |>
-            filter(decision == "dupl") |>
+            filter(decision == "duplicate") |>
             group_by(duplicate_id) |>
             slice_sample(n = 1) |>
             ungroup(),
           # Row bind in the "keepers" (should already be 1 per hunter)
           sdbr_dupes |>
-            filter(decision == "keeper")) |>
+            filter(str_detect(decision, "keeper"))) |>
         # Drop unneeded columns
-        select(-c(x_bags:decision)) |>
+        select(-c(all_ones:decision)) |>
         # Designate record type
         mutate(record_type = "HIP")
     }else{
       sdbr_dupes <-
         sdbr_dupes |>
-        filter(decision == "keeper") |>
+        filter(str_detect(decision, "keeper")) |>
         # Drop unneeded columns
-        select(-c(x_bags:decision)) |>
+        select(-c(all_ones:decision)) |>
         # Designate record type
         mutate(record_type = "HIP")}
 
-    # --------------------------------------------------------------------------
-    # PART 3: Sea duck states duplicate resolution (Maine)
-
-    # For sea duck states, we handle duplicates by:
-    # 1. Keep record(s) with the most recent issue date.
-    # 2. Exclude records with all 1s or all 0s in bag columns from consideration.
-    # 3. Keep any records that have a 2 for sea duck.
-    # 4. If more than one record remains, choose to keep one randomly.
-
-    seaduck_dupes <-
-      duplicates |>
-      # Filter to seaduck states
-      filter(dl_state %in% states_seaducks) |>
-      duplicateNewest() |>
-      duplicateAllOnes() |>
-      # Check records for 2 in seaduck field
-      mutate(x_seaducks = ifelse(seaducks == "2", "keeper", NA)) |>
-      # Convert x_bags if "keeper" to the number of records in the group with
-      # the "keeper" value; otherwise, indicate 0s or 1s
-      group_by(duplicate_id, x_bags) |>
-      mutate(x_bags = ifelse(x_bags == "keeper", as.character(n()), x_bags)) |>
-      ungroup() |>
-      # Convert x_seaducks that passed the check above to equal the number of
-      # records in the group that count as "keeper"
-      group_by(duplicate_id, x_seaducks) |>
-      mutate(
-        x_seaducks =
-          ifelse(!is.na(x_seaducks), as.character(n()), x_seaducks)) |>
-      ungroup() |>
-      # Make decisions on which record to keep for each group
-      group_by(duplicate_id) |>
-      mutate(
-        decision =
-          case_when(
-            # When there's only 1 record per group, keep it
-            n() == 1 ~ "keeper",
-            # When there's a record in a group and it's the only one that passed
-            # the bag and seaduck checks above, keep it
-            x_bags == 1 & x_seaducks == 1 ~ "keeper",
-            # When there isn't a 1 value in any of the checking columns, it's a
-            # duplicate still and we will need to randomly choose which record
-            # in the group to keep later
-            !(1 %in% x_bags)&!(1 %in% x_seaducks) ~ "dupl",
-            # If there is a 1 in the seaduck checks col, then that record is the
-            # one we want to keep
-            x_seaducks == 1 ~ "keeper",
-            # For rare cases that have two records: keep the record with the not
-            # all 1s bag values (unsure if needed)
-            x_bags == 1 ~ "keeper",
-            TRUE ~ NA_character_)) |>
-      # If NA records have another qualifying record in their group, drop them
-      mutate(
-        decision =
-          ifelse(
-            n() > 1 & length(unique(decision)) > 1 & is.na(decision),
-            "drop",
-            decision)) |>
-      ungroup() |>
-      filter(decision != "drop")
-
-    # Get the final frame with 1 record per hunter
-    if(nrow(filter(seaduck_dupes, decision == "dupl")) > 0){
-      seaduck_dupes <-
-        bind_rows(
-          # Handle "dupl"s; randomly keep one per group using slice_sample()
-          seaduck_dupes |>
-            filter(decision == "dupl") |>
-            group_by(duplicate_id) |>
-            slice_sample(n = 1) |>
-            ungroup(),
-          # Row bind in the "keepers" (should already be 1 per hunter)
-          seaduck_dupes |>
-            filter(decision == "keeper")) |>
-        # Drop unneeded columns
-        select(-c(x_bags:decision)) |>
-        # Designate record type
-        mutate(record_type = "HIP")
-    }else{
-      seaduck_dupes <-
-        seaduck_dupes |>
-        filter(decision == "keeper") |>
-        # Drop unneeded columns
-        select(-c(x_bags:decision)) |>
-        # Designate record type
-        mutate(record_type = "HIP")}
-
-    # --------------------------------------------------------------------------
-    # PART 4: Non-permit, non-seaduck, non-brant record duplicate resolution
-
+    # Non-permit, non-seaduck, non-brant record duplicate resolution
     other_dupes <-
       duplicates |>
       # Record not from seaduck, brant, or permit state
@@ -212,14 +134,14 @@ duplicateFix <-
         !(dl_state %in% states_sdbr) &
         !(dl_state %in% states_seaducks) &
         !(dl_state %in% unique(REF_PMT_INLINE$dl_state))) |>
-      # Repeat duplicate checking
+      # Keep records with the most recent issue_date
       duplicateNewest() |>
+      # Check records for "1" in every bag field
       duplicateAllOnes() |>
-      # Convert x_bags if "keeper" to the number of records in the group with
-      # the "keeper" value; otherwise, indicate 0s or 1s
-      group_by(duplicate_id, x_bags) |>
-      mutate(x_bags = ifelse(x_bags == "keeper", as.character(n()), x_bags)) |>
-      ungroup() |>
+      # If record doesn't have 1s in every bag field, put the group size (number
+      # of records in the set of duplicates that are not all-1s); if record DOES
+      # have 1s in every bag field, put "all_1s"
+      duplicateAllOnesGroupSize() |>
       # Make decisions on which record to keep for each group
       group_by(duplicate_id) |>
       mutate(
@@ -260,7 +182,7 @@ duplicateFix <-
             ungroup(),
           # Row bind in the "keepers" (should already be 1 per hunter)
           other_dupes |>
-            filter(decision == "keeper")) |>
+            filter(str_detect(decision, "keeper"))) |>
         # Drop unneeded columns
         select(-c(x_bags:decision)) |>
         # Designate record type
@@ -268,15 +190,15 @@ duplicateFix <-
     }else{
       other_dupes <-
         other_dupes |>
-        filter(decision == "keeper") |>
+        filter(str_detect(decision, "keeper")) |>
         # Drop unneeded columns
         select(-c(x_bags:decision)) |>
         # Designate record type
         mutate(record_type = "HIP")}
 
-    # --------------------------------------------------------------------------
-    # PART 5: Permit state duplicate resolution
+# Permit state duplicate resolution ---------------------------------------
 
+    # Permit state duplicate resolution
     # Some permit states (WA, OR) submit permit records separately from
     # HIP records. The status of each record will be determined and they will be
     # labeled as either HIP or permit. Multiple HIP records must be resolved
@@ -320,13 +242,14 @@ duplicateFix <-
     hip_dupes <-
       permit_dupes |>
       filter(record_type == "HIP") |>
+      # Keep records with the most recent issue_date
       duplicateNewest() |>
+      # Check records for "1" in every bag field
       duplicateAllOnes() |>
-      # Convert x_bags if "keeper" to the number of records in the group with
-      # the "keeper" value; otherwise, indicate 0s or 1s
-      group_by(duplicate_id, x_bags) |>
-      mutate(x_bags = ifelse(x_bags == "keeper", as.character(n()), x_bags)) |>
-      ungroup() |>
+      # If record doesn't have 1s in every bag field, put the group size (number
+      # of records in the set of duplicates that are not all-1s); if record DOES
+      # have 1s in every bag field, put "all_1s"
+      duplicateAllOnesGroupSize() |>
       # Make decisions on which record to keep for each group
       group_by(duplicate_id) |>
       mutate(
@@ -369,20 +292,19 @@ duplicateFix <-
             ungroup(),
           # Row bind in the "keepers" (should already be 1 per hunter)
           hip_dupes |>
-            filter(decision == "keeper"))
+            filter(str_detect(decision, "keeper")))
     }else{
       hip_dupes <-
         # Keep the "keepers" (should already be 1 per hunter)
         hip_dupes |>
-        filter(decision == "keeper")}
+        filter(str_detect(decision, "keeper"))}
 
     # Get table of just permits
     permit_dupes <-
       permit_dupes |>
       filter(record_type == "PMT")
 
-    # --------------------------------------------------------------------------
-    # PART 6: Combine all resolved records into one tibble
+# Combine all resolved records into one tibble ----------------------------
 
     resolved_duplicates <-
       # Remove duplicates from the input frame
@@ -504,11 +426,38 @@ duplicateAllOnes <-
     duplicates |>
       # Flag records with 1 in every bag field
       mutate(
-        x_bags =
+        all_ones =
           pmap_chr(
             select(duplicates, all_of(REF_BAG_FIELDS)),
-            ~ifelse(all(c(...) == "1"), "ones", "keeper"))
+            ~ifelse(all(c(...) == "1"), "all_1s", "not_all_1s"))
       )
+  }
+
+#' Evaluate group sizes of all-one/not-all-one records
+#'
+#' The internal \code{duplicateAllOnesGroupSize} function is used inside of \code{\link{duplicateFix}}.
+#'
+#' @importFrom dplyr group_by
+#' @importFrom dplyr mutate
+#' @importFrom dplyr n
+#' @importFrom dplyr ungroup
+#'
+#' @param duplicates The tibble created by \code{\link{duplicateID}}
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
+
+duplicateAllOnesGroupSize <-
+  function(duplicates) {
+    # If record doesn't have 1s in every bag field, put the group size (number
+    # of records in the set of duplicates that are not all-1s); if record DOES
+    # have 1s in every bag field, put "all_1s"
+    duplicates |>
+      group_by(duplicate_id, all_ones) |>
+      mutate(
+        all_ones_group_size =
+          ifelse(all_ones == "not_all_1s", as.character(n()), all_ones)) |>
+      ungroup()
   }
 
 #' Find duplicates
