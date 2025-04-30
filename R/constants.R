@@ -6,6 +6,7 @@
 #' @importFrom dplyr if_all
 #' @importFrom dplyr all_of
 #' @importFrom stringr str_detect
+#' @importFrom rlang syms
 
 # Define variables to evaluate data consistently across functions
 
@@ -57,11 +58,16 @@ REGEX_SUFFIXES <-
     "(?<=\\s)(JR|SR|I{1,3}|IV|VI{0,3}|I{0,1}X|XI{1,3}|XI{0,1}V|XVI{1,2}|XI",
     "{0,1}X|1ST|2ND|3RD|[4-9]TH|1[0-9]TH|20TH)\\.?$")
 
-# List of Harvest Information Program species/species group fields containing
+# Vector of Harvest Information Program species/species group fields containing
 # bag values
 REF_BAG_FIELDS <-
   c("ducks_bag", "geese_bag", "dove_bag", "woodcock_bag", "coots_snipe",
     "rails_gallinules", "cranes", "band_tailed_pigeon", "brant", "seaducks")
+
+# Vector of fields that are used to deduplicate hunters
+REF_DUPL_FIELDS <-
+  c("firstname", "lastname", "state", "birth_date", "dl_state",
+    "registration_yr")
 
 # US District and Territory abbreviations:
 # District of Columbia, American Samoa, Guam, Northern Mariana Islands,

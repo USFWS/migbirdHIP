@@ -2,51 +2,63 @@
 
 ## Major changes & new features
 
-- Created `constants.R` to define variables in a central place and thus evaluate data consistently across functions; e.g., `inLinePermitDNHMessage()` and `inLinePermitDNHFix()` both use `LOGIC_INLINE_PMT_DNH` to evaluate data using the same logical condition.
-    - Moved `ref_bagfields`, `abbr_usa`, `abbr_canada`, `pmt_inline`, and `pmt_files` from package internal data `sysdata.rda` to the `constants.R` file, for transparency and to reduce the number of objects to be included internally; now named with uppercase letters to indicate they are internal reference data objects (`REF_BAG_FIELDS`, `REF_ABBR_USA`, `REF_ABBR_CANADA`, `REF_PMT_INLINE`, `REF_PMT_FILES`)
-    - Moved suffix regex reference vector from `moveSuffixes()` to `constants.R` as `REGEX_SUFFIXES`
-- Added `testRecordMessage()` to `read_hip()` and `testRecordFilter()` to `clean()` to find and filter out any testing records mistakenly sent to us by the states.
-- Renamed `strataCheck()` to `bagCheck()` and renamed `strata.R` to `bags.R`
-    - `bagCheck()` was broken up into 1 additional internal function, `summarizeBadBags()`
-    - Standardized using the phrase "bag values" over the term "strata"; HIP records contain bag values until they are written out and strata are assigned.
-- Deleted demographic-oriented `outOfStateHunters()` and `youthHunters()` functions because they are not used
-- Almost all data params changed to be less ambiguous (e.g. `x` now `cleaned_data`, `proofed_data`, etc)
-- Functions renamed to camel case except `read_hip()` and `write_hip()`:
-    - `errorPlot_fields()`, `errorPlot_states()`, and `errorPlot_dl()` now named `errorPlotFields()`, `errorPlotStates()`, `errorPlotDL()`
-    - `errorLevel_errors_state()` and `errorLevel_errors_field()` renamed to `errorLevelErrorsByState()` and `errorLevelErrorsByField()`
-    - `recordLevel_errors_state()` function deleted from package since it was not being used
-- `{tibble}` no longer a required import
-- `redFlags()` no longer exported (used only in the download report), moved to the `errorPlots.R` script instead of being in its own file
-- Renamed `renameFiles()` to `fileRename()` and moved from `renameFiles.R` to `files.R` to be grouped with `fileCheck()` (previously in `fileCheck.R`)
-- `validate()`, `investigate()`, and `identicalBags()` removed from R package
-- In an effort to improve the maintainability of the package code, steps were made toward modularity, clarity, and unit testing in some of the larger functions.
-    - `findDuplicates()` and `fixDuplicates()` renamed to `duplicateFinder()` and `duplicateFix()` to mirror naming conventions of other functions with the subject of the verb coming first (e.g. `glyphFinder()`, `glyphCheck()`) 
-        - Previously named `findDuplicates()` function no longer outputs a plot
-        - New `duplicatePlot()` function added
-        - All functions related to duplicates moved to `duplicates.R` (previously separated into `findDuplicates.R` and `fixDuplicates.R`)
-    - `read_hip()` was broken down into 17 new minor internal functions (`listFiles()`, `ignorePermits()`, `ignoreHolds()`, `idBlankFiles()`, `dropBlankFiles()`, `checkFileNameDateFormat()`, `checkFileNameStateAbbr()`, `readMessages()`, `missingPIIMessage()`, `missingEmailsMessage()`, `testRecordMessage()`, `zeroBagsMessage()`, `naBagsMessage()`, `nonDigitBagsMessage()`, `inLinePermitDNHMessage()`, `dlStateNAMessage()`, and `dlDateNAMessage()`). More strict requirements must be met for data to be successfully read (e.g. instead of returning a message that file names are incorrectly formatted, this would stop the process). The `zeroBagsMessage()` internal function is a new feature of `read_hip()` that checks for records with all-zero bag values and returns a message to the console if they are detected.
-    - `clean()` was broken down into 8 minor internal functions (2 previously used: `strataFix()` split into `cranePermitBagFix()` and `btpiPermitBagFix()`; and 6 new functions: `namesToUppercase()`, `missingPIIFilter()`, `moveSuffixes()`, `formatZip()`, `zipCheck()`, and `inLinePermitDNHFix()`)
-        - No longer changes middle initial values (this now happens in `correct()` via `correctMiddleInitial()`)
-    - `correct()` 
-        - Broken down into 4 minor internal functions (`correctEmail()`, `correctTitle()`, `correctSuffix()`, `correctMiddleInitial()`))
-        - No longer filters out all-0 bag records (this now happens in `clean()` via `naAndZeroBagsFilter()`)
-- `sumLines()` deprecated and `read_hip()` param `sumlines` eliminated; no longer used and not considered useful moving forward
-- Edited `write_hip()` to include more checks before files are written out, including:
-    - New `type` param conditionally checks `record_type` field and `cranes`, `band_tailed_pigeon`, and `dove_bag` fields depending on the user input
-    - `.xlsx` and `.xls` file extensions are converted to `.csv` 
+-   Created `constants.R` to define variables in a central place and thus evaluate data consistently across functions (e.g., `inLinePermitDNHMessage()` and `inLinePermitDNHFix()` both use `LOGIC_INLINE_PMT_DNH` to evaluate data using the same logical condition).
+    -   Moved `ref_bagfields`, `abbr_usa`, `abbr_canada`, `pmt_inline`, and `pmt_files` from package internal data `sysdata.rda` to the `constants.R` file, for transparency and to reduce the number of objects included internally; now named with uppercase letters to indicate they are internal reference data objects (`REF_BAG_FIELDS`, `REF_ABBR_USA`, `REF_ABBR_CANADA`, `REF_PMT_INLINE`, `REF_PMT_FILES`).
+    -   Moved suffix regex reference vector from `moveSuffixes()` to `constants.R` as `REGEX_SUFFIXES`.
+-   New functions
+    -   `testRecordMessage()` added to `read_hip()` and `testRecordFilter()` added to `clean()` to find and filter out any testing records mistakenly sent to us by the states.
+    -   New `duplicatePlot()` function added; `duplicateFinder()` (previously named `findDuplicates()`) function no longer outputs a plot.
+    -   The `zeroBagsMessage()` internal function is a new feature of `read_hip()` that checks for records with all-zero bag values and returns a message to the console if they are detected.
+-   Refactored functions
+    -   In an effort to improve the maintainability of the package code, steps were made toward modularity, clarity, and unit testing in some of the larger functions.
+    -   `duplicateFix()`
+        -   Broken down into 2 new minor internal functions (`duplicateID()`, `duplicateNewest()`, and `duplicateAllOnes()` ...)
+        -   Records are no longer evaluated for having all-zero bags, because these records are now filtered upstream in the data pipeline during `clean()`.
+    -   `read_hip()`
+        -   Broken down into 17 new minor internal functions (`listFiles()`, `ignorePermits()`, `ignoreHolds()`, `idBlankFiles()`, `dropBlankFiles()`, `checkFileNameDateFormat()`, `checkFileNameStateAbbr()`, `readMessages()`, `missingPIIMessage()`, `missingEmailsMessage()`, `testRecordMessage()`, `zeroBagsMessage()`, `naBagsMessage()`, `nonDigitBagsMessage()`, `inLinePermitDNHMessage()`, `dlStateNAMessage()`, and `dlDateNAMessage()`).
+        -   More strict requirements must be met for data to be successfully read (e.g. instead of returning a message that file names are incorrectly formatted, this would stop the process).
+    -   `clean()`
+        -   Broken down into 8 minor internal functions (2 previously used: `strataFix()` split into `cranePermitBagFix()` and `btpiPermitBagFix()`; and 6 new functions: `namesToUppercase()`, `missingPIIFilter()`, `moveSuffixes()`, `formatZip()`, `zipCheck()`, and `inLinePermitDNHFix()`)
+        -   Middle initial values are no longer changed (this now happens in `correct()` via `correctMiddleInitial()`)
+    -   `correct()`
+        -   Broken down into 4 minor internal functions (`correctEmail()`, `correctTitle()`, `correctSuffix()`, `correctMiddleInitial()`))
+        -   No longer filters out all-0 bag records (this now happens in `clean()` via `naAndZeroBagsFilter()`)
+        -   Changes middle initial values if they are flagged in `proof()` via `correctMiddleInitial()` (this step previously happened in `clean()`)
+    -   `write_hip()`
+        -   Edited to include more checks before files are written out.
+        -   New `type` param conditionally checks `record_type` field and `cranes`, `band_tailed_pigeon`, and `dove_bag` fields depending on the user input.
+        -   `.xlsx` and `.xls` file extensions are converted to `.csv`
+-   Renamed and moved functions
+    -   Renamed `strataCheck()` to `bagCheck()` and renamed `strata.R` to `bags.R`.
+        -   `bagCheck()` split and now uses an internal function, `summarizeBadBags()`.
+        -   Standardized using the phrase "bag values" over the term "strata"; HIP records contain bag values until they are written out and strata are assigned.
+    -   Renamed `renameFiles()` to `fileRename()` and moved from `renameFiles.R` to `files.R` to be grouped with `fileCheck()` (previously in `fileCheck.R`).
+    -   `findDuplicates()` and `fixDuplicates()` renamed to `duplicateFinder()` and `duplicateFix()` to mirror naming conventions of other functions with the subject of the verb coming first (e.g. `glyphFinder()`, `glyphCheck()`).
+    -   All functions related to duplicates moved to `duplicates.R` (previously separated into `findDuplicates.R` and `fixDuplicates.R`)
+    -   Renamed functions using camel case except for `read_hip()` and `write_hip()`
+        -   `errorPlot_fields()`, `errorPlot_states()`, and `errorPlot_dl()` now named `errorPlotFields()`, `errorPlotStates()`, `errorPlotDL()`
+        -   `errorLevel_errors_state()` and `errorLevel_errors_field()` renamed to `errorLevelErrorsByState()` and `errorLevelErrorsByField()`
+    -   `redFlags()` no longer exported (used only in the download report), moved to the `errorPlots.R` script instead of being in its own file
+-   Deleted functions
+    -   Deleted `validate()`, `investigate()`, and `identicalBags()`.
+    -   Deleted demographic-oriented `outOfStateHunters()` and `youthHunters()` functions because they were not being used.
+    -   Deleted `recordLevel_errors_state()` function since it was not being used.
+    -   `sumLines()` deleted and `read_hip()` param `sumlines` eliminated; no longer used and not considered useful moving forward.
 
 ## Minor changes / bug fixes
 
-- Template `dl_report.qmd`
-    - Sort errors by descending in "causes of errors by state" table
-    - Eliminated breaking error in report rendering if there is no field exceeding the error threshold
-    - Removed all-0 bag section from the Agenda tab
-    - Added comma formatting to long numbers 
-    - On the Errors tab, moved the "Bad zip codes" section to its own sub-header after "Causes of errors for top 3 fields"
-- Edited `read_hip()` to catch file names with incorrect MMDDYYYY or DDMMYYYY date format
-- Edited `issueCheck()` to return error for NA values in `record_key` field
-- Added release tags to README
-- Replace deprecated `~ .x` anonymous function notation with `\(x)` across the following functions: `read_hip()`, `clean()`, `glyphCheck()`
+-   Template `dl_report.qmd`:
+    -   Sorted errors by descending in "causes of errors by state" table.
+    -   Eliminated breaking error in report rendering if there is no field exceeding the error threshold.
+    -   Removed all-zero bag section from the Agenda tab.
+    -   Added comma formatting to long numbers.
+    -   On the Errors tab, moved the "Bad zip codes" section to its own sub-header after "Causes of errors for top 3 fields".
+-   Almost all data params changed to be less ambiguous (e.g. `x` now `cleaned_data`, `proofed_data`, etc).
+-   `{tibble}` no longer a required import
+-   `read_hip()` now catches file names with incorrect MMDDYYYY or DDMMYYYY date format.
+-   `issueCheck()` now returns an error for NA values in `record_key` field.
+-   Added release tags to README.
+-   Replace deprecated `~ .x` anonymous function notation with `\(x)` across the following functions: `read_hip()`, `clean()`, and `glyphCheck()`.
 
 # migbirdHIP 1.3.0
 
@@ -54,27 +66,27 @@
 
 -   Edited `shiftCheck()` to return a summary of shift errors rather than just a table of record id values.
 -   Edited `issueCheck()`, `issueAssign()`, and `issuePlot()` to accommodate new rules in evaluating if a record is current. All records are now current unless their `issue_date` falls before `issue_start` or after the last day of migratory bird hunting in the record's state.
--   Edited `proof()` and `errorPlot_fields()` to no longer flag and/or plot youth hunters (hunters with birth year < 16 years ago).
+-   Edited `proof()` and `errorPlot_fields()` to no longer flag and/or plot youth hunters (hunters with birth year \< 16 years ago).
 
 ## Minor changes / bug fixes
 
 -   Template `dl_report.qmd`
-    - Excluded future data line from agenda tab
-    - Minor adjustments for edge cases in which summary variables are `NULL`
-    - Added clarification to table captions
-    - Eliminated irrelevant error and warning message printouts from rendered report
-    - Remove inconsequential "bad bags" from Agenda tab; do not report 1s received instead of 0s, or 0s received instead of 1s
-    - Edited "bad bags" section of agenda tab to return a message in the edge case of 0% of a file containing bad bag values
-    - Edited the Issuance tab to reflect new rules in evaluating if a record is current
-- Edited `identicalBags()` function to exclude matching coots_snipe and rails_gallinules from MI in output; this state uses the response from one question to populate both fields.
-- Edited `read_hip()` function to exclude "hold" subdirectories when reading season HIP data.
-- Updated R dependency to v4.4.0.
-- Added programmatic `stopifnot()` to all functions to safeguard against running with incorrect/invalid parameters.
-- Reduced variation in parameter names:
-    - `distinct` changed to `unique` for `pullErrors()`
-    - `output` changed to `return` for `outOfStateHunters()`
-    - `assigned_data` changed to `x` for `issuePlot()`
-    - `data` changed to `x` for `glyphCheck()`, `glyphFinder()`, `issueAssign()`, `issueCheck()`, and `shiftCheck()`
+    -   Excluded future data line from agenda tab
+    -   Minor adjustments for edge cases in which summary variables are `NULL`
+    -   Added clarification to table captions
+    -   Eliminated irrelevant error and warning message printouts from rendered report
+    -   Remove inconsequential "bad bags" from Agenda tab; do not report 1s received instead of 0s, or 0s received instead of 1s
+    -   Edited "bad bags" section of agenda tab to return a message in the edge case of 0% of a file containing bad bag values
+    -   Edited the Issuance tab to reflect new rules in evaluating if a record is current
+-   Edited `identicalBags()` function to exclude matching coots_snipe and rails_gallinules from MI in output; this state uses the response from one question to populate both fields.
+-   Edited `read_hip()` function to exclude "hold" subdirectories when reading season HIP data.
+-   Updated R dependency to v4.4.0.
+-   Added programmatic `stopifnot()` to all functions to safeguard against running with incorrect/invalid parameters.
+-   Reduced variation in parameter names:
+    -   `distinct` changed to `unique` for `pullErrors()`
+    -   `output` changed to `return` for `outOfStateHunters()`
+    -   `assigned_data` changed to `x` for `issuePlot()`
+    -   `data` changed to `x` for `glyphCheck()`, `glyphFinder()`, `issueAssign()`, `issueCheck()`, and `shiftCheck()`
 
 # migbirdHIP 1.2.8
 
