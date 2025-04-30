@@ -45,9 +45,8 @@ duplicateFix <-
       filter(dl_state %in% states_sdbr) |>
       duplicateNewest() |>
       duplicateAllOnes() |>
-      mutate(
-        # Check records for 2 in brant or seaduck field
-        x_sdbrs = ifelse(brant == "2"|seaducks == "2", "keeper", NA)) |>
+      # Check records for 2 in brant or seaduck field
+      mutate(x_sdbrs = ifelse(brant == "2"|seaducks == "2", "keeper", NA)) |>
       # Convert x_bags if "keeper" to the number of records in the group with
       # the "keeper" value; otherwise, indicate 0s or 1s
       group_by(duplicate_id, x_bags) |>
@@ -132,9 +131,8 @@ duplicateFix <-
       filter(dl_state %in% states_seaducks) |>
       duplicateNewest() |>
       duplicateAllOnes() |>
-      mutate(
-        # Check records for 2 in seaduck field
-        x_seaducks = ifelse(seaducks == "2", "keeper", NA)) |>
+      # Check records for 2 in seaduck field
+      mutate(x_seaducks = ifelse(seaducks == "2", "keeper", NA)) |>
       # Convert x_bags if "keeper" to the number of records in the group with
       # the "keeper" value; otherwise, indicate 0s or 1s
       group_by(duplicate_id, x_bags) |>
@@ -458,9 +456,9 @@ duplicateID <-
 #'
 #' @importFrom dplyr group_by
 #' @importFrom dplyr mutate
-#' @importFrom stringr str_detect
 #' @importFrom lubridate mdy
 #' @importFrom dplyr ungroup
+#' @importFrom dplyr filter
 #' @importFrom dplyr select
 #'
 #' @param duplicates The tibble created by \code{\link{duplicateID}}
@@ -472,24 +470,17 @@ duplicateNewest <-
   function(duplicates) {
     duplicates |>
       group_by(duplicate_id) |>
+      # Identify records with most recent issue date
       mutate(
-        # Check for most recent issue date
         x_issue_date =
-          # Skip frame shift issues and only evaluate for dates in correct
-          # mm/dd/yyyy format
           ifelse(
-            str_detect(issue_date, "^[0-9]{2}\\/[0-9]{2}\\/[0-9]{4}$"),
-            ifelse(
-              issue_date ==
-                strftime(
-                  max(mdy(issue_date), na.rm = TRUE), format = "%m/%d/%Y"),
-              "keeper",
-              NA),
-            "bad_issue_date_format")) |>
+            issue_date ==
+              strftime(max(mdy(issue_date), na.rm = TRUE), format = "%m/%d/%Y"),
+              "newest",
+              NA)
+        ) |>
       ungroup() |>
-      # If the issue date was in the right format, keep the record(s) from each
-      # group that were the most recent; if the issue date was in the wrong
-      # format, keep those too for future evaluation
+      # Keep the record(s) from each group that were the most recent
       filter(!is.na(x_issue_date)) |>
       select(-x_issue_date)
   }

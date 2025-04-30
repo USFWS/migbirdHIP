@@ -121,4 +121,5 @@ globalVariables(
     "bad_bag_value",
     "shifted",
     "n_bad_bags",
-    "n_state"))
+    "n_state",
+    "duplicate_id"))
