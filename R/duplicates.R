@@ -30,7 +30,7 @@ duplicateFix <-
     # Create a tibble of duplicate records with a duplicate id field
     duplicates <- duplicateID(current_data)
 
-    # Sea duck and brant states duplicate resolution
+    # Sea duck and brant states duplicate resolution:
     # 1. Keep record(s) with the most recent issue date.
     # 2. Evaluate if records contain 1s in all bag columns and if records have a
     #    2 for either brant or sea duck (states_sdbr) or just seaduck
@@ -41,7 +41,7 @@ duplicateFix <-
     # 4. If more than one record remains per group, choose to keep one randomly.
 
     # Sea Duck and Brant states duplicate resolution
-    sdbr_dupes <-
+    seaduck_and_brant_duplicates <-
       duplicates |>
       # Filter to sea duck and brant states
       filter(dl_state %in% c(states_sdbr, states_seaducks)) |>
@@ -101,33 +101,10 @@ duplicateFix <-
       filter(decision != "drop")
 
     # Get the final frame with 1 record per hunter
-    if(nrow(filter(sdbr_dupes, decision == "duplicate")) > 0){
-      sdbr_dupes <-
-        bind_rows(
-          # Handle "duplicate"s; randomly keep one per group using slice_sample()
-          sdbr_dupes |>
-            filter(decision == "duplicate") |>
-            group_by(duplicate_id) |>
-            slice_sample(n = 1) |>
-            ungroup(),
-          # Row bind in the "keepers" (should already be 1 per hunter)
-          sdbr_dupes |>
-            filter(str_detect(decision, "keeper"))) |>
-        # Drop unneeded columns
-        select(-c(all_ones:decision)) |>
-        # Designate record type
-        mutate(record_type = "HIP")
-    }else{
-      sdbr_dupes <-
-        sdbr_dupes |>
-        filter(str_detect(decision, "keeper")) |>
-        # Drop unneeded columns
-        select(-c(all_ones:decision)) |>
-        # Designate record type
-        mutate(record_type = "HIP")}
+    sdbr_deduplicated <- duplicateSample(seaduck_and_brant_duplicates)
 
     # Non-permit, non-seaduck, non-brant record duplicate resolution
-    other_dupes <-
+    other_duplicates <-
       duplicates |>
       # Record not from seaduck, brant, or permit state
       filter(
@@ -148,17 +125,14 @@ duplicateFix <-
         decision =
           case_when(
             # When there's only 1 record per group, keep it
-            n() == 1 ~ "keeper",
+            n() == 1 ~ "keeper_single",
             # When there's a record in a group and it's the only one that passed
             # the bag check above, keep it
-            x_bags == 1 ~ "keeper",
+            all_ones_group_size == 1 ~ "keeper_not_all_1s",
             # When there isn't a 1 value in the checking column, it's a
             # duplicate still and we will need to randomly choose which record
             # in the group to keep later
-            !(1 %in% x_bags) ~ "dupl",
-            # For rare cases that have two records: keep the record with not all
-            # 1s (unsure if needed)
-            x_bags == 1 ~ "keeper",
+            !(1 %in% all_ones_group_size) ~ "duplicate",
             TRUE ~ NA_character_)) |>
       # If NA records have another qualifying record in their group, drop them
       mutate(
@@ -171,32 +145,7 @@ duplicateFix <-
       filter(decision != "drop")
 
     # Get the final frame with 1 record per hunter
-    if(nrow(filter(other_dupes, decision == "dupl")) > 0){
-      other_dupes <-
-        bind_rows(
-          # Handle "dupl"s; randomly keep one per group using slice_sample()
-          other_dupes |>
-            filter(decision == "dupl") |>
-            group_by(duplicate_id) |>
-            slice_sample(n = 1) |>
-            ungroup(),
-          # Row bind in the "keepers" (should already be 1 per hunter)
-          other_dupes |>
-            filter(str_detect(decision, "keeper"))) |>
-        # Drop unneeded columns
-        select(-c(x_bags:decision)) |>
-        # Designate record type
-        mutate(record_type = "HIP")
-    }else{
-      other_dupes <-
-        other_dupes |>
-        filter(str_detect(decision, "keeper")) |>
-        # Drop unneeded columns
-        select(-c(x_bags:decision)) |>
-        # Designate record type
-        mutate(record_type = "HIP")}
-
-# Permit state duplicate resolution ---------------------------------------
+    other_deduplicated <- duplicateSample(other_duplicates)
 
     # Permit state duplicate resolution
     # Some permit states (WA, OR) submit permit records separately from
@@ -304,8 +253,7 @@ duplicateFix <-
       permit_dupes |>
       filter(record_type == "PMT")
 
-# Combine all resolved records into one tibble ----------------------------
-
+    # Combine all resolved records into one tibble
     resolved_duplicates <-
       # Remove duplicates from the input frame
       current_data |>
@@ -458,6 +406,42 @@ duplicateAllOnesGroupSize <-
         all_ones_group_size =
           ifelse(all_ones == "not_all_1s", as.character(n()), all_ones)) |>
       ungroup()
+  }
+
+#' De-duplicate by randomly sampling intermediate tibbles
+#'
+#' The internal \code{duplicateSample} function is used inside of \code{\link{duplicateFix}} to deduplicate intermediate tibbles that have been evaluated using other criteria already.
+#'
+#' @importFrom dplyr bind_rows
+#' @importFrom dplyr filter
+#' @importFrom dplyr group_by
+#' @importFrom dplyr slice_sample
+#' @importFrom dplyr ungroup
+#' @importFrom stringr str_detect
+#' @importFrom dplyr select
+#' @importFrom dplyr mutate
+#'
+#' @param duplicates The tibble created by \code{\link{duplicateID}}
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
+
+duplicateSample <-
+  function(dupes) {
+    bind_rows(
+      # Handle "duplicate"s; randomly keep one per group using slice_sample()
+      dupes |>
+        filter(decision == "duplicate") |>
+        group_by(duplicate_id) |>
+        slice_sample(n = 1) |>
+        ungroup(),
+      # Row bind in the "keepers" (should already be 1 per hunter)
+      dupes |>
+        filter(str_detect(decision, "keeper"))) |>
+      # Drop unneeded columns
+      select(-c(all_ones:decision)) |>
+      # Designate record type
+      mutate(record_type = "HIP")
   }
 
 #' Find duplicates

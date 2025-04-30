@@ -12,7 +12,7 @@
 -   Refactored functions
     -   In an effort to improve the maintainability of the package code, steps were made toward modularity, clarity, and unit testing in some of the larger functions.
     -   `duplicateFix()`
-        -   Broken down into 2 new minor internal functions (`duplicateID()`, `duplicateNewest()`, and `duplicateAllOnes()` ...)
+        -   Broken down into 2 new minor internal functions (`duplicateID()`, `duplicateNewest()`, `duplicateAllOnes()`, `duplicateAllOnesGroupSize()`, and `duplicateSample()`)
         -   Records are no longer evaluated for having all-zero bags, because these records are now filtered upstream in the data pipeline during `clean()`.
     -   `read_hip()`
         -   Broken down into 17 new minor internal functions (`listFiles()`, `ignorePermits()`, `ignoreHolds()`, `idBlankFiles()`, `dropBlankFiles()`, `checkFileNameDateFormat()`, `checkFileNameStateAbbr()`, `readMessages()`, `missingPIIMessage()`, `missingEmailsMessage()`, `testRecordMessage()`, `zeroBagsMessage()`, `naBagsMessage()`, `nonDigitBagsMessage()`, `inLinePermitDNHMessage()`, `dlStateNAMessage()`, and `dlDateNAMessage()`).
