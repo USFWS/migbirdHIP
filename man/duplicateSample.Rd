@@ -7,7 +7,7 @@
 duplicateSample(dupes)
 }
 \arguments{
-\item{duplicates}{The tibble created by \code{\link{duplicateID}}}
+\item{dupes}{Intermediate tibble created in \code{\link{duplicateFix}}}
 }
 \description{
 The internal \code{duplicateSample} function is used inside of \code{\link{duplicateFix}} to deduplicate intermediate tibbles that have been evaluated using other criteria already.
