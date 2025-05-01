@@ -539,33 +539,49 @@ duplicateFinder <-
 duplicatePlot <-
   function(current_data) {
 
+    # Find duplicates
     dupl_tibble <- duplicateFinder(current_data)
 
+    # Define regular expression for one field
+    regex_field <- "[a-z|a-z\\_a-z]{1,}"
+
+    # Plot
     dupl_plot <-
       dupl_tibble |>
       # Bin into generic "2+ fields" if more than one field contributes to a
       # duplicate
       mutate(
-        dupl =
+        duplicate_field =
           case_when(
             # 5+ fields
-            str_detect(dupl, "[a-z|a-z\\_a-z|a-z|a-z\\_a-z\\_a-z|a-z\\_a-z]{1,}\\-[a-z|a-z\\_a-z]{1,}\\-[a-z|a-z\\_a-z]{1,}\\-[a-z|a-z\\_a-z]{1,}\\-[a-z|a-z\\_a-z]{1,}") ~ "2+ fields",
+            str_detect(
+              duplicate_field,
+              paste0(
+                "[a-z|a-z\\_a-z|a-z|a-z\\_a-z\\_a-z|a-z\\_a-z]{1,}",
+                paste(rep(regex_field, 4), collapse = "\\-"))) ~
+              "2+ fields",
             # 4 fields
-            str_detect(dupl, "[a-z|a-z\\_a-z]{1,}\\-[a-z|a-z\\_a-z]{1,}\\-[a-z|a-z\\_a-z]{1,}\\-[a-z|a-z\\_a-z]{1,}") ~ "2+ fields",
+            str_detect(
+              duplicate_field, paste(rep(regex_field, 4), collapse = "\\-")) ~
+              "2+ fields",
             # 3 fields
-            str_detect(dupl, "[a-z|a-z\\_a-z]{1,}\\-[a-z|a-z\\_a-z]{1,}\\-[a-z|a-z\\_a-z]{1,}") ~ "2+ fields",
-            str_detect(dupl, "[a-z|a-z\\_a-z]{1,}\\-[a-z|a-z\\_a-z]{1,}") ~ "2+ fields",
-            TRUE ~ dupl)
+            str_detect(
+              duplicate_field, paste(rep(regex_field, 3), collapse = "\\-")) ~
+              "2+ fields",
+            str_detect(
+              duplicate_field, paste(rep(regex_field, 2), collapse = "\\-")) ~
+              "2+ fields",
+            TRUE ~ duplicate_field)
       ) |>
       # Make a new col to reorder the bars
-      group_by(dupl) |>
+      group_by(duplicate_field) |>
       mutate(total_count = n()) |>
       ungroup() |>
-      ggplot(aes(x = reorder(dupl, -total_count))) +
+      ggplot(aes(x = reorder(duplicate_field, -total_count))) +
       geom_bar(stat = "count") +
       geom_text(
         aes(
-          x = dupl,
+          x = duplicate_field,
           label = after_stat(count),
           angle = 90),
         stat = "count",
