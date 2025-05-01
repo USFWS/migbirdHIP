@@ -74,8 +74,8 @@ duplicateFix <-
             # Keep a record if it's the only one in its group that has a 2 in
             # seaduck or brant columns
             sd_or_br_has_2_group_size == 1 ~ "keeper_sd_or_br_has_2",
-            # For rare cases that still have two or more records: keep a record if
-            # it's the only one in its group with the not all 1s bag values
+            # For rare cases that still have two or more records: keep a record
+            # if it's the only one in its group with the not all 1s bag values
             all_ones_group_size == 1 ~ "keeper_not_all_1s",
             # When there isn't a 1 value in any of the checking columns, it's a
             # duplicate still and we will need to randomly choose which record
@@ -126,12 +126,6 @@ duplicateFix <-
       duplicates |>
       # Filter the duplicates to those that occur in permit states
       filter(dl_state %in% unique(REF_PMT_INLINE$dl_state)) |>
-      # Set "." to NA in take fields & make those fields numeric
-      mutate(
-        across(
-          matches("bag|coots|rails"),
-          ~str_replace(.x, "\\.", NA_character_) |>
-          as.numeric(.))) |>
       # Calculate sum of values in the non-permit species columns to use as a
       # proxy.
       # Note: We can no longer use "special_sum" == 0 because the value for
