@@ -11,6 +11,8 @@
     -   The `zeroBagsMessage()` internal function is a new feature of `read_hip()` that checks for records with all-zero bag values and returns a message to the console if they are detected.
 -   Refactored functions
     -   In an effort to improve the maintainability of the package code, steps were made toward modularity, clarity, and unit testing in some of the larger functions.
+    -   `duplicateFinder()`
+        -   New internal function `duplicateFields()` uses `purrr` to significantly reduce redundancy in `duplicateFinder()`; overall, refactoring reduced the function's length from 151 lines to 50 lines and improved processing speed.
     -   `duplicateFix()`
         -   Broken down into 7 new minor internal functions (`duplicateID()`, `duplicateNewest()`, `duplicateAllOnes()`, `duplicateAllOnesGroupSize()`, `duplicateDecide()`, `duplicateRecordType()` and `duplicateSample()`).
         -   Overall, this refactor reduced deduplication run time by an average of 2 seconds on a frame with 270,000 records.

@@ -68,7 +68,7 @@ REF_BAG_FIELDS <-
     "rails_gallinules", "cranes", "band_tailed_pigeon", "brant", "seaducks")
 
 # Vector of fields that are used to deduplicate hunters
-REF_DUPL_FIELDS <-
+REF_HUNTER_ID_FIELDS <-
   c("firstname", "lastname", "state", "birth_date", "dl_state",
     "registration_yr")
 

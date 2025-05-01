@@ -154,7 +154,7 @@ duplicateFix <-
     resolved_duplicates <-
       # Remove duplicates from the input frame
       current_data |>
-      group_by(!!!syms(REF_DUPL_FIELDS)) |>
+      group_by(!!!syms(REF_HUNTER_ID_FIELDS)) |>
       filter(n() == 1) |>
       ungroup() |>
       # Set record type for single HIP registrations and solo in-line permits
@@ -201,8 +201,8 @@ duplicateFix <-
 duplicateID <-
   function(current_data) {
     current_data |>
-      # Group by REF_DUPL_FIELDS to determine each unique hunter
-      group_by(!!!syms(REF_DUPL_FIELDS)) |>
+      # Group by REF_HUNTER_ID_FIELDS to determine each unique hunter
+      group_by(!!!syms(REF_HUNTER_ID_FIELDS)) |>
       # Identify duplicates, aka records in groups of n() > 1
       filter(n() > 1) |>
       mutate(duplicate_id = paste0("duplicate_", cur_group_id())) |>
@@ -404,28 +404,48 @@ duplicateRecordType <-
             "HIP"))
   }
 
+#' Find causes of duplication
+#'
+#' The internal \code{duplicateFields} function is used inside of \code{\link{duplicateFinder}} to find which fields have different values among a group of duplicate registrations.
+#'
+#' @importFrom purrr map
+#' @importFrom purrr discard
+#' @importFrom stringr str_c
+#'
+#' @param duplicates The tibble created by \code{\link{duplicateID}}
+#' @param field_name Name of the column to compare values for
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
+
+duplicateFields <-
+  function(duplicates, fields) {
+    # Return the field name if there is more than one unique value in
+    # that field for a hunter, otherwise return NA
+    map(
+      fields,
+      \(x) if (length(unique(duplicates[[x]])) > 1) {
+        x
+      } else {
+        NA_character_
+      }) |>
+      # Remove NA values
+      discard(is.na) |>
+      # Combine the names of fields causing duplication into one string
+      str_c(collapse = "-")
+  }
+
 #' Find duplicates
 #'
 #' Determine how many duplicate records are in the data and return a table.
 #'
 #' @importFrom dplyr mutate
-#' @importFrom dplyr across
-#' @importFrom dplyr all_of
-#' @importFrom dplyr matches
 #' @importFrom dplyr filter
-#' @importFrom dplyr pull
 #' @importFrom dplyr group_by
 #' @importFrom dplyr n
 #' @importFrom dplyr ungroup
 #' @importFrom dplyr arrange
-#' @importFrom dplyr select
-#' @importFrom dplyr n_distinct
-#' @importFrom dplyr cur_group_id
-#' @importFrom dplyr row_number
 #' @importFrom stringr str_detect
-#' @importFrom stringr str_remove
-#' @importFrom dplyr summarize
-#' @importFrom dplyr distinct
 #' @importFrom rlang syms
 #'
 #' @inheritParams duplicateFix
@@ -438,153 +458,52 @@ duplicateRecordType <-
 duplicateFinder <-
   function(current_data) {
 
-    # List of permit records
-    pmts <-
-      current_data |>
-      # Classify solo permit records as PMT
-      mutate(
-        across(
-          all_of(REF_BAG_FIELDS),
-          ~as.numeric(.x)),
-        other_sum =
-          rowSums(across(matches(eval(REF_NON_PMT_SPECIES))), na.rm = T),
-        special_sum =
-          rowSums(across(matches("cranes|band|brant|seaducks")), na.rm = T),
-        record_type =
-          ifelse(
-            other_sum == 0 & special_sum > 0 & dl_state %in% unique(REF_PMT_INLINE$dl_state),
-            "PMT",
-            NA)) |>
-      filter(record_type == "PMT") |>
-      pull(record_key)
-
+    # Create a tibble of HIP duplicates
     duplicates <-
       current_data |>
+      # Assign record type
+      duplicateRecordType() |>
       # Filter out permits
-      filter(!record_key %in% pmts) |>
-      # Create a row key
-      mutate(hunter_key = paste0("hunter_", row_number())) |>
-      group_by(!!!syms(REF_DUPL_FIELDS)) |>
-      # Identify duplicates
+      filter(record_type != "PMT") |>
+      # Filter out non-duplicate records
+      group_by(!!!syms(REF_HUNTER_ID_FIELDS)) |>
       filter(n() > 1) |>
       ungroup() |>
-      # Filter out non-duplicate records
-      mutate(duplicate = "duplicate") |>
-      # Sort tibble
-      arrange(!!!syms(REF_DUPL_FIELDS))
+      # Sort
+      arrange(!!!syms(REF_HUNTER_ID_FIELDS))
 
-    # Number of registrations that are duplicated
-    duplicate_individuals <-
-      duplicates |>
-      select(!!!syms(REF_DUPL_FIELDS)) |>
-      n_distinct()
+    # Define the fields to check for cause of duplication
+    fields_to_check <-
+      c("title", "middle", "suffix", "address", "city", "zip", "issue_date",
+        "hunt_mig_birds", "registration_yr", "email", "dl_date",
+        "dl_cycle")
 
-    # Determine which fields are different between the duplicates so we can
-    # try to figure out why hunters are in the data more than once
+    # Determine the cause(s) of registration duplication for each hunter
     dupl_tibble <-
       duplicates |>
-      select(-c("hunter_key", "duplicate")) |>
-      group_by(!!!syms(REF_DUPL_FIELDS)) |>
-      mutate(
-        # Hunter key per individual (not per row)
-        hunter_key = cur_group_id(),
-        # Find the reason for the duplicates
-        # We start with a blank string so the following code can paste in
-        dupl = "",
-        # Iterate over each field in order to paste the field names together
-        # (can't be done with case_when)
-        dupl =
-          ifelse(
-            length(unique(title)) > 1,
-            paste(dupl, "title", sep = "-"),
-            dupl),
-        dupl =
-          ifelse(
-            length(unique(middle)) > 1,
-            paste(dupl, "middle", sep = "-"),
-            dupl),
-        dupl =
-          ifelse(
-            length(unique(suffix)) > 1,
-            paste(dupl, "suffix", sep = "-"),
-            dupl),
-        dupl =
-          ifelse(
-            length(unique(address)) > 1,
-            paste(dupl, "address", sep = "-"),
-            dupl),
-        dupl =
-          ifelse(
-            length(unique(city)) > 1,
-            paste(dupl, "city", sep = "-"),
-            dupl),
-        dupl =
-          ifelse(
-            length(unique(zip)) > 1,
-            paste(dupl, "zip", sep = "-"),
-            dupl),
-        dupl =
-          ifelse(
-            length(unique(birth_date)) > 1,
-            paste(dupl, "birth_date", sep = "-"),
-            dupl),
-        dupl =
-          ifelse(
-            length(unique(issue_date)) > 1,
-            paste(dupl, "issue_date", sep = "-"),
-            dupl),
-        dupl =
-          ifelse(
-            length(unique(hunt_mig_birds)) > 1,
-            paste(dupl, "hunt_mig_birds", sep = "-"),
-            dupl),
-        dupl =
-          ifelse(
-            length(unique(registration_yr)) > 1,
-            paste(dupl, "registration_yr", sep = "-"),
-            dupl),
-        dupl =
-          ifelse(
-            length(unique(email)) > 1,
-            paste(dupl, "email", sep = "-"),
-            dupl),
-        dupl =
-          ifelse(
-            length(unique(dl_date)) > 1,
-            paste(dupl, "dl_date", sep = "-"),
-            dupl),
-        dupl =
-          ifelse(
-            length(unique(dl_cycle)) > 1,
-            paste(dupl, "dl_cycle", sep = "-"),
-            dupl),
-        dupl = ifelse(str_detect(dupl, "^$"), "bag", dupl),
-        dupl = str_remove(dupl, "^\\-")
-      ) |>
+      group_by(!!!syms(REF_HUNTER_ID_FIELDS)) |>
+      # Hunter key per individual
+      mutate(hunter_key = cur_group_id()) |>
       ungroup() |>
-      select(hunter_key, dupl, dl_state) |>
-      distinct()
+      group_by(hunter_key, dl_state) |>
+      # Determine which fields are different between the duplicates to interpret
+      # why hunters are in the data more than once
+      reframe(
+        duplicate_field =
+          duplicateFields(pick(!!!fields_to_check), fields_to_check)) |>
+      # Blank strings indicate an unequal bag value among duplicates
+      mutate(
+        duplicate_field =
+          ifelse(str_detect(duplicate_field, "^$"), "bag", duplicate_field))
 
-    if(nrow(dupl_tibble) == 0) {
-      message(
-        paste(
-          "There are", duplicate_individuals,
-          "registrations with duplicates;", nrow(duplicates),
-          "total duplicated records."))
-    } else {
-      message(
-        paste(
-          "There are", duplicate_individuals,
-          "registrations with duplicates;", nrow(duplicates),
-          "total duplicated records."))
+    # Return a message of how many duplicates are in the data
+    message(
+      paste(
+        "There are", length(unique(dupl_tibble$hunter_key)), "registrations",
+        "with duplicates;", nrow(duplicates), "total duplicated records."))
 
-      dupl_table <-
-        dupl_tibble |>
-        group_by(dupl) |>
-        summarize(count = n()) |>
-        ungroup()
-
-      return(dupl_table)
+    if(nrow(dupl_tibble) > 0) {
+      return(dupl_tibble |> count(duplicate_field))
     }
   }
 
