@@ -4,18 +4,14 @@
 #'
 #' @importFrom dplyr group_by
 #' @importFrom dplyr mutate
+#' @importFrom dplyr case_when
 #' @importFrom dplyr ungroup
 #' @importFrom dplyr filter
-#' @importFrom dplyr arrange
 #' @importFrom dplyr bind_rows
-#' @importFrom dplyr across
-#' @importFrom dplyr matches
 #' @importFrom dplyr select
-#' @importFrom dplyr anti_join
-#' @importFrom dplyr slice_sample
-#' @importFrom dplyr n_distinct
-#' @importFrom stringr str_replace
 #' @importFrom rlang syms
+#' @importFrom dplyr n
+#' @importFrom dplyr distinct
 #'
 #' @param current_data The object created after filtering to current data with \code{\link{issueCheck}}
 #'
@@ -30,15 +26,13 @@ duplicateFix <-
     # Create a tibble of duplicate records with a duplicate id field
     duplicates <- duplicateID(current_data)
 
-    # Sea duck and brant states duplicate resolution:
+    # Sea duck and brant states duplicate resolution
     # 1. Keep record(s) with the most recent issue date.
     # 2. Evaluate if records contain 1s in all bag columns and if records have a
     #    2 for either brant or sea duck (just seaduck = Maine).
     # 3. Keep record if it is the only one in its group that has a 2 in
     #    seaduck or brant, or if it's the only one that is not-all-1s.
     # 4. If more than one record remains per group, keep one randomly.
-
-    # Sea Duck and Brant states duplicate resolution
     seaduck_and_brant_duplicates <-
       duplicates |>
       # Filter to sea duck and brant states
@@ -113,53 +107,45 @@ duplicateFix <-
       # Make decisions on which record to keep for each group
       duplicateDecide()
 
-    # Get the final non-permit, non-seaduck, non-brant tibble with 1 record per
-    # hunter
+    # Get the final non-special record tibble with 1 record per hunter
     other_deduplicated <- duplicateSample(other_duplicates)
 
-    # In-line permit state duplicate resolution: WA and OR submit permit records
-    # separately from HIP records. These partial duplicates will be labeled as
-    # either HIP or PMT. Multiple HIP records must be resolved (keep only 1 per
-    # hunter), but multiple permits are allowed.
+    # In-line permit state duplicate resolution
+    # WA and OR submit permit records separately from HIP records. These partial
+    # duplicates will be labeled as either HIP or PMT. Multiple HIP records must
+    # be resolved (keep only 1 per hunter), but multiple permits are allowed.
     permit_state_duplicates <-
       duplicates |>
       # Filter the duplicates to those that occur in permit states
       filter(dl_state %in% unique(REF_PMT_INLINE$dl_state)) |>
-      # Calculate sum of values in the non-permit species columns to determine
-      # if a record is an in-line permit
-      mutate(
-        record_type =
-          case_when(
-            # If the sum of values in non-permit species columns is > 0, the
-            # record is a HIP registration
-            rowSums(
-              across(
-                matches(
-                  eval(REF_NON_PMT_SPECIES)), as.numeric), na.rm = T) > 0 ~
-              "HIP",
-            # If the sum of values in permit species columns is > 0, the record
-            # is a permit
-            rowSums(
-              across(
-                matches(
-                  eval(REF_NON_PMT_SPECIES)), as.numeric), na.rm = T) == 0 ~
-              "PMT",
-            TRUE ~ NA_character_
-          )
-      )
+      # Set record type for HIP registrations and in-line permits
+      duplicateRecordType()
 
     # If there is more than one HIP record per person from an in-line permit
     # state, decide which one to keep
-    hip_permit_state_duplicates <-
-      permit_state_duplicates |>
-      filter(record_type == "HIP") |>
-      # Keep records with the most recent issue_date
-      duplicateNewest() |>
-      # Check records for "1" in every bag field
-      duplicateAllOnes() |>
-      duplicateAllOnesGroupSize() |>
-      # Make decisions on which record to keep for each group
-      duplicateDecide()
+    if(nrow(permit_state_duplicates) > 0) {
+      hip_permit_state_duplicates <-
+        permit_state_duplicates |>
+        filter(record_type == "HIP") |>
+        # Keep records with the most recent issue_date
+        duplicateNewest() |>
+        # Check records for "1" in every bag field
+        duplicateAllOnes() |>
+        duplicateAllOnesGroupSize() |>
+        # Make decisions on which record to keep for each group
+        duplicateDecide()
+
+      # Get the final permit state tibble with 1 HIP record per hunter
+      hip_deduplicated <-
+        duplicateSample(hip_permit_state_duplicates) |>
+        select(-c("duplicate_id", "all_ones", "all_ones_group_size", "decision"))
+    } else {
+      permit_state_duplicates <-
+        permit_state_duplicates |>
+        mutate(record_type = as.character(record_type))
+
+      hip_deduplicated <- permit_state_duplicates
+    }
 
     # Get the final permit state tibble with 1 HIP record per hunter
     hip_deduplicated <- duplicateSample(hip_permit_state_duplicates)
@@ -171,39 +157,24 @@ duplicateFix <-
       group_by(!!!syms(REF_DUPL_FIELDS)) |>
       filter(n() == 1) |>
       ungroup() |>
-      # These records should all be HIP
-      mutate(record_type = "HIP") |>
-      # Classify solo permit records as PMT
-      mutate(
-        across(
-          matches("bag|coots|rails|band|brant|seaducks"),
-          ~as.numeric(.x)),
-        other_sum =
-          rowSums(across(matches(eval(REF_NON_PMT_SPECIES))), na.rm = T),
-        special_sum =
-          rowSums(across(matches("band|brant|seaducks")), na.rm = T),
-        across(
-          matches("bag|coots|rails|band|brant|seaducks"),
-          ~as.character(.x)),
-        record_type =
-          ifelse(
-            other_sum == 0 & special_sum > 0 & dl_state %in% unique(REF_PMT_INLINE$dl_state),
-            "PMT",
-            record_type)) |>
-      select(-c("other_sum", "special_sum")) |>
-      # Add back the resolved duplicates back in
+      # Set record type for single HIP registrations and solo in-line permits
+      duplicateRecordType() |>
+      # Add the resolved duplicates back in
       bind_rows(
+        # Sea duck and brant states
         sdbr_deduplicated |>
           select(-(duplicate_id:decision)) |>
           mutate(record_type = "HIP"),
+        # Other states
         other_deduplicated |>
           select(-(duplicate_id:decision)) |>
           mutate(record_type = "HIP"),
+        # In-line permit states PMT records
         permit_state_duplicates |>
           select(-duplicate_id) |>
           filter(record_type == "PMT"),
-        hip_deduplicated |>
-          select(-(duplicate_id:decision))
+        # In-line permit states HIP records
+        hip_deduplicated
         ) |>
       distinct()
 
@@ -330,7 +301,9 @@ duplicateAllOnesGroupSize <-
 #'
 #' The internal \code{duplicateDecide} function is used inside of \code{\link{duplicateFix}} to deduplicate intermediate tibbles.
 #'
+#' @importFrom dplyr group_by
 #' @importFrom dplyr mutate
+#' @importFrom dplyr case_when
 #' @importFrom dplyr n
 #' @importFrom dplyr ungroup
 #' @importFrom dplyr filter
@@ -380,8 +353,6 @@ duplicateDecide <-
 #' @importFrom dplyr slice_sample
 #' @importFrom dplyr ungroup
 #' @importFrom stringr str_detect
-#' @importFrom dplyr select
-#' @importFrom dplyr mutate
 #'
 #' @param dupes Intermediate tibble created in \code{\link{duplicateFix}}
 #'
@@ -400,6 +371,37 @@ duplicateSample <-
       # Row bind in the "keepers" (should already be 1 per hunter)
       dupes |>
         filter(str_detect(decision, "keeper")))
+  }
+
+#' Set record type
+#'
+#' The internal \code{duplicateRecordType} function is used inside of \code{\link{duplicateFix}} to set record type of registrations based on each record's bag values.
+#'
+#' @importFrom dplyr mutate
+#' @importFrom dplyr across
+#' @importFrom dplyr matches
+#'
+#' @param duplicates The tibble created by \code{\link{duplicateID}}
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
+
+duplicateRecordType <-
+  function(duplicates) {
+    # If a record is from an in-line permit state, the sum of values in
+    # non-permit species columns is 0, AND the sum of values in permit species
+    # columns is > 0, the record is an in-line permit.
+    duplicates |>
+      mutate(
+        record_type =
+          ifelse(
+            dl_state %in% unique(REF_PMT_INLINE$dl_state) &
+              rowSums(across(matches(eval(REF_NON_PMT_SPECIES)), as.numeric),
+                      na.rm = T) == 0 &
+              rowSums(across(matches("band|brant|seaducks"), as.numeric),
+                      na.rm = T) > 0,
+            "PMT",
+            "HIP"))
   }
 
 #' Find duplicates

@@ -12,8 +12,9 @@
 -   Refactored functions
     -   In an effort to improve the maintainability of the package code, steps were made toward modularity, clarity, and unit testing in some of the larger functions.
     -   `duplicateFix()`
-        -   Broken down into 6 new minor internal functions (`duplicateID()`, `duplicateNewest()`, `duplicateAllOnes()`, `duplicateAllOnesGroupSize()`, `duplicateDecide()` and `duplicateSample()`).
-        -   Records are no longer evaluated for having all-zero bags, because these records are now filtered out upstream during `clean()`.
+        -   Broken down into 7 new minor internal functions (`duplicateID()`, `duplicateNewest()`, `duplicateAllOnes()`, `duplicateAllOnesGroupSize()`, `duplicateDecide()`, `duplicateRecordType()` and `duplicateSample()`).
+        -   Overall, this refactor reduced deduplication run time by an average of 2 seconds on a frame with 270,000 records.
+        -   Records are no longer evaluated for having all-zero bags or periods instead of bag values because these records are now filtered out upstream during `clean()`.
     -   `read_hip()`
         -   Broken down into 17 new minor internal functions (`listFiles()`, `ignorePermits()`, `ignoreHolds()`, `idBlankFiles()`, `dropBlankFiles()`, `checkFileNameDateFormat()`, `checkFileNameStateAbbr()`, `readMessages()`, `missingPIIMessage()`, `missingEmailsMessage()`, `testRecordMessage()`, `zeroBagsMessage()`, `naBagsMessage()`, `nonDigitBagsMessage()`, `inLinePermitDNHMessage()`, `dlStateNAMessage()`, and `dlDateNAMessage()`).
         -   More strict requirements must be met for data to be successfully read (e.g. instead of returning a message that file names are incorrectly formatted, this would stop the process).
