@@ -58,6 +58,9 @@ REGEX_SUFFIXES <-
     "(?<=\\s)(JR|SR|I{1,3}|IV|VI{0,3}|I{0,1}X|XI{1,3}|XI{0,1}V|XVI{1,2}|XI",
     "{0,1}X|1ST|2ND|3RD|[4-9]TH|1[0-9]TH|20TH)\\.?$")
 
+# Regular expression that selects non-permit species bag fields
+REGEX_NON_PMT_SPECIES <- "bag|coots|rails"
+
 # Vector of Harvest Information Program species/species group fields containing
 # bag values
 REF_BAG_FIELDS <-

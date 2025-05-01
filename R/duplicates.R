@@ -113,44 +113,45 @@ duplicateFix <-
       # Make decisions on which record to keep for each group
       duplicateDecide()
 
-    # Get the final tibble with 1 record per hunter
+    # Get the final non-permit, non-seaduck, non-brant tibble with 1 record per
+    # hunter
     other_deduplicated <- duplicateSample(other_duplicates)
 
-    # Permit state duplicate resolution:
-    # WA and OR submit permit records separately from HIP records. These partial
-    # duplicates will be labeled as either HIP or PMT. Multiple HIP records must
-    # be resolved (keep only 1 per hunter), but multiple permits are allowed.
-    # HIP records contain non-0 values in the regular species bag fields. Permit
-    # records always have 0s in regular species columns.
-    permit_duplicates <-
+    # In-line permit state duplicate resolution: WA and OR submit permit records
+    # separately from HIP records. These partial duplicates will be labeled as
+    # either HIP or PMT. Multiple HIP records must be resolved (keep only 1 per
+    # hunter), but multiple permits are allowed.
+    permit_state_duplicates <-
       duplicates |>
       # Filter the duplicates to those that occur in permit states
       filter(dl_state %in% unique(REF_PMT_INLINE$dl_state)) |>
-      # Calculate sum of values in the non-permit species columns to use as a
-      # proxy.
-      # Note: We can no longer use "special_sum" == 0 because the value for
-      # cranes is often sent as a 1. The special_sum reference col was
-      # previously calculated by adding the values for brant, seaducks,
-      # band_tailed_pigeon, and cranes. Using only the "regular" HIP species sum
-      # is relatively reliable instead.
+      # Calculate sum of values in the non-permit species columns to determine
+      # if a record is an in-line permit
       mutate(
-        other_sum = rowSums(across(matches("bag|coots|rails")), na.rm = T)) |>
-      # Reset bags to character for row bind later
-      mutate(
-        across(matches("bag|coots|rails"), ~as.character(.x)),
         record_type =
           case_when(
             # If the sum of values in non-permit species columns is > 0, the
-            # record is a HIP record
-            other_sum > 0 ~ "HIP",
-            # If the sum of values in permit species columns is > 0 the record
+            # record is a HIP registration
+            rowSums(
+              across(
+                matches(
+                  eval(REF_NON_PMT_SPECIES)), as.numeric), na.rm = T) > 0 ~
+              "HIP",
+            # If the sum of values in permit species columns is > 0, the record
             # is a permit
-            other_sum == 0 ~ "PMT",
-            TRUE ~ NA_character_))
+            rowSums(
+              across(
+                matches(
+                  eval(REF_NON_PMT_SPECIES)), as.numeric), na.rm = T) == 0 ~
+              "PMT",
+            TRUE ~ NA_character_
+          )
+      )
 
-    # If there is more than one HIP record per person, decide which one to keep
-    hip_duplicates <-
-      permit_duplicates |>
+    # If there is more than one HIP record per person from an in-line permit
+    # state, decide which one to keep
+    hip_permit_state_duplicates <-
+      permit_state_duplicates |>
       filter(record_type == "HIP") |>
       # Keep records with the most recent issue_date
       duplicateNewest() |>
@@ -160,8 +161,8 @@ duplicateFix <-
       # Make decisions on which record to keep for each group
       duplicateDecide()
 
-    # Get the final tibble with 1 record per hunter
-    hip_deduplicated <- duplicateSample(hip_duplicates)
+    # Get the final permit state tibble with 1 HIP record per hunter
+    hip_deduplicated <- duplicateSample(hip_permit_state_duplicates)
 
     # Combine all resolved records into one tibble
     resolved_duplicates <-
@@ -178,7 +179,7 @@ duplicateFix <-
           matches("bag|coots|rails|band|brant|seaducks"),
           ~as.numeric(.x)),
         other_sum =
-          rowSums(across(matches("bag|coots|rails")), na.rm = T),
+          rowSums(across(matches(eval(REF_NON_PMT_SPECIES))), na.rm = T),
         special_sum =
           rowSums(across(matches("band|brant|seaducks")), na.rm = T),
         across(
@@ -198,8 +199,8 @@ duplicateFix <-
         other_deduplicated |>
           select(-(duplicate_id:decision)) |>
           mutate(record_type = "HIP"),
-        permit_duplicates |>
-          select(-c("duplicate_id", "other_sum")) |>
+        permit_state_duplicates |>
+          select(-duplicate_id) |>
           filter(record_type == "PMT"),
         hip_deduplicated |>
           select(-(duplicate_id:decision))
@@ -444,7 +445,7 @@ duplicateFinder <-
           all_of(REF_BAG_FIELDS),
           ~as.numeric(.x)),
         other_sum =
-          rowSums(across(matches("bag|coots|rails")), na.rm = T),
+          rowSums(across(matches(eval(REF_NON_PMT_SPECIES))), na.rm = T),
         special_sum =
           rowSums(across(matches("cranes|band|brant|seaducks")), na.rm = T),
         record_type =
