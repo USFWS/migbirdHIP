@@ -153,13 +153,15 @@ read_hip <-
       # Add a download key
       group_by(dl_date, dl_state) |>
       mutate(dl_key = paste0("dl_", cur_group_id())) |>
-      ungroup() |>
-      # Add a record key
-      mutate(record_key = paste0("record_", row_number()))
+      ungroup()
 
     # Remove exact duplicates
     if (unique == TRUE) {
-      raw_data <- distinct(raw_data)
+      raw_data <-
+        raw_data |>
+        distinct() |>
+        # Add a record key
+        mutate(record_key = paste0("record_", row_number()))
     }
 
     # Return messages to console for important issues
