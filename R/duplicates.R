@@ -396,7 +396,7 @@ duplicateRecordType <-
         record_type =
           ifelse(
             dl_state %in% unique(REF_PMT_INLINE$dl_state) &
-              rowSums(across(matches(eval(REF_NON_PMT_SPECIES)), as.numeric),
+              rowSums(across(matches(eval(REGEX_NON_PMT_SPECIES)), as.numeric),
                       na.rm = T) == 0 &
               rowSums(across(matches("band|brant|seaducks"), as.numeric),
                       na.rm = T) > 0,
@@ -413,7 +413,7 @@ duplicateRecordType <-
 #' @importFrom stringr str_c
 #'
 #' @param duplicates The tibble created by \code{\link{duplicateID}}
-#' @param field_name Name of the column to compare values for
+#' @param fields Name of the column to compare values for
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}
@@ -447,6 +447,8 @@ duplicateFields <-
 #' @importFrom dplyr arrange
 #' @importFrom stringr str_detect
 #' @importFrom rlang syms
+#' @importFrom dplyr reframe
+#' @importFrom dplyr pick
 #'
 #' @inheritParams duplicateFix
 #'

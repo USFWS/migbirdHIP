@@ -9,7 +9,7 @@ duplicateFields(duplicates, fields)
 \arguments{
 \item{duplicates}{The tibble created by \code{\link{duplicateID}}}
 
-\item{field_name}{Name of the column to compare values for}
+\item{fields}{Name of the column to compare values for}
 }
 \description{
 The internal \code{duplicateFields} function is used inside of \code{\link{duplicateFinder}} to find which fields have different values among a group of duplicate registrations.
