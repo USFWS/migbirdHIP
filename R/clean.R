@@ -304,10 +304,10 @@ zipCheck <-
       group_by(source_file) |>
       reframe(
         n = n(),
-        prop = round(n/total_records, 2)) |>
+        proportion = round(n/total_records, 2)) |>
       distinct() |>
       arrange(desc(n)) |>
-      filter(n >= 100 | prop >= 0.1)
+      filter(n >= 100 | proportion >= 0.1)
 
     # Error check: are any zip codes wrong?
     if(nrow(zipcheck) > 0){

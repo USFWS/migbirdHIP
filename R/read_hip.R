@@ -442,9 +442,9 @@ missingPIIMessage <-
       filter(
         is.na(firstname)|is.na(lastname)|is.na(state)|is.na(birth_date)) |>
       group_by(dl_state) |>
-      reframe(n = n(), prop = round(n/n_total, 2)) |>
+      reframe(n = n(), proportion = round(n/n_total, 2)) |>
       distinct() |>
-      filter(n >= 100 | prop >= 0.1)
+      filter(n >= 100 | proportion >= 0.1)
 
     if (nrow(raw_nas) > 0) {
       message(
