@@ -22,7 +22,7 @@
     "repositoryURL": "https://github.com/USFWS/migbirdHIP.git",
     "vcs": "git",
 
-    "laborHours": 644,
+    "laborHours": 684,
 
     "tags": [
       "usfws",
@@ -42,7 +42,7 @@
     },
 
     "date": {
-      "metadataLastUpdated": "2025-04-15"
+      "metadataLastUpdated": "2025-05-02"
     }
   }
 ]
