@@ -36,19 +36,21 @@ proof <-
     stopifnot("Error: `year` parameter must be numeric." = is.numeric(year))
     stopifnot("Error: Incorrect value supplied for `year` parameter. Please use a 4-digit year in the 2020s, e.g. 2024." = str_detect(year, "^202[0-9]{1}$"))
 
-    # Create a record key so that the errors can be joined in later
-    keyed_x <-
+    # Create a record key so that the errors can be joined in later (there may
+    # be more than 1 error per record, so using the record_key field will not
+    # work)
+    keyed_data <-
       deduplicated_data |>
       mutate(temp_key = paste0("row_", row_number()))
 
     markup <-
       bind_rows(
         # Title should be 1 or 2, no other values
-        keyed_x |>
+        keyed_data |>
           filter(!str_detect(title, "0|1|2")) |>
           mutate(error = "title"),
         # First name
-        keyed_x |>
+        keyed_data |>
           mutate(
             error =
               case_when(
@@ -70,11 +72,11 @@ proof <-
                   "firstname",
                 TRUE ~ NA_character_)),
         # Middle name should only be 1 letter of the alphabet
-        keyed_x |>
+        keyed_data |>
           filter(!str_detect(middle, "^[A-Z]{1}$")) |>
           mutate(error = "middle"),
         # Last name
-        keyed_x |>
+        keyed_data |>
           mutate(
             error =
               case_when(
@@ -92,7 +94,7 @@ proof <-
         # Suffix
         # Allows 1-20 in Roman numerals and numeric, excluding XVIII since the
         # limit is 4 characters)
-        keyed_x |>
+        keyed_data |>
           filter(
             str_detect(
               suffix,
@@ -100,29 +102,29 @@ proof <-
           mutate(error = "suffix"),
         # Address does not contain |, tab or non-UTF8 characters
         # Any further address verification isn't really possible
-        keyed_x |>
+        keyed_data |>
           filter(str_detect(address, "\\||\\t|[^\\x00-\\x7F]+")) |>
           mutate(error = "address"),
         # City should only contain letters, spaces (e.g. New York City), hyphens
         # (e.g. Winston-Salem, NC), or apostrophes (e.g. HI residents and
         # O'Fallon, MO)
-        keyed_x |>
+        keyed_data |>
           filter(str_detect(city, "[^A-Za-z\\s\\-\\']")) |>
           mutate(error = "city"),
         # City MUST contain at least 3 letters
-        keyed_x |>
+        keyed_data |>
           filter(str_detect(city, "^[A-Za-z]{1,2}$")) |>
           mutate(error = "city"),
         # State should only contain a specific list of states/provinces/etc
-        keyed_x |>
+        keyed_data |>
           filter(!str_detect(state, REGEX_USA_CANADA)) |>
           mutate(error = "state"),
         # Zip code should be in the reference table
-        keyed_x |>
+        keyed_data |>
           filter(!str_extract(zip, "^[0-9]{5}") %in% zip_code_ref$zipcode) |>
           mutate(error = "zip"),
         # Birth date should only ever be between 100 and 0 years ago
-        keyed_x |>
+        keyed_data |>
           filter(
             as.numeric(
               str_extract(birth_date, "(?<=\\/)[0-9]{4}")) < year - 100 |
@@ -130,15 +132,15 @@ proof <-
                 str_extract(birth_date, "(?<=\\/)[0-9]{4}")) > year - 0) |>
           mutate(error = "birth_date"),
         # Hunting migratory birds should only be = 1 or 2
-        keyed_x |>
+        keyed_data |>
           filter(!hunt_mig_birds %in% c("1", "2")) |>
           mutate(error = "hunt_mig_birds"),
         # Registration year should = survey year
-        keyed_x |>
+        keyed_data |>
           filter(registration_yr != year) |>
           mutate(error = "registration_yr"),
         # Email
-        keyed_x |>
+        keyed_data |>
           mutate(email = tolower(email)) |>
           filter(
             # If email doesn't fit a loose validation regular expression, mark
@@ -191,7 +193,7 @@ proof <-
       select(temp_key, error)
 
     graded_x <-
-      keyed_x |>
+      keyed_data |>
       # Join in the error report
       left_join(markup, by = "temp_key") |>
       group_by(temp_key) |>
