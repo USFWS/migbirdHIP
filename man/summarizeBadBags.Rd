@@ -8,6 +8,10 @@ summarizeBadBags(deduplicated_data, bad_bag_values, x)
 }
 \arguments{
 \item{deduplicated_data}{The object created after deduplicating data with \code{\link{duplicateFix}}}
+
+\item{bad_bag_values}{Bad bag values}
+
+\item{x}{Row number}
 }
 \description{
 The internal \code{filterOutOregonPermits} function calculates the count and proportion of a bad bag value inside of \code{\link{bagCheck}}.

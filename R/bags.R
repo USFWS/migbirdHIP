@@ -32,7 +32,8 @@ bagCheck <-
 
     # Filter out in-line permits
     deduplicated_data <-
-      deduplicated_data |> filter(!(!!LOGIC_INLINE_PMT))
+      deduplicated_data |>
+      filter(!(!!LOGIC_INLINE_PMT))
 
     # Reformat hip_bags_ref
     mini_hip_bags_ref <-
@@ -125,7 +126,9 @@ bagCheck <-
 #' @importFrom rlang sym
 #' @importFrom dplyr n
 #'
-#' @inheritParams bagCheck
+#' @param deduplicated_data The object created after deduplicating data with \code{\link{duplicateFix}}
+#' @param bad_bag_values Bad bag values
+#' @param x Row number
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}
@@ -142,7 +145,7 @@ summarizeBadBags <-
         spp = bad_bag_values[[x,2]]) |>
       select(-sym(bad_bag_values[[x,2]])) |>
       mutate(
-        prop = paste0(round(n_bad_bags/n_state, 2)*100,"%"),
+        proportion = paste0(round(n_bad_bags/n_state, 2)*100,"%"),
         bad_bag_value = bad_bag_values[[x,3]]) |>
-      distinct(dl_state, spp, bad_bag_value, n = n_bad_bags, prop)
+      distinct(dl_state, spp, bad_bag_value, n = n_bad_bags, proportion)
   }
