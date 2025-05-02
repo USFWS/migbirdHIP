@@ -5,6 +5,7 @@
 -   Created `constants.R` to define variables in a central place and thus evaluate data consistently across functions (e.g., `inLinePermitDNHMessage()` and `inLinePermitDNHFix()` both use `LOGIC_INLINE_PMT_DNH` to evaluate data using the same logical condition).
     -   Moved `ref_bagfields`, `abbr_usa`, `abbr_canada`, `pmt_inline`, and `pmt_files` from package internal data `sysdata.rda` to the `constants.R` file, for transparency and to reduce the number of objects included internally; now named with uppercase letters to indicate they are internal reference data objects (`REF_BAG_FIELDS`, `REF_ABBR_USA`, `REF_ABBR_CANADA`, `REF_PMT_INLINE`, `REF_PMT_FILES`).
     -   Moved suffix regex reference vector from `moveSuffixes()` to `constants.R` as `REGEX_SUFFIXES`.
+    -   Moved strata names from `write_hip()` to `constants.R` as `REF_STRATA_NAMES`.
 -   New functions
     -   `testRecordMessage()` added to `read_hip()` and `testRecordFilter()` added to `clean()` to find and filter out any testing records mistakenly sent to us by the states.
     -   New `duplicatePlot()` function added; `duplicateFinder()` (previously named `findDuplicates()`) function no longer outputs a plot.

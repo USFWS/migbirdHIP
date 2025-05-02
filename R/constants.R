@@ -67,6 +67,10 @@ REF_BAG_FIELDS <-
   c("ducks_bag", "geese_bag", "dove_bag", "woodcock_bag", "coots_snipe",
     "rails_gallinules", "cranes", "band_tailed_pigeon", "brant", "seaducks")
 
+REF_STRATA_NAMES <-
+  c("S_ducks", "S_geese", "S_doves", "S_woodcock", "S_coot_snipe",
+    "S_rail_gallinule", "S_cranes", "S_bt_pigeons", "S_brant", "S_seaducks")
+
 # Vector of fields that are used to deduplicate hunters
 REF_HUNTER_ID_FIELDS <-
   c("firstname", "lastname", "state", "birth_date", "dl_state",

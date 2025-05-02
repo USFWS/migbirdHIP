@@ -139,10 +139,6 @@ write_hip <-
           unique(corrected_data$seaducks) == 0)
     }
 
-    stratanames <-
-      c("S_ducks", "S_geese", "S_doves", "S_woodcock", "S_coot_snipe",
-        "S_rail_gallinule", "S_cranes", "S_bt_pigeons", "S_brant", "S_seaducks")
-
     # Generate a list of translated bags for each species/species group
     bag_translations <-
       map(
@@ -153,7 +149,7 @@ write_hip <-
           select(-c("stateBagValue", "spp")) |>
           rename(
             dl_state = state,
-            !!sym(stratanames[.x]) := FWSstratum)
+            !!sym(REF_STRATA_NAMES[.x]) := FWSstratum)
       )
 
     # Left join all the bag translations to the corrected data
@@ -176,11 +172,11 @@ write_hip <-
           filter(n() == 1) |>
           ungroup() |>
           filter(spp == REF_BAG_FIELDS[.x]) |>
-          mutate(!!sym(stratanames[.x]) := NA) |>
+          mutate(!!sym(REF_STRATA_NAMES[.x]) := NA) |>
           select(-spp) |>
           rename(
             dl_state = state,
-            !!sym(paste0(stratanames[.x], "_0s")) := FWSstratum)
+            !!sym(paste0(REF_STRATA_NAMES[.x], "_0s")) := FWSstratum)
       )
 
     # If a season doesn't exist, make sure the translation is 0 (not NA)
@@ -190,17 +186,17 @@ write_hip <-
           corrected_data |>
           left_join(
             zero_translations[[i]],
-            by = c("dl_state", stratanames[i])) |>
+            by = c("dl_state", REF_STRATA_NAMES[i])) |>
           mutate(
-            !!sym(stratanames[i]) :=
+            !!sym(REF_STRATA_NAMES[i]) :=
               ifelse(
-                is.na(!!sym(paste0(stratanames[i]))) &
-                  !is.na(!!sym(paste0(stratanames[i], "_0s"))),
-                !!sym(paste0(stratanames[i], "_0s")),
-                !!sym(paste0(stratanames[i]))
+                is.na(!!sym(paste0(REF_STRATA_NAMES[i]))) &
+                  !is.na(!!sym(paste0(REF_STRATA_NAMES[i], "_0s"))),
+                !!sym(paste0(REF_STRATA_NAMES[i], "_0s")),
+                !!sym(paste0(REF_STRATA_NAMES[i]))
               )
           ) |>
-          select(-!!sym(paste0(stratanames[i], "_0s")))
+          select(-!!sym(paste0(REF_STRATA_NAMES[i], "_0s")))
       }
     }
 
