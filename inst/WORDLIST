@@ -3,8 +3,8 @@ BT
 CMD
 DDMMYYYY
 DL
+De
 FWS
-HuntY
 MH
 MMDDYYYY
 NL
@@ -24,7 +24,9 @@ brant
 ccom
 comcast
 csv
+deduplicate
 deduplicating
+deduplication
 dev
 dl
 edu
@@ -52,14 +54,13 @@ modularity
 noemail
 outOfStateHunters
 param
+params
 pre
-programmatically
 pullErrors
 rda
 readme
 redFlags
 renameFiles
-repo
 seaduck
 seaducks
 shiftCheck
