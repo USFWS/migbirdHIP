@@ -86,8 +86,6 @@ namesToUppercase <-
 #' The internal \code{missingPIIFilter} function filters out HIP registrations that are missing critical pieces of contact information.
 #'
 #' @importFrom dplyr filter
-#' @importFrom dplyr if_all
-#' @importFrom dplyr if_any
 #'
 #' @inheritParams clean
 #'
@@ -97,19 +95,17 @@ namesToUppercase <-
 missingPIIFilter <-
   function(raw_data) {
 
+    # Filter out records if firstname, lastname, state, or date of birth are
+    # missing; records discarded because these are needed to identify
+    # individuals and cannot be otherwise determined. Also, filter out records
+    # if they are missing a value for email AND combinations of elements of a
+    # physical address that are required to determine where to mail a letter.
     raw_data |>
-      # Filter out records if firstname, lastname, city of residence, state of
-      # residence, or date of birth are missing -- records discarded because
-      # these are needed to identify individuals
       filter(
-        !if_any(
-          c("firstname", "lastname", "state", "birth_date"), \(x) is.na(x))) |>
-      # Filter out any additional records if they are missing a value for email
-      # AND elements of a physical address that are required to determine where
-      # to mail a letter
-      filter(!if_all(c("address", "email"), \(x) is.na(x))) |>
-      filter(!if_all(c("city", "zip", "email"), \(x) is.na(x)))
-
+        !(!!LOGIC_MISSING_PII |
+            !!LOGIC_MISSING_ADDRESSES |
+            !!LOGIC_MISSING_CITY_ZIP_EMAIL)
+        )
   }
 
 #' Move suffixes

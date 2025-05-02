@@ -1,7 +1,6 @@
 #' @importFrom rlang expr
 #' @importFrom dplyr bind_rows
 #' @importFrom dplyr tibble
-#' @importFrom lubridate ymd
 #' @importFrom dplyr if_any
 #' @importFrom dplyr if_all
 #' @importFrom dplyr all_of
@@ -32,13 +31,26 @@ LOGIC_INLINE_PMT_DNH <-
 LOGIC_TEST_RECORD <-
   expr(firstname == "TEST" & lastname == "TEST")
 
-# Define non-digit bag records
+# Define non-digit bag records; used by read_hip() and clean()
 LOGIC_NONDIGIT_BAGS <-
   expr(if_any(all_of(REF_BAG_FIELDS), \(x) !str_detect(x, "^[0-9]{1}$")))
 
-# Define all-zero bag records
+# Define all-zero bag records; used by read_hip() and clean()
 LOGIC_ZERO_BAGS <-
   expr(if_all(all_of(REF_BAG_FIELDS), \(x) x == "0"))
+
+# Define missing personal information; used by read_hip() and missingPIIFilter()
+LOGIC_MISSING_PII <-
+  expr(if_any(c("firstname", "lastname", "state", "birth_date"), \(x) is.na(x)))
+
+# Define missing address and email; used by read_hip() and missingPIIFilter()
+LOGIC_MISSING_ADDRESSES <-
+  expr(if_all(c("address", "email"), \(x) is.na(x)))
+
+# Define missing elements of a physical address that are required to determine
+# where to mail a letter; used by read_hip() and missingPIIFilter()
+LOGIC_MISSING_CITY_ZIP_EMAIL <-
+  expr(if_all(c("city", "zip", "email"), \(x) is.na(x)))
 
 # Define suffixes using regular expressions. Includes values from 1-20 in Roman
 # numerals and numeric, excluding XVIII (limit is 4 characters)

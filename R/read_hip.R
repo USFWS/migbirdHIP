@@ -440,7 +440,9 @@ missingPIIMessage <-
       mutate(n_total = n()) |>
       ungroup() |>
       filter(
-        is.na(firstname)|is.na(lastname)|is.na(state)|is.na(birth_date)) |>
+        !!LOGIC_MISSING_PII |
+          !!LOGIC_MISSING_ADDRESSES |
+          !!LOGIC_MISSING_CITY_ZIP_EMAIL) |>
       group_by(dl_state) |>
       reframe(n = n(), proportion = round(n/n_total, 2)) |>
       distinct() |>
