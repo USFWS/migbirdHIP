@@ -50,6 +50,13 @@ REGEX_SUFFIXES <-
 # Regular expression that selects non-permit species bag fields
 REGEX_NON_PMT_SPECIES <- "bag|coots|rails"
 
+# Combine US State, District and Territory abbreviations with Canadian Province
+# and Territory abbreviations; used by proof()
+REGEX_USA_CANADA <-
+  paste(
+    c(datasets::state.abb, REF_ABBR_USA, REF_ABBR_CANADA),
+    collapse = "|")
+
 # Vector of Harvest Information Program species/species group fields containing
 # bag values
 REF_BAG_FIELDS <-
@@ -74,15 +81,15 @@ REF_ABBR_USA <-
   c("DC", "AS", "GU", "MP", "PR", "VI", "UM", "MH", "FM", "PW", "AA", "AE",
     "AP")
 
-# Canada abbreviations:
-# Alberta, British Columbia, Manitoba, New Brunswick, Newfoundland and
-# Labrador, Nova Scotia, Northwest Territories, Nunavut, Ontario, Prince
-# Edward Island, Province du Québec, Quebec, Saskatchewan, Yukon
+# Canada abbreviations: Alberta, British Columbia, Manitoba, New Brunswick,
+# Newfoundland and Labrador, Nova Scotia, Northwest Territories, Nunavut,
+# Ontario, Prince Edward Island, Province du Québec, Quebec, Saskatchewan,
+# Yukon; Used by the download report template
 REF_ABBR_CANADA <-
   c("AB", "BC", "MB", "NB", "NL", "NS", "NT", "NU", "ON", "PE", "PQ", "QC",
     "SK", "YT")
 
-# Continental 49 state abbreviations
+# Continental 49 state abbreviations; Used by read_hip() and the download report
 REF_ABBR_49_STATES <- datasets::state.abb[datasets::state.abb != "HI"]
 
 # Permit state expected bag values (files received separately from HIP process)

@@ -36,13 +36,6 @@ proof <-
     stopifnot("Error: `year` parameter must be numeric." = is.numeric(year))
     stopifnot("Error: Incorrect value supplied for `year` parameter. Please use a 4-digit year in the 2020s, e.g. 2024." = str_detect(year, "^202[0-9]{1}$"))
 
-    # Combine US State, District and Territory abbreviations with Canada
-    # abbreviations
-    states_provinces_and_canada <-
-      paste(
-        c(datasets::state.abb, REF_ABBR_USA, REF_ABBR_CANADA),
-        collapse = "|")
-
     # Create a record key so that the errors can be joined in later
     keyed_x <-
       deduplicated_data |>
@@ -122,7 +115,7 @@ proof <-
           mutate(error = "city"),
         # State should only contain a specific list of states/provinces/etc
         keyed_x |>
-          filter(!str_detect(state, states_provinces_and_canada)) |>
+          filter(!str_detect(state, REGEX_USA_CANADA)) |>
           mutate(error = "state"),
         # Zip code should be in the reference table
         keyed_x |>
