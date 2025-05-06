@@ -9,7 +9,6 @@
 
 # Define variables to evaluate data consistently across functions
 
-
 # Vector of Harvest Information Program species/species group fields containing
 # bag values
 REF_BAG_FIELDS <-
@@ -44,6 +43,17 @@ REF_ABBR_CANADA <-
 
 # Continental 49 state abbreviations; Used by read_hip() and the download report
 REF_ABBR_49_STATES <- datasets::state.abb[datasets::state.abb != "HI"]
+
+# Define suffixes. Includes 1-20 in Roman numerals and ordinal values,
+# excluding XVIII (limit is 4 characters)
+REF_ROMAN_SUFFIXES <-
+  c("I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X",
+    "XI", "XII", "XIII", "XIV", "XV", "XVI", "XVII", "XIX", "XX")
+
+REF_ORDINAL_SUFFIXES <-
+  c("1ST", "2ND", "3RD", paste0(c(4:20), "TH"))
+
+REF_SUFFIXES <- c(REF_ROMAN_SUFFIXES, REF_ORDINAL_SUFFIXES)
 
 # Permit state expected bag values (files received separately from HIP process)
 REF_PMT_FILES <-
@@ -120,18 +130,11 @@ LOGIC_MISSING_CITY_ZIP_EMAIL <-
 
 # Define a trailing suffix using regular expressions (e.g., suffix included in
 # the firstname or lastname field). Includes values from 1-20 in Roman numerals
-# and numeric, excluding XVIII (limit is 4 characters)
+# and numeric
 REGEX_SUFFIX_SEARCH <-
   paste0(
     "(?<=\\s)(JR|SR|I{1,3}|IV|VI{0,3}|I{0,1}X|XI{1,3}|XI{0,1}V|XVI{1,2}|XI",
     "{0,1}X|1ST|2ND|3RD|[4-9]TH|1[0-9]TH|20TH)\\.?$")
-
-# Define suffixes using regular expressions. Includes values from 1-20 in Roman
-# numerals and numeric, excluding XVIII (limit is 4 characters)
-REGEX_SUFFIX_EXACT <-
-  paste0(
-    "^[JR|SR|I{1,3}|IV|VI{0,3}|I{0,1}X|XI{1,3}|XI{0,1}V|XVI{1,2}|XI{0,1}X|1ST|",
-    "2ND|3RD|[4-9]TH|1[0-9]TH|20TH]$")
 
 # Regular expression that selects non-permit species bag fields
 REGEX_NON_PMT_SPECIES <- "bag|coots|rails"

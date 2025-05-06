@@ -117,7 +117,7 @@ hunters <-
       dplyr::mutate(
         suffix =
           ifelse(
-            stringr::str_detect(suffix, REGEX_SUFFIX_EXACT) |
+            !suffix %in% REF_SUFFIXES |
               dplyr::row_number() %in% sample(c(1:200), 5),
             suffix,
             NA))) |>

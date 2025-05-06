@@ -95,10 +95,7 @@ proof <-
         # Allows 1-20 in Roman numerals and numeric, excluding XVIII since the
         # limit is 4 characters)
         keyed_data |>
-          filter(
-            str_detect(
-              suffix,
-              "[^JR|SR|I{1,3}|IV|VI{0,3}|I{0,1}X|XI{1,3}|XI{0,1}V|XVI{1,2}|XI{0,1}X|1ST|2ND|3RD|[4-9]TH|1[0-9]TH|20TH]")) |>
+          filter(!suffix %in% REF_SUFFIXES) |>
           mutate(error = "suffix"),
         # Address does not contain |, tab or non-UTF8 characters
         # Any further address verification isn't really possible
