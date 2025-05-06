@@ -9,10 +9,31 @@ test_that("good titles pass proofing", {
 
 test_that("bad titles fail proofing", {
   bad_titles <- tibble(title = c("*", "%", "#", "!", "3", "10", "Z", "TH"))
-
   bad_titles_filtered <- filter(bad_titles, !title %in% REF_TITLES)
 
   expect_equal(nrow(bad_titles), nrow(bad_titles_filtered))
+})
+
+# middle ------------------------------------------------------------------
+
+test_that("good middle initials pass proofing", {
+  good_middles <- tibble(middle = LETTERS)
+
+  good_middles_filtered <-
+    good_middles |>
+    filter(!str_detect(middle, "^[A-Z]{1}$"))
+
+  expect_equal(nrow(good_middles_filtered), 0)
+})
+
+test_that("bad middle initials fail proofing", {
+  bad_middles <- tibble(middle = c("*", "%", "#", "!", "3", "10", "TH"))
+
+  bad_middles_filtered <-
+    bad_middles |>
+    filter(!str_detect(middle, "^[A-Z]{1}$"))
+
+  expect_equal(nrow(bad_middles), nrow(bad_middles_filtered))
 })
 
 # suffix ------------------------------------------------------------------
