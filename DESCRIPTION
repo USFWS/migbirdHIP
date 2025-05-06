@@ -29,7 +29,8 @@ Suggests:
     knitr,
     sf,
     spelling,
-    stringi
+    stringi,
+    testthat (>= 3.0.0)
 VignetteBuilder: 
     knitr
 Encoding: UTF-8
@@ -37,3 +38,4 @@ Language: en-US
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
+Config/testthat/edition: 3
