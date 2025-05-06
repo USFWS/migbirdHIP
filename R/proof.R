@@ -45,9 +45,9 @@ proof <-
 
     markup <-
       bind_rows(
-        # Title should be 1 or 2, no other values
+        # Title should only be NA, 0, 1, or 2
         keyed_data |>
-          filter(!str_detect(title, "0|1|2")) |>
+          filter(!title %in% REF_TITLES) |>
           mutate(error = "title"),
         # First name
         keyed_data |>

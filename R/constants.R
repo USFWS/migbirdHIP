@@ -44,8 +44,8 @@ REF_ABBR_CANADA <-
 # Continental 49 state abbreviations; Used by read_hip() and the download report
 REF_ABBR_49_STATES <- datasets::state.abb[datasets::state.abb != "HI"]
 
-# Define suffixes. Includes 1-20 in Roman numerals and ordinal values,
-# excluding XVIII (limit is 4 characters)
+# Define suffixes. Accepted values include 1-20 in Roman numerals and ordinal
+# values, excluding XVIII (database limit is 4 characters)
 REF_ROMAN_SUFFIXES <-
   c("I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X",
     "XI", "XII", "XIII", "XIV", "XV", "XVI", "XVII", "XIX", "XX")
@@ -54,6 +54,9 @@ REF_ORDINAL_SUFFIXES <-
   c("1ST", "2ND", "3RD", paste0(c(4:20), "TH"))
 
 REF_SUFFIXES <- c(REF_ROMAN_SUFFIXES, REF_ORDINAL_SUFFIXES)
+
+# Define titles. Expected values are "1" and "2", but we also accept "0" and NA
+REF_TITLES <- c(NA, "0", "1", "2")
 
 # Permit state expected bag values (files received separately from HIP process)
 REF_PMT_FILES <-

@@ -1,3 +1,22 @@
+# title -------------------------------------------------------------------
+
+test_that("good titles pass proofing", {
+  good_titles <- tibble(title = c(NA, "1", "2", "0"))
+  good_titles_filtered <- filter(good_titles, !title %in% REF_TITLES)
+
+  expect_equal(nrow(good_titles_filtered), 0)
+})
+
+test_that("bad titles fail proofing", {
+  bad_titles <- tibble(title = c("*", "%", "#", "!", "3", "10", "Z", "TH"))
+
+  bad_titles_filtered <- filter(bad_titles, !title %in% REF_TITLES)
+
+  expect_equal(nrow(bad_titles), nrow(bad_titles_filtered))
+})
+
+# suffix ------------------------------------------------------------------
+
 test_that("good suffixes pass proofing", {
   good_suffixes <- tibble(suffix = REF_SUFFIXES)
   good_suffixes_filtered <- filter(good_suffixes, !suffix %in% REF_SUFFIXES)
