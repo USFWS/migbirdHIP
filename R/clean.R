@@ -140,11 +140,11 @@ moveSuffixes <-
         suffix =
           case_when(
             # Lastname
-            str_detect(lastname, REGEX_SUFFIXES) ~
-              str_extract(lastname, REGEX_SUFFIXES),
+            str_detect(lastname, REGEX_SUFFIX_SEARCH) ~
+              str_extract(lastname, REGEX_SUFFIX_SEARCH),
             # Firstname
-            str_detect(firstname, REGEX_SUFFIXES) ~
-              str_extract(firstname, REGEX_SUFFIXES),
+            str_detect(firstname, REGEX_SUFFIX_SEARCH) ~
+              str_extract(firstname, REGEX_SUFFIX_SEARCH),
             TRUE ~ suffix),
         # Delete periods and commas from suffixes
         suffix = str_remove_all(suffix, "\\.|\\,"),
@@ -152,15 +152,15 @@ moveSuffixes <-
         # numeric, excluding XVIII since the db limit is 4 characters)
         lastname =
           ifelse(
-            str_detect(lastname, REGEX_SUFFIXES),
-            str_remove(lastname, REGEX_SUFFIXES),
+            str_detect(lastname, REGEX_SUFFIX_SEARCH),
+            str_remove(lastname, REGEX_SUFFIX_SEARCH),
             lastname),
         # Delete suffixes from firstname col (includes 1-20 in Roman numerals
         # and numeric, excluding XVIII since the db limit is 4 characters)
         firstname =
           ifelse(
-            str_detect(firstname, REGEX_SUFFIXES),
-            str_remove(firstname, REGEX_SUFFIXES),
+            str_detect(firstname, REGEX_SUFFIX_SEARCH),
+            str_remove(firstname, REGEX_SUFFIX_SEARCH),
             firstname)) |>
       # Delete white space around names due to moving the suffixes
       mutate(across(contains("name"), \(x) str_trim(x)))

@@ -52,12 +52,20 @@ LOGIC_MISSING_ADDRESSES <-
 LOGIC_MISSING_CITY_ZIP_EMAIL <-
   expr(if_all(c("city", "zip", "email"), \(x) is.na(x)))
 
-# Define suffixes using regular expressions. Includes values from 1-20 in Roman
-# numerals and numeric, excluding XVIII (limit is 4 characters)
-REGEX_SUFFIXES <-
+# Define a trailing suffix using regular expressions (e.g., suffix included in
+# the firstname or lastname field). Includes values from 1-20 in Roman numerals
+# and numeric, excluding XVIII (limit is 4 characters)
+REGEX_SUFFIX_SEARCH <-
   paste0(
     "(?<=\\s)(JR|SR|I{1,3}|IV|VI{0,3}|I{0,1}X|XI{1,3}|XI{0,1}V|XVI{1,2}|XI",
     "{0,1}X|1ST|2ND|3RD|[4-9]TH|1[0-9]TH|20TH)\\.?$")
+
+# Define suffixes using regular expressions. Includes values from 1-20 in Roman
+# numerals and numeric, excluding XVIII (limit is 4 characters)
+REGEX_SUFFIX_EXACT <-
+  paste0(
+    "^[JR|SR|I{1,3}|IV|VI{0,3}|I{0,1}X|XI{1,3}|XI{0,1}V|XVI{1,2}|XI{0,1}X|1ST|",
+    "2ND|3RD|[4-9]TH|1[0-9]TH|20TH]$")
 
 # Regular expression that selects non-permit species bag fields
 REGEX_NON_PMT_SPECIES <- "bag|coots|rails"
