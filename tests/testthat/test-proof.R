@@ -57,3 +57,22 @@ test_that("bad suffixes fail proofing", {
 
   expect_equal(nrow(bad_suffixes), nrow(bad_suffixes_filtered))
 })
+
+# city --------------------------------------------------------------------
+
+test_that("bad city names fail proofing", {
+  good_city_names <-
+    tibble(
+      city = c("Los Angeles", "Annapolis", "St. Petersburg", "Coeur d'Alene",
+               "Dover-Foxcroft", "St..Louis"))
+
+  bad_city_names <-
+    tibble(
+      city = c("Wilming$ton", "Saint-Louis-du-Ha! Ha!", "0maha"))
+
+  bad_city_names_filtered <-
+    rbind(good_city_names, bad_city_names) |>
+    filter(str_detect(city, REGEX_CITY))
+
+  expect_equal(bad_city_names, bad_city_names_filtered)
+})

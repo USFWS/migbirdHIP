@@ -102,11 +102,11 @@ proof <-
         keyed_data |>
           filter(str_detect(address, "\\||\\t|[^\\x00-\\x7F]+")) |>
           mutate(error = "address"),
-        # City should only contain letters, spaces (e.g. New York City), hyphens
-        # (e.g. Winston-Salem, NC), or apostrophes (e.g. HI residents and
-        # O'Fallon, MO)
+        # City names should only contain letters, spaces (e.g., New York City,
+        # NY), hyphens (e.g., Winston-Salem, NC), apostrophes (e.g., O'Fallon,
+        # MO), and/or periods (e.g., St. Augustine, FL)
         keyed_data |>
-          filter(str_detect(city, "[^A-Za-z\\s\\-\\']")) |>
+          filter(str_detect(city, REGEX_CITY)) |>
           mutate(error = "city"),
         # City MUST contain at least 3 letters
         keyed_data |>

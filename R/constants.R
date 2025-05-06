@@ -148,3 +148,6 @@ REGEX_USA_CANADA <-
   paste(
     c(datasets::state.abb, REF_ABBR_USA, REF_ABBR_CANADA),
     collapse = "|")
+
+# Regular expression for correct city name values
+REGEX_CITY <- "[^A-Za-z\\s\\-\\'\\.]"
