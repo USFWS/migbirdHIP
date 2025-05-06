@@ -7,3 +7,4 @@
 ^\.github$
 ^\.gitignore$
 ^\.git$
+^data-raw$

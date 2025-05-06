@@ -15,18 +15,17 @@ vignette: >
     - [Installation](#installation)
     - [Functions overview](#functions-overview)
 - [Part A: Data Import and Cleaning](#part-a-data-import-and-cleaning)
-    - [renameFiles](#renamefiles)
+    - [fileRename](#filerename)
     - [fileCheck](#filecheck)
     - [read_hip](#read_hip)
     - [glyphCheck](#glyphcheck)
     - [shiftCheck](#shiftcheck)
     - [clean](#clean)
     - [issueCheck](#issuecheck)
-    - [findDuplicates](#findduplicates)
-    - [fixDuplicates](#fixduplicates)
-    - [strataCheck](#stratacheck)
-    - [identicalBags](#identicalbags)
-    - [validate](#validate)
+    - [duplicateFinder](#duplicatefinder)
+    - [duplicateFix](#duplicatefix)
+    - [duplicatePlot](#duplicateplot)
+    - [bagCheck](#bagcheck)
 - [Part B: Data Proofing and Correction](#part-b-data-proofing-and-correction)
     - [proof](#proof)
     - [correct](#correct)
@@ -35,8 +34,6 @@ vignette: >
     - [writeReport](#writereport)
 - [Part C: Data Visualization and Tabulation](#part-c-data-visualization-and-tabulation)
     - Visualization
-        - [outOfStateHunters](#outofstatehunters)
-        - [youthHunters](#youthhunters)
         - [errorPlot_fields](#errorplot_fields)
         - [errorPlot_states](#errorplot_states)
         - [errorPlot_dl](#errorplot_dl)
@@ -71,12 +68,12 @@ knitr::include_graphics("image/migbirdHIP_flowchart.svg")
 
 ## Part A: Data Import and Cleaning
 
-### renameFiles
+### fileRename
 
-The `renameFiles` function was incorporated into this package for special cases. Some states submit .txt  files using a 5-digit file name format, containing 2 letters for the state abbreviation followed by a 3-digit Julian date (representing the date the file was uploaded). To convert these 5-digit filenames to the standard 10-digit format (a requirement to read data properly with [read_hip](#read_hip)), supply the `renameFiles` with the directory containing HIP data. File names will be automatically overwritten with the YYYYMMDD format date corresponding to the submitted Julian date. This function also converts lowercase state abbreviations to uppercase. The year of the Harvest Information Program must be supplied as a parameter to accurately convert dates.
+The `fileRename` function was incorporated into this package for special cases. Some states submit .txt  files using a 5-digit file name format, containing 2 letters for the state abbreviation followed by a 3-digit Julian date (representing the date the file was uploaded). To convert these 5-digit filenames to the standard 10-digit format (a requirement to read data properly with [read_hip](#read_hip)), supply the `fileRename` with the directory containing HIP data. File names will be automatically overwritten with the YYYYMMDD format date corresponding to the submitted Julian date. This function also converts lowercase state abbreviations to uppercase. The year of the Harvest Information Program must be supplied as a parameter to accurately convert dates.
 
 ```{r rename, eval = FALSE}
-renameFiles(path = "C:/HIP/DL1301", year = 2021)
+fileRename(path = "C:/HIP/DL1301", year = 2021)
 ```
 
 ### fileCheck
@@ -92,7 +89,7 @@ fileCheck(
 
 ### read_hip
 
-The first step is to import fixed-width .txt files containing HIP data. Files must adhere to a 10-digit naming convention in order to successfully import data using the `read_hip` function; if files were submitted with the old 5-digit format, run [renameFiles](#renamefiles) first.
+The first step is to import fixed-width .txt files containing HIP data. Files must adhere to a 10-digit naming convention in order to successfully import data using the `read_hip` function; if files were submitted with the old 5-digit format, run [fileRename](#filerename) first.
 
 The `read_hip` function allows data to be read in for all states (e.g. `state = NA`, the default), for just a specific state (e.g. `state = "DE"`), a specific download (e.g. `season = FALSE`, the default) or data over an entire season (e.g. `season = TRUE`). Use `unique = TRUE` to read in a frame without exact duplicates, or `unique = FALSE` for all records. This function also:
 
@@ -169,21 +166,21 @@ DL1301_current <- issueCheck(DL1301_clean, year = 2021, plot = F)
 DL1301_current <- DL1301_clean
 ```
 
-### findDuplicates
+### duplicateFinder
 
-The `findDuplicates` function finds hunters that have more than one registration. Records are grouped by first name, last name, state, birth date, registration year, and download state to identify unique hunters. If the same hunter has 2 or more registrations, the fields that are not identical are counted and summarized. A plot is returned by default, but the type of output can be specified using `return = "plot"` for plot, or `return = "table"` for table and summary message.
+The `duplicateFinder` function finds hunters that have more than one registration. Records are grouped by first name, last name, state, birth date, registration year, and download state to identify unique hunters. If the same hunter has 2 or more registrations, the fields that are not identical are counted and summarized. A plot is returned by default, but the type of output can be specified using `return = "plot"` for plot, or `return = "table"` for table and summary message.
 
-```{r findDuplicates, fig.cap = "Figure 1. Plot of types of duplicates.", fig.width = 6, fig.height = 3.5, dpi = 300, out.width = 500, fig.align = "center"}
-findDuplicates(DL1301_current)
+```{r duplicateFinder, fig.cap = "Figure 1. Plot of types of duplicates.", fig.width = 6, fig.height = 3.5, dpi = 300, out.width = 500, fig.align = "center"}
+duplicateFinder(DL1301_current)
 ```
 
 ```{r findDuplicates_tbl}
-findDuplicates(DL1301_current, return = "table")
+duplicateFinder(DL1301_current)
 ```
 
-### fixDuplicates
+### duplicateFix
 
-We sometimes receive multiple HIP records per person which must be resolved by `fixDuplicates`. Only 1 HIP record per hunter can be kept. To decide which record to keep from a group, we follow a series of logic.
+We sometimes receive multiple HIP records per person which must be resolved by `duplicateFix`. Only 1 HIP record per hunter can be kept. To decide which record to keep from a group, we follow a series of logic.
 
 Records are kept when they meet the below criteria (in order of importance):
 
@@ -198,54 +195,23 @@ A new field called "record_type" is added to the data after the above deduplicat
 Note: This function replaces "." values with NA in non-permit species columns for WA and OR records.
 
 
-```{r, fixduplicates}
-DL1301_fixed <- fixDuplicates(DL1301_current)
+```{r, duplicateFix}
+DL1301_fixed <- duplicateFix(DL1301_current)
 ```
 
-### strataCheck
+### duplicatePlot
 
-Running `strataCheck` ensures species "bag" values are in order. This function searches for values in species group columns that are not typical or expected by the FWS. If a value outside of the normal range is detected, an output tibble is created. Each row in the output contains the state, species, unusual stratum value, and a list of the normal values we would expect.
+...
+
+### bagCheck
+
+Running `bagCheck` ensures species "bag" values are in order. This function searches for values in species group columns that are not typical or expected by the FWS. If a value outside of the normal range is detected, an output tibble is created. Each row in the output contains the state, species, unusual stratum value, and a list of the normal values we would expect.
 
 If a value for a species group is given in the HIP data that doesn't match anything in our records, the species reported in the output will have NA values in the "normal_strata" column. These species are not hunted in the reported states.
 
-```{r, stratacheck}
-strataCheck(DL1301_fixed)
+```{r, bagCheck}
+bagCheck(DL1301_fixed)
 ```
-
-### identicalBags
-
-Check to make sure the data from each file don't have any columns that are exactly the same.
-
-```{r, identicalbags}
-identicalBags(DL1301_fixed)
-```
-
-### validate
-
-The `validate` function looks for repeated values in two dimensions, both horizontally and vertically.
-
-<b>Horizontally.</b> The horizontal check for repetition looks across records and finds any rows with same value in each species group column. Details in the output tibble include: the repeated value (h_value), number of records with repeats (h_rep), total number of records (h_total), and proportion of repeated values per file (prop_repeat). The default version of this function (`all = FALSE`) only checks ducks, geese, and coots_snipe bags. If the parameter is set to `all = TRUE`, every species group will be checked.
-
-```{r, validate_h}
-validate(DL1301_fixed, type = "horizontal")
-```
-
-<b>Vertically.</b> The vertical check searches within each column for repetition. Any species group column with the same value in all rows will be detected. The default version of this function (`all = FALSE`) only checks duck bags. If the parameter is set to `all = TRUE`, every species group will be checked.
-
-```{r, validate_make_bad_values, echo = F}
-# Make vertical repitition in the data (for example purposes) since there are none!
-DL1301_fixed <-
-  DL1301_fixed |>
-  mutate(ducks_bag = ifelse(dl_state == "AK", 3, ducks_bag))
-```
-
-```{r, validate_v}
-validate(DL1301_fixed, type = "vertical")
-```
-
-It is not possible to include as much detail in the vertical output as in the horizontal output without being specific about which state, species, and time scale you wish to assess.
-
-If there are no repetitions, a positive message will be returned.
 
 ## Part B: Data Proofing and Correction
 
@@ -368,22 +334,6 @@ writeReport(
 ```
 
 ## Part C: Data Visualization and Tabulation
-
-### outOfStateHunters
-
-The `outOfStateHunters` function plots and tabulates how many hunters registered in a download state that does not match the state, province, or territory of their address. This function plots proportion of out-of-staters with counts as bar labels. The tibble contains counts and proportions by state.
-
-```{r outofstate, fig.cap = "Figure 6. Plot of proportions of out-of-state hunters.", fig.width = 6, fig.height = 4, dpi = 300, out.width = 500, fig.align = "center"}
-outOfStateHunters(DL1301_proofed)
-```
-
-### youthHunters
-
-The `youthHunters` function returns a table and plot of the number of hunters with birth dates < 16 years from the year of HIP data collection. These data are interesting to explore because hunters younger than 16 years of age are not required to have a migratory bird hunting license in the United States.
-
-```{r youth, fig.cap = "Figure 7. Plot of proportions of youth hunters.", fig.width = 6, fig.height = 3.5, dpi = 300, out.width = 500, fig.align = "center"}
-youthHunters(DL1301_proofed, year = 2021)
-```
 
 ### errorPlot_fields
 
