@@ -128,7 +128,7 @@ proof <-
           mutate(error = "birth_date"),
         # Hunting migratory birds should only be = 1 or 2
         keyed_data |>
-          filter(!hunt_mig_birds %in% c("1", "2")) |>
+          filter(!hunt_mig_birds %in% REF_HUNT_MIG_BIRDS) |>
           mutate(error = "hunt_mig_birds"),
         # Registration year should = survey year
         keyed_data |>

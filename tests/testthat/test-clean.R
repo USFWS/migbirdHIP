@@ -1,3 +1,10 @@
+# test record -------------------------------------------------------------
+
+# see test-proof.R
+
+
+# suffixes ----------------------------------------------------------------
+
 test_that("suffixes found in firstname", {
   firstname_suffixes <-
     tibble(

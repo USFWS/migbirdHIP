@@ -43,6 +43,9 @@ test_that("bad titles fail proofing", {
   expect_equal(nrow(bad_titles), nrow(bad_titles_filtered))
 })
 
+# firstname ---------------------------------------------------------------
+
+
 # middle ------------------------------------------------------------------
 
 test_that("good middle initials pass proofing", {
@@ -64,6 +67,9 @@ test_that("bad middle initials fail proofing", {
 
   expect_equal(nrow(bad_middles), nrow(bad_middles_filtered))
 })
+
+# lastname ----------------------------------------------------------------
+
 
 # suffix ------------------------------------------------------------------
 
@@ -87,6 +93,9 @@ test_that("bad suffixes fail proofing", {
   expect_equal(nrow(bad_suffixes), nrow(bad_suffixes_filtered))
 })
 
+# address -----------------------------------------------------------------
+
+
 # city --------------------------------------------------------------------
 
 test_that("bad city names fail proofing", {
@@ -105,3 +114,41 @@ test_that("bad city names fail proofing", {
 
   expect_equal(bad_city_names, bad_city_names_filtered)
 })
+
+# state -------------------------------------------------------------------
+
+
+# zip code ----------------------------------------------------------------
+
+
+# birth_date --------------------------------------------------------------
+
+
+# hunt_mig_birds ----------------------------------------------------------
+
+test_that("good hunt_mig_birds values pass proofing", {
+  good_hunt_mig_birds <- tibble(hunt_mig_birds = c("1", "2", "2", "2", "1"))
+
+  good_hunt_mig_birds_filtered <-
+    good_hunt_mig_birds |>
+    filter(!hunt_mig_birds %in% REF_HUNT_MIG_BIRDS)
+
+  expect_equal(nrow(good_hunt_mig_birds_filtered), 0)
+})
+
+test_that("bad hunt_mig_birds values fail proofing", {
+  bad_hunt_mig_birds <- tibble(hunt_mig_birds = c("3", "*", "A", "11", "22"))
+
+  bad_hunt_mig_birds_filtered <-
+    bad_hunt_mig_birds |>
+    filter(!hunt_mig_birds %in% REF_HUNT_MIG_BIRDS)
+
+  expect_equal(bad_hunt_mig_birds, bad_hunt_mig_birds_filtered)
+})
+
+# registration_yr ---------------------------------------------------------
+
+
+# email -------------------------------------------------------------------
+
+

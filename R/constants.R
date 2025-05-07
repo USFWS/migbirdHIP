@@ -58,6 +58,10 @@ REF_SUFFIXES <- c(REF_ROMAN_SUFFIXES, REF_ORDINAL_SUFFIXES)
 # Define titles. Expected values are "1" and "2", but we also accept "0" and NA
 REF_TITLES <- c(NA, "0", "1", "2")
 
+# Define valid hunt_mig_birds values; only "1" and "2" are accepted, although
+# "2" is the desired/expected value
+REF_HUNT_MIG_BIRDS <- c("1", "2")
+
 # Permit state expected bag values (files received separately from HIP process)
 REF_PMT_FILES <-
   bind_rows(
