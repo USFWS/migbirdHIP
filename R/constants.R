@@ -44,6 +44,10 @@ REF_ABBR_CANADA <-
 # Continental 49 state abbreviations; Used by read_hip() and the download report
 REF_ABBR_49_STATES <- datasets::state.abb[datasets::state.abb != "HI"]
 
+# Combine US State, District and Territory abbreviations with Canadian Province
+# and Territory abbreviations; used by proof()
+REF_USA_CANADA <- c(datasets::state.abb, REF_ABBR_USA, REF_ABBR_CANADA)
+
 # Define suffixes. Accepted values include 1-20 in Roman numerals and ordinal
 # values, excluding XVIII (database limit is 4 characters)
 REF_ROMAN_SUFFIXES <-
@@ -148,13 +152,6 @@ REGEX_SUFFIX_SEARCH <-
 
 # Regular expression that selects non-permit species bag fields
 REGEX_NON_PMT_SPECIES <- "bag|coots|rails"
-
-# Combine US State, District and Territory abbreviations with Canadian Province
-# and Territory abbreviations; used by proof()
-REGEX_USA_CANADA <-
-  paste(
-    c(datasets::state.abb, REF_ABBR_USA, REF_ABBR_CANADA),
-    collapse = "|")
 
 # Regular expression for correct city name values
 REGEX_CITY <- "[^A-Za-z\\s\\-\\'\\.]"

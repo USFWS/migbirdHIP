@@ -110,9 +110,10 @@ proof <-
         keyed_data |>
           filter(str_detect(city, "^[A-Za-z]{1,2}$")) |>
           mutate(error = "city"),
-        # State should only contain a specific list of states/provinces/etc
+        # State should only be a 2-letter abbreviation for 1) a US state, 2) as
+        # US territory, or 3) a Canadian province or territory
         keyed_data |>
-          filter(!str_detect(state, REGEX_USA_CANADA)) |>
+          filter(!state %in% REF_USA_CANADA) |>
           mutate(error = "state"),
         # Zip code should be in the reference table
         keyed_data |>

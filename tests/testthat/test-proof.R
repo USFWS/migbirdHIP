@@ -117,6 +117,36 @@ test_that("bad city names fail proofing", {
 
 # state -------------------------------------------------------------------
 
+test_that("good states pass proofing", {
+  good_states <-
+    tibble(
+      state =
+        c("AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "HI",
+          "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI",
+          "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC",
+          "ND", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT",
+          "VT", "VA", "WA", "WV", "WI", "WY", "DC", "AS", "GU", "MP", "PR",
+          "VI", "UM", "MH", "FM", "PW", "AA", "AE", "AP", "AB", "BC", "MB",
+          "NB", "NL", "NS", "NT", "NU", "ON", "PE", "PQ", "QC", "SK", "YT"))
+
+  good_states_filtered <-
+    good_states |>
+    filter(!state %in% REF_USA_CANADA)
+
+  expect_equal(nrow(good_states_filtered), 0)
+})
+
+test_that("bad states fail proofing", {
+  bad_states <-
+    tibble(
+      state = c("la", "De", "MX", "CN", "00", "ZZ", " ", "  ", "_", "!!", "*"))
+
+  bad_states_filtered <-
+    bad_states |>
+    filter(!state %in% REF_USA_CANADA)
+
+  expect_equal(nrow(bad_states), nrow(bad_states_filtered))
+})
 
 # zip code ----------------------------------------------------------------
 
