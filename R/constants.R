@@ -44,8 +44,9 @@ REF_ABBR_CANADA <-
 # Continental 49 state abbreviations; Used by read_hip() and the download report
 REF_ABBR_49_STATES <- datasets::state.abb[datasets::state.abb != "HI"]
 
-# Combine US State, District and Territory abbreviations with Canadian Province
-# and Territory abbreviations; used by proof()
+# Combine US State (include HI because this is for addresses), District and
+# Territory abbreviations with Canadian Province and Territory abbreviations;
+# used by proof()
 REF_USA_CANADA <- c(datasets::state.abb, REF_ABBR_USA, REF_ABBR_CANADA)
 
 # Define suffixes. Accepted values include 1-20 in Roman numerals and ordinal
@@ -54,9 +55,11 @@ REF_ROMAN_SUFFIXES <-
   c("I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X",
     "XI", "XII", "XIII", "XIV", "XV", "XVI", "XVII", "XIX", "XX")
 
+# Define suffixes spanning 1ST-20TH
 REF_ORDINAL_SUFFIXES <-
   c("1ST", "2ND", "3RD", paste0(c(4:20), "TH"))
 
+# Combine roman numeral and ordinal suffixes into one object
 REF_SUFFIXES <- c(REF_ROMAN_SUFFIXES, REF_ORDINAL_SUFFIXES)
 
 # Define titles. Expected values are "1" and "2", but we also accept "0" and NA
@@ -158,3 +161,18 @@ REGEX_NON_PMT_SPECIES <- "bag|coots|rails"
 # Winston-Salem, NC), apostrophes (e.g., O'Fallon, MO), and/or periods (e.g.,
 # St. Augustine, FL)
 REGEX_CITY <- "[^A-Za-z\\s\\-\\'\\.]"
+
+# Regular expression for the expected email format. Local part may contain Latin
+# lower and uppercase letters, numbers, underscores, dots, hyphens, and a plus
+# sign; must contain @; domain may contain Latin lower and uppercase letters,
+# numbers, and hyphens; subdomains acceptable when separated by a dot. Other
+# ASCII characters that are theoretically allowed in email addresses are not
+# valid in HIP data (e.g., !#$%&'*/=?^_`{|}~)
+REGEX_EMAIL <-
+  "^[a-zA-Z0-9\\_\\.\\+\\-]+\\@[a-zA-Z0-9\\-]+\\.[a-zA-Z0-9\\-\\.]+$"
+
+# Regular expression for an obfuscative email address local-part
+REGEX_EMAIL_OBFUSCATIVE_LOCALPART <-
+  "^(none|no|na|not|non|nomail|noemail|noreply|customer|unknown|notprovided)\\@"
+
+

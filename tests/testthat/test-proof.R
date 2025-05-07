@@ -181,4 +181,157 @@ test_that("bad hunt_mig_birds values fail proofing", {
 
 # email -------------------------------------------------------------------
 
+test_that("good email addresses pass proofing", {
+  good_emails <-
+    tibble(
+      # Fake email addresses that are formatted correctly
+      email = c(
+        "TonyStark@starkindustries.com",
+        "spiderman@yahoo.com",
+        "peter_parker@gmail.com",
+        "blackwidow@posteo.de",
+        "thor@comcast.net",
+        "star-lord88@duck.com",
+        "CaptainMarvel90@gmail.com",
+        "Hulk.Smash.00@hotmail.com",
+        "H.A.W.K.E.Y.E@GMAIL.COM",
+        "moon.knight@icloud.com",
+        "Gambit@att.net",
+        "BlackPanther@github.io",
+        "groot+hunting@gmail.com",
+        "ROCK3T+hip@icloud.com",
+        "_nickFury_@hotmail.com",
+        "W0-lv3R.ine+xm3n@Xavier.School.org",
+        "bucky@GMAIL.COM",
+        "Captain-America@us.army.mil"
+      ))
 
+  good_emails_filtered <-
+    good_emails |>
+    proofBadEmails()
+
+  expect_equal(nrow(good_emails_filtered), 0)
+})
+
+test_that("bad email addresses fail proofing", {
+  bad_emails <-
+    tibble(
+      # Fake email addresses that are formatted incorrectly
+      email = c(
+        "Tony`Stark@starkindustries.com",
+        "Tony!Stark@starkindustries.com",
+        "Tony@Stark@starkindustries.com",
+        "Tony#Stark@starkindustries.com",
+        "Tony$Stark@starkindustries.com",
+        "Tony%Stark@starkindustries.com",
+        "Tony^Stark@starkindustries.com",
+        "Tony&Stark@starkindustries.com",
+        "Tony*Stark@starkindustries.com",
+        "Tony(Stark@starkindustries.com",
+        "Tony)Stark@starkindustries.com",
+        "Tony{Stark@starkindustries.com",
+        "Tony}Stark@starkindustries.com",
+        "Tony|Stark@starkindustries.com",
+        "Tony[Stark@starkindustries.com",
+        "Tony]Stark@starkindustries.com",
+        "Tony=Stark@starkindustries.com",
+        "BruceBanner@@gmail.com",
+        "BruceBanner@@@gmail.com",
+        "none@gmail.com",
+        "no@gmail.com",
+        "na@gmail.com",
+        "not@gmail.com",
+        "non@gmail.com",
+        "nomail@gmail.com",
+        "noemail@gmail.com",
+        "noreply@gmail.com",
+        "customer@gmail.com",
+        "unknown@gmail.com",
+        "notprovided@gmail.com",
+        "spiderman@none.com",
+        "spiderman@no.com",
+        "spiderman@na.org",
+        "spiderman@tpw.org",
+        "spiderman@twp.org",
+        "spiderman@example.com",
+        "peter______________________________________________________________________________parker@example.com",
+        "Dead..Pool@comcast.net",
+        "DeadPool@comc..ast.net",
+        ".thor@comcast.net",
+        "loki@.comcast.net",
+        "star-lord88.@duck.com",
+        "CaptainMarvel90@gmail.com.",
+        "Hulk.Smash.00@-hotmail.com",
+        "yondu@guerillamail.com",
+        "moon.knight@icloud.net",
+        "moon.knight@icloud.org",
+        "moon.knight@att.com",
+        "moon.knight@att.org",
+        "moon.knight@comcast.com",
+        "moon.knight@comcast.org",
+        "moon.knight@gmail.net",
+        "moon.knight@gmail.edu",
+        "moon.knight@gmail.org",
+        "moon.knight@gmail.co",
+        "wanda@com",
+        "wanda@net",
+        "wanda@io",
+        "wanda@",
+        "wanda",
+        "@wanda",
+        "@wanda.com",
+        "vision@yahoo.com.com",
+        "vision@yahoo.comcom",
+        "vision@yahoo.con",
+        "vision@yahoo.ccom",
+        "vision@yahoo.coom",
+        "vision@yahoo.comm",
+        "vision@yahoo.c0m",
+        "vision@yahoo.ocm",
+        "vision@yahoo.cm",
+        "vision@yahoo.om",
+        "vision@yahoo.cim",
+        "vision@yahoo.common",
+        "agatha@gmail",
+        "agatha@yahoo",
+        "agatha@hotmail",
+        "agatha@aol",
+        "agatha@icloud",
+        "agatha@comcast",
+        "agatha@outlook",
+        "agatha@sbcglobal",
+        "agatha@att",
+        "agatha@msn",
+        "agatha@live",
+        "agatha@bellsouth",
+        "agatha@charter",
+        "agatha@ymail",
+        "agatha@me",
+        "agatha@verizon",
+        "agatha@cox",
+        "agatha@earthlink",
+        "agatha@protonmail",
+        "agatha@pm",
+        "agatha@duck",
+        "agatha@ducks",
+        "agatha@mail",
+        "thanos@gmailcom",
+        "thanos@comcastnet",
+        "thanos@edu",
+        "thanos@fwsgov",
+        "thanos@ducksorg",
+        "thanos@navymil",
+        "thanos@usnavymil",
+        "thanos@usafmil",
+        "thanos@mailmil",
+        "thanos@armymil",
+        "thanos@usarmymil",
+        "thanos@usacearmymil"
+      ))
+
+  bad_emails_filtered <-
+    bad_emails |>
+    proofBadEmails()
+
+  expect_equal(nrow(bad_emails), nrow(bad_emails_filtered))
+})

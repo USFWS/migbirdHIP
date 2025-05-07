@@ -135,53 +135,7 @@ proof <-
           mutate(error = "registration_yr"),
         # Email
         keyed_data |>
-          mutate(email = tolower(email)) |>
-          filter(
-            # If email doesn't fit a loose validation regular expression, mark
-            # as error. Local part may contain Latin lower and uppercase
-            # letters, numbers, underscores, dots, hyphens, and a plus sign
-            # (consecutive dots, leading dots, etc all handled in correct
-            # function even if not marked as error); must contain @; domain may
-            # contain Latin lower and uppercase letters, numbers, and hyphens;
-            # subdomains acceptable when separated by a dot.
-            !str_detect(
-              email,
-              "^[a-zA-Z0-9\\_\\.\\+\\-]+\\@[a-zA-Z0-9\\-]+\\.[a-zA-Z0-9\\-\\.]+$"
-              ) |
-              # If email is obfuscative
-              str_detect(
-                email,
-                "^(none|no|na|not|non|www\\.none|nomail|noemail|noreply|customer|unknown|notprovided)\\@"
-                ) |
-              str_detect(email, "\\@none") |
-              str_detect(email, "\\@(no\\.com|na\\.org)$") |
-              # Obfuscative Texas emails from @tpw or @tpwd
-              str_detect(email, "\\@(tpw|twp)") |
-              # If domain is invalid
-              str_detect(email, "\\@example.com$") |
-              # If longer than 100 characters (max length of valid address is
-              # 254 but this would be very rare)
-              str_length(email) > 100 |
-              # If there are multiple .
-              str_detect(email, "\\.\\.+") |
-              # If there is a dot in the place of the first character
-              str_detect(email, "^\\.") |
-              # If there is a dot in the place of last character in local part
-              str_detect(email, "\\.(?=\\@)") |
-              # If dot is last character
-              str_detect(email, "\\.$") |
-              # Hyphen in first place of domain
-              str_detect(email, "(?<=\\@)\\-") |
-              # Bad top level domain
-              str_detect(email, "(?<=\\@)gmail\\.(co|net|edu|org)$") |
-              str_detect(email, "(?<=\\@)att\\.(com|org)$") |
-              str_detect(email, "(?<=\\@)comcast\\.(com|org)$") |
-              str_detect(email, "(?<=\\@)icloud\\.(net|org)$") |
-              str_detect(
-                email,
-                "(?<=\\.)(com(\\.com)+|com(com)+|con|ccom|coom|comm|c0m|ocm|cm|om|cim|common)$"
-              )
-            ) |>
+          proofBadEmails() |>
           mutate(error = "email")
       ) |>
       select(temp_key, error)
@@ -228,3 +182,59 @@ proof <-
     return(graded_x)
 
   }
+
+#' Proof bad emails
+#'
+#' The internal \code{proofBadEmails} function is used inside of \code{\link{proof}} to find poorly formatted or intentionally obfuscative email addresses.
+#'
+#' @importFrom dplyr mutate
+#' @importFrom dplyr filter
+#' @importFrom stringr str_detect
+#'
+#' @param keyed_data An tibble used internally in \code{\link{proof}}
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
+
+proofBadEmails <-
+  function(keyed_data) {
+
+    # Filter data to email addresses that do not meet expectations
+    keyed_data |>
+      mutate(email = tolower(email)) |>
+      filter(
+        !str_detect(email, REGEX_EMAIL) |
+          # Obfuscative emails
+          str_detect(email, REGEX_EMAIL_OBFUSCATIVE_LOCALPART) |
+          str_detect(email, "\\@none") |
+          str_detect(email, "\\@(no\\.com|na\\.org)$") |
+          str_detect(email, "\\@(tpw|twp)") |
+          # Invalid domain
+          str_detect(email, "\\@example.com$") |
+          # Burner domain
+          str_detect(email, "\\@guerillamail") |
+          # Longer than 100 characters (max length of a valid address is 254 but
+          # this would be very rare; we only accept 100)
+          str_length(email) > 100 |
+          # Multiple sequential dots
+          str_detect(email, "\\.\\.+") |
+          # Dot in the place of the first character
+          str_detect(email, "^\\.") |
+          # Dot in the place of last character in local part
+          str_detect(email, "\\.(?=\\@)") |
+          # Dot is last character
+          str_detect(email, "\\.$") |
+          # Hyphen in first place of domain
+          str_detect(email, "(?<=\\@)\\-") |
+          # Bad top level domain
+          str_detect(email, "(?<=\\@)gmail\\.(co|net|edu|org)$") |
+          str_detect(email, "(?<=\\@)(att|comcast)\\.(com|org)$") |
+          str_detect(email, "(?<=\\@)icloud\\.(net|org)$") |
+          str_detect(email, "(?<=\\.)(com(\\.com)+|com(com)+|con|ccom|coom|comm|c0m|ocm|cm|om|cim|common)$") |
+          # Missing top level domain endings
+          str_detect(email, "(?<=\\@)(gmail|yahoo|hotmail|aol|icloud|comcast|outlook|sbcglobal|att|msn|live|bellsouth|charter|ymail|me|verizon|cox|earthlink|protonmail|pm|duck|ducks|mail)$") |
+          # Missing top level domain periods
+          str_detect(email, "(?<!\\.)(com|net|edu|gov|org|navymil|usnavymil|usafmil|mailmil|armymil|usarmymil|usacearmymil)$")
+      )
+  }
+
