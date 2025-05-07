@@ -45,6 +45,10 @@ proof <-
 
     markup <-
       bind_rows(
+        # Test record (redundant, should be filtered out in clean)
+        keyed_data |>
+          filter(!!LOGIC_TEST_RECORD) |>
+          mutate(error = "test_record"),
         # Title should only be NA, 0, 1, or 2
         keyed_data |>
           filter(!title %in% REF_TITLES) |>
@@ -66,10 +70,6 @@ proof <-
                 # No full names (detect using 2+ spaces)
                 str_detect(
                   firstname, "^[A-Z]+\\s[A-Z]+\\s[A-Z]+$") ~ "firstname",
-                # Should not be "blank" or "inaudible"
-                str_detect(
-                  firstname, "^[INAUDIBLE|BLANK|TEST|USER|RESIDENT]$") ~
-                  "firstname",
                 TRUE ~ NA_character_)),
         # Middle name should only be 1 letter of the alphabet
         keyed_data |>
@@ -88,8 +88,6 @@ proof <-
                 # No full names (detect using 2+ spaces)
                 str_detect(
                   lastname, "^[A-Z]+\\s[A-Z]+\\s[A-Z]+$") ~ "lastname",
-                # Should not be "inaudible"
-                str_detect(lastname, "^INAUDIBLE$") ~ "lastname",
                 TRUE ~ NA_character_)),
         # Suffix
         # Allows 1-20 in Roman numerals and numeric, excluding XVIII since the

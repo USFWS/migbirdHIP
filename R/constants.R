@@ -108,7 +108,10 @@ LOGIC_INLINE_PMT_DNH <-
 
 # Define a test record
 LOGIC_TEST_RECORD <-
-  expr(firstname == "TEST" & lastname == "TEST")
+  expr(
+    (firstname == "TEST" & lastname == "TEST") |
+      lastname == "INAUDIBLE" |
+      str_detect(firstname, "^(INAUDIBLE|BLANK|USER|TEST|RESIDENT)$"))
 
 # Define non-digit bag records; used by read_hip() and clean()
 LOGIC_NONDIGIT_BAGS <-

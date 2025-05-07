@@ -208,6 +208,7 @@ firstname_errors$space <- sample(hunters$row_key, size = 100)
 firstname_errors$period <- sample(hunters$row_key, size = 5)
 firstname_errors$comma <- sample(hunters$row_key, size = 5)
 firstname_errors$number <- sample(hunters$row_key, size = 5)
+firstname_errors$test <- sample(hunters$row_key, size = 1)
 
 # Middle initials
 middle_errors <- list()
@@ -220,6 +221,7 @@ lastname_errors$hyphen <- sample(hunters$row_key, size = 150)
 lastname_errors$space <- sample(hunters$row_key, size = 300)
 lastname_errors$period <- sample(hunters$row_key, size = 50)
 lastname_errors$initial <- sample(hunters$row_key, size = 100)
+lastname_errors$test <- firstname_errors$test
 
 # Address
 address_errors <- list()
@@ -284,8 +286,8 @@ messy_hunters <-
       ifelse(row_key %in% title_errors$NAs, NA, title),
     firstname =
       dplyr::case_when(
-        row_key %in% firstname_errors$NAs ~
-          NA_character_,
+        row_key %in% firstname_errors$test ~ "TEST",
+        row_key %in% firstname_errors$NAs ~ NA_character_,
         row_key %in% firstname_errors$initial ~
           stringr::str_sub(firstname, 1, 1),
         row_key %in% firstname_errors$twoletter ~
@@ -308,8 +310,8 @@ messy_hunters <-
       ifelse(row_key %in% middle_errors$NAs, NA, middle),
     lastname =
       dplyr::case_when(
-        row_key %in% lastname_errors$NAs ~
-          NA_character_,
+        row_key %in% firstname_errors$test ~ "TEST",
+        row_key %in% lastname_errors$NAs ~ NA_character_,
         row_key %in% lastname_errors$hyphen[lastname_errors$hyphen !=
                                               paste0("row_", nrow(hunters))] ~
           paste(lastname, dplyr::lead(lastname), sep = "-"),
