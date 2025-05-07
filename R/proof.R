@@ -49,7 +49,7 @@ proof <-
         keyed_data |>
           filter(!!LOGIC_TEST_RECORD) |>
           mutate(error = "test_record"),
-        # Title should only be NA, 0, 1, or 2
+        # Title
         keyed_data |>
           filter(!title %in% REF_TITLES) |>
           mutate(error = "title"),
@@ -71,9 +71,9 @@ proof <-
                 str_detect(
                   firstname, "^[A-Z]+\\s[A-Z]+\\s[A-Z]+$") ~ "firstname",
                 TRUE ~ NA_character_)),
-        # Middle name should only be 1 letter of the alphabet
+        # Middle initial
         keyed_data |>
-          filter(!str_detect(middle, "^[A-Z]{1}$")) |>
+          filter(!middle %in% LETTERS) |>
           mutate(error = "middle"),
         # Last name
         keyed_data |>
@@ -90,8 +90,6 @@ proof <-
                   lastname, "^[A-Z]+\\s[A-Z]+\\s[A-Z]+$") ~ "lastname",
                 TRUE ~ NA_character_)),
         # Suffix
-        # Allows 1-20 in Roman numerals and numeric, excluding XVIII since the
-        # limit is 4 characters)
         keyed_data |>
           filter(!suffix %in% REF_SUFFIXES) |>
           mutate(error = "suffix"),

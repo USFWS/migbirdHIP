@@ -153,5 +153,8 @@ REGEX_SUFFIX_SEARCH <-
 # Regular expression that selects non-permit species bag fields
 REGEX_NON_PMT_SPECIES <- "bag|coots|rails"
 
-# Regular expression for correct city name values
+# Regular expression for correct city name values. City names should only
+# contain letters, spaces (e.g., New York City, NY), hyphens (e.g.,
+# Winston-Salem, NC), apostrophes (e.g., O'Fallon, MO), and/or periods (e.g.,
+# St. Augustine, FL)
 REGEX_CITY <- "[^A-Za-z\\s\\-\\'\\.]"

@@ -53,7 +53,7 @@ test_that("good middle initials pass proofing", {
 
   good_middles_filtered <-
     good_middles |>
-    filter(!str_detect(middle, "^[A-Z]{1}$"))
+    filter(!middle %in% LETTERS)
 
   expect_equal(nrow(good_middles_filtered), 0)
 })
@@ -63,7 +63,7 @@ test_that("bad middle initials fail proofing", {
 
   bad_middles_filtered <-
     bad_middles |>
-    filter(!str_detect(middle, "^[A-Z]{1}$"))
+    filter(!middle %in% LETTERS)
 
   expect_equal(nrow(bad_middles), nrow(bad_middles_filtered))
 })
