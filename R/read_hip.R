@@ -69,6 +69,8 @@ read_hip <-
       ignorePermits() |>
       # Don't process hold files
       ignoreHolds() |>
+      # Don't process lifetime files
+      ignoreLifetime() |>
       # Identify blank files
       idBlankFiles() |>
       # Drop blank files
@@ -236,6 +238,25 @@ ignoreHolds <-
     # Don't process hold files
     filelist |>
       filter(!str_detect(filepath, "hold"))
+  }
+
+#' Ignore lifetime files
+#'
+#' The internal \code{ignoreLifetime} function is used inside of \code{\link{read_hip}} to filter out lifetime files from the file list.
+#'
+#' @importFrom dplyr filter
+#' @importFrom stringr str_detect
+#'
+#' @param filelist The file list tibble created by \code{\link{listFiles}}
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
+
+ignoreLifetime <-
+  function(filelist) {
+    # Don't process lifetime files
+    filelist |>
+      filter(!str_detect(filepath, "lifetime"))
   }
 
 #' Identify blank files
