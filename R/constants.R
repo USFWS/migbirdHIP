@@ -175,4 +175,5 @@ REGEX_EMAIL <-
 REGEX_EMAIL_OBFUSCATIVE_LOCALPART <-
   "^(none|no|na|not|non|nomail|noemail|noreply|customer|unknown|notprovided)\\@"
 
-
+# Address regular expression
+REGEX_ADDRESS <- "\\||\\t|[^\\x00-\\x7F]+"

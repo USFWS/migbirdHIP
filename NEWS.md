@@ -6,6 +6,8 @@
     -   Fake HIP test data creation script stored under `data-raw/`
     -   Test data containing fake HIP registrations stored as fixed-width `.txt` files under `inst/extdata/`
 -   Created `variables.R` to define seasonally changing variables in a central place
+    -   `REF_CURRENT_SEASON` for current HIP season
+    -   `REF_RELEASES` is a named vector of all `migbirdHIP` package releases and the corresponding season of HIP data that the version was intended for.
 -   Created `constants.R` to define variables in a central place and thus evaluate data consistently across functions (e.g., `inLinePermitDNHMessage()` and `inLinePermitDNHFix()` both use `LOGIC_INLINE_PMT_DNH` to evaluate data using the same logical condition).
     -   Moved `ref_bagfields`, `abbr_usa`, `abbr_canada`, `pmt_inline`, and `pmt_files` from package internal data `sysdata.rda` to the `constants.R` file, for transparency and to reduce the number of objects included internally; now named with uppercase letters to indicate they are internal reference data objects (`REF_BAG_FIELDS`, `REF_ABBR_USA`, `REF_ABBR_CANADA`, `REF_PMT_INLINE`, `REF_PMT_FILES`).
     -   Moved suffix regex reference vector from `moveSuffixes()` to `constants.R` as `REGEX_SUFFIX_SEARCH`.
@@ -61,6 +63,8 @@
     -   Removed all-zero bag section from the Agenda tab.
     -   Added comma formatting to long numbers.
     -   On the Errors tab, moved the "Bad zip codes" section to its own sub-header after "Causes of errors for top 3 fields".
+-   Add `zzz.R`
+    -   Run package startup message which returns the installed `migbirdHIP` package version and which season of HIP data the package version is compatible with.
 -   Almost all data params changed to be less ambiguous (e.g. `x` now `cleaned_data`, `proofed_data`, etc).
 -   `{tibble}` no longer a required import
 -   `read_hip()` now catches file names with incorrect MMDDYYYY or DDMMYYYY date format.

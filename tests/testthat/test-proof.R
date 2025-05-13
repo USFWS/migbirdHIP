@@ -95,6 +95,21 @@ test_that("bad suffixes fail proofing", {
 
 # address -----------------------------------------------------------------
 
+test_that("bad addresses fail proofing", {
+  good_addresses <-
+    tibble(
+      address = c("966 American Holly Ln", "3 Bee Dr", "PO Box 9"))
+
+  bad_addresses <-
+    tibble(
+      address = c("80 Fox |Dr", "4 Bear’s Pl"))
+
+  bad_addresses_filtered <-
+    rbind(good_addresses, bad_addresses) |>
+    filter(str_detect(address, REGEX_ADDRESS))
+
+  expect_equal(bad_addresses, bad_addresses_filtered)
+})
 
 # city --------------------------------------------------------------------
 

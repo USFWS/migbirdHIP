@@ -93,14 +93,11 @@ proof <-
         keyed_data |>
           filter(!suffix %in% REF_SUFFIXES) |>
           mutate(error = "suffix"),
-        # Address does not contain |, tab or non-UTF8 characters
-        # Any further address verification isn't really possible
+        # Address
         keyed_data |>
-          filter(str_detect(address, "\\||\\t|[^\\x00-\\x7F]+")) |>
+          filter(str_detect(address, REGEX_ADDRESS)) |>
           mutate(error = "address"),
-        # City names should only contain letters, spaces (e.g., New York City,
-        # NY), hyphens (e.g., Winston-Salem, NC), apostrophes (e.g., O'Fallon,
-        # MO), and/or periods (e.g., St. Augustine, FL)
+        # City
         keyed_data |>
           filter(str_detect(city, REGEX_CITY)) |>
           mutate(error = "city"),
@@ -108,8 +105,7 @@ proof <-
         keyed_data |>
           filter(str_detect(city, "^[A-Za-z]{1,2}$")) |>
           mutate(error = "city"),
-        # State should only be a 2-letter abbreviation for 1) a US state, 2) as
-        # US territory, or 3) a Canadian province or territory
+        # State
         keyed_data |>
           filter(!state %in% REF_USA_CANADA) |>
           mutate(error = "state"),
@@ -125,11 +121,11 @@ proof <-
               as.numeric(
                 str_extract(birth_date, "(?<=\\/)[0-9]{4}")) > year - 0) |>
           mutate(error = "birth_date"),
-        # Hunting migratory birds should only be = 1 or 2
+        # hunt_mig_birds
         keyed_data |>
           filter(!hunt_mig_birds %in% REF_HUNT_MIG_BIRDS) |>
           mutate(error = "hunt_mig_birds"),
-        # Registration year should = survey year
+        # registration_yr should = survey year
         keyed_data |>
           filter(registration_yr != year) |>
           mutate(error = "registration_yr"),
