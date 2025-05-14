@@ -145,6 +145,20 @@ LOGIC_MISSING_ADDRESSES <-
 LOGIC_MISSING_CITY_ZIP_EMAIL <-
   expr(if_all(c("city", "zip", "email"), \(x) is.na(x)))
 
+# First name regular expression; may contain apostrophe, space, hyphen (none of
+# which consecutive) and 2+ capital letters
+REGEX_FIRSTNAME <-
+  paste0(
+    "^(?!.*\\'\\')(?!.*\\s\\s)(?!.*\\-\\-)[A-Z+\\'?]\\-?\\s?\\'?[A-Z\\-?\\s?\\",
+    "'?]*[A-Z]+$")
+
+# Last name regular expression; may contain apostrophe, space, hyphen, period,
+# (none of which consecutive) and 2+ capital letters
+REGEX_LASTNAME <-
+  paste0(
+    "^(?!.*\\'\\')(?!.*\\s\\s)(?!.*\\-\\-)(?!.*\\.\\.)[A-Z]\\-?\\s?\\'?[A-Z\\-",
+    "?\\s?\\'?\\.?]*[A-Z]+$")
+
 # Define a trailing suffix using regular expressions (e.g., suffix included in
 # the firstname or lastname field). Includes values from 1-20 in Roman numerals
 # and numeric
@@ -160,7 +174,7 @@ REGEX_NON_PMT_SPECIES <- "bag|coots|rails"
 # contain letters, spaces (e.g., New York City, NY), hyphens (e.g.,
 # Winston-Salem, NC), apostrophes (e.g., O'Fallon, MO), and/or periods (e.g.,
 # St. Augustine, FL)
-REGEX_CITY <- "[^A-Za-z\\s\\-\\'\\.]"
+REGEX_BAD_CITY <- "[^A-Za-z\\s\\-\\'\\.]"
 
 # Regular expression for the expected email format. Local part may contain Latin
 # lower and uppercase letters, numbers, underscores, dots, hyphens, and a plus
@@ -175,5 +189,5 @@ REGEX_EMAIL <-
 REGEX_EMAIL_OBFUSCATIVE_LOCALPART <-
   "^(none|no|na|not|non|nomail|noemail|noreply|customer|unknown|notprovided)\\@"
 
-# Address regular expression
-REGEX_ADDRESS <- "\\||\\t|[^\\x00-\\x7F]+"
+# Address regular expression for unwanted symbols
+REGEX_BAD_ADDRESS <- "\\||\\t|[^\\x00-\\x7F]+"

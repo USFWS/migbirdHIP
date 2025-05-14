@@ -45,6 +45,105 @@ test_that("bad titles fail proofing", {
 
 # firstname ---------------------------------------------------------------
 
+test_that("good first names pass proofing", {
+  good_first_names <-
+    tibble(
+      first_names =
+        c("JO",
+          "ABE",
+          "DORT",
+          "DAVID",
+          "JOHNNY",
+          "GABRIEL",
+          "CHANDLER",
+          "'IWALANI",
+          "KU'UIPO",
+          "MA'IA'I",
+          "HA-YOON",
+          "BO-A",
+          "JEAN-BAPTISTE",
+          "MINH ANH",
+          "MARY-ANN LOUISE",
+          "JOE BILLY-BOB",
+          "JEA-YVES-ANDRE",
+          "JOHN PAUL GEORGE")
+    )
+
+  good_first_names_filtered <-
+    filter(good_first_names, !str_detect(first_names, REGEX_FIRSTNAME))
+
+  expect_equal(nrow(good_first_names_filtered), 0)
+})
+
+test_that("bad first names fail proofing", {
+  bad_first_names <-
+    tibble(
+      first_names =
+        c("C",
+          "BOB-",
+          "-BOB",
+          " BOBBY",
+          "BOBBY ",
+          "JAMES DEAN ",
+          " JAMES DEAN",
+          "BOB- ",
+          " -BOB",
+          "BOB -",
+          "- BOB",
+          "1",
+          "B0B",
+          "DAV3",
+          "~",
+          "M~",
+          "`",
+          "KU`UIPO",
+          "!",
+          "FRED!",
+          "@",
+          "GREG@GMAIL",
+          "#",
+          "MARK#",
+          "$",
+          "MARK$",
+          "%",
+          "90%",
+          "AMY%",
+          "^",
+          "^CAL",
+          "&",
+          "BILL & PAM",
+          "*",
+          "A*RON",
+          "(",
+          ")",
+          "GREGORY (GREG)",
+          "+",
+          "JOHN+DOE",
+          "=",
+          "PHIL=",
+          "-",
+          ".",
+          "MR.BOB",
+          "MR. BOB",
+          "''DEON",
+          "JO''HN",
+          "DAN''",
+          "H  AL",
+          "  HAL",
+          "HAL  ",
+          "WALL--E",
+          "--JAN",
+          "JAN--",
+          "MARY-JANE--WILDER",
+          "MARY JANE  WILDER",
+          "")
+    )
+
+  bad_first_names_filtered <-
+    filter(bad_first_names, !str_detect(first_names, REGEX_FIRSTNAME))
+
+  expect_equal(nrow(bad_first_names), nrow(bad_first_names_filtered))
+})
 
 # middle ------------------------------------------------------------------
 
@@ -70,6 +169,114 @@ test_that("bad middle initials fail proofing", {
 
 # lastname ----------------------------------------------------------------
 
+test_that("good last names pass proofing", {
+  good_last_names <-
+    tibble(
+      last_names =
+        c("LI",
+          "LEE",
+          "KING",
+          "ABBOT",
+          "KNIGHT",
+          "SHERIFF",
+          "THATCHER",
+          "UNDERWOOD",
+          "O'MALLEY",
+          "TO'OTO'O",
+          "BOWES-LYON",
+          "CAVE-BROWNE-CAVE",
+          "ST GERMAINE",
+          "ST. GERMAINE",
+          "DIT TRANCHEMONTAGNE",
+          "VAN DER WAAL",
+          "REYES DE LA BARRERA")
+    )
+
+  good_last_names_filtered <-
+    filter(good_last_names, !str_detect(last_names, REGEX_LASTNAME))
+
+  expect_equal(nrow(good_last_names_filtered), 0)
+})
+
+test_that("bad last names fail proofing", {
+  bad_last_names <-
+    tibble(
+      last_names =
+        c("B",
+          "SMITH-",
+          "-SMITH",
+          " JONES",
+          "JONES ",
+          "SMITH JONES ",
+          " SMITH JONES",
+          "SMITH- ",
+          " -SMITH",
+          "SMITH -",
+          "- SMITH",
+          "SMITH.",
+          ".SMITH",
+          "SMITH. ",
+          " .SMITH",
+          "SMITH .",
+          ". SMITH",
+          "1",
+          "B0B",
+          "DAV3",
+          "~",
+          "M~",
+          "`",
+          "KU`UIPO",
+          "!",
+          "FRED!",
+          "@",
+          "GREG@GMAIL",
+          "#",
+          "MARK#",
+          "$",
+          "MARK$",
+          "%",
+          "90%",
+          "AMY%",
+          "^",
+          "^CAL",
+          "&",
+          "BILL & PAM",
+          "*",
+          "A*RON",
+          "(",
+          ")",
+          "GREGORY (GREG)",
+          "+",
+          "JOHN+DOE",
+          "=",
+          "PHIL=",
+          "-",
+          ".",
+          "..JONES",
+          "JONES..",
+          "JO..NES",
+          "JO ..NES",
+          "''GARCIA",
+          "DA''VIS",
+          "DAVIS''",
+          "W  ILLIAMS",
+          "  WILLIAMS",
+          "WILLIAMS  ",
+          "WILLIA--MS",
+          "--MOORE",
+          "MOORE--",
+          "MARY-JANE--WILDER",
+          "MARY JANE  WILDER",
+          "MARY.JANE  WILDER",
+          "MARY..JANE  WILDER",
+          "")
+    )
+
+  bad_last_names_filtered <-
+    filter(bad_last_names, !str_detect(last_names, REGEX_LASTNAME))
+
+  expect_equal(nrow(bad_last_names), nrow(bad_last_names_filtered))
+})
 
 # suffix ------------------------------------------------------------------
 

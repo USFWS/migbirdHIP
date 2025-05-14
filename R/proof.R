@@ -55,51 +55,27 @@ proof <-
           mutate(error = "title"),
         # First name
         keyed_data |>
-          mutate(
-            error =
-              case_when(
-                # First name should be >1 letter
-                str_detect(firstname, "^[A-Z]{1}$") ~ "firstname",
-                # First name should not contain 1 letter followed by a name
-                str_detect(firstname, "^[A-Z]{1}\\s[A-Z]+$") ~ "firstname",
-                # First name should not contain a name followed by 1 letter
-                str_detect(firstname, "^[A-Z]+\\s[A-Z]{1}$") ~ "firstname",
-                # Only non-alpha characters allowed are spaces, apostrophes, and
-                # hyphens. No numbers, commas, parentheses, etc allowed
-                str_detect(firstname, "[^A-Z\\s\\-\\']") ~ "firstname",
-                # No full names (detect using 2+ spaces)
-                str_detect(
-                  firstname, "^[A-Z]+\\s[A-Z]+\\s[A-Z]+$") ~ "firstname",
-                TRUE ~ NA_character_)),
+          filter(str_detect(firstname, REGEX_FIRSTNAME)) |>
+          mutate(error = "firstname"),
         # Middle initial
         keyed_data |>
           filter(!middle %in% LETTERS) |>
           mutate(error = "middle"),
         # Last name
         keyed_data |>
-          mutate(
-            error =
-              case_when(
-                # Last name should be >1 letter
-                str_detect(lastname, "^[A-Z]{1}$") ~ "lastname",
-                # Only non-alpha characters allowed are spaces, periods,
-                # hyphens, and apostrophes. No numbers, commas, parentheses, etc
-                str_detect(lastname, "[^A-Z\\s\\-\\.\\']") ~ "lastname",
-                # No full names (detect using 2+ spaces)
-                str_detect(
-                  lastname, "^[A-Z]+\\s[A-Z]+\\s[A-Z]+$") ~ "lastname",
-                TRUE ~ NA_character_)),
+          filter(str_detect(lastname, REGEX_LASTNAME)) |>
+          mutate(error = "lastname"),
         # Suffix
         keyed_data |>
           filter(!suffix %in% REF_SUFFIXES) |>
           mutate(error = "suffix"),
         # Address
         keyed_data |>
-          filter(str_detect(address, REGEX_ADDRESS)) |>
+          filter(str_detect(address, REGEX_BAD_ADDRESS)) |>
           mutate(error = "address"),
         # City
         keyed_data |>
-          filter(str_detect(city, REGEX_CITY)) |>
+          filter(str_detect(city, REGEX_BAD_CITY)) |>
           mutate(error = "city"),
         # City MUST contain at least 3 letters
         keyed_data |>
