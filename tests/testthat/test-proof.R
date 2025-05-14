@@ -313,7 +313,7 @@ test_that("bad addresses fail proofing", {
 
   bad_addresses_filtered <-
     rbind(good_addresses, bad_addresses) |>
-    filter(str_detect(address, REGEX_ADDRESS))
+    filter(str_detect(address, REGEX_BAD_ADDRESS))
 
   expect_equal(bad_addresses, bad_addresses_filtered)
 })
@@ -332,7 +332,7 @@ test_that("bad city names fail proofing", {
 
   bad_city_names_filtered <-
     rbind(good_city_names, bad_city_names) |>
-    filter(str_detect(city, REGEX_CITY))
+    filter(str_detect(city, REGEX_BAD_CITY))
 
   expect_equal(bad_city_names, bad_city_names_filtered)
 })
