@@ -188,6 +188,12 @@ canada_zips <-
     "V5M 1Z7",
     "B3G1N5")
 
+upload_dates <-
+  c(paste0("08", stringr::str_pad(c(1:31), 2, pad = "0")),
+    paste0("09", stringr::str_pad(c(1:7), 2, pad = "0")))
+
+file_dates <- paste0(REF_CURRENT_SEASON, upload_dates, ".txt")
+
 # messy selections --------------------------------------------------------
 
 # Select some hunters for intentional errors: change to NA, add a hyphen, add a
@@ -388,7 +394,10 @@ fake_hip <-
     issue_date =
       purrr::map_chr(
         1:nrow(messy_hunters_shuffled),
-        ~fake_issue_dates(dtp, "2024-07-01", "2025-04-01")),
+        ~fake_issue_dates(
+          dtp,
+          start = paste0(REF_CURRENT_SEASON, "-01-01"),
+          end = paste0(REF_CURRENT_SEASON, "-09-07"))),
     hunt_mig_birds =
       ifelse(row_key %in% hunty_errors$hunty1, "1", "2"),
     ducks_bag =
@@ -479,12 +488,12 @@ fake_hip <-
     registration_yr = REF_CURRENT_SEASON
   ) |>
   dplyr::relocate(email, .after = "registration_yr") |>
-  dplyr::mutate(
-    source_file =
-      paste0(dl_state, as.numeric(REF_CURRENT_SEASON) + 1, "0101.txt")) |>
+  group_by(dl_state) |>
+  dplyr::mutate(source_file = paste0(dl_state, sample(file_dates, 1))) |>
+  ungroup() |>
   dplyr::select(-c("row_key", "dl_state"))
 
-# Split the fake data by into a list by dl_state/source file
+# Split the fake data into a list by dl_state/source file
 split_fake_hip <-
   split(fake_hip |> dplyr::select(-source_file), f = fake_hip$source_file)
 
@@ -494,7 +503,8 @@ purrr::walk(
   1:length(split_fake_hip),
   \(x) gdata::write.fwf(
     as.data.frame(split_fake_hip[[x]]),
-    file = paste0(here::here(), "/inst/extdata/", names(split_fake_hip[x])),
+    file =
+      paste0(here::here(), "/inst/extdata/DL0901/", names(split_fake_hip[x])),
     sep = "",
     colnames = F,
     width = c(1, 15, 1, 20, 3, 60, 20, 2, 10, 10, 10,

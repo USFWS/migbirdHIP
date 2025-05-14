@@ -4,7 +4,7 @@
 
 -   Added test data
     -   Fake HIP test data creation script stored under `data-raw/`
-    -   Test data containing fake HIP registrations stored as fixed-width `.txt` files under `inst/extdata/`
+    -   Test data containing fake HIP registrations stored as fixed-width `.txt` files under `inst/extdata/DL0901/`
 -   Created `variables.R` to define seasonally changing variables in a central place
     -   `REF_CURRENT_SEASON` for current HIP season
     -   `REF_RELEASES` is a named vector of all `migbirdHIP` package releases and the corresponding season of HIP data that the version was intended for.

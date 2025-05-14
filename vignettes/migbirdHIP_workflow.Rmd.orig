@@ -9,312 +9,356 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
 ## Table of Contents
 
-- [Introduction](#introduction)
-    - [Installation](#installation)
-    - [Functions overview](#functions-overview)
-- [Part A: Data Import and Cleaning](#part-a-data-import-and-cleaning)
-    - [fileRename](#filerename)
-    - [fileCheck](#filecheck)
-    - [read_hip](#read_hip)
-    - [glyphCheck](#glyphcheck)
-    - [shiftCheck](#shiftcheck)
-    - [clean](#clean)
-    - [issueCheck](#issuecheck)
-    - [duplicateFinder](#duplicatefinder)
-    - [duplicateFix](#duplicatefix)
-    - [duplicatePlot](#duplicateplot)
-    - [bagCheck](#bagcheck)
-- [Part B: Data Proofing and Correction](#part-b-data-proofing-and-correction)
-    - [proof](#proof)
-    - [correct](#correct)
-    - [pullErrors](#pullerrors)
-    - [write_hip](#write_hip)
-    - [writeReport](#writereport)
-- [Part C: Data Visualization and Tabulation](#part-c-data-visualization-and-tabulation)
-    - Visualization
-        - [errorPlot_fields](#errorplot_fields)
-        - [errorPlot_states](#errorplot_states)
-        - [errorPlot_dl](#errorplot_dl)
-    - Tabulation
-        - [errorTable](#errortable)
-        - [redFlags](#redflags)
-- [Troubleshooting](#troubleshooting)
-    - [Common read_hip warnings](#common-read_hip-warnings)
-    - [Memory problems](#memory-problems)
-    - [Other](#other)
+-   [Introduction](#introduction)
+    -   [Installation](#installation)
+        -   [Releases](#releases)
+    -   [Load](#load)
+    -   [Functions overview](#functions-overview)
+-   [Part A: Data Import and Cleaning](#part-a-data-import-and-cleaning)
+    -   [fileRename](#filerename)
+    -   [fileCheck](#filecheck)
+    -   [read_hip](#read_hip)
+    -   [glyphCheck](#glyphcheck)
+    -   [shiftCheck](#shiftcheck)
+    -   [clean](#clean)
+    -   [issueCheck](#issuecheck)
+    -   [duplicateFinder](#duplicatefinder)
+    -   [duplicateFix](#duplicatefix)
+    -   [duplicatePlot](#duplicateplot)
+    -   [bagCheck](#bagcheck)
+-   [Part B: Data Proofing and Correction](#part-b-data-proofing-and-correction)
+    -   [proof](#proof)
+    -   [correct](#correct)
+    -   [pullErrors](#pullerrors)
+    -   [write_hip](#write_hip)
+    -   [writeReport](#writereport)
+-   [Part C: Data Visualization and Tabulation](#part-c-data-visualization-and-tabulation)
+    -   Visualization
+        -   [errorPlot_fields](#errorplot_fields)
+        -   [errorPlot_states](#errorplot_states)
+        -   [errorPlot_dl](#errorplot_dl)
+    -   Tabulation
+        -   [errorTable](#errortable)
+        -   [redFlags](#redflags)
+-   [Troubleshooting](#troubleshooting)
+    -   [Common read_hip warnings](#common-read_hip-warnings)
+    -   [Memory problems](#memory-problems)
+    -   [Other](#other)
 
-## Introduction
+## Introduction {#introduction}
 
-The *migbirdHIP* package was created for the U.S. Fish and Wildlife Service (USFWS) to wrangle, tidy, and visualize Harvest Information Program (HIP) data.
+The `migbirdHIP` package was created by the U.S. Fish and Wildlife Service (USFWS) to process, clean, and visualize Harvest Information Program (HIP) registration data.
 
-HIP data have been used since 1999 to make important management decisions for migratory game birds in the United States. Raw hunting activity data are processed in this package. To read more about HIP, visit: [https://www.fws.gov/harvestsurvey/](https://www.fws.gov/harvestsurvey/)
+Every year, migratory game bird hunters must register for HIP in the state(s) they plan to hunt by providing their name, address, date of birth, and hunting success from the previous year. All 49 contiguous states are responsible for collecting this information and submitting hunter registrations to the USFWS. Raw data submitted by the states are processed in this package.
 
-### Installation
+The USFWS has been using HIP registrations since 1999 to select hunters for the Migratory Bird Harvest Survey (Diary Survey) and the Parts Collection Survey (Wing Survey). Only a small proportion of HIP registrants are chosen to complete these surveys each year. The USFWS ultimately uses these data to generate annual harvest estimates. To read more about HIP and the surveys, visit: <https://www.fws.gov/harvestsurvey/> and <https://www.fws.gov/library/collections/migratory-bird-hunting-activity-and-harvest-reports>
+
+### Installation {#installation}
 
 The package can be installed from the USFWS GitHub repository using:
+
 ```{r, install, message = FALSE, eval = FALSE}
 devtools::install_github("USFWS/migbirdHIP", quiet = T, upgrade = F, , build_vignettes = T)
 ```
 
-### Functions overview
+#### Releases {#releases}
 
-The flowchart below is a visual guide to the order in which functions are used. Some functions are only used situationally and some issues with the data cannot be solved using a function at all. The general process of handling HIP data is demonstrated here; every function in the *migbirdHIP* package is included.
+To install a past release, use the example below and substitute the appropriate version number.
+
+```{r, releases, message = FALSE, eval = FALSE}
+devtools::install_github("USFWS/migbirdHIP@v1.2.8", build_vignettes = T)
+```
+
+### Load {#load}
+
+Load `migbirdHIP` after installation. The package will return a startup message with the version you have installed and what season of HIP data the package version was intended for.
+
+```{r setup}
+library(migbirdHIP)
+```
+
+### Functions overview {#functions-overview}
+
+The flowchart below is a visual guide to the order in which functions are used. Some functions are only used situationally and some issues with the data cannot be solved using a function at all. The general process of handling HIP data is demonstrated here; every function in the `migbirdHIP` package is included.
 
 ```{r flowchart_svg, echo = FALSE, fig.cap = "Overview of migbirdHIP functions in a flowchart format.", out.width = "100%", dev = "svg", fig.align = "center"}
 knitr::include_graphics("image/migbirdHIP_flowchart.svg")
 ```
 
-## Part A: Data Import and Cleaning
+## Part A: Data Import and Cleaning {#part-a-data-import-and-cleaning}
 
-### fileRename
+### fileRename {#filerename}
 
-The `fileRename` function was incorporated into this package for special cases. Some states submit .txt  files using a 5-digit file name format, containing 2 letters for the state abbreviation followed by a 3-digit Julian date (representing the date the file was uploaded). To convert these 5-digit filenames to the standard 10-digit format (a requirement to read data properly with [read_hip](#read_hip)), supply the `fileRename` with the directory containing HIP data. File names will be automatically overwritten with the YYYYMMDD format date corresponding to the submitted Julian date. This function also converts lowercase state abbreviations to uppercase. The year of the Harvest Information Program must be supplied as a parameter to accurately convert dates.
+The `fileRename` function renames non-standard file names to the standard format. We expect a file name to be a 2-letter capitalized state abbreviation followed by YYYYMMDD (indicating the date data were submitted).
+
+Some states submit files using a 5-digit file name format, containing 2 letters for the state abbreviation followed by a 3-digit Julian date. To convert these 5-digit filenames to the standard format (a requirement to read data properly with [read_hip](#read_hip)), supply `fileRename` with the directory containing HIP data. File names will be automatically overwritten with the YYYYMMDD format date corresponding to the submitted Julian date.
+
+This function also converts lowercase state abbreviations to uppercase.
+
+The current hunting season year must be supplied as a parameter to accurately convert dates.
 
 ```{r rename, eval = FALSE}
-fileRename(path = "C:/HIP/DL1301", year = 2021)
+fileRename(path = "C:/HIP/raw_data/DL0901", year = 2024)
 ```
 
-### fileCheck
+### fileCheck {#filecheck}
 
 Check if any files in the input folder have already been written to the processed folder.
 
 ```{r filecheck, eval = FALSE}
 fileCheck(
-  raw_path = "C:/HIP/DL1301",
-  processed_path = "C:/HIP/corrected_data"
+  raw_path = "C:/HIP/raw_data/DL0901/",
+  processed_path = "C:/HIP/corrected_data/"
 )
 ```
 
-### read_hip
+### read_hip {#read_hip}
 
-The first step is to import fixed-width .txt files containing HIP data. Files must adhere to a 10-digit naming convention in order to successfully import data using the `read_hip` function; if files were submitted with the old 5-digit format, run [fileRename](#filerename) first.
+Read HIP data from fixed-width .txt files using `read_hip`. Files must adhere to a 10-character naming convention to successfully be read in (2-letter capitalized state abbreviation followed by YYYYMMDD). If files were submitted with a 5-digit format or lowercase state abbreviation, run [fileRename](#filerename) first.
 
-The `read_hip` function allows data to be read in for all states (e.g. `state = NA`, the default), for just a specific state (e.g. `state = "DE"`), a specific download (e.g. `season = FALSE`, the default) or data over an entire season (e.g. `season = TRUE`). Use `unique = TRUE` to read in a frame without exact duplicates, or `unique = FALSE` for all records. This function also:
+The `read_hip` function allows data to be read in for:
 
-* Returns a message if one or more files are blank in the directory
-* Return a message by download state for records with blank or NA values in firstname, lastname, state, or birth date
-* Checks download state abbreviations in the .txt file names
-* Trims whitespace on all values
-* Converts "N/A" strings to NA
-* Creates a dl_state, dl_date, dl_cycle, and source_file column from each .txt filename
-* Creates a dl_key column by grouping data by dl_state and dl_date
-* Creates a record_key column (unique identifier for each row, used later by other functions)
+-   all states (e.g. `state = NA`, the default)
+-   a specific state (e.g. `state = "DE"`)
+-   a specific download (e.g. `season = FALSE`, the default)
+-   an entire season (e.g. `season = TRUE`)
 
-We will use the default settings to read in all of the states from download 1301.
+Use `unique = TRUE` to read in a frame without exact duplicates, or `unique = FALSE` to read in all records including exact duplicates. This function also:
+
+-   Returns a message if one or more files are blank in the directory
+-   Return a message by download state for records with blank or NA values in firstname, lastname, state, or birth date
+-   Checks download state abbreviations in the .txt file names
+-   Trims whitespace on all values
+-   Converts "N/A" strings to NA
+-   Creates a dl_state, dl_date, dl_cycle, and source_file column from each .txt filename
+-   Creates a dl_key column by grouping data by dl_state and dl_date
+-   Creates a record_key column (unique identifier for each row, used later by other functions)
+
+We will use the default settings to read in all of the states from download 0901. Fake HIP data files located in the `extdata/DL0901/` directory of the R package will be used as an example.
+
+```{r, fakedatapath}
+fake_data_path <- system.file("extdata", "DL0901", package = "migbirdHIP")
+
+print(fake_data_path)
+```
 
 ```{r, readhip, message = FALSE, warning = FALSE}
-library(migbirdHIP)
-
-DL1301 <- read_hip("C:/HIP/DL1301", sumlines = F)
+raw_data <- read_hip(fake_data_path)
 ```
 
-Did you get a warning or three? Read an explanation of common `read_hip` warnings, [below](#common-read_hip-warnings).
+Did you get a warning? Read an explanation of common `read_hip` warnings [below](#common-read_hip-warnings).
 
-### glyphCheck
+### glyphCheck {#glyphcheck}
 
-During pre-processing, R may throw an error like "invalid UTF-8 byte sequence detected". The error usually includes a field name but no other helpful information. The `glyphCheck` function identifies values containing non-UTF-8 glyphs/characters and returns them with the source file so they can be edited.
+During pre-processing, R may throw an error that says something like "invalid UTF-8 byte sequence detected". The error usually includes a field name but no other helpful information. The `glyphCheck` function identifies values containing non-UTF-8 glyphs/characters and prints them with the source file in the console so they can be edited.
 
 ```{r glyphCheck, eval = FALSE}
-glyphCheck(DL1301)
+glyphCheck(raw_data)
 ```
 
-### shiftCheck
+### shiftCheck {#shiftcheck}
 
 Find and print any rows that have a line shift error.
 
 ```{r shiftCheck, eval = FALSE}
-shiftCheck(DL1301)
+shiftCheck(raw_data)
 ```
 
-### clean
+### clean {#clean}
 
-After data are read and unshifted, we `clean`:
+Clean the data after it has been read and checked.
 
 ```{r, clean}
-DL1301_clean <- clean(DL1301)
+clean_data <- clean(raw_data)
 ```
 
-This function does simple data cleaning. Importantly, records are discarded if first name, last name, birth date, state of residence, address AND email, OR city AND zip AND email are missing.
+The `clean` function does simple data cleaning. Importantly, records are discarded if first name, last name, birth date, state of residence, address AND email, OR city AND zip AND email are missing.
 
 Other quick fixes include:
 
-* Converts names to uppercase
-* Moves suffixes from first or last name columns to the appropriate suffix column (including any value from I to XX or 1ST to 20TH, except for XVIII)
-* If any value other than a letter is in the middle initial column, it's set to NA
-* Zip code correction
-    * Removes ending hyphen from zip codes with only 5 digits
-    * Trims 0s from 10th digit
-    * Inserts a hyphen in continuous 9 digit zip code values
-    * Inserts a hyphen in 9 digit zip codes with a middle space
-    * Deletes trailing -0000 and -____ from zip codes
-* Address cleaning
-    * Deletes leading "." in addresses (a spillover character from suffix)
-    * Attempt at PO Box standardization, by changing "P.O.BOX" to "PO BOX" and "P.O. BOX" to "PO BOX"
-* Trims whitespace on all values (again)
+-   Converts names to uppercase
+-   Moves suffixes from first or last name columns to the appropriate suffix column (including any value from I to XX or 1ST to 20TH, except for XVIII)
+-   If any value other than a letter is in the middle initial column, it's set to NA
+-   Zip code correction
+    -   Removes ending hyphen from zip codes with only 5 digits
+    -   Trims 0s from 10th digit
+    -   Inserts a hyphen in continuous 9 digit zip code values
+    -   Inserts a hyphen in 9 digit zip codes with a middle space
+    -   Deletes trailing -0000 and -\_\_\_\_ from zip codes
+-   Address cleaning
+    -   Deletes leading "." in addresses (a spillover character from suffix)
+    -   Attempt at PO Box standardization, by changing "P.O.BOX" to "PO BOX" and "P.O. BOX" to "PO BOX"
+-   Trims whitespace on all values (again)
 
-### issueCheck
+### issueCheck {#issuecheck}
 
 The `issueCheck` function filters out past registrations, returns messages for records received that should be saved for the future, and plots records that have a disagreement between registration year and issue date. To skip plotting, specify `plot = F`.
 
 ```{r, issuecheck, eval = F}
-DL1301_current <- issueCheck(DL1301_clean, year = 2021, plot = F)
+current_data <- issueCheck(clean_data, year = 2024, plot = F)
 ```
 
 ```{r, createcurrent, include = F}
-DL1301_current <- DL1301_clean
+current_data <- clean_data
 ```
 
-### duplicateFinder
+### duplicateFinder {#duplicatefinder}
 
 The `duplicateFinder` function finds hunters that have more than one registration. Records are grouped by first name, last name, state, birth date, registration year, and download state to identify unique hunters. If the same hunter has 2 or more registrations, the fields that are not identical are counted and summarized. A plot is returned by default, but the type of output can be specified using `return = "plot"` for plot, or `return = "table"` for table and summary message.
 
 ```{r duplicateFinder, fig.cap = "Figure 1. Plot of types of duplicates.", fig.width = 6, fig.height = 3.5, dpi = 300, out.width = 500, fig.align = "center"}
-duplicateFinder(DL1301_current)
+duplicateFinder(current_data)
 ```
 
 ```{r findDuplicates_tbl}
-duplicateFinder(DL1301_current)
+duplicateFinder(current_data)
 ```
 
-### duplicateFix
+### duplicateFix {#duplicatefix}
 
 We sometimes receive multiple HIP records per person which must be resolved by `duplicateFix`. Only 1 HIP record per hunter can be kept. To decide which record to keep from a group, we follow a series of logic.
 
 Records are kept when they meet the below criteria (in order of importance):
 
-1. The record in the group has the most recent issue date.
-2. Records do not contain all 1s or all 0s in bag columns.
-3. For duplicates from sea duck and brant states (AK, CA, CT, DE, MA, MD, NC, NH, NJ, NY, RI, VA), keep records with a 2 in seaduck or brant.
-4. For duplicates from seaduck-only state (ME), keep records with a 2 in seaduck.
-5. If records are tied, one is chosen randomly.
+1.  The record in the group has the most recent issue date.
+2.  Records do not contain all 1s or all 0s in bag columns.
+3.  For duplicates from sea duck and brant states (AK, CA, CT, DE, MA, MD, NC, NH, NJ, NY, RI, VA), keep records with a 2 in seaduck or brant.
+4.  For duplicates from seaduck-only state (ME), keep records with a 2 in seaduck.
+5.  If records are tied, one is chosen randomly.
 
 A new field called "record_type" is added to the data after the above deduplicating process. Every HIP record is labeled "HIP". Permit states WA and OR send HIP and permit records separately, which are labeled "HIP" and "PMT" respectively.
 
 Note: This function replaces "." values with NA in non-permit species columns for WA and OR records.
 
-
 ```{r, duplicateFix}
-DL1301_fixed <- duplicateFix(DL1301_current)
+deduplicated_data <- duplicateFix(current_data)
 ```
 
-### duplicatePlot
+### duplicatePlot {#duplicateplot}
 
 ...
 
-### bagCheck
+### bagCheck {#bagcheck}
 
 Running `bagCheck` ensures species "bag" values are in order. This function searches for values in species group columns that are not typical or expected by the FWS. If a value outside of the normal range is detected, an output tibble is created. Each row in the output contains the state, species, unusual stratum value, and a list of the normal values we would expect.
 
 If a value for a species group is given in the HIP data that doesn't match anything in our records, the species reported in the output will have NA values in the "normal_strata" column. These species are not hunted in the reported states.
 
 ```{r, bagCheck}
-bagCheck(DL1301_fixed)
+bagCheck(deduplicated_data)
 ```
 
-## Part B: Data Proofing and Correction
+## Part B: Data Proofing and Correction {#part-b-data-proofing-and-correction}
 
-### proof
+### proof {#proof}
 
 After data are cleaned and checked for any important issues that would require manual attention, we `proof`:
 
 ```{r, proof, message = F}
-DL1301_proofed <- proof(DL1301_fixed, year = 2021)
+proofed_data <- proof(deduplicated_data, year = 2024)
 ```
 
 Data that are considered irregular are flagged in a new column called "errors". No actual corrections take place in this step; all data remain identical except for the new "errors" column. For each field, values are compared to standard expected formats and if they do not conform, the field name is pasted as a string in the "errors" column. Each row can have from zero errors (NA) to all column names listed. Multiple flags are hyphen delimited.
 
 The year of the Harvest Information Program must be supplied as a parameter. This aids in checking dates when licenses were issued, as one example.
 
-### correct
+### correct {#correct}
 
 After the download data are proofed, the next step is to fix the data to the best of our ability. Data can be corrected by running the `correct` function on the proofed tibble. The year of the Harvest Information Program must be supplied as a parameter. Since the "errors" column is re-created using `correct`, supplying the year is necessary for the same reasons it is required by `proof`.
 
 ```{r correct, message = F}
-DL1301_corrected <- correct(DL1301_proofed, year = 2021)
+corrected_data <- correct(proofed_data, year = 2024)
 ```
 
 The following changes are made by the `correct` function:
 
-* *Title* is changed to NA if it does not equal 1 or 2
-* *First name* is not changed, but remains flagged as an error if it breaks a following rule:
-    * Not > 1 letter
-    * Contains a first initial and middle name
-    * Contains a first name and middle initial
-    * Contains non-alpha characters other than space or hyphen
-    * No full names (detected with 2+ spaces)
-    * Is not "BLANK", "INAUDIBLE", "TEST", "USER", or "RESIDENT"
-* *Middle initial* is not changed, but remains flagged if it is not exactly 1 letter
-* *Last name* is not changed, but remains flagged as an error if it breaks a following rule:
-    * Not > 1 letter
-    * Contains a non-alpha character other than space, period, hyphen, or apostrophe
-    * No full names (Detected with 2+ spaces)
-    * Is not "INAUDIBLE"
-* *Suffix* is changed to NA if it is not equal to:
-    * JR or SR
-    * A value from I to VII in Roman numerals
-    * An value from 1ST to 9TH
-* *Address* is not changed, but remains flagged if it contains a |, tab, or non-UTF8 character
-* *City* is not changed, but remains flagged if it contains any non-alpha character
-* *State* is not changed, but remains flagged if it is not contained in the following list of abbreviations for US and Canada states, provinces, and territories:
-    * AL, AK, AZ, AR, CA, CO, CT, DE, DC, FL, GA, HI, ID, IL, IN, IA, KS, KY, LA, ME, MD, MA, MI, MN, MS, MO, MT, NE, NV, NH, NJ, NM, NY, NC, ND, OH, OK, OR, PA, RI, SC, SD, TN, TX, UT, VT, VA, WA, WV, WI, WY, AS, GU, MP, PR, VI, UM, FM, MH, PW, AA, AE, AP, CM, CZ, NB, PI, TT, ON, QC, NS, NB, MB, BC, PE, SK, AB, NL
-* *Zip* is not changed, but is flagged if:
-    * If the hunter's address doesn't have a zip that should be in their reported state of residence (checked against a master list of USA postal codes), it's flagged
-    * Foreign zip codes are flagged
-    * Zip codes that do not match a 5-digit or 9-digit hyphenated format are flagged
-* *Birth date* is not changed, but remains flagged if the birth year was > 100 or < 16 years ago
-* *Issue date* is not changed, but remains flagged if it is not equal to or +/- 1 year from the HIP data collection year
-* *Hunt migratory birds* is not changed, and remains flagged if it is not equal to 1 or 2
-* *Bag values* remain unchanged
-* *Registration year* is not changed, but remains flagged if it is not equal to or +/- 1 year from the HIP data collection year
-* *Email* is corrected by:
-    * Removing spaces, commas, and/or forward slash symbols
-    * Changing to lowercase
-    * Replacing multiple @ symbols with a single @
-    * Adding periods and three-letter endings to common domains, including:
-        * gmail -> gmail.com
-        * yahoo -> yahoo.com
-        * aol -> aol.com
-        * comcast -> comcast.net
-        * verizon -> verizon.net
-        * cox -> cox.net
-        * outlook -> outlook.com
-        * hotmail -> hotmail.com
-    * Replace .ccom with .com
-    * Add missing periods before net, com, edu, and gov
-    * Change email to NA if:
-        * There is no @ symbol in the email string
-        * If the email is invalid (i.e. none<!-- breaklink -->@none, noemail, n/a)
-    * Any email that wasn't corrected and doesn't fit the standardized email regex remains flagged
+-   *Title* is changed to NA if it does not equal 1 or 2
+-   *First name* is not changed, but remains flagged as an error if it breaks a following rule:
+    -   Not \> 1 letter
+    -   Contains a first initial and middle name
+    -   Contains a first name and middle initial
+    -   Contains non-alpha characters other than space or hyphen
+    -   No full names (detected with 2+ spaces)
+    -   Is not "BLANK", "INAUDIBLE", "TEST", "USER", or "RESIDENT"
+-   *Middle initial* is not changed, but remains flagged if it is not exactly 1 letter
+-   *Last name* is not changed, but remains flagged as an error if it breaks a following rule:
+    -   Not \> 1 letter
+    -   Contains a non-alpha character other than space, period, hyphen, or apostrophe
+    -   No full names (Detected with 2+ spaces)
+    -   Is not "INAUDIBLE"
+-   *Suffix* is changed to NA if it is not equal to:
+    -   JR or SR
+    -   A value from I to VII in Roman numerals
+    -   An value from 1ST to 9TH
+-   *Address* is not changed, but remains flagged if it contains a \|, tab, or non-UTF8 character
+-   *City* is not changed, but remains flagged if it contains any non-alpha character
+-   *State* is not changed, but remains flagged if it is not contained in the following list of abbreviations for US and Canada states, provinces, and territories:
+    -   AL, AK, AZ, AR, CA, CO, CT, DE, DC, FL, GA, HI, ID, IL, IN, IA, KS, KY, LA, ME, MD, MA, MI, MN, MS, MO, MT, NE, NV, NH, NJ, NM, NY, NC, ND, OH, OK, OR, PA, RI, SC, SD, TN, TX, UT, VT, VA, WA, WV, WI, WY, AS, GU, MP, PR, VI, UM, FM, MH, PW, AA, AE, AP, CM, CZ, NB, PI, TT, ON, QC, NS, NB, MB, BC, PE, SK, AB, NL
+-   *Zip* is not changed, but is flagged if:
+    -   If the hunter's address doesn't have a zip that should be in their reported state of residence (checked against a master list of USA postal codes), it's flagged
+    -   Foreign zip codes are flagged
+    -   Zip codes that do not match a 5-digit or 9-digit hyphenated format are flagged
+-   *Birth date* is not changed, but remains flagged if the birth year was \> 100 or \< 16 years ago
+-   *Issue date* is not changed, but remains flagged if it is not equal to or +/- 1 year from the HIP data collection year
+-   *Hunt migratory birds* is not changed, and remains flagged if it is not equal to 1 or 2
+-   *Bag values* remain unchanged
+-   *Registration year* is not changed, but remains flagged if it is not equal to or +/- 1 year from the HIP data collection year
+-   *Email* is corrected by:
+    -   Removing spaces, commas, and/or forward slash symbols
+    -   Changing to lowercase
+    -   Replacing multiple \@ symbols with a single \@
+    -   Adding periods and three-letter endings to common domains, including:
+        -   gmail -\> gmail.com
+        -   yahoo -\> yahoo.com
+        -   aol -\> aol.com
+        -   comcast -\> comcast.net
+        -   verizon -\> verizon.net
+        -   cox -\> cox.net
+        -   outlook -\> outlook.com
+        -   hotmail -\> hotmail.com
+    -   Replace .ccom with .com
+    -   Add missing periods before net, com, edu, and gov
+    -   Change email to NA if:
+        -   There is no \@ symbol in the email string
+        -   If the email is invalid (i.e. none<!-- breaklink -->@none, noemail, n/a)
+    -   Any email that wasn't corrected and doesn't fit the standardized email regex remains flagged
 
-All functions in [Part C](#part-c-data-visualization-and-tabulation) will run on the corrected tibble, `DL1301_corrected`, just as they worked on the example tibble `DL1301_proofed`. Errors can be compared between the proofed stage and corrected stage to get a better idea of which errors were serious (i.e. difficult to correct automatically) and determine how serious errors can be prevented in the future.
+All functions in [Part C](#part-c-data-visualization-and-tabulation) will run on the corrected tibble, `corrected_data`, just as they worked on the example tibble `proofed_data`. Errors can be compared between the proofed stage and corrected stage to get a better idea of which errors were serious (i.e. difficult to correct automatically) and determine how serious errors can be prevented in the future.
 
-### pullErrors
+### pullErrors {#pullerrors}
 
 The `pullErrors` function can be used to view all of the actual values that were flagged as errors in a particular field. In this example, we find that the "suffix" field contains several values that are not accepted.
 
 ```{r pullerrors}
-pullErrors(DL1301_proofed, field = "suffix")
+pullErrors(proofed_data, field = "suffix")
 ```
 
 Running `pullErrors` on a field that has no errors will return a message.
 
 ```{r pullerrors2}
-pullErrors(DL1301_proofed, field = "dove_bag")
+pullErrors(proofed_data, field = "dove_bag")
 ```
 
-### write_hip
+### write_hip {#write_hip}
 
 After the data have been processed with `correct`, the table is ready to be written for the database. Use `write_hip` to do final processing to the table, which includes adding in FWS strata and setting NAs to blank strings. If `split = FALSE`, the final table will be saved as a single .csv to your specified path. If `split = TRUE` (default), one .csv file per each input .txt source file will be written to the specified directory.
 
 ```{r, writecsv, eval = FALSE}
 
-write_hip(DL1301_corrected, path = "C:/HIP/processed_data/")
+write_hip(corrected_data, path = "C:/HIP/processed_data/")
 
 ```
 
-### writeReport
+### writeReport {#writereport}
 
 The `writeReport` function can be used to automatically generate an R markdown document with figures, tables, and summary statistics. This can be done at the end of a download cycle.
 
@@ -324,29 +368,29 @@ The `writeReport` function can be used to automatically generate an R markdown d
 memory.limit(size = 55000)
 
 writeReport(
-  raw_path = "C:/HIP/DL1301",
+  raw_path = fake_data_path,
   temp_path = "C:/HIP/corrected_data",
   year = 2021,
-  dl = "1301",
+  dl = "0901",
   dir = "C:/HIP/dl_reports",
-  file = "DL1301_report")
+  file = "DL0901_report")
 
 ```
 
-## Part C: Data Visualization and Tabulation
+## Part C: Data Visualization and Tabulation {#part-c-data-visualization-and-tabulation}
 
-### errorPlot_fields
+### errorPlot_fields {#errorplot_fields}
 
 The `errorPlot_fields` function can be run on all states...
 
 ```{r errorfieldsplotall, fig.cap = "Figure 2. Plot of all location's errors by field name.", fig.width = 6, fig.height = 3.6, dpi = 300, out.width = 500, fig.align = "center"}
-errorPlot_fields(DL1301_proofed, loc = "all", year = 2021)
+errorPlot_fields(proofed_data, loc = "all", year = 2021)
 ```
 
 ... or it can be limited to just one.
 
 ```{r errorfieldsplotsc, fig.cap = "Figure 3. Plot of Louisiana's errors by field name.", fig.width = 6, fig.height = 3.6, dpi = 300, out.width = 500, fig.align = "center"}
-errorPlot_fields(DL1301_proofed, loc = "LA", year = 2021)
+errorPlot_fields(proofed_data, loc = "LA", year = 2021)
 ```
 
 It is possible to add any `ggplot2` components to these plots. For season total data specifically, the plot can be facet_wrapped using either dl_cycle or dl_date. The example below demonstrates how this package's functions can interact with the tidyverse and shows an example of an `errorPlot_fields` facet_wrap (using a subset of 4 download cycles)
@@ -362,15 +406,15 @@ errorPlot_fields(
   facet_wrap(~dl_cycle, ncol = 2)
 ```
 
-### errorPlot_states
+### errorPlot_states {#errorplot_states}
 
 The `errorPlot_states` function plots error proportions per state. You may optionally set a threshold value to only view states above a certain proportion of error. Bar labels are error counts.
 
 ```{r errorplotstates, fig.cap = "Figure 5. Plot of proportion of error by state.", fig.width = 6, fig.height = 4, dpi = 300, out.width = 500, fig.align = "center"}
-errorPlot_states(DL1301_proofed)
+errorPlot_states(proofed_data)
 ```
 
-### errorPlot_dl
+### errorPlot_dl {#errorplot_dl}
 
 This function should not be used unless you want to visualize an entire season of data. The `errorPlot_dl` function plots proportion of error per download cycle across the year. Location may be specified to see a particular state over time.
 
@@ -382,71 +426,71 @@ errorPlot_dl(hipdata2020, loc = "MI")
 knitr::include_graphics("image/errorPlot_dl.png")
 ```
 
-### errorTable
+### errorTable {#errortable}
 
 The `errorTable` function is a flexible way to obtain error data as a tibble, which can be assessed as needed or exported to create records of download cycle errors. The basic function reports errors by both location and field.
 
 ```{r errortable1}
-errorTable(DL1301_proofed)
+errorTable(proofed_data)
 ```
 
 Errors can be reported by only location by turning off the `field` parameter.
 
 ```{r errortable2}
-errorTable(DL1301_proofed, field = "none")
+errorTable(proofed_data, field = "none")
 ```
 
 Errors can be reported by only field by turning off the `loc` parameter.
 
 ```{r errortable3}
-errorTable(DL1301_proofed, loc = "none")
+errorTable(proofed_data, loc = "none")
 ```
 
 Location can be specified.
 
 ```{r errortable4}
-errorTable(DL1301_proofed, loc = "CA")
+errorTable(proofed_data, loc = "CA")
 ```
 
 Field can be specified.
 
 ```{r errortable5}
-errorTable(DL1301_proofed, field = "suffix")
+errorTable(proofed_data, field = "suffix")
 ```
 
 Total errors for a location can be pulled.
 
 ```{r errortable6}
-errorTable(DL1301_proofed, loc = "CA", field = "none")
+errorTable(proofed_data, loc = "CA", field = "none")
 ```
 
 Total errors for a field in a particular location can be pulled.
 
 ```{r errortable7}
-errorTable(DL1301_proofed, loc = "CA", field = "dove_bag")
+errorTable(proofed_data, loc = "CA", field = "dove_bag")
 ```
 
-### redFlags
+### redFlags {#redflags}
 
-<b>By state.</b>
-States with an unacceptable level of error can be pulled into a tibble. The tibble contains information pertaining to state, the count of errors from that state, the number of correct records from that state, the proportion of error per state, and a "flag" column that prints the threshold used. Any threshold can be supplied; in this example, we see which states had more than 3% error.
+**By state.** States with an unacceptable level of error can be pulled into a tibble. The tibble contains information pertaining to state, the count of errors from that state, the number of correct records from that state, the proportion of error per state, and a "flag" column that prints the threshold used. Any threshold can be supplied; in this example, we see which states had more than 3% error.
 
 ```{r redflags1}
-redFlags(DL1301_proofed, type = "state", threshold = 0.03)
+redFlags(proofed_data, type = "state", threshold = 0.03)
 ```
 
-<b>By field.</b>
-The same can be done for data fields. In this example, we see which fields had more than 1% error.
+**By field.** The same can be done for data fields. In this example, we see which fields had more than 1% error.
 
 ```{r redflags2}
-redFlags(DL1301_proofed, type = "field", threshold = 0.01)
+redFlags(proofed_data, type = "field", threshold = 0.01)
 ```
 
-## Troubleshooting
+## Troubleshooting {#troubleshooting}
 
-### Common read_hip warnings
+If you encounter a problem while using this R package, please [report an issue](https://github.com/USFWS/migbirdHIP/issues) on the [migbirdHIP GitHub repository](https://github.com/USFWS/migbirdHIP).
 
-Sometimes `read_hip` will throw one or more warnings. Warnings are usually benign, but for clarity I provide examples and explanations of common warnings below. If the warning or error you receive after reading HIP data isn't described here and seems like a real problem, please [report an issue](#other).
+### Common read_hip warnings {#common-read_hip-warnings}
+
+Sometimes `read_hip` will throw one or more warnings. Warnings are usually benign, but for clarity I provide examples and explanations of common warnings below.
 
 #### Example 1
 
@@ -464,23 +508,12 @@ Another version of a parsing failure occurs when a file is missing the last colu
 knitr::include_graphics("image/parsing_failure_2.png")
 ```
 
-### Memory problems
+### Memory problems {#memory-problems}
 
 Some of these functions require a lot of memory to run. To help your R session process these data, especially when working with the large season totals, you can do a few things:
 
-1. Remove objects from the environment. If you have already run `read_hip`, `clean`, and `proof`, you may no longer need your original dataframe or your cleaned dataframe, since most error checking functions work from the proofed or corrected versions of the data. To remove an unneeded object like the cleaned dataframe, run `rm(DL1301_clean)`.
+1.  Remove objects from the environment. If you have already run `read_hip`, `clean`, and `proof`, you may no longer need your original dataframe or your cleaned dataframe, since most error checking functions work from the proofed or corrected versions of the data. To remove an unneeded object like the cleaned dataframe, run `rm(clean_data)`, or set it to `NULL` via `clean_data <- NULL`.
 
-2. Check your memory using `memory.limit()`
+2.  Check your memory using `memory.limit()`
 
-3. Increase your memory, e.g. `memory.limit(size = 55000)`
-
-### Other
-
-<b>Issue reporting</b>
-
-If you find a bug in the package, it's advised to [create an issue](https://github.com/USFWS/migbirdHIP/issues) at the package's GitHub repo, https://github.com/USFWS/migbirdHIP.
-
-<b>Questions?</b>
-
-Contact Abby Walter, abby_walter@fws.gov
-
+3.  Increase your memory, e.g. `memory.limit(size = 55000)`
