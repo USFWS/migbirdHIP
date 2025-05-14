@@ -32,8 +32,8 @@ knitr::opts_chunk$set(
     -   [clean](#clean)
     -   [issueCheck](#issuecheck)
     -   [duplicateFinder](#duplicatefinder)
-    -   [duplicateFix](#duplicatefix)
     -   [duplicatePlot](#duplicateplot)
+    -   [duplicateFix](#duplicatefix)
     -   [bagCheck](#bagcheck)
 -   [Part B: Data Proofing and Correction](#part-b-data-proofing-and-correction)
     -   [proof](#proof)
@@ -43,9 +43,9 @@ knitr::opts_chunk$set(
     -   [writeReport](#writereport)
 -   [Part C: Data Visualization and Tabulation](#part-c-data-visualization-and-tabulation)
     -   Visualization
-        -   [errorPlot_fields](#errorplot_fields)
-        -   [errorPlot_states](#errorplot_states)
-        -   [errorPlot_dl](#errorplot_dl)
+        -   [errorPlotFields](#errorplotfields)
+        -   [errorPlotStates](#errorplotstates)
+        -   [errorPlotDL](#errorplotdl)
     -   Tabulation
         -   [errorTable](#errortable)
         -   [redFlags](#redflags)
@@ -66,7 +66,7 @@ The USFWS has been using HIP registrations since 1999 to select hunters for the 
 
 The package can be installed from the USFWS GitHub repository using:
 
-```{r, install, message = FALSE, eval = FALSE}
+```{r, install, eval = FALSE}
 devtools::install_github("USFWS/migbirdHIP", quiet = T, upgrade = F, , build_vignettes = T)
 ```
 
@@ -74,7 +74,7 @@ devtools::install_github("USFWS/migbirdHIP", quiet = T, upgrade = F, , build_vig
 
 To install a past release, use the example below and substitute the appropriate version number.
 
-```{r, releases, message = FALSE, eval = FALSE}
+```{r, releases, eval = FALSE}
 devtools::install_github("USFWS/migbirdHIP@v1.2.8", build_vignettes = T)
 ```
 
@@ -145,14 +145,8 @@ Use `unique = TRUE` to read in a frame without exact duplicates, or `unique = FA
 
 We will use the default settings to read in all of the states from download 0901. Fake HIP data files located in the `extdata/DL0901/` directory of the R package will be used as an example.
 
-```{r, fakedatapath}
-fake_data_path <- system.file("extdata", "DL0901", package = "migbirdHIP")
-
-print(fake_data_path)
-```
-
-```{r, readhip, message = FALSE, warning = FALSE}
-raw_data <- read_hip(fake_data_path)
+```{r, readhip}
+raw_data <- read_hip("C:/HIP/DL0901/")
 ```
 
 Did you get a warning? Read an explanation of common `read_hip` warnings [below](#common-read_hip-warnings).
@@ -213,14 +207,18 @@ current_data <- clean_data
 
 ### duplicateFinder {#duplicatefinder}
 
-The `duplicateFinder` function finds hunters that have more than one registration. Records are grouped by first name, last name, state, birth date, registration year, and download state to identify unique hunters. If the same hunter has 2 or more registrations, the fields that are not identical are counted and summarized. A plot is returned by default, but the type of output can be specified using `return = "plot"` for plot, or `return = "table"` for table and summary message.
-
-```{r duplicateFinder, fig.cap = "Figure 1. Plot of types of duplicates.", fig.width = 6, fig.height = 3.5, dpi = 300, out.width = 500, fig.align = "center"}
-duplicateFinder(current_data)
-```
+The `duplicateFinder` function finds hunters that have more than one registration. Records are grouped by first name, last name, state, birth date, and download state to identify unique hunters. If the same hunter has 2 or more registrations, the fields that are not identical are counted and summarized.
 
 ```{r findDuplicates_tbl}
 duplicateFinder(current_data)
+```
+
+### duplicatePlot {#duplicateplot}
+
+Plot duplicates.
+
+```{r, duplicatePlot, fig.cap = "Figure 1. Plot of types of duplicates.", fig.width = 6, fig.height = 3.5, dpi = 300, out.width = 500, fig.align = "center"}
+duplicatePlot(current_data)
 ```
 
 ### duplicateFix {#duplicatefix}
@@ -243,10 +241,6 @@ Note: This function replaces "." values with NA in non-permit species columns fo
 deduplicated_data <- duplicateFix(current_data)
 ```
 
-### duplicatePlot {#duplicateplot}
-
-...
-
 ### bagCheck {#bagcheck}
 
 Running `bagCheck` ensures species "bag" values are in order. This function searches for values in species group columns that are not typical or expected by the FWS. If a value outside of the normal range is detected, an output tibble is created. Each row in the output contains the state, species, unusual stratum value, and a list of the normal values we would expect.
@@ -263,7 +257,7 @@ bagCheck(deduplicated_data)
 
 After data are cleaned and checked for any important issues that would require manual attention, we `proof`:
 
-```{r, proof, message = F}
+```{r, proof}
 proofed_data <- proof(deduplicated_data, year = 2024)
 ```
 
@@ -275,7 +269,7 @@ The year of the Harvest Information Program must be supplied as a parameter. Thi
 
 After the download data are proofed, the next step is to fix the data to the best of our ability. Data can be corrected by running the `correct` function on the proofed tibble. The year of the Harvest Information Program must be supplied as a parameter. Since the "errors" column is re-created using `correct`, supplying the year is necessary for the same reasons it is required by `proof`.
 
-```{r correct, message = F}
+```{r correct}
 corrected_data <- correct(proofed_data, year = 2024)
 ```
 
@@ -368,9 +362,9 @@ The `writeReport` function can be used to automatically generate an R markdown d
 memory.limit(size = 55000)
 
 writeReport(
-  raw_path = fake_data_path,
+  raw_path = "C:/HIP/DL0901/",
   temp_path = "C:/HIP/corrected_data",
-  year = 2021,
+  year = 2024,
   dl = "0901",
   dir = "C:/HIP/dl_reports",
   file = "DL0901_report")
@@ -379,47 +373,47 @@ writeReport(
 
 ## Part C: Data Visualization and Tabulation {#part-c-data-visualization-and-tabulation}
 
-### errorPlot_fields {#errorplot_fields}
+### errorPlotFields {#errorplotfields}
 
-The `errorPlot_fields` function can be run on all states...
+The `errorPlotFields` function can be run on all states...
 
 ```{r errorfieldsplotall, fig.cap = "Figure 2. Plot of all location's errors by field name.", fig.width = 6, fig.height = 3.6, dpi = 300, out.width = 500, fig.align = "center"}
-errorPlot_fields(proofed_data, loc = "all", year = 2021)
+errorPlotFields(proofed_data, loc = "all", year = 2024)
 ```
 
 ... or it can be limited to just one.
 
 ```{r errorfieldsplotsc, fig.cap = "Figure 3. Plot of Louisiana's errors by field name.", fig.width = 6, fig.height = 3.6, dpi = 300, out.width = 500, fig.align = "center"}
-errorPlot_fields(proofed_data, loc = "LA", year = 2021)
+errorPlotFields(proofed_data, loc = "LA", year = 2024)
 ```
 
-It is possible to add any `ggplot2` components to these plots. For season total data specifically, the plot can be facet_wrapped using either dl_cycle or dl_date. The example below demonstrates how this package's functions can interact with the tidyverse and shows an example of an `errorPlot_fields` facet_wrap (using a subset of 4 download cycles)
+It is possible to add any `ggplot2` components to these plots. For season total data specifically, the plot can be facet_wrapped using either dl_cycle or dl_date. The example below demonstrates how this package's functions can interact with the tidyverse and shows an example of an `errorPlotFields` facet_wrap (using a subset of 4 download cycles)
 
 ```{r errorfieldsfacet, eval = FALSE}
-errorPlot_fields(
-  hipdata2020 |>
+errorPlotFields(
+  hipdata2024 |>
     filter(str_detect(dl_cycle, "0800|0901|0902|1001")),
-    year = 2021) +
+    year = 2024) +
   theme(
     axis.text.x = element_text(angle = 90, vjust = 0, hjust = 1),
     legend.position = "bottom") +
   facet_wrap(~dl_cycle, ncol = 2)
 ```
 
-### errorPlot_states {#errorplot_states}
+### errorPlotStates {#errorplotstates}
 
-The `errorPlot_states` function plots error proportions per state. You may optionally set a threshold value to only view states above a certain proportion of error. Bar labels are error counts.
+The `errorPlotStates` function plots error proportions per state. You may optionally set a threshold value to only view states above a certain proportion of error. Bar labels are error counts.
 
 ```{r errorplotstates, fig.cap = "Figure 5. Plot of proportion of error by state.", fig.width = 6, fig.height = 4, dpi = 300, out.width = 500, fig.align = "center"}
-errorPlot_states(proofed_data)
+errorPlotStates(proofed_data)
 ```
 
-### errorPlot_dl {#errorplot_dl}
+### errorPlotDL {#errorplotdl}
 
 This function should not be used unless you want to visualize an entire season of data. The `errorPlot_dl` function plots proportion of error per download cycle across the year. Location may be specified to see a particular state over time.
 
-```{r errorPlot_dl, eval = FALSE}
-errorPlot_dl(hipdata2020, loc = "MI")
+```{r errorPlotDL, eval = FALSE}
+errorPlot_dl(hipdata2024, loc = "MI")
 ```
 
 ```{r errorplotdl_example, echo = FALSE, fig.cap = "errorPlot_dl example output", out.width = "70%", fig.align = "center"}
@@ -468,20 +462,6 @@ Total errors for a field in a particular location can be pulled.
 
 ```{r errortable7}
 errorTable(proofed_data, loc = "CA", field = "dove_bag")
-```
-
-### redFlags {#redflags}
-
-**By state.** States with an unacceptable level of error can be pulled into a tibble. The tibble contains information pertaining to state, the count of errors from that state, the number of correct records from that state, the proportion of error per state, and a "flag" column that prints the threshold used. Any threshold can be supplied; in this example, we see which states had more than 3% error.
-
-```{r redflags1}
-redFlags(proofed_data, type = "state", threshold = 0.03)
-```
-
-**By field.** The same can be done for data fields. In this example, we see which fields had more than 1% error.
-
-```{r redflags2}
-redFlags(proofed_data, type = "field", threshold = 0.01)
 ```
 
 ## Troubleshooting {#troubleshooting}

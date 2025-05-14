@@ -379,7 +379,6 @@ bagLogic2 <-
 # Create dl_state, reformat birth_date, create issue_date, create
 # hunt_mig_birds, create bag fields, introduce all-zero errors, create WA and
 # OR inline permits, and introduce errors to hunt_mig_birds and bag fields
-
 fake_hip <-
   messy_hunters_shuffled |>
   dplyr::mutate(
@@ -488,14 +487,46 @@ fake_hip <-
     registration_yr = REF_CURRENT_SEASON
   ) |>
   dplyr::relocate(email, .after = "registration_yr") |>
-  group_by(dl_state) |>
+  dplyr::group_by(dl_state) |>
   dplyr::mutate(source_file = paste0(dl_state, sample(file_dates, 1))) |>
-  ungroup() |>
+  dplyr::ungroup() |>
   dplyr::select(-c("row_key", "dl_state"))
+
+# Introduce duplicates
+fake_hip_with_duplicates <-
+  fake_hip |>
+  # Exact duplicates
+  dplyr::bind_rows(fake_hip |> dplyr::slice_sample(n = 110)) |>
+  # Partial duplicates
+  dplyr::bind_rows(
+    fake_hip |>
+      dplyr::slice_sample(n = 90) |>
+      dplyr::mutate(
+        seaducks =
+          ifelse(
+            stringr::str_detect(source_file, "OR|WA") & seaducks == "2",
+            "0",
+            seaducks),
+        geese_bag =
+          ifelse(geese_bag == "2", "0", geese_bag),
+        ducks_bag =
+          ifelse(geese_bag == "2", "1", ducks_bag),
+        issue_date =
+          ifelse(
+            stringr::str_detect(firstname, "S|s"),
+            paste(
+              stringr::str_sub(lubridate::mdy(issue_date)-1, 6, 7),
+              stringr::str_sub(lubridate::mdy(issue_date)-1, 9, 10),
+              stringr::str_sub(lubridate::mdy(issue_date)-1, 1, 4), sep = "/"),
+            issue_date)
+          )
+      )
 
 # Split the fake data into a list by dl_state/source file
 split_fake_hip <-
-  split(fake_hip |> dplyr::select(-source_file), f = fake_hip$source_file)
+  split(
+    fake_hip_with_duplicates |> dplyr::select(-source_file),
+    f = fake_hip_with_duplicates$source_file)
 
 # write to R package ------------------------------------------------------
 
