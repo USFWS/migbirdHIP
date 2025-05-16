@@ -136,6 +136,9 @@ test_that("bad first names fail proofing", {
           "JAN--",
           "MARY-JANE--WILDER",
           "MARY JANE  WILDER",
+          "BOB AKA THE GREAT",
+          "BOB A.K.A. THE GREAT",
+          "BOB F.K.A. THE GREAT",
           "")
     )
 

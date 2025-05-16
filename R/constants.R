@@ -149,8 +149,8 @@ LOGIC_MISSING_CITY_ZIP_EMAIL <-
 # which consecutive) and 2+ capital letters
 REGEX_FIRSTNAME <-
   paste0(
-    "^(?!.*\\'\\')(?!.*\\s\\s)(?!.*\\-\\-)[A-Z+\\'?]\\-?\\s?\\'?[A-Z\\-?\\s?\\",
-    "'?]*[A-Z]+$")
+    "^(?!.*\\'\\')(?!.*\\s\\s)(?!.*\\-\\-)(?!.*\\sAKA\\s.*)[A-Z+\\'?]\\-?\\s?\\",
+    "'?[A-Z\\-?\\s?\\'?]*[A-Z]+$")
 
 # Last name regular expression; may contain apostrophe, space, hyphen, period,
 # (none of which consecutive) and 2+ capital letters
