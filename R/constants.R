@@ -156,8 +156,8 @@ REGEX_FIRSTNAME <-
 # (none of which consecutive) and 2+ capital letters
 REGEX_LASTNAME <-
   paste0(
-    "^(?!.*\\'\\')(?!.*\\s\\s)(?!.*\\-\\-)(?!.*\\.\\.)[A-Z]\\-?\\s?\\'?[A-Z\\-",
-    "?\\s?\\'?\\.?]*[A-Z]+$")
+    "^(?!.*\\'\\')(?!.*\\s\\s)(?!.*\\-\\-)(?!.*\\.\\.)(?!.*\\.[A-Z\\s]*\\.)",
+    "[A-Z]\\-?\\s?\\'?[A-Z\\-?\\s?\\'?\\.?]*[A-Z]+$")
 
 # Define a trailing suffix using regular expressions (e.g., suffix included in
 # the firstname or lastname field). Includes values from 1-20 in Roman numerals

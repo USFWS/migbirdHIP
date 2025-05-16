@@ -269,6 +269,9 @@ test_that("bad last names fail proofing", {
           "MARY JANE  WILDER",
           "MARY.JANE  WILDER",
           "MARY..JANE  WILDER",
+          "ST. ST. GERMAINE",
+          "ST.ST.GERMAINE",
+          "S.S. WASHINGTON",
           "")
     )
 

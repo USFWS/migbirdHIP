@@ -18,6 +18,11 @@
     -   The `zeroBagsMessage()` internal function is a new feature of `read_hip()` that checks for records with all-zero bag values and returns a message to the console if they are detected.
 -   Refactored functions
     -   In an effort to improve the maintainability of the package code, steps were made toward modularity, clarity, and unit testing in some of the larger functions.
+    -   `proof()`
+        -   Most logic used to identify and flag errors was moved to internal variables in the `constants.R` file, which are used by `proof()` and `test-proof.R`
+        -   First name and last name rules were slightly relaxed
+            -   No limit on number of spaces, apostrophes, or hyphens as long as they are not consecutive
+            -   For first name, apostrophe or letter allowed as first character
     -   `duplicateFinder()`
         -   New internal function `duplicateFields()` uses `purrr` to significantly reduce redundancy in `duplicateFinder()`; overall, refactoring reduced the function's length from 151 lines to 50 lines and improved processing speed.
     -   `duplicateFix()`
