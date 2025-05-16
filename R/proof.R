@@ -75,11 +75,7 @@ proof <-
           mutate(error = "address"),
         # City
         keyed_data |>
-          filter(str_detect(city, REGEX_BAD_CITY)) |>
-          mutate(error = "city"),
-        # City MUST contain at least 3 letters
-        keyed_data |>
-          filter(str_detect(city, "^[A-Za-z]{1,2}$")) |>
+          filter(!str_detect(city, REGEX_CITY)) |>
           mutate(error = "city"),
         # State
         keyed_data |>

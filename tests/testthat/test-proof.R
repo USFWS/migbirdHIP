@@ -326,16 +326,25 @@ test_that("bad addresses fail proofing", {
 test_that("bad city names fail proofing", {
   good_city_names <-
     tibble(
-      city = c("Los Angeles", "Annapolis", "St. Petersburg", "Coeur d'Alene",
-               "Dover-Foxcroft", "St..Louis"))
+      city = c("Los Angeles",
+               "Annapolis",
+               "St. Petersburg",
+               "Coeur d'Alene",
+               "Dover-Foxcroft",
+               "Roy",
+               "La Plata"))
 
   bad_city_names <-
     tibble(
-      city = c("Wilming$ton", "Saint-Louis-du-Ha! Ha!", "0maha"))
+      city = c("Wilming$ton",
+               "Saint-Louis-du-Ha! Ha!",
+               "0maha",
+               "St..Louis",
+               "Po"))
 
   bad_city_names_filtered <-
     rbind(good_city_names, bad_city_names) |>
-    filter(str_detect(city, REGEX_BAD_CITY))
+    filter(!str_detect(city, REGEX_CITY))
 
   expect_equal(bad_city_names, bad_city_names_filtered)
 })

@@ -174,7 +174,11 @@ REGEX_NON_PMT_SPECIES <- "bag|coots|rails"
 # contain letters, spaces (e.g., New York City, NY), hyphens (e.g.,
 # Winston-Salem, NC), apostrophes (e.g., O'Fallon, MO), and/or periods (e.g.,
 # St. Augustine, FL)
-REGEX_BAD_CITY <- "[^A-Za-z\\s\\-\\'\\.]"
+REGEX_CITY <-
+  paste0(
+    "^(?!.*\\'\\')(?!.*\\s\\s)(?!.*\\-\\-)(?!.*\\.\\.)(?!.*\\.[A-Za-z\\s]*\\.)",
+    "(?=.*[A-Za-z]{3,}.*)[A-Za-z]\\-?\\s?\\'?[A-Za-z\\-?\\s?\\'?\\.?]*[A-Za-z]",
+    "+$")
 
 # Regular expression for the expected email format. Local part may contain Latin
 # lower and uppercase letters, numbers, underscores, dots, hyphens, and a plus
