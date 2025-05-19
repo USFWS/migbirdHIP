@@ -79,7 +79,7 @@ proof <-
           mutate(error = "state"),
         # Zip code should be in the reference table
         keyed_data |>
-          filter(!str_extract(zip, "^[0-9]{5}") %in% zip_code_ref$zipcode) |>
+          filter(!str_extract(zip, "^[0-9]{5}") %in% REF_ZIP_CODE$zipcode) |>
           mutate(error = "zip"),
         # Birth date should only ever be between 100 and 0 years ago
         keyed_data |>
@@ -129,7 +129,7 @@ proof <-
     graded_x <-
       graded_x |>
       left_join(
-        zip_code_ref |>
+        REF_ZIP_CODE |>
           distinct(zip = zipcode, zipState = state),
         by = "zip") |>
       # Add an error if the state doesn't match zipState

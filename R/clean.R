@@ -289,7 +289,7 @@ zipCheck <-
     zipcheck <-
       raw_data |>
       left_join(
-        zip_code_ref |>
+        REF_ZIP_CODE |>
           distinct(zip = zipcode, zipState = state),
         by = "zip") |>
       select(source_file, state, zip, zipState) |>

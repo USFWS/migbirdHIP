@@ -450,7 +450,12 @@ duplicates <-
 #     dl_state) |>
 #   dplyr::n_distinct()
 
-
+# States that have overlapping HIP issue windows are categorized as "2 season" states
+states_twoseason <-
+  migbirdHIP:::REF_DATES |>
+  dplyr::filter(category == "2 season") |>
+  dplyr::select(state) |>
+  dplyr::pull()
 ```
 
 ::: panel-tabset
@@ -1031,7 +1036,7 @@ if(params$dl == "0800") {
   cat("Map not available for this report.")
 } else {
   
-  migbirdHIP:::hexmap |>
+  migbirdHIP:::SF_HEXMAP |>
     dplyr::left_join(files_received, by = c("id", "state")) |> 
     ggplot2::ggplot() +
     ggplot2::geom_sf(
@@ -1324,7 +1329,7 @@ if(nrow(dplyr::filter(issue_assignments, decision != "nochange")) > 0){
 #| message: false
 #| warning: false
 
-if(nrow(dplyr::filter(issue_assignments, decision != "nochange") |> dplyr::filter(!(dl_state %in% migbirdHIP:::states_twoseason & decision == "copy"))) > 0){
+if(nrow(dplyr::filter(issue_assignments, decision != "nochange") |> dplyr::filter(!(dl_state %in% states_twoseason & decision == "copy"))) > 0){
   stamp_format <- lubridate::stamp("Apr 15, 1993")
   
   bad_issue_table <-
@@ -1332,7 +1337,7 @@ if(nrow(dplyr::filter(issue_assignments, decision != "nochange") |> dplyr::filte
     dplyr::filter(decision != "current" & dl_state != "MS") |>
     dplyr::select(dl_state, source_file, issue_date, registration_yr) |>
     dplyr::left_join(
-      migbirdHIP:::licenses_ref |>
+      migbirdHIP:::REF_DATES |>
         dplyr::select(
           -c("hunting_season", "category")) |> 
         dplyr::rename(dl_state = state),
@@ -1388,7 +1393,7 @@ if(nrow(dplyr::filter(issue_assignments, decision == "future")) > 0){
         dplyr::ungroup() |>
         dplyr::arrange(dplyr::desc(n)) |> 
         dplyr::left_join(
-          migbirdHIP:::licenses_ref |>
+          migbirdHIP:::REF_DATES |>
             dplyr::select(dl_state = state, last_day_migbird_hunting),
           by = "dl_state") |>
         dplyr::select(
@@ -1701,7 +1706,7 @@ zipcheck <-
   dplyr::select(dl_state, state, zip) |> 
   dplyr::filter(!state %in% migbirdHIP:::REF_ABBR_CANADA) |> 
   dplyr::left_join(
-    migbirdHIP:::zip_code_ref |>
+    migbirdHIP:::REF_ZIP_CODE |>
       dplyr::select(zip = zipcode, zipState = state),
     by = "zip") |>
   dplyr::filter(state != zipState) |> 

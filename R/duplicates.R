@@ -36,7 +36,7 @@ duplicateFix <-
     seaduck_and_brant_duplicates <-
       duplicates |>
       # Filter to sea duck and brant states
-      filter(dl_state %in% c(states_sdbr, states_seaducks)) |>
+      filter(dl_state %in% c(REF_STATES_SD_BR, REF_STATES_SD_ONLY)) |>
       # Keep records with the most recent issue_date
       duplicateNewest() |>
       # Check records for "1" in every bag field
@@ -45,9 +45,9 @@ duplicateFix <-
       mutate(
         sd_or_br_has_2 =
           case_when(
-            dl_state %in% states_sdbr & brant == "2" ~ "has_2",
-            dl_state %in% states_sdbr & seaducks == "2" ~ "has_2",
-            dl_state %in% states_seaducks & seaducks == "2" ~ "has_2",
+            dl_state %in% REF_STATES_SD_BR & brant == "2" ~ "has_2",
+            dl_state %in% REF_STATES_SD_BR & seaducks == "2" ~ "has_2",
+            dl_state %in% REF_STATES_SD_ONLY & seaducks == "2" ~ "has_2",
             TRUE ~ "no_2")) |>
       duplicateAllOnesGroupSize() |>
       # If record has 2 in brant, seaduck, or both, put the group size (number
@@ -96,8 +96,8 @@ duplicateFix <-
       duplicates |>
       # Record not from seaduck, brant, or permit state
       filter(
-        !(dl_state %in% states_sdbr) &
-        !(dl_state %in% states_seaducks) &
+        !(dl_state %in% REF_STATES_SD_BR) &
+        !(dl_state %in% REF_STATES_SD_ONLY) &
         !(dl_state %in% unique(REF_PMT_INLINE$dl_state))) |>
       # Keep records with the most recent issue_date
       duplicateNewest() |>

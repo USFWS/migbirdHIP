@@ -9,6 +9,23 @@
 
 # Define variables to evaluate data consistently across functions
 
+# Vector of state abbreviations (NOT INCLUDING Oregon or Washington) that have a
+# hunting season for both sea ducks AND brant
+REF_STATES_SD_BR <-
+  REF_BAGS |>
+  dplyr::filter(stateBagValue == 2 & spp %in% c("brant", "seaducks")) |>
+  tidyr::pivot_wider(
+    id_cols = state,
+    names_from = "spp",
+    values_from = "stateBagValue") |>
+  dplyr::arrange(state) |>
+  dplyr::filter(!is.na(brant) & !is.na(seaducks) & !state %in% c("OR", "WA")) |>
+  dplyr::pull(state)
+
+# Maine is currently the only state with a sea duck hunting season but not a
+# brant hunting season
+REF_STATES_SD_ONLY <- "ME"
+
 # Vector of Harvest Information Program species/species group fields containing
 # bag values
 REF_BAG_FIELDS <-
@@ -205,5 +222,6 @@ REGEX_EMAIL_OBFUSCATIVE_LOCALPART <-
   "^(none|no|na|not|non|nomail|noemail|noreply|customer|unknown|notprovided)\\@"
 
 # Regular expression for an obfuscative email address domain
-REGEX_EMAIL_OBFUSCATIVE_DOMAIN <- "\\@(no|na|none|example|guerillamail|tpw|twp).*$"
+REGEX_EMAIL_OBFUSCATIVE_DOMAIN <-
+  "\\@(no|na|none|example|guerillamail|tpw|twp).*$"
 

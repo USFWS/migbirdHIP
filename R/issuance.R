@@ -166,7 +166,7 @@ issueAssign <-
     clean_data |>
       # Join in licensing dates
       left_join(
-        licenses_ref |>
+        REF_DATES |>
           rename(dl_state = state),
         by = "dl_state") |>
       # Filter out bad issue_date values
@@ -260,7 +260,7 @@ issuePlot <-
       filter(decision != "current" & dl_state != "MS") |>
       select(dl_state, source_file, issue_date, registration_yr, decision) |>
       left_join(
-        licenses_ref |>
+        REF_DATES |>
           rename(dl_state = state),
         by = "dl_state") |>
       distinct()

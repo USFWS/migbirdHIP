@@ -1,8 +1,9 @@
-# Define variables to evaluate data consistently across functions; these values
-# change with each hunting season
+# Define variables that change with each hunting season
 
+# Current hunting season (for the 2023-2024 season, this value should be "2023")
 REF_CURRENT_SEASON <- "2024"
 
+# migbirdHIP package versions and their intended HIP season
 REF_RELEASES <-
   c("incomplete" = "1.2.0",
     "incomplete" = "1.2.1",

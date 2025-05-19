@@ -86,7 +86,7 @@ fake_issue_dates <-
 randomBag <-
   function(n, bag_field) {
     bags <-
-      migbirdHIP:::hip_bags_ref |>
+      migbirdHIP:::REF_BAGS |>
       dplyr::filter(state == REF_ABBR_49_STATES[n] & spp == bag_field) |>
       dplyr::pull(stateBagValue)
 
@@ -276,7 +276,7 @@ messy_hunters <-
   # the first 3 digits and then reconciling down to 1 state at random)
   dplyr::mutate(zip_key = stringr::str_sub(zip, 1, 3)) |>
   dplyr::left_join(
-    migbirdHIP:::zip_code_ref |>
+    migbirdHIP:::REF_ZIP_CODE |>
       dplyr::mutate(zip_key = stringr::str_sub(zipcode, 1, 3)) |>
       dplyr::distinct(zip_key, state) |>
       dplyr::group_by(zip_key) |>

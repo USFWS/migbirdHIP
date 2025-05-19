@@ -2,16 +2,22 @@
 
 ## Major changes & new features
 
+-   Changed contents of `R/sysdata.rda`
+    -   Fewer objects are now stored in `sysdata.rda` (reduced from 14 to 5). This enhances transparency and reduces the number of objects that must be generated outside of the R package itself.
+    -   Eight objects were moved to `constants.R`:
+        -   `ref_bagfields`, `abbr_usa`, `abbr_canada`, `pmt_inline`, `pmt_files`, `states_twoseason`, `states_sdbr`, and `states_seaducks` were moved and renamed `REF_BAG_FIELDS`, `REF_ABBR_USA`, `REF_ABBR_CANADA`, `REF_PMT_INLINE`, `REF_PMT_FILES`, `REF_STATES_SD_BR`, and `REF_STATES_SD_ONLY`, respectively.
+    -   Three objects were dropped entirely. `MS_firstday` and `MS_lastday` are no longer needed by `issueCheck()` (see [baca6ad](https://github.com/USFWS/migbirdHIP/commit/baca6ad7ff24660e64f8d6ead7aeaf7a7ea533af)), and `states_twoseason` is only used by the download report, so the code to generate that vector was moved to the download report template.
+    -   Four internal data objects were renamed: `REF_BAGS` (previously `hip_bags_ref`), `REF_DATES` (previously `licenses_ref`), `REF_ZIP_CODE` (previously `zip_code_ref`), and `SF_HEXMAP` (previously `hexmap`).
+    -   A new object was added. `REF_EMAIL_TLDS` contains all top-level domains recognized by the Internet Assigned Numbers Authority.
 -   Added test data
     -   Fake HIP test data creation script stored under `data-raw/`
     -   Test data containing fake HIP registrations stored as fixed-width `.txt` files under `inst/extdata/DL0901/`
--   Created `variables.R` to define seasonally changing variables in a central place
-    -   `REF_CURRENT_SEASON` for current HIP season
+-   Created `variables.R` to define seasonally changing variables in a central place.
+    -   `REF_CURRENT_SEASON` for current HIP season.
     -   `REF_RELEASES` is a named vector of all `migbirdHIP` package releases and the corresponding season of HIP data that the version was intended for.
--   Created `constants.R` to define variables in a central place and thus evaluate data consistently across functions (e.g., `inLinePermitDNHMessage()` and `inLinePermitDNHFix()` both use `LOGIC_INLINE_PMT_DNH` to evaluate data using the same logical condition).
-    -   Moved `ref_bagfields`, `abbr_usa`, `abbr_canada`, `pmt_inline`, and `pmt_files` from package internal data `sysdata.rda` to the `constants.R` file, for transparency and to reduce the number of objects included internally; now named with uppercase letters to indicate they are internal reference data objects (`REF_BAG_FIELDS`, `REF_ABBR_USA`, `REF_ABBR_CANADA`, `REF_PMT_INLINE`, `REF_PMT_FILES`).
-    -   Moved suffix regex reference vector from `moveSuffixes()` to `constants.R` as `REGEX_SUFFIX_SEARCH`.
-    -   Moved strata names from `write_hip()` to `constants.R` as `REF_STRATA_NAMES`.
+-   Created `constants.R` to define variables in a central place and thus evaluate data consistently.
+    -   Variables are used across functions (e.g., `inLinePermitDNHMessage()` and `inLinePermitDNHFix()` both use `LOGIC_INLINE_PMT_DNH`) and are shared between functions and `testthat` files.
+    -   New naming convention helps users to use and find internal reference data objects more quickly by using uppercase letters and categorical prefixes (`REF_`, `LOGIC_`, `REGEX_`, and `SF_`).
 -   New functions
     -   `testRecordMessage()` added to `read_hip()` and `testRecordFilter()` added to `clean()` to find and filter out any testing records mistakenly sent to us by the states.
     -   New `duplicatePlot()` function added; `duplicateFinder()` (previously named `findDuplicates()`) function no longer outputs a plot.

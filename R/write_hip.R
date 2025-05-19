@@ -143,7 +143,7 @@ write_hip <-
     bag_translations <-
       map(
         1:length(REF_BAG_FIELDS),
-        ~hip_bags_ref |>
+        ~REF_BAGS |>
           filter(spp == REF_BAG_FIELDS[.x]) |>
           mutate(!!sym(REF_BAG_FIELDS[.x]) := as.character(stateBagValue)) |>
           select(-c("stateBagValue", "spp")) |>
@@ -166,7 +166,7 @@ write_hip <-
     zero_translations <-
       map(
         1:length(REF_BAG_FIELDS),
-        ~hip_bags_ref |>
+        ~REF_BAGS |>
           select(-stateBagValue) |>
           group_by(state, spp) |>
           filter(n() == 1) |>

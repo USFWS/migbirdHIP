@@ -35,23 +35,23 @@ bagCheck <-
       deduplicated_data |>
       filter(!(!!LOGIC_INLINE_PMT))
 
-    # Reformat hip_bags_ref
-    mini_hip_bags_ref <-
-      hip_bags_ref |>
+    # Reformat REF_BAGS
+    mini_bags_ref <-
+      REF_BAGS |>
       select(-FWSstratum) |>
       rename(dl_state = state) |>
       mutate(stateBagValue  = as.character(stateBagValue))
 
     # The following nested joins remove all values that are not 0 or 1 from
-    # hip_bags_ref for state/species combinations in REF_PMT_FILES (e.g. 2s are
+    # REF_BAGS for state/species combinations in REF_PMT_FILES (e.g. 2s are
     # not acceptable in regular HIP pre-processing for CO cranes, so this
     # resulting tibble will only contain a line for CO cranes = 1). This rule is
     # also applied in internal function `permitBagFix()`, please refer to that
     # function if this comment is still unclear.
     non_pmt_file_bags_ref <-
       anti_join(
-        mini_hip_bags_ref,
-        mini_hip_bags_ref |>
+        mini_bags_ref,
+        mini_bags_ref |>
           inner_join(REF_PMT_FILES |> select(-value)) |>
           filter(!stateBagValue %in% c("0", "1"))
       )
@@ -65,7 +65,7 @@ bagCheck <-
       ungroup()
 
     # Do any species bag values in the HIP data fall outside what is expected in
-    # the hip_bags_ref?
+    # the REF_BAGS?
     bad_bag_values <-
       deduplicated_data |>
       select(dl_state, all_of(REF_BAG_FIELDS)) |>

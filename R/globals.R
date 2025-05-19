@@ -14,16 +14,16 @@ globalVariables(
       "hunt_mig_birds",
       REF_BAG_FIELDS,
       "email"),
-    # Field names in migbirdHIP:::hip_bags_ref
+    # Field names in migbirdHIP:::REF_BAGS
     c("stateBagValue",
       "spp",
       "FWSstratum"),
-    # Field names in migbirdHIP:::licenses_ref
+    # Field names in migbirdHIP:::REF_DATES
     c("last_day_migbird_hunting",
       "issue_start",
       "issue_end",
       "category"),
-    # Field names in migbirdHIP:::zip_code_ref
+    # Field names in migbirdHIP:::REF_ZIP_CODE
     "zipcode",
     # Used in errorPlots.R
     c("count_correct",
