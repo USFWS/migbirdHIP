@@ -437,7 +437,7 @@ test_that("good email addresses pass proofing", {
         "BlackPanther@github.io",
         "groot+hunting@gmail.com",
         "ROCK3T+hip@icloud.com",
-        "_nickFury_@hotmail.com",
+        "nickFury_@hotmail.com",
         "W0-lv3R.ine+xm3n@Xavier.School.org",
         "bucky@GMAIL.COM",
         "Captain-America@us.army.mil"

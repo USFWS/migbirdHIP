@@ -177,12 +177,6 @@ proofBadEmails <-
           str_length(email) > 100 |
           # Multiple sequential dots
           str_detect(email, "\\.\\.+") |
-          # Dot in the place of the first character
-          str_detect(email, "^\\.") |
-          # Dot in the place of last character in local part
-          str_detect(email, "\\.(?=\\@)") |
-          # Dot is last character
-          str_detect(email, "\\.$") |
           # Hyphen in first place of domain
           str_detect(email, "(?<=\\@)\\-") |
           # Bad top level domain
