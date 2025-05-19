@@ -179,11 +179,24 @@ proofBadEmails <-
           str_detect(email, "(?<=\\@)gmail\\.(co|net|edu|org)$") |
           str_detect(email, "(?<=\\@)(att|comcast)\\.(com|org)$") |
           str_detect(email, "(?<=\\@)icloud\\.(net|org)$") |
-          str_detect(email, "(?<=\\.)(com(\\.com)+|com(com)+|con|ccom|coom|comm|c0m|ocm|cm|om|cim|common)$") |
+          str_detect(
+            email,
+            paste0(
+              "(?<=\\.)(com(\\.com)+|com(com)+|con|ccom|coom|comm|c0m|ocm|cm|o",
+              "m|cim|common)$")) |
           # Missing top level domain endings
-          str_detect(email, "(?<=\\@)(gmail|yahoo|hotmail|aol|icloud|comcast|outlook|sbcglobal|att|msn|live|bellsouth|charter|ymail|me|verizon|cox|earthlink|protonmail|pm|duck|ducks|mail)$") |
+          str_detect(
+            email,
+            paste0(
+              "(?<=\\@)(gmail|yahoo|hotmail|aol|icloud|comcast|outlook|sbcglob",
+              "al|att|msn|live|bellsouth|charter|ymail|me|verizon|cox|earthlin",
+              "k|protonmail|pm|duck|ducks|mail)$")) |
           # Missing top level domain periods
-          str_detect(email, "(?<!\\.)(com|net|edu|gov|org|navymil|usnavymil|usafmil|mailmil|armymil|usarmymil|usacearmymil)$")
+          str_detect(
+            email,
+            paste0(
+              "(?<!\\.)(com|net|edu|gov|org|navymil|usnavymil|usafmil|mailmil|",
+              "armymil|usarmymil|usacearmymil)$"))
       )
   }
 

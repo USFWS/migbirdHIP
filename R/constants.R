@@ -190,13 +190,15 @@ REGEX_CITY <-
 # The first character in the local part must be a letter or number, and a dot
 # may not occur as the last character in the local part or last character of the
 # entire address. Sequential dots are not allowed. A hyphen is not allowed to be
-# the first character in the domain. Other ASCII characters that are
-# theoretically allowed in email addresses are not valid in HIP data (e.g.,
+# the first character in the domain. Length required is a minimum of 6
+# characters (e.g., a@b.io). Other ASCII characters that are theoretically
+# allowed in email addresses are not valid in HIP data (e.g.,
 # !#$%&'*/=?^_`{|}~).
 REGEX_EMAIL <-
   paste0(
-    "^(?!.+\\.\\@.+)(?!.+\\.$)(?!.+\\.\\.+.+)(?!.+\\@\\-.+)[a-zA-Z0-9]+[a-zA-Z",
-    "0-9\\_\\.\\+\\-]*\\@[a-zA-Z0-9\\-]+\\.[a-zA-Z0-9\\-\\.]+$")
+    "^(?!.+\\.\\@.+)(?!.+\\.$)(?!.+\\.\\.+.+)(?!.+\\@\\-.+)(?=.+[a-zA-Z]{2,}$)",
+    "[a-zA-Z0-9]+[a-zA-Z0-9\\_\\.\\+\\-]*\\@[a-zA-Z0-9\\-]+\\.[a-zA-Z0-9\\-\\.",
+    "]+$")
 
 # Regular expression for an obfuscative email address local-part
 REGEX_EMAIL_OBFUSCATIVE_LOCALPART <-

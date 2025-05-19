@@ -440,7 +440,8 @@ test_that("good email addresses pass proofing", {
         "nickFury_@hotmail.com",
         "W0-lv3R.ine+xm3n@Xavier.School.org",
         "bucky@GMAIL.COM",
-        "Captain-America@us.army.mil"
+        "Captain-America@us.army.mil",
+        "g@gmail.com"
       ))
 
   good_emails_filtered <-
@@ -455,6 +456,9 @@ test_that("bad email addresses fail proofing", {
     tibble(
       # Fake email addresses that are formatted incorrectly
       email = c(
+        "@",
+        "@@",
+        "",
         "Tony`Stark@starkindustries.com",
         "Tony!Stark@starkindustries.com",
         "Tony@Stark@starkindustries.com",
@@ -563,7 +567,11 @@ test_that("bad email addresses fail proofing", {
         "thanos@mailmil",
         "thanos@armymil",
         "thanos@usarmymil",
-        "thanos@usacearmymil"
+        "thanos@usacearmymil",
+        "a@b.c",
+        "0@b.c",
+        "a@0.c",
+        "a@b.0"
       ))
 
   bad_emails_filtered <-
