@@ -175,10 +175,6 @@ proofBadEmails <-
           # Longer than 100 characters (max length of a valid address is 254 but
           # this would be very rare; we only accept 100)
           str_length(email) > 100 |
-          # Multiple sequential dots
-          str_detect(email, "\\.\\.+") |
-          # Hyphen in first place of domain
-          str_detect(email, "(?<=\\@)\\-") |
           # Bad top level domain
           str_detect(email, "(?<=\\@)gmail\\.(co|net|edu|org)$") |
           str_detect(email, "(?<=\\@)(att|comcast)\\.(com|org)$") |

@@ -184,16 +184,19 @@ REGEX_CITY <-
     "+$")
 
 # Regular expression for the expected email format. Local part may contain Latin
-# lower and uppercase letters, numbers, underscores, dots, hyphens, and a plus
-# sign; must contain @; domain may contain Latin lower and uppercase letters,
-# numbers, and hyphens; subdomains acceptable when separated by a dot. Other
-# ASCII characters that are theoretically allowed in email addresses are not
-# valid in HIP data (e.g., !#$%&'*/=?^_`{|}~). The regular expression specifies
-# that the first character in the local part must be a letter or number, and a
-# dot may not occur as the last character in the local part or last character of
-# the entire address.
+# lower and uppercase letters, numbers, underscores, dots, hyphens, and/or plus
+# signs; must contain an @; domain may contain Latin lower and uppercase
+# letters, numbers, and hyphens; subdomains acceptable when separated by a dot.
+# The first character in the local part must be a letter or number, and a dot
+# may not occur as the last character in the local part or last character of the
+# entire address. Sequential dots are not allowed. A hyphen is not allowed to be
+# the first character in the domain. Other ASCII characters that are
+# theoretically allowed in email addresses are not valid in HIP data (e.g.,
+# !#$%&'*/=?^_`{|}~).
 REGEX_EMAIL <-
-  "^(?!.+\\.\\@.+)(?!.+\\.$)[a-zA-Z0-9]+[a-zA-Z0-9\\_\\.\\+\\-]*\\@[a-zA-Z0-9\\-]+\\.[a-zA-Z0-9\\-\\.]+$"
+  paste0(
+    "^(?!.+\\.\\@.+)(?!.+\\.$)(?!.+\\.\\.+.+)(?!.+\\@\\-.+)[a-zA-Z0-9]+[a-zA-Z",
+    "0-9\\_\\.\\+\\-]*\\@[a-zA-Z0-9\\-]+\\.[a-zA-Z0-9\\-\\.]+$")
 
 # Regular expression for an obfuscative email address local-part
 REGEX_EMAIL_OBFUSCATIVE_LOCALPART <-
