@@ -145,6 +145,9 @@ LOGIC_MISSING_ADDRESSES <-
 LOGIC_MISSING_CITY_ZIP_EMAIL <-
   expr(if_all(c("city", "zip", "email"), \(x) is.na(x)))
 
+# Regular expression that selects non-permit species bag fields
+REGEX_NON_PMT_SPECIES <- "bag|coots|rails"
+
 # First name regular expression; may contain apostrophe, space, hyphen (none of
 # which consecutive) and 2+ capital letters
 REGEX_FIRSTNAME <-
@@ -167,8 +170,8 @@ REGEX_SUFFIX_SEARCH <-
     "(?<=\\s)(JR|SR|I{1,3}|IV|VI{0,3}|I{0,1}X|XI{1,3}|XI{0,1}V|XVI{1,2}|XI",
     "{0,1}X|1ST|2ND|3RD|[4-9]TH|1[0-9]TH|20TH)\\.?$")
 
-# Regular expression that selects non-permit species bag fields
-REGEX_NON_PMT_SPECIES <- "bag|coots|rails"
+# Address regular expression for unwanted symbols
+REGEX_BAD_ADDRESS <- "\\||\\t|[^\\x00-\\x7F]+"
 
 # Regular expression for correct city name values. City names should only
 # contain letters, spaces (e.g., New York City, NY), hyphens (e.g.,
@@ -193,5 +196,6 @@ REGEX_EMAIL <-
 REGEX_EMAIL_OBFUSCATIVE_LOCALPART <-
   "^(none|no|na|not|non|nomail|noemail|noreply|customer|unknown|notprovided)\\@"
 
-# Address regular expression for unwanted symbols
-REGEX_BAD_ADDRESS <- "\\||\\t|[^\\x00-\\x7F]+"
+# Regular expression for an obfuscative email address domain
+REGEX_EMAIL_OBFUSCATIVE_DOMAIN <- "\\@(no|na|none|example|guerillamail|tpw|twp).*$"
+

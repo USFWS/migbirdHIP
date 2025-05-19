@@ -3,23 +3,19 @@
 #' After cleaning the data with \code{\link{clean}}, compare each field to an expected range of values and flag non-conforming values in a new "errors" column.
 #'
 #' @importFrom dplyr mutate
-#' @importFrom dplyr select
-#' @importFrom dplyr as_tibble
 #' @importFrom dplyr row_number
 #' @importFrom dplyr bind_rows
-#' @importFrom dplyr distinct
 #' @importFrom dplyr filter
+#' @importFrom dplyr select
+#' @importFrom dplyr as_tibble
+#' @importFrom dplyr distinct
 #' @importFrom dplyr case_when
-#' @importFrom dplyr left_join
-#' @importFrom dplyr reframe
+#' @importFrom dplyr full_join
 #' @importFrom stringr str_detect
 #' @importFrom dplyr group_by
 #' @importFrom dplyr ungroup
-#' @importFrom dplyr n
-#' @importFrom stringr str_detect
 #' @importFrom stringr str_extract
 #' @importFrom stringr str_remove_all
-#' @importFrom stringr str_length
 #'
 #' @param deduplicated_data The object created after deduplicating data with \code{\link{duplicateFix}}
 #' @param year The year in which the Harvest Information Program data were collected
@@ -111,7 +107,7 @@ proof <-
     graded_x <-
       keyed_data |>
       # Join in the error report
-      left_join(markup, by = "temp_key") |>
+      full_join(markup, by = "temp_key") |>
       group_by(temp_key) |>
       # Paste errors together (some records might have more than one!)
       mutate(errors = paste(error, collapse = "-")) |>
@@ -158,6 +154,7 @@ proof <-
 #' @importFrom dplyr mutate
 #' @importFrom dplyr filter
 #' @importFrom stringr str_detect
+#' @importFrom stringr str_length
 #'
 #' @param keyed_data An tibble used internally in \code{\link{proof}}
 #'
@@ -174,13 +171,7 @@ proofBadEmails <-
         !str_detect(email, REGEX_EMAIL) |
           # Obfuscative emails
           str_detect(email, REGEX_EMAIL_OBFUSCATIVE_LOCALPART) |
-          str_detect(email, "\\@none") |
-          str_detect(email, "\\@(no\\.com|na\\.org)$") |
-          str_detect(email, "\\@(tpw|twp)") |
-          # Invalid domain
-          str_detect(email, "\\@example.com$") |
-          # Burner domain
-          str_detect(email, "\\@guerillamail") |
+          str_detect(email, REGEX_EMAIL_OBFUSCATIVE_DOMAIN) |
           # Longer than 100 characters (max length of a valid address is 254 but
           # this would be very rare; we only accept 100)
           str_length(email) > 100 |
