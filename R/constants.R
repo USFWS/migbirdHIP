@@ -12,15 +12,7 @@
 # Vector of state abbreviations (NOT INCLUDING Oregon or Washington) that have a
 # hunting season for both sea ducks AND brant
 REF_STATES_SD_BR <-
-  REF_BAGS |>
-  dplyr::filter(stateBagValue == 2 & spp %in% c("brant", "seaducks")) |>
-  tidyr::pivot_wider(
-    id_cols = state,
-    names_from = "spp",
-    values_from = "stateBagValue") |>
-  dplyr::arrange(state) |>
-  dplyr::filter(!is.na(brant) & !is.na(seaducks) & !state %in% c("OR", "WA")) |>
-  dplyr::pull(state)
+  c("AK", "CA", "CT", "DE", "MA", "MD", "NC", "NH", "NJ", "NY", "RI", "VA")
 
 # Maine is currently the only state with a sea duck hunting season but not a
 # brant hunting season
