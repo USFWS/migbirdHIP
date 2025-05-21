@@ -3,12 +3,11 @@
 ## Major changes & new features
 
 -   Changed contents of `R/sysdata.rda`
-    -   Fewer objects are now stored in `sysdata.rda` (reduced from 14 to 5). This enhances transparency and reduces the number of objects that must be generated outside of the R package itself.
+    -   Fewer objects are now stored in `sysdata.rda` (reduced from 14 to 4). This enhances transparency and reduces the number of objects that must be generated outside of the R package itself.
     -   Eight objects were moved to `constants.R`:
         -   `ref_bagfields`, `abbr_usa`, `abbr_canada`, `pmt_inline`, `pmt_files`, `states_twoseason`, `states_sdbr`, and `states_seaducks` were moved and renamed `REF_BAG_FIELDS`, `REF_ABBR_USA`, `REF_ABBR_CANADA`, `REF_PMT_INLINE`, `REF_PMT_FILES`, `REF_STATES_SD_BR`, and `REF_STATES_SD_ONLY`, respectively.
-    -   Three objects were dropped entirely. `MS_firstday` and `MS_lastday` are no longer needed by `issueCheck()` (see [baca6ad](https://github.com/USFWS/migbirdHIP/commit/baca6ad7ff24660e64f8d6ead7aeaf7a7ea533af)), and `states_twoseason` is only used by the download report, so the code to generate that vector was moved to the download report template.
+    -   Three objects were dropped entirely. `MS_firstday` and `MS_lastday` are no longer needed by `issueCheck()`, and `states_twoseason` is only used by the download report, so the code to generate that vector was moved to the download report template.
     -   Four internal data objects were renamed: `REF_BAGS` (previously `hip_bags_ref`), `REF_DATES` (previously `licenses_ref`), `REF_ZIP_CODE` (previously `zip_code_ref`), and `SF_HEXMAP` (previously `hexmap`).
-    -   A new object was added. `REF_EMAIL_TLDS` contains all top-level domains recognized by the Internet Assigned Numbers Authority.
 -   Added test data
     -   Fake HIP test data creation script stored under `data-raw/`
     -   Test data containing fake HIP registrations stored as fixed-width `.txt` files under `inst/extdata/DL0901/`

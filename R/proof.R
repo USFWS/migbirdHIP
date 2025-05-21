@@ -175,10 +175,24 @@ proofBadEmails <-
           # Longer than 100 characters (max length of a valid address is 254 but
           # this would be very rare; we only accept 100)
           str_length(email) > 100 |
+          # Domain typo
+          str_detect(
+            email,
+            paste0(
+              "(?<=\\@)(gmaill|gmai|gamil|gmial|gmal|gmil|gail|gmali|gmall|gla",
+              "il|gmaim|gamil|gimal|gmai|gmaii)\\.com$")) |
+          str_detect(email, "(?<=\\@)yahooo\\.com$") |
+          str_detect(email, "(?<=\\@)attt\\.net$") |
+          # Popular domain doesn't have matching top level domain
+          str_detect(email, "(?<=\\@)gmail(?!\\.com$)") |
+          str_detect(email, "(?<=\\@)yahoo\\.(?!(com|co\\.uk|fr|es|ca|de)$)") |
+          str_detect(email, "(?<=\\@)hotmail\\.(?!(com|co\\.uk|fr|es|ca|de)$)") |
+          str_detect(email, "(?<=\\@)(icloud|aol|outlook|msn|live|ymail|me|mac)\\.(?!com$)") |
+          str_detect(email, "(?<=\\@)(att|cox|comcast|sbcglobal|bellsouth|verizon|earthlink|charter)\\.(?!net$)") |
+          str_detect(email, "(?<=\\@)proton\\.(?!(me|mail\\.com|mail\\.ch)$)") |
+          str_detect(email, "(?<=\\@)protonmail\\.(?!(com|ch)$)") |
+          str_detect(email, "(?<=\\@)pm\\.(?!me$)") |
           # Bad top level domain
-          str_detect(email, "(?<=\\@)gmail\\.(co|net|edu|org)$") |
-          str_detect(email, "(?<=\\@)(att|comcast)\\.(com|org)$") |
-          str_detect(email, "(?<=\\@)icloud\\.(net|org)$") |
           str_detect(
             email,
             paste0(
