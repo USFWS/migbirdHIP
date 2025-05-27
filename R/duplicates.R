@@ -139,6 +139,9 @@ duplicateFix <-
       hip_deduplicated <-
         duplicateSample(hip_permit_state_duplicates) |>
         select(-c("duplicate_id", "all_ones", "all_ones_group_size", "decision"))
+
+      # Get the final permit state tibble with 1 HIP record per hunter
+      hip_deduplicated <- duplicateSample(hip_permit_state_duplicates)
     } else {
       permit_state_duplicates <-
         permit_state_duplicates |>
@@ -146,9 +149,6 @@ duplicateFix <-
 
       hip_deduplicated <- permit_state_duplicates
     }
-
-    # Get the final permit state tibble with 1 HIP record per hunter
-    hip_deduplicated <- duplicateSample(hip_permit_state_duplicates)
 
     # Combine all resolved records into one tibble
     resolved_duplicates <-
@@ -227,21 +227,25 @@ duplicateID <-
 
 duplicateNewest <-
   function(duplicates) {
-    duplicates |>
-      group_by(duplicate_id) |>
-      # Identify records with most recent issue date
-      mutate(
-        x_issue_date =
-          ifelse(
-            issue_date ==
-              strftime(max(mdy(issue_date), na.rm = TRUE), format = "%m/%d/%Y"),
+    if(nrow(duplicates) > 0) {
+      duplicates |>
+        group_by(duplicate_id) |>
+        # Identify records with most recent issue date
+        mutate(
+          x_issue_date =
+            ifelse(
+              issue_date ==
+                strftime(max(mdy(issue_date), na.rm = TRUE), format = "%m/%d/%Y"),
               "newest",
               NA)
         ) |>
-      ungroup() |>
-      # Keep the record(s) from each group that were the most recent
-      filter(!is.na(x_issue_date)) |>
-      select(-x_issue_date)
+        ungroup() |>
+        # Keep the record(s) from each group that were the most recent
+        filter(!is.na(x_issue_date)) |>
+        select(-x_issue_date)
+    } else {
+      duplicates
+    }
   }
 
 #' Flag all-one records in a group of duplicates
