@@ -530,6 +530,7 @@ split_fake_hip <-
 
 # write to R package ------------------------------------------------------
 
+# Write 49 files to extdata dir
 purrr::walk(
   1:length(split_fake_hip),
   \(x) gdata::write.fwf(
@@ -541,3 +542,10 @@ purrr::walk(
     width = c(1, 15, 1, 20, 3, 60, 20, 2, 10, 10, 10,
               1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4, 100))
 )
+
+# Write mini test data to extdata dir
+DF_TEST_MINI <-
+  split_fake_hip[[1]] |>
+  dplyr::slice_head(n = 20)
+
+usethis::use_data(DF_TEST_MINI)
