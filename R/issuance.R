@@ -35,7 +35,7 @@ issueCheck <-
 
     # Return message if all values in record_key field are NA (causes problems
     # with joining later)
-    if (is.na(unique(clean_data$record_key))) {
+    if (TRUE == unique(is.na(unique(clean_data$record_key)))) {
       message("Error: All values in record_key are NA.")
     }
 
