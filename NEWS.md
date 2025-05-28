@@ -10,7 +10,16 @@
     -   Four internal data objects were renamed: `REF_BAGS` (previously `hip_bags_ref`), `REF_DATES` (previously `licenses_ref`), `REF_ZIP_CODE` (previously `zip_code_ref`), and `SF_HEXMAP` (previously `hexmap`).
 -   Added test data
     -   Fake HIP test data creation script stored under `data-raw/`
-    -   Test data containing fake HIP registrations stored as fixed-width `.txt` files under `inst/extdata/DL0901/`
+    -   Test data containing fake HIP registrations stored as fixed-width `.txt` files under `inst/extdata/DL0901/`, to be used in testing or simulating `read_hip()`
+    -   Miniature and tiny test data stored as exported `.rda` files under `data/`, to make it easier to demonstrate functions and run unit tests
+        -   `DF_TEST_MINI` contains 1,606 rows from 7 states (OR records to represent solo permit state, ME records to represent SD-only state, DE records to represent SD and BR state, ND records to represent CR state, UT records to represent BT state, CO records to represent CR and BT state, and IA records to represent non-BT, CR, SD, or BR state) and is formatted as though the data were just read in.
+        -   Six tiny test data objects:
+            -   `DF_TEST_TINI_READ` is a subset of `DF_TEST_MINI`, and contains 3 rows formatted as though the data were just read in
+            -   `DF_TEST_TINI_CLEANED` is the result of running `clean()` on `DF_TEST_TINI_READ`
+            -   `DF_TEST_TINI_CURRENT` is the result of running `issueCheck()` on `DF_TEST_TINI_CLEANED`
+            -   `DF_TEST_TINI_DEDUPED` is the result of running `duplicateFix()` on `DF_TEST_TINI_CURRENT`
+            -   `DF_TEST_TINI_PROOFED` is the result of running `proof()` on `DF_TEST_TINI_DEDUPED`
+            -   `DF_TEST_TINI_CORRECTED` is the result of running `correct()` on `DF_TEST_TINI_PROOFED`
 -   Created `variables.R` to define seasonally changing variables in a central place.
     -   `REF_CURRENT_SEASON` for current HIP season.
     -   `REF_RELEASES` is a named vector of all `migbirdHIP` package releases and the corresponding season of HIP data that the version was intended for.
