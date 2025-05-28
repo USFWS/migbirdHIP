@@ -177,20 +177,21 @@ issueAssign <-
           ifelse(
             dl_state != "MS",
             case_when(
-              # If the issue_date falls between issue_start and issue_end for that
-              # state, it's a current record (no change needed)
+              # If the issue_date falls between issue_start and issue_end for
+              # that state, it's a current record (no change needed)
               mdy(issue_date) %within%
                 interval(issue_start, last_day_migbird_hunting) ~ "current",
-              # Past records are issued before the issue_start date; these will be
-              # filtered out later
+              # Past records are issued before the issue_start date; these will
+              # be filtered out later
               mdy(issue_date) < issue_start ~ "past",
-              # If the record has an issue_date after the last day of hunting for
-              # that state, it's a future record and the registration_yr needs to be
-              # +1
+              # If the record has an issue_date after the last day of hunting
+              # for that state, it's a future record and the registration_yr
+              # needs to be +1
               mdy(issue_date) > last_day_migbird_hunting ~ "future",
               TRUE ~ "bad issue dates"),
             "MS"),
-        # Edit registration_yr: current year for current records, yr+1 for future
+        # Edit registration_yr: current year for current records, yr+1 for
+        # future
         registration_yr =
           ifelse(
             decision == "future",
