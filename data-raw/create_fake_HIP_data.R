@@ -194,6 +194,8 @@ upload_dates <-
 
 file_dates <- paste0(REF_CURRENT_SEASON, upload_dates, ".txt")
 
+yr <- as.numeric(REF_CURRENT_SEASON)
+
 # messy selections --------------------------------------------------------
 
 # Select some hunters for intentional errors: change to NA, add a hyphen, add a
@@ -571,12 +573,26 @@ DF_TEST_MINI <-
   dplyr::relocate(dl_key, .after = "dl_cycle")
 
 # Tini test data
-DF_TEST_TINI <-
+DF_TEST_TINI_READ <-
   DF_TEST_MINI |>
   dplyr::filter(dl_state == "IA") |>
   dplyr::slice_sample(n = 3) |>
   dplyr::mutate(record_key = paste0("record_", dplyr::row_number()))
 
-# Write mini and tini data to extdata directory
+# Partially process tini test data
+DF_TEST_TINI_CLEANED <- clean(DF_TEST_TINI_RAW)
+DF_TEST_TINI_CURRENT <- issueCheck(DF_TEST_TINI_CLEAN, yr)
+DF_TEST_TINI_DEDUPED <- duplicateFix(DF_TEST_TINI_CURRENT)
+DF_TEST_TINI_PROOFED <- proof(DF_TEST_TINI_DEDUPED, yr)
+DF_TEST_TINI_CORRECTED <- correct(DF_TEST_TINI_PROOFED, yr)
+
+# Write mini data to extdata directory
 usethis::use_data(DF_TEST_MINI, overwrite = T)
-usethis::use_data(DF_TEST_TINI, overwrite = T)
+
+# Write partially processed tini data to extdata directory
+usethis::use_data(DF_TEST_TINI_READ, overwrite = T)
+usethis::use_data(DF_TEST_TINI_CLEANED, overwrite = T)
+usethis::use_data(DF_TEST_TINI_CURRENT, overwrite = T)
+usethis::use_data(DF_TEST_TINI_DEDUPED, overwrite = T)
+usethis::use_data(DF_TEST_TINI_PROOFED, overwrite = T)
+usethis::use_data(DF_TEST_TINI_CORRECTED, overwrite = T)
