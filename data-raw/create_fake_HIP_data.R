@@ -543,9 +543,40 @@ purrr::walk(
               1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4, 100))
 )
 
-# Write mini test data to extdata dir
+# Mini test data
 DF_TEST_MINI <-
-  split_fake_hip[[1]] |>
-  dplyr::slice_head(n = 20)
+  fake_hip_with_duplicates |>
+  dplyr::mutate(
+    # Add the download state as a column
+    dl_state =
+      stringr::str_extract(source_file, "[A-Z]{2}(?=[0-9]{8}\\.txt)"),
+    # Add the download date as a column
+    dl_date =
+      stringr::str_extract(source_file, "(?<=[A-Z]{2})[0-9]{8}(?=\\.txt)"),
+    # Add the download cycle as a column
+    dl_cycle = "0901") |>
+  # Keep some OR records to represent solo permit state
+  # Keep some ME records to represent SD-only state
+  # Keep some DE records to represent SD and BR state
+  # Keep some ND records to represent CR state
+  # Keep some UT records to represent BT state
+  # Keep some CO records to represent CT and BT state
+  # Keep some IA records to represent non-BT, CR, SD, or BR state
+  dplyr::filter(dl_state %in% c("OR", "ME", "DE", "ND", "UT", "CO", "IA")) |>
+  dplyr::mutate(record_key = paste0("record_", dplyr::row_number())) |>
+  dplyr::group_by(dl_date, dl_state) |>
+  dplyr::mutate(dl_key = paste0("dl_", dplyr::cur_group_id())) |>
+  dplyr::ungroup() |>
+  dplyr::relocate(source_file, .after = "dl_date") |>
+  dplyr::relocate(dl_key, .after = "dl_cycle")
 
-usethis::use_data(DF_TEST_MINI)
+# Tini test data
+DF_TEST_TINI <-
+  DF_TEST_MINI |>
+  dplyr::filter(state == "IA") |>
+  dplyr::slice_sample(n = 3) |>
+  dplyr::mutate(record_key = paste0("record_", dplyr::row_number()))
+
+# Write mini and tini data to extdata directory
+usethis::use_data(DF_TEST_MINI, overwrite = T)
+usethis::use_data(DF_TEST_TINI, overwrite = T)
