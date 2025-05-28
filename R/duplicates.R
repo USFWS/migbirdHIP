@@ -176,7 +176,8 @@ duplicateFix <-
         # In-line permit states HIP records
         hip_deduplicated
         ) |>
-      distinct()
+      distinct() |>
+      select(-duplicate_id)
 
     return(resolved_duplicates)
   }
