@@ -573,7 +573,7 @@ DF_TEST_MINI <-
 # Tini test data
 DF_TEST_TINI <-
   DF_TEST_MINI |>
-  dplyr::filter(state == "IA") |>
+  dplyr::filter(dl_state == "IA") |>
   dplyr::slice_sample(n = 3) |>
   dplyr::mutate(record_key = paste0("record_", dplyr::row_number()))
 
