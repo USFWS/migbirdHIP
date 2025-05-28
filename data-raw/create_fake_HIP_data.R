@@ -560,7 +560,7 @@ DF_TEST_MINI <-
   # Keep some DE records to represent SD and BR state
   # Keep some ND records to represent CR state
   # Keep some UT records to represent BT state
-  # Keep some CO records to represent CT and BT state
+  # Keep some CO records to represent CR and BT state
   # Keep some IA records to represent non-BT, CR, SD, or BR state
   dplyr::filter(dl_state %in% c("OR", "ME", "DE", "ND", "UT", "CO", "IA")) |>
   dplyr::mutate(record_key = paste0("record_", dplyr::row_number())) |>
