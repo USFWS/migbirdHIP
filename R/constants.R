@@ -65,11 +65,14 @@ REF_ROMAN_SUFFIXES <-
     "XI", "XII", "XIII", "XIV", "XV", "XVI", "XVII", "XIX", "XX")
 
 # Define suffixes spanning 1ST-20TH
-REF_ORDINAL_SUFFIXES <-
-  c("1ST", "2ND", "3RD", paste0(c(4:20), "TH"))
+REF_ORDINAL_SUFFIXES <- c("1ST", "2ND", "3RD", paste0(c(4:20), "TH"))
+
+# Define junior and senior suffixes
+REF_CATEGORICAL_SUFFIXES <- c("JR", "SR")
 
 # Combine roman numeral and ordinal suffixes into one object
-REF_SUFFIXES <- c(REF_ROMAN_SUFFIXES, REF_ORDINAL_SUFFIXES)
+REF_SUFFIXES <-
+  c(REF_ROMAN_SUFFIXES, REF_ORDINAL_SUFFIXES, REF_CATEGORICAL_SUFFIXES)
 
 # Define titles. Expected values are "1" and "2", but we also accept "0" and NA
 REF_TITLES <- c(NA, "0", "1", "2")
