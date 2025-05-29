@@ -140,8 +140,6 @@ duplicateFix <-
         duplicateSample(hip_permit_state_duplicates) |>
         select(-c("duplicate_id", "all_ones", "all_ones_group_size", "decision"))
 
-      # Get the final permit state tibble with 1 HIP record per hunter
-      hip_deduplicated <- duplicateSample(hip_permit_state_duplicates)
     } else {
       permit_state_duplicates <-
         permit_state_duplicates |>
@@ -149,6 +147,9 @@ duplicateFix <-
 
       hip_deduplicated <- permit_state_duplicates
     }
+
+    # # Get the final permit state tibble with 1 HIP record per hunter
+    # hip_deduplicated <- duplicateSample(hip_permit_state_duplicates)
 
     # Combine all resolved records into one tibble
     resolved_duplicates <-
@@ -159,6 +160,7 @@ duplicateFix <-
       ungroup() |>
       # Set record type for single HIP registrations and solo in-line permits
       duplicateRecordType() |>
+      mutate(record_type = as.character(record_type)) |>
       # Add the resolved duplicates back in
       bind_rows(
         # Sea duck and brant states
@@ -176,8 +178,7 @@ duplicateFix <-
         # In-line permit states HIP records
         hip_deduplicated
         ) |>
-      distinct() |>
-      select(-duplicate_id)
+      distinct()
 
     return(resolved_duplicates)
   }
