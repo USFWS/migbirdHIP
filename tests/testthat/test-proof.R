@@ -1,3 +1,23 @@
+# proof function ----------------------------------------------------------
+
+test_that("errors field created", {
+
+  test_proof <- proof(DF_TEST_TINI_DEDUPED, as.numeric(REF_CURRENT_SEASON))
+  expect_false(is.null(test_proof$errors))
+})
+
+test_that("errors field contains errors", {
+
+  test_proof <- proof(DF_TEST_TINI_DEDUPED, as.numeric(REF_CURRENT_SEASON))
+  expect_false(nrow(filter(test_proof, is.na(errors))) == 0)
+})
+
+test_that("proof input and output have the same number of records", {
+
+  test_proof <- proof(DF_TEST_TINI_DEDUPED, as.numeric(REF_CURRENT_SEASON))
+  expect_equal(nrow(DF_TEST_TINI_DEDUPED), nrow(test_proof))
+})
+
 # test record -------------------------------------------------------------
 
 test_that("test records fail proofing", {
