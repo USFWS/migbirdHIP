@@ -51,7 +51,7 @@ proof <-
           mutate(error = "title"),
         # First name
         keyed_data |>
-          filter(str_detect(firstname, REGEX_FIRSTNAME)) |>
+          filter(!str_detect(firstname, REGEX_FIRSTNAME)) |>
           mutate(error = "firstname"),
         # Middle initial
         keyed_data |>
@@ -59,7 +59,7 @@ proof <-
           mutate(error = "middle"),
         # Last name
         keyed_data |>
-          filter(str_detect(lastname, REGEX_LASTNAME)) |>
+          filter(!str_detect(lastname, REGEX_LASTNAME)) |>
           mutate(error = "lastname"),
         # Suffix
         keyed_data |>
