@@ -21,71 +21,19 @@ test_that("filter out any record if any bag value is not a 1-digit number", {
 })
 
 test_that("filter out any record with all-NA or all-0 bag values", {
-  suppressMessages(
-    test_clean <-
+  test_data <-
+    bind_rows(
       DF_TEST_TINI_READ |>
-      dplyr::mutate(
-        ducks_bag =
-          dplyr::case_when(
-            record_key == "record_1" ~ "0",
-            record_key == "record_2" ~ NA,
-            record_key == "record_3" ~ "1",
-            TRUE ~ ducks_bag),
-        geese_bag =
-          dplyr::case_when(
-            record_key == "record_1" ~ "0",
-            record_key == "record_2" ~ NA,
-            record_key == "record_3" ~ "1",
-            TRUE ~ geese_bag),
-        dove_bag =
-          dplyr::case_when(
-            record_key == "record_1" ~ "0",
-            record_key == "record_2" ~ NA,
-            record_key == "record_3" ~ "1",
-            TRUE ~ dove_bag),
-        woodcock_bag =
-          dplyr::case_when(
-            record_key == "record_1" ~ "0",
-            record_key == "record_2" ~ NA,
-            record_key == "record_3" ~ "1",
-            TRUE ~ woodcock_bag),
-        coots_snipe =
-          dplyr::case_when(
-            record_key == "record_1" ~ "0",
-            record_key == "record_2" ~ NA,
-            record_key == "record_3" ~ "1",
-            TRUE ~ coots_snipe),
-        rails_gallinules =
-          dplyr::case_when(
-            record_key == "record_1" ~ "0",
-            record_key == "record_2" ~ NA,
-            record_key == "record_3" ~ "1",
-            TRUE ~ rails_gallinules),
-        cranes =
-          dplyr::case_when(
-            record_key == "record_1" ~ "0",
-            record_key == "record_2" ~ NA,
-            record_key == "record_3" ~ "1",
-            TRUE ~ cranes),
-        band_tailed_pigeon =
-          dplyr::case_when(
-            record_key == "record_1" ~ "0",
-            record_key == "record_2" ~ NA,
-            record_key == "record_3" ~ "1",
-            TRUE ~ band_tailed_pigeon),
-        brant =
-          dplyr::case_when(
-            record_key == "record_1" ~ "0",
-            record_key == "record_2" ~ NA,
-            record_key == "record_3" ~ "1",
-            TRUE ~ brant),
-        seaducks =
-          dplyr::case_when(
-            record_key == "record_1" ~ "0",
-            record_key == "record_2" ~ NA,
-            record_key == "record_3" ~ "1",
-            TRUE ~ seaducks)) |>
-      clean())
+        filter(record_key == "record_1") |>
+        mutate(across(contains(REF_BAG_FIELDS), \(x) "0")),
+      DF_TEST_TINI_READ |>
+        filter(record_key == "record_2") |>
+        mutate(across(contains(REF_BAG_FIELDS), \(x) "1")),
+      DF_TEST_TINI_READ |>
+        filter(record_key == "record_3") |>
+        mutate(across(contains(REF_BAG_FIELDS), \(x) NA)))
+
+  suppressMessages(test_clean <- clean(test_data))
 
   expect_equal(nrow(DF_TEST_TINI_READ)-2, nrow(test_clean))
 })
@@ -95,26 +43,15 @@ test_that("filter out any record with all-NA or all-0 bag values", {
 test_that("filter out if firstname, lastname, state, or DOB missing", {
 
   test_missing <-
-    bind_rows(
-      DF_TEST_TINI_READ |>
-        dplyr::mutate(
-          firstname = ifelse(record_key == "record_1", NA, firstname),
-          lastname = ifelse(record_key == "record_2", NA, lastname),
-          state = ifelse(record_key == "record_3", NA, state),
-        ),
-      DF_TEST_TINI_READ |>
-        dplyr::mutate(
-          record_key =
-            dplyr::case_when(
-              record_key == "record_1" ~ "record_a",
-              record_key == "record_2" ~ "record_b",
-              record_key == "record_3" ~ "record_c",
-              TRUE ~ record_key),
-          birth_date = ifelse(record_key == "record_a", NA, birth_date)
-        )
-      )
+    DF_TEST_MINI |>
+    dplyr::slice_head(n = 10) |>
+    dplyr::mutate(
+      firstname = ifelse(record_key == "record_1", NA, firstname),
+      lastname = ifelse(record_key == "record_2", NA, lastname),
+      state = ifelse(record_key == "record_3", NA, state),
+      birth_date = ifelse(record_key == "record_4", NA, birth_date))
 
-  test_clean <- suppressMessages(clean(test_missing))
+  suppressMessages(invisible(capture.output(test_clean <- clean(test_missing))))
 
   expect_equal(nrow(test_missing)-4, nrow(test_clean))
 })
@@ -146,9 +83,6 @@ test_that("filter out if email AND city AND zip are missing", {
 
 # names to uppercase ------------------------------------------------------
 
-# # Convert firstname, lastname, and suffix to upper case
-# namesToUppercase()
-
 test_that("firstname converted to uppercase", {
   expect_true(
     unique(stringr::str_detect(DF_TEST_TINI_CLEANED$firstname, "^[^a-z]+$"))
@@ -177,33 +111,28 @@ test_that("suffix converted to uppercase", {
 
 test_that("filter out test records", {
 
-  test_missing <-
-    bind_rows(
-      DF_TEST_TINI_READ |>
-        dplyr::mutate(
-          firstname =
-            dplyr::case_when(
-              record_key == "record_1" ~ "TEST",
-              record_key == "record_2" ~ "TEST",
-              record_key == "record_3" ~ "INAUDIBLE",
-              TRUE ~ record_key),
-          lastname = ifelse(record_key == "record_1", "TEST", lastname)),
-      DF_TEST_TINI_READ |>
-        dplyr::mutate(
-          firstname =
-            dplyr::case_when(
-              record_key == "record_1" ~ "BLANK",
-              record_key == "record_2" ~ "USER",
-              record_key == "record_3" ~ "RESIDENT",
-              TRUE ~ firstname)),
-      DF_TEST_TINI_READ |>
-        dplyr::mutate(
-          lastname = ifelse(record_key == "record_1", "INAUDIBLE", lastname))
-    )
+  test_data <-
+    DF_TEST_MINI |>
+    dplyr::slice_head(n = 10) |>
+    dplyr::mutate(
+      firstname =
+        dplyr::case_when(
+          record_key == "record_1" ~ "TEST",
+          record_key == "record_2" ~ "TEST",
+          record_key == "record_3" ~ "INAUDIBLE",
+          record_key == "record_4" ~ "BLANK",
+          record_key == "record_5" ~ "USER",
+          record_key == "record_6" ~ "RESIDENT",
+          TRUE ~ firstname),
+      lastname =
+        dplyr::case_when(
+          record_key == "record_1" ~ "TEST",
+          record_key == "record_7" ~ "INAUDIBLE",
+          TRUE ~ lastname))
 
-  test_clean <- suppressMessages(clean(test_missing))
+  suppressMessages(invisible(capture.output(test_clean <- clean(test_data))))
 
-  expect_equal(nrow(test_missing)-7, nrow(test_clean))
+  expect_equal(nrow(test_data)-7, nrow(test_clean))
 })
 
 # zip formatting ----------------------------------------------------------
@@ -241,99 +170,35 @@ test_that("zips formatted correctly", {
 # solo permit DNH ---------------------------------------------------------
 
 test_that("change in-line permit record hunt_mig_birds value to 2", {
-  test_data <-
-    dplyr::bind_rows(
-      DF_TEST_TINI_READ,
-      DF_TEST_TINI_READ |>
-        mutate(
-          record_key =
-            dplyr::case_when(
-              record_key == "record_1" ~ "record_a",
-              record_key == "record_2" ~ "record_b",
-              record_key == "record_3" ~ "record_c",
-              TRUE ~ record_key))
-      ) |>
+
+  inline_pmt_test <-
+    DF_TEST_MINI |>
+    dplyr::slice_sample(n = 3) |>
     dplyr::mutate(
-      hunt_mig_birds =
-        dplyr::case_when(
-          record_key == "record_1" ~ "0",
-          record_key == "record_a" ~ "1",
-          record_key == "record_2" ~ "1",
-          record_key == "record_b" ~ "0",
-          record_key %in% c("record_3", "record_c") ~ "2",
-          TRUE ~ ducks_bag),
-      dl_state =
-        dplyr::case_when(
-          record_key %in% c("record_1", "record_a") ~ "WA",
-          record_key %in% c("record_2", "record_b") ~ "OR",
-          record_key %in% c("record_3", "record_c") ~ "IL",
-          TRUE ~ ducks_bag),
-      ducks_bag =
-        dplyr::case_when(
-          record_key %in% c("record_1", "record_a") ~ "0",
-          record_key %in% c("record_2", "record_b") ~ "0",
-          record_key %in% c("record_3", "record_c") ~ ducks_bag,
-          TRUE ~ ducks_bag),
-      geese_bag =
-        dplyr::case_when(
-          record_key %in% c("record_1", "record_a") ~ "0",
-          record_key %in% c("record_2", "record_b") ~ "0",
-          record_key %in% c("record_3", "record_c") ~ geese_bag,
-          TRUE ~ geese_bag),
-      dove_bag =
-        dplyr::case_when(
-          record_key %in% c("record_1", "record_a") ~ "0",
-          record_key %in% c("record_2", "record_b") ~ "0",
-          record_key %in% c("record_3", "record_c") ~ dove_bag,
-          TRUE ~ dove_bag),
-      woodcock_bag =
-        dplyr::case_when(
-          record_key %in% c("record_1", "record_a") ~ "0",
-          record_key %in% c("record_2", "record_b") ~ "0",
-          record_key %in% c("record_3", "record_c") ~ woodcock_bag,
-          TRUE ~ woodcock_bag),
-      coots_snipe =
-        dplyr::case_when(
-          record_key %in% c("record_1", "record_a") ~ "0",
-          record_key %in% c("record_2", "record_b") ~ "0",
-          record_key %in% c("record_3", "record_c") ~ coots_snipe,
-          TRUE ~ coots_snipe),
-      rails_gallinules =
-        dplyr::case_when(
-          record_key %in% c("record_1", "record_a") ~ "0",
-          record_key %in% c("record_2", "record_b") ~ "0",
-          record_key %in% c("record_3", "record_c") ~ rails_gallinules,
-          TRUE ~ rails_gallinules),
-      cranes =
-        dplyr::case_when(
-          record_key %in% c("record_1", "record_a") ~ "0",
-          record_key %in% c("record_2", "record_b") ~ "0",
-          record_key %in% c("record_3", "record_c") ~ cranes,
-          TRUE ~ cranes),
-      band_tailed_pigeon =
-        dplyr::case_when(
-          record_key == "record_1" ~ "2",
-          record_key == "record_a" ~ "2",
-          record_key == "record_2" ~ "0",
-          record_key == "record_b" ~ "0",
-          record_key %in% c("record_3", "record_c") ~ band_tailed_pigeon,
-          TRUE ~ band_tailed_pigeon),
-      brant =
-        dplyr::case_when(
-          record_key == "record_1" ~ "2",
-          record_key == "record_a" ~ "0",
-          record_key == "record_2" ~ "2",
-          record_key == "record_b" ~ "0",
-          record_key %in% c("record_3", "record_c") ~ brant,
-          TRUE ~ brant),
-      seaducks =
-        dplyr::case_when(
-          record_key == "record_1" ~ "2",
-          record_key == "record_a" ~ "0",
-          record_key == "record_2" ~ "0",
-          record_key == "record_b" ~ "2",
-          record_key %in% c("record_3", "record_c") ~ seaducks,
-          TRUE ~ seaducks))
+      across(matches("bag|crane|coot|rail"), \(x) "0"),
+      band_tailed_pigeon = ifelse(dplyr::row_number() == 1, "2", "0"),
+      brant = ifelse(dplyr::row_number() == 2, "2", "0"),
+      seaducks = ifelse(dplyr::row_number() == 3, "2", "0"))
+
+  test_data <-
+    bind_rows(
+      inline_pmt_test |>
+        mutate(
+          dl_state = "WA",
+          hunt_mig_birds = "0"),
+      inline_pmt_test |>
+        mutate(
+          dl_state = "WA",
+          hunt_mig_birds = "1"),
+      inline_pmt_test |>
+        mutate(
+          dl_state = "OR",
+          hunt_mig_birds = "0"),
+      inline_pmt_test |>
+        mutate(
+          dl_state = "OR",
+          hunt_mig_birds = "1")
+      )
 
   cleaned_data <- suppressMessages(clean(test_data))
 
@@ -344,45 +209,20 @@ test_that("change in-line permit record hunt_mig_birds value to 2", {
 
 test_that("change crane permit file state crane bag values to 0", {
   test_data <-
-    dplyr::bind_rows(
-      DF_TEST_TINI_READ,
-      DF_TEST_TINI_READ |>
-        mutate(
-          record_key =
-            dplyr::case_when(
-              record_key == "record_1" ~ "record_a",
-              record_key == "record_2" ~ "record_b",
-              record_key == "record_3" ~ "record_c",
-              TRUE ~ record_key)),
-      DF_TEST_TINI_READ |>
-        mutate(
-          record_key =
-            dplyr::case_when(
-              record_key == "record_1" ~ "record_x",
-              record_key == "record_2" ~ "record_y",
-              record_key == "record_3" ~ "record_z",
-              TRUE ~ record_key)),
-      DF_TEST_TINI_READ |>
-        mutate(
-          record_key =
-            dplyr::case_when(
-              record_key == "record_1" ~ "record_q",
-              record_key == "record_2" ~ "record_r",
-              record_key == "record_3" ~ "record_s",
-              TRUE ~ record_key))
-    ) |>
-    mutate(
+    DF_TEST_MINI |>
+    dplyr::slice_head(n = 12) |>
+    dplyr::mutate(
       dl_state =
         dplyr::case_when(
           record_key == "record_1" ~ "CO",
           record_key == "record_2" ~ "KS",
           record_key == "record_3" ~ "MN",
-          record_key == "record_a" ~ "MT",
-          record_key == "record_b" ~ "ND",
-          record_key == "record_c" ~ "NM",
-          record_key == "record_x" ~ "OK",
-          record_key == "record_y" ~ "TX",
-          record_key == "record_z" ~ "WY",
+          record_key == "record_4" ~ "MT",
+          record_key == "record_5" ~ "ND",
+          record_key == "record_6" ~ "NM",
+          record_key == "record_7" ~ "OK",
+          record_key == "record_8" ~ "TX",
+          record_key == "record_9" ~ "WY",
           TRUE ~ "SD"),
       cranes = "2")
 
@@ -397,24 +237,15 @@ test_that("change crane permit file state crane bag values to 0", {
 
 test_that("change BTPI permit file state BTPI bag values to 0", {
   test_data <-
-    dplyr::bind_rows(
-      DF_TEST_TINI_READ,
-      DF_TEST_TINI_READ |>
-        mutate(
-          record_key =
-            dplyr::case_when(
-              record_key == "record_1" ~ "record_a",
-              record_key == "record_2" ~ "record_b",
-              record_key == "record_3" ~ "record_c",
-              TRUE ~ record_key))
-    ) |>
-    mutate(
+    DF_TEST_MINI |>
+    dplyr::slice_head(n = 10) |>
+    dplyr::mutate(
       dl_state =
         dplyr::case_when(
           record_key == "record_1" ~ "CO",
           record_key == "record_2" ~ "NM",
           record_key == "record_3" ~ "UT",
-          record_key == "record_a" ~ "CA",
+          record_key == "record_4" ~ "CA",
           TRUE ~ "AZ"),
       band_tailed_pigeon = "2")
 
