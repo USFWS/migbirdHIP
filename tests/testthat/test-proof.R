@@ -307,7 +307,54 @@ test_that("bad last names fail proofing", {
 # suffix ------------------------------------------------------------------
 
 test_that("good suffixes pass proofing", {
-  good_suffixes <- tibble(suffix = c(REF_SUFFIXES, NA))
+  good_suffixes <-
+    tibble(
+      suffix =
+        c(
+          NA,
+          "I",
+          "II",
+          "III",
+          "IV",
+          "V",
+          "VI",
+          "VII",
+          "VIII",
+          "IX",
+          "X",
+          "XI",
+          "XII",
+          "XIII",
+          "XIV",
+          "XV",
+          "XVI",
+          "XVII",
+          "XIX",
+          "XX",
+          "1ST",
+          "2ND",
+          "3RD",
+          "4TH",
+          "5TH",
+          "6TH",
+          "7TH",
+          "8TH",
+          "9TH",
+          "10TH",
+          "11TH",
+          "12TH",
+          "13TH",
+          "14TH",
+          "15TH",
+          "16TH",
+          "17TH",
+          "18TH",
+          "19TH",
+          "20TH",
+          "JR",
+          "SR"
+        ))
+
   good_suffixes_filtered <-
     good_suffixes |>
     filter(!suffix %in% c(REF_SUFFIXES, NA))
