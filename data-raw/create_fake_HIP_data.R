@@ -194,8 +194,6 @@ upload_dates <-
 
 file_dates <- paste0(REF_CURRENT_SEASON, upload_dates, ".txt")
 
-yr <- as.numeric(REF_CURRENT_SEASON)
-
 # messy selections --------------------------------------------------------
 
 # Select some hunters for intentional errors: change to NA, add a hyphen, add a
@@ -572,6 +570,12 @@ DF_TEST_MINI <-
   dplyr::relocate(source_file, .after = "dl_date") |>
   dplyr::relocate(dl_key, .after = "dl_cycle")
 
+# Write mini data to extdata directory
+usethis::use_data(DF_TEST_MINI, overwrite = T)
+
+# Define season year
+yr <- as.numeric(REF_CURRENT_SEASON)
+
 # Tini test data
 DF_TEST_TINI_READ <-
   DF_TEST_MINI |>
@@ -585,9 +589,6 @@ DF_TEST_TINI_CURRENT <- issueCheck(DF_TEST_TINI_CLEANED, yr)
 DF_TEST_TINI_DEDUPED <- duplicateFix(DF_TEST_TINI_CURRENT)
 DF_TEST_TINI_PROOFED <- proof(DF_TEST_TINI_DEDUPED, yr)
 DF_TEST_TINI_CORRECTED <- correct(DF_TEST_TINI_PROOFED, yr)
-
-# Write mini data to extdata directory
-usethis::use_data(DF_TEST_MINI, overwrite = T)
 
 # Write partially processed tini data to extdata directory
 usethis::use_data(DF_TEST_TINI_READ, overwrite = T)
