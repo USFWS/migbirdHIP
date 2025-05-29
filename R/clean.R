@@ -20,12 +20,11 @@ clean <-
       filter(!(!!LOGIC_NONDIGIT_BAGS)) |>
       # Filter out any record with all-NA or all-0 bag values
       filter(!(!!LOGIC_ZERO_BAGS)) |>
-      # Filter out records if firstname, lastname, city of residence, state of
-      # residence, or date of birth are missing -- records discarded because
-      # these are needed to identify individuals. Filter out any other
-      # additional records if they are missing a value for email AND elements of
-      # a physical address that are required to determine where to mail a
-      # letter.
+      # Filter out records if firstname, lastname, state, or date of birth are
+      # missing; records discarded because these are needed to identify
+      # individuals and cannot be otherwise determined. Also, filter out records
+      # if they are missing a value for email AND combinations of elements of a
+      # physical address that are required to determine where to mail a letter.
       missingPIIFilter() |>
       # Convert firstname, lastname, and suffix to upper case
       namesToUppercase() |>
