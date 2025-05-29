@@ -55,7 +55,7 @@ proof <-
           mutate(error = "firstname"),
         # Middle initial
         keyed_data |>
-          filter(!middle %in% LETTERS) |>
+          filter(!middle %in% c(LETTERS, NA)) |>
           mutate(error = "middle"),
         # Last name
         keyed_data |>
@@ -63,7 +63,7 @@ proof <-
           mutate(error = "lastname"),
         # Suffix
         keyed_data |>
-          filter(!suffix %in% REF_SUFFIXES) |>
+          filter(!suffix %in% c(REF_SUFFIXES, NA)) |>
           mutate(error = "suffix"),
         # Address
         keyed_data |>

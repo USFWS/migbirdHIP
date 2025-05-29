@@ -151,11 +151,11 @@ test_that("bad first names fail proofing", {
 # middle ------------------------------------------------------------------
 
 test_that("good middle initials pass proofing", {
-  good_middles <- tibble(middle = LETTERS)
+  good_middles <- tibble(middle = c(LETTERS, NA))
 
   good_middles_filtered <-
     good_middles |>
-    filter(!middle %in% LETTERS)
+    filter(!middle %in% c(LETTERS, NA))
 
   expect_equal(nrow(good_middles_filtered), 0)
 })
@@ -287,8 +287,10 @@ test_that("bad last names fail proofing", {
 # suffix ------------------------------------------------------------------
 
 test_that("good suffixes pass proofing", {
-  good_suffixes <- tibble(suffix = REF_SUFFIXES)
-  good_suffixes_filtered <- filter(good_suffixes, !suffix %in% REF_SUFFIXES)
+  good_suffixes <- tibble(suffix = c(REF_SUFFIXES, NA))
+  good_suffixes_filtered <-
+    good_suffixes |>
+    filter(!suffix %in% c(REF_SUFFIXES, NA))
 
   expect_equal(nrow(good_suffixes_filtered), 0)
 })
