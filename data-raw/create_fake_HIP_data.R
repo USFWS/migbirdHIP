@@ -580,8 +580,8 @@ DF_TEST_TINI_READ <-
   dplyr::mutate(record_key = paste0("record_", dplyr::row_number()))
 
 # Partially process tini test data
-DF_TEST_TINI_CLEANED <- clean(DF_TEST_TINI_RAW)
-DF_TEST_TINI_CURRENT <- issueCheck(DF_TEST_TINI_CLEAN, yr)
+DF_TEST_TINI_CLEANED <- clean(DF_TEST_TINI_READ)
+DF_TEST_TINI_CURRENT <- issueCheck(DF_TEST_TINI_CLEANED, yr)
 DF_TEST_TINI_DEDUPED <- duplicateFix(DF_TEST_TINI_CURRENT)
 DF_TEST_TINI_PROOFED <- proof(DF_TEST_TINI_DEDUPED, yr)
 DF_TEST_TINI_CORRECTED <- correct(DF_TEST_TINI_PROOFED, yr)
