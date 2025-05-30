@@ -13,7 +13,7 @@ test_that("errors field contains errors", {
     mutate(zip = "000000")
 
   test_proof <- proof(error_data, as.numeric(REF_CURRENT_SEASON))
-  expect_false(nrow(filter(test_proof, is.na(errors))) == 0)
+  expect_true(nrow(filter(test_proof, is.na(errors))) == 0)
 })
 
 test_that("proof input and output have the same number of records", {
