@@ -66,18 +66,14 @@ issueCheck <-
           arrange(desc(n))
       )
     }
-    # Return message if any issue_date is after the file was submitted
-    if(nrow(filter(clean_data, mdy(issue_date) > ymd(dl_date))) > 0) {
-      message(
-        "Error: issue_date in the future detected (relative to file name).")
-      print(
-        filter(issue_assignments, mdy(issue_date) > ymd(dl_date)) |>
-          count(source_file, dl_state, issue_date, registration_yr, dl_date)
-      )
-    }
+
     # Return message if issue_date = "00/00/0000" detected
     if(TRUE %in% str_detect(clean_data$issue_date, "00/00/0000")) {
-      message("Error: issue_date value of 00/00/0000 detected.")
+      message(
+        paste(
+          "Error: issue_date value of 00/00/0000 detected in",
+          nrow(filter(clean_data, issue_date == "00/00/0000")),
+          "record(s), which will be dropped."))
     }
     # Return message if "bad issue dates" detected
     if(TRUE %in% str_detect(issue_assignments$decision, "bad issue dates")) {
@@ -131,6 +127,16 @@ issueCheck <-
       # Filter out past data
       filter(decision != "past") |>
       select(-decision)
+
+    # Return message if any issue_date is after the file was submitted
+    if(nrow(filter(current_data, mdy(issue_date) > ymd(dl_date))) > 0) {
+      message(
+        "Error: issue_date in the future detected (relative to file name).")
+      print(
+        filter(issue_assignments, mdy(issue_date) > ymd(dl_date)) |>
+          count(source_file, dl_state, issue_date, registration_yr, dl_date)
+      )
+    }
 
     return(current_data)
   }
