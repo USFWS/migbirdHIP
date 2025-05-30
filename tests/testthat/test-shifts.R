@@ -1,4 +1,4 @@
-test_that("glyphCheck finds non-utf8 characters", {
+test_that("shiftCheck finds line shifts", {
 
   shifted_data <-
     DF_TEST_TINI_READ |>
