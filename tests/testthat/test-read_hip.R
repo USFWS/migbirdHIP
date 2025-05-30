@@ -96,9 +96,37 @@ test_that("ignoreLifetime works", {
 
 # idBlankFiles ------------------------------------------------------------
 
+test_that("idBlankFiles works", {
+
+  files_listed <-
+    listFiles(
+      paste0(here::here(), "/inst/extdata/DL0902/"),
+      as.numeric(REF_CURRENT_SEASON))
+
+  blanks <- idBlankFiles(files_listed) |> filter(check == "blank")
+
+  expect_true(nrow(blanks) == 1)
+})
 
 # dropBlankFiles ----------------------------------------------------------
 
+test_that("idBlankFiles works", {
+
+  files_listed <-
+    listFiles(
+      paste0(here::here(), "/inst/extdata/DL0902/"),
+      as.numeric(REF_CURRENT_SEASON))
+
+  suppressMessages(
+    invisible(
+      capture.output(
+        blanks <-
+          dropBlankFiles(idBlankFiles(files_listed)) |>
+          filter(check == "blank")
+      )))
+
+  expect_true(nrow(blanks) == 0)
+})
 
 # checkFileNameDateFormat -------------------------------------------------
 

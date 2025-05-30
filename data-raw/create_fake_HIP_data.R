@@ -573,6 +573,11 @@ write_test_data(split_fake_hip, 3, 3, "/inst/extdata/DL0902/hold/")
 write_test_data(split_fake_hip, 23, 23, "/inst/extdata/DL0902/lifetime/")
 write_test_data(split_fake_hip, 12, 12, "/inst/extdata/DL0902/permit/")
 
+# Write empty file
+file.create(
+  paste0(
+    here::here(), "/inst/extdata/DL0902/FL", REF_CURRENT_SEASON, "0910.txt"))
+
 # write mini and tini fake HIP data to R package --------------------------
 
 # Mini test data
