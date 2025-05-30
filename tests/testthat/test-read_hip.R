@@ -6,9 +6,7 @@ test_that("read_hip works for single state", {
     invisible(
       capture.output(
         read_data <-
-          read_hip(
-            paste0(here::here(), "/inst/extdata/DL0901/"),
-            state = "RI")
+          read_hip(testthat::test_path("data", "DL0902"), state = "PA")
         )))
 
   expect_true(nrow(read_data) > 0)
@@ -19,12 +17,10 @@ test_that("read_hip works for a download", {
   suppressMessages(
     invisible(
       capture.output(
-        read_data <-
-          read_hip(
-            paste0(here::here(), "/inst/extdata/DL0901/"))
+        read_data <- read_hip(testthat::test_path("data", "DL0902"))
         )))
 
-  expect_true(length(unique(read_data$dl_state)) == 49)
+  expect_true(length(unique(read_data$dl_state)) == 2)
 })
 
 # listFiles function ------------------------------------------------------
@@ -33,23 +29,23 @@ test_that("listFiles works", {
 
   files_listed <-
     listFiles(
-      paste0(here::here(), "/inst/extdata/DL0901/"),
+      paste0(testthat::test_path("data", "DL0902"), "/"),
       as.numeric(REF_CURRENT_SEASON))
 
-  expect_true(nrow(files_listed) == 49)
+  expect_true(nrow(files_listed) == 6)
 })
 
 # ignorePermits -----------------------------------------------------------
 
 test_that("ignorePermits works", {
 
-  bad_file <- list.files(paste0(here::here(), "/inst/extdata/DL0902/permit/"))
+  bad_file <- list.files(testthat::test_path("data", "DL0902", "permit"))
 
   suppressMessages(
     invisible(
       capture.output(
         read_data_files <-
-          read_hip(paste0(here::here(), "/inst/extdata/DL0902/")) |>
+          read_hip(testthat::test_path("data", "DL0902")) |>
           distinct(source_file) |>
           pull()
         )))
@@ -62,13 +58,13 @@ test_that("ignorePermits works", {
 
 test_that("ignoreHolds works", {
 
-  bad_file <- list.files(paste0(here::here(), "/inst/extdata/DL0902/hold/"))
+  bad_file <- list.files(testthat::test_path("data", "DL0902", "hold"))
 
   suppressMessages(
     invisible(
       capture.output(
         read_data_files <-
-          read_hip(paste0(here::here(), "/inst/extdata/DL0902/")) |>
+          read_hip(testthat::test_path("data", "DL0902")) |>
           distinct(source_file) |>
           pull()
       )))
@@ -80,13 +76,13 @@ test_that("ignoreHolds works", {
 
 test_that("ignoreLifetime works", {
 
-  bad_file <- list.files(paste0(here::here(), "/inst/extdata/DL0902/lifetime/"))
+  bad_file <- list.files(testthat::test_path("data", "DL0902", "lifetime"))
 
   suppressMessages(
     invisible(
       capture.output(
         read_data_files <-
-          read_hip(paste0(here::here(), "/inst/extdata/DL0902/")) |>
+          read_hip(testthat::test_path("data", "DL0902")) |>
           distinct(source_file) |>
           pull()
       )))
@@ -100,7 +96,7 @@ test_that("idBlankFiles works", {
 
   files_listed <-
     listFiles(
-      paste0(here::here(), "/inst/extdata/DL0902/"),
+      testthat::test_path("data", "DL0902"),
       as.numeric(REF_CURRENT_SEASON))
 
   blanks <- idBlankFiles(files_listed) |> filter(check == "blank")
@@ -114,7 +110,7 @@ test_that("idBlankFiles works", {
 
   files_listed <-
     listFiles(
-      paste0(here::here(), "/inst/extdata/DL0902/"),
+      testthat::test_path("data", "DL0902"),
       as.numeric(REF_CURRENT_SEASON))
 
   suppressMessages(
