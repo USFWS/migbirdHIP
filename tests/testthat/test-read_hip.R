@@ -130,7 +130,26 @@ test_that("idBlankFiles works", {
 
 # checkFileNameDateFormat -------------------------------------------------
 
+test_that("checkFileNameDateFormat works for MMDDYYYY", {
+
+  suppressMessages(
+    invisible(
+      capture.output(
+        badformat <- checkFileNameDateFormat("MD02022024.txt")
+      )))
+
+  expect_true(badformat == "error")
+})
 
 # checkFileNameStateAbbr --------------------------------------------------
 
+test_that("checkFileNameStateAbbr works", {
 
+  suppressMessages(
+    invisible(
+      capture.output(
+        badformat <- checkFileNameStateAbbr("md20241010.txt")
+      )))
+
+  expect_true(badformat == "error")
+})
