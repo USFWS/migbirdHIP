@@ -168,6 +168,73 @@ test_that("multiple solo PMTs retained, OR", {
 
 # SD and BR state ---------------------------------------------------------
 
+test_that("HIP duplicates resolved in SD and BR state, DE", {
+
+  hip_test <-
+    DF_TEST_MINI |>
+    dplyr::slice_head(n = 3) |>
+    dplyr::mutate(
+      dl_state = "DE",
+      brant =
+        case_when(
+          record_key == "record_1" ~ "2",
+          record_key == "record_2" ~ "0",
+          record_key == "record_3" ~ "2",
+          TRUE ~ "0"),
+      seaducks =
+        case_when(
+          record_key == "record_1" ~ "0",
+          record_key == "record_2" ~ "2",
+          record_key == "record_3" ~ "2",
+          TRUE ~ "0"))
+
+  duplicated_data <-
+    bind_rows(
+      hip_test,
+      hip_test |> mutate(brant = "0", seaducks = "0"))
+
+  deduped_data <- duplicateFix(duplicated_data)
+
+  expect_equal(
+    nrow(hip_test),
+    nrow(deduped_data)
+  )
+
+  br <- c("record_1", "record_3")
+  sd <- c("record_2", "record_3")
+
+  expect_true(
+    "2" == unique(deduped_data$brant[deduped_data$record_key %in% br])
+  )
+
+  expect_true(
+    "2" == unique(deduped_data$seaducks[deduped_data$record_key %in% sd])
+  )
+})
 
 # SD only state -----------------------------------------------------------
 
+test_that("HIP duplicates resolved in SD and BR state, ME", {
+
+  hip_test <-
+    DF_TEST_MINI |>
+    dplyr::slice_head(n = 1) |>
+    dplyr::mutate(
+      dl_state = "ME",
+      brant = "0",
+      seaducks = "2")
+
+  duplicated_data <-
+    bind_rows(
+      hip_test,
+      hip_test |> mutate(seaducks = "0"))
+
+  deduped_data <- duplicateFix(duplicated_data)
+
+  expect_equal(
+    nrow(hip_test),
+    nrow(deduped_data)
+  )
+
+  expect_true("2" == deduped_data$seaducks)
+})
