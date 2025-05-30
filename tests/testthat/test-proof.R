@@ -8,7 +8,11 @@ test_that("errors field created", {
 
 test_that("errors field contains errors", {
 
-  test_proof <- proof(DF_TEST_TINI_DEDUPED, as.numeric(REF_CURRENT_SEASON))
+  error_data <-
+    DF_TEST_TINI_DEDUPED |>
+    mutate(zip = "000000")
+
+  test_proof <- proof(error_data, as.numeric(REF_CURRENT_SEASON))
   expect_false(nrow(filter(test_proof, is.na(errors))) == 0)
 })
 

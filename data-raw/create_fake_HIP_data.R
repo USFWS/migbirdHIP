@@ -528,20 +528,52 @@ split_fake_hip <-
     fake_hip_with_duplicates |> dplyr::select(-source_file),
     f = fake_hip_with_duplicates$source_file)
 
-# write to R package ------------------------------------------------------
+# write fake HIP data to R package ----------------------------------------
 
-# Write 49 files to extdata dir
-purrr::walk(
-  1:length(split_fake_hip),
-  \(x) gdata::write.fwf(
-    as.data.frame(split_fake_hip[[x]]),
-    file =
-      paste0(here::here(), "/inst/extdata/DL0901/", names(split_fake_hip[x])),
-    sep = "",
-    colnames = F,
-    width = c(1, 15, 1, 20, 3, 60, 20, 2, 10, 10, 10,
-              1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4, 100))
-)
+# # Create download data directories
+# dir.create(paste0(here::here(), "/inst/extdata/DL0901/"))
+# dir.create(paste0(here::here(), "/inst/extdata/DL0902/"))
+#
+# # Create accessory folders
+# dir.create(paste0(here::here(), "/inst/extdata/DL0902/hold/"))
+# dir.create(paste0(here::here(), "/inst/extdata/DL0902/permit/"))
+# dir.create(paste0(here::here(), "/inst/extdata/DL0902/lifetime/"))
+
+# Delete existing files in extdata/DL0901/ dir
+file.remove(
+  file.path(paste0(here::here(), "/inst/extdata/DL0901/"),
+            dir(path = paste0(here::here(), "/inst/extdata/DL0901/"),
+                pattern = "*.txt")))
+
+# Create test data writing function
+write_test_data <-
+  function(test_data_list, n_start, n_end, out_dir) {
+    purrr::walk(
+      n_start:n_end,
+      \(x) gdata::write.fwf(
+        as.data.frame(test_data_list[[x]]),
+        file =
+          paste0(here::here(), out_dir, names(test_data_list[x])),
+        sep = "",
+        colnames = F,
+        width = c(1, 15, 1, 20, 3, 60, 20, 2, 10, 10, 10,
+                  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4, 100))
+    )
+  }
+
+# Write 49 files to extdata/DL0901/ dir
+write_test_data(split_fake_hip, 1, 49, "/inst/extdata/DL0901/")
+
+# Write 2 files to extdata/DL0902/ dir (to simulate duplicates across downloads)
+write_test_data(split_fake_hip, 36, 37, "/inst/extdata/DL0902/")
+
+# Write 1 file each to extdata/DL0902/ subdirs hold, lifetime, and permit (for
+# testing read_hip)
+write_test_data(split_fake_hip, 3, 3, "/inst/extdata/DL0902/hold/")
+write_test_data(split_fake_hip, 23, 23, "/inst/extdata/DL0902/lifetime/")
+write_test_data(split_fake_hip, 12, 12, "/inst/extdata/DL0902/permit/")
+
+# write mini and tini fake HIP data to R package --------------------------
 
 # Mini test data
 DF_TEST_MINI <-
@@ -590,7 +622,9 @@ DF_TEST_TINI_DEDUPED <- duplicateFix(DF_TEST_TINI_CURRENT)
 DF_TEST_TINI_PROOFED <- proof(DF_TEST_TINI_DEDUPED, yr)
 DF_TEST_TINI_CORRECTED <- correct(DF_TEST_TINI_PROOFED, yr)
 
-# Write partially processed tini data to extdata directory
+# Write partially processed tini data to extdata directory (note: all must
+# contain 3 records, if any records are dropped during the above functions
+# re-sample DF_TEST_TINI_READ)
 usethis::use_data(DF_TEST_TINI_READ, overwrite = T)
 usethis::use_data(DF_TEST_TINI_CLEANED, overwrite = T)
 usethis::use_data(DF_TEST_TINI_CURRENT, overwrite = T)
