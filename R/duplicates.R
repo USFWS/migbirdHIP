@@ -272,7 +272,7 @@ duplicateAllOnes <-
         all_ones =
           pmap_chr(
             select(duplicates, all_of(REF_BAG_FIELDS)),
-            ~ifelse(all(c(...) == "1"), "all_1s", "not_all_1s"))
+            \(...) ifelse(all(c(...) == "1"), "all_1s", "not_all_1s"))
       )
   }
 
