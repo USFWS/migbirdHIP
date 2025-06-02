@@ -143,13 +143,13 @@ write_hip <-
     bag_translations <-
       map(
         1:length(REF_BAG_FIELDS),
-        ~REF_BAGS |>
-          filter(spp == REF_BAG_FIELDS[.x]) |>
-          mutate(!!sym(REF_BAG_FIELDS[.x]) := as.character(stateBagValue)) |>
+        \(x) REF_BAGS |>
+          filter(spp == REF_BAG_FIELDS[x]) |>
+          mutate(!!sym(REF_BAG_FIELDS[x]) := as.character(stateBagValue)) |>
           select(-c("stateBagValue", "spp")) |>
           rename(
             dl_state = state,
-            !!sym(REF_STRATA_NAMES[.x]) := FWSstratum)
+            !!sym(REF_STRATA_NAMES[x]) := FWSstratum)
       )
 
     # Left join all the bag translations to the corrected data
@@ -166,17 +166,17 @@ write_hip <-
     zero_translations <-
       map(
         1:length(REF_BAG_FIELDS),
-        ~REF_BAGS |>
+        \(x) REF_BAGS |>
           select(-stateBagValue) |>
           group_by(state, spp) |>
           filter(n() == 1) |>
           ungroup() |>
-          filter(spp == REF_BAG_FIELDS[.x]) |>
-          mutate(!!sym(REF_STRATA_NAMES[.x]) := NA) |>
+          filter(spp == REF_BAG_FIELDS[x]) |>
+          mutate(!!sym(REF_STRATA_NAMES[x]) := NA) |>
           select(-spp) |>
           rename(
             dl_state = state,
-            !!sym(paste0(REF_STRATA_NAMES[.x], "_0s")) := FWSstratum)
+            !!sym(paste0(REF_STRATA_NAMES[x], "_0s")) := FWSstratum)
       )
 
     # If a season doesn't exist, make sure the translation is 0 (not NA)
@@ -239,12 +239,12 @@ write_hip <-
 
       walk(
         1:length(final_list),
-        ~fwrite(
-          final_list[[.x]],
+        \(x) fwrite(
+          final_list[[x]],
           file =
             str_replace(
               paste0(path,
-                     final_list[[.x]] |>
+                     final_list[[x]] |>
                        distinct(source_file) |>
                        pull()),
               "\\.(txt|xlsx|xls)$",
