@@ -214,9 +214,14 @@ REGEX_EMAIL <-
 
 # Regular expression for an obfuscative email address local-part
 REGEX_EMAIL_OBFUSCATIVE_LOCALPART <-
-  "^(none|no|na|not|non|nomail|noemail|noreply|customer|unknown|notprovided)\\@"
+  paste0(
+    "^(none|nope|no|na|not|non|nomail|noemail|noreply|customer|unknown|",
+    "notprovided|fake|[0-9]{1,5}fake|fake[0-9]{1,5}|fake\\.fake|fakeemail|",
+    "notvalidemail|walmartfakeemail|donotreply|info)\\@")
 
 # Regular expression for an obfuscative email address domain
 REGEX_EMAIL_OBFUSCATIVE_DOMAIN <-
-  "\\@(no|na|none|example|guerillamail|tpw|twp).*$"
+  paste0(
+    "\\@(no|na|none|example|guerillamail|tpw|twp|test|spambog|fake|",
+    "email\\-fake|temp\\-mail).*$")
 
