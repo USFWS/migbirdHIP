@@ -215,9 +215,45 @@ REGEX_EMAIL <-
 # Regular expression for an obfuscative email address local-part
 REGEX_EMAIL_OBFUSCATIVE_LOCALPART <-
   paste0(
-    "^(none|nope|no|na|not|non|nomail|noemail|noreply|customer|unknown|",
-    "notprovided|fake|[0-9]{1,5}fake|fake[0-9]{1,5}|fake\\.fake|fakeemail|",
-    "notvalidemail|walmartfakeemail|donotreply|info)\\@")
+    "^((none)+|(none)+[0-9]+|[0-9]+(none)+|",
+    "none+|",
+    "o{4,100}|",
+    "n{4,100}|",
+    "e{4,100}|",
+    "noen|nnon|onoene|nnnnnne|nonen|nonoe|nnoe|onoennoneo|nonne|nnone|nnno|",
+    "onon|onoe|nonn|noeone|nonneee|nonnee|nonoeone|onne|nononon|oonono|onoen|",
+    "noneo|",
+    "(nope)+|(nope)+[0-9]+|[0-9]+(nope)+|",
+    "(no)+|(no)+[0-9]+|[0-9]+(no)+|",
+    "(na)+|(na)+[0-9]+|[0-9]+(na)+|",
+    "not|not[0-9]+|[0-9]+not|",
+    "non|non[0-9]+|[0-9]+non|",
+    "noone|noone[0-9]+|[0-9]+noone|",
+    "nomail|nomail[0-9]+|[0-9]+nomail|",
+    "noemail|noemail[0-9]+|[0-9]+noemail|",
+    "noemailaddress|noemailaddress[0-9]+|[0-9]+noemailaddress|",
+    "novalid|novalid[0-9]+|[0-9]+novalid|",
+    "nonvalid|nonvalid[0-9]+|[0-9]+nonvalid|",
+    "invalid|invalid[0-9]+|[0-9]+invalid|",
+    "notvalidemail|notvalidemail[0-9]+|[0-9]+notvalidemail|",
+    "noreply|noreply[0-9]+|[0-9]+noreply|",
+    "donotreply|donotreply[0-9]+|[0-9]+donotreply|",
+    "customer|",
+    "unknown|unknown[0-9]+|[0-9]+unknown|",
+    "notprovided|notprovided[0-9]+|[0-9]+notprovided|",
+    "refused|refused[0-9]+|[0-9]+refused|",
+    "refusedemail|refusedemail[0-9]+|[0-9]+refusedemail|",
+    "customerrefused|customerrefused[0-9]+|[0-9]+customerrefused|",
+    "nocustomer|nocustomer[0-9]+|[0-9]+nocustomer|",
+    "fake|[0-9]+fake|fake[0-9]+|",
+    "fake\\.fake|[0-9]+fake\\.fake|fake\\.fake[0-9]+|",
+    "fakeemail|[0-9]+fakeemail|fakeemail[0-9]+|",
+    "walmartfakeemail|[0-9]+walmartfakeemail|walmartfakeemail[0-9]+|",
+    "nonetpwd|[0-9]+nonetpwd|nonetpwd[0-9]+|",
+    "tpwd|[0-9]+tpwd|tpwd[0-9]+|",
+    "123|1234|12345|123456|1234567|12345678|123456789|",
+    "0{1,100}",
+    ")\\@")
 
 # Regular expression for an obfuscative email address domain
 REGEX_EMAIL_OBFUSCATIVE_DOMAIN <-
