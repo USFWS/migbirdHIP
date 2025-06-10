@@ -5,7 +5,7 @@
 \alias{DF_TEST_MINI}
 \title{Miniature fake HIP data}
 \format{
-An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 1601 rows and 30 columns.
+An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 1602 rows and 30 columns.
 }
 \usage{
 DF_TEST_MINI
