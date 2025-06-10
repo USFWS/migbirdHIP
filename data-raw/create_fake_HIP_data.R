@@ -564,14 +564,21 @@ write_test_data <-
 # Write 49 files to extdata/DL0901/ dir
 write_test_data(split_fake_hip, 1, 49, "/inst/extdata/DL0901/")
 
+# Delete existing files in /tests/testthat/data/DL0902/ dir
+file.remove(
+  file.path(paste0(here::here(), "/tests/testthat/data/DL0902/"),
+            dir(path = paste0(here::here(), "/tests/testthat/data/DL0902/"),
+                pattern = "*.txt",
+                recursive = T)))
+
 # Write 2 files to /tests/testthat/data/DL0902/ dir (for unit tests)
-write_test_data(split_fake_hip, 36, 37, "/inst/extdata/DL0902/")
+write_test_data(split_fake_hip, 36, 37, "/tests/testthat/data/DL0902/")
 
 # Write 1 file each to /tests/testthat/data/DL0902/ subdirs hold, lifetime, and
 # permit (for testing read_hip)
-write_test_data(split_fake_hip, 3, 3, "/inst/extdata/DL0902/hold/")
-write_test_data(split_fake_hip, 23, 23, "/inst/extdata/DL0902/lifetime/")
-write_test_data(split_fake_hip, 12, 12, "/inst/extdata/DL0902/permit/")
+write_test_data(split_fake_hip, 3, 3, "/tests/testthat/data/DL0902/hold/")
+write_test_data(split_fake_hip, 23, 23, "/tests/testthat/data/DL0902/lifetime/")
+write_test_data(split_fake_hip, 12, 12, "/tests/testthat/data/DL0902/permit/")
 
 # Write empty file
 file.create(
