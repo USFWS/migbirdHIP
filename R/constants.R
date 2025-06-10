@@ -216,7 +216,10 @@ REGEX_EMAIL <-
 REGEX_EMAIL_OBFUSCATIVE_LOCALPART <-
   paste0(
     "^((none)+|(none)+[0-9]+|[0-9]+(none)+|",
+    "none(abc|123)+|",
+    "none\\..+|",
     "none+|",
+    "none\\+|",
     "o{4,100}|",
     "n{4,100}|",
     "e{4,100}|",
@@ -231,8 +234,14 @@ REGEX_EMAIL_OBFUSCATIVE_LOCALPART <-
     "not|not[0-9]+|[0-9]+not|",
     "non|non[0-9]+|[0-9]+non|",
     "noone|noone[0-9]+|[0-9]+noone|",
+    "noemai|noemial|",
     "nomail|nomail[0-9]+|[0-9]+nomail|",
     "noemail|noemail[0-9]+|[0-9]+noemail|",
+    "noemailnone|",
+    "no\\.email|no\\.email[0-9]+|[0-9]+no\\.email|",
+    "nonemail|noneemail|noneemal|noneeamil|noneemsil|",
+    "nanone|",
+    "no\\-email|no\\-email[0-9]+|[0-9]+no\\-email|",
     "noemailaddress|noemailaddress[0-9]+|[0-9]+noemailaddress|",
     "novalid|novalid[0-9]+|[0-9]+novalid|",
     "nonvalid|nonvalid[0-9]+|[0-9]+nonvalid|",
@@ -240,7 +249,31 @@ REGEX_EMAIL_OBFUSCATIVE_LOCALPART <-
     "notvalidemail|notvalidemail[0-9]+|[0-9]+notvalidemail|",
     "noreply|noreply[0-9]+|[0-9]+noreply|",
     "donotreply|donotreply[0-9]+|[0-9]+donotreply|",
+    "subscribe|",
     "customer|",
+    "done|",
+    "fu|",
+    "noneya|",
+    "notavailable|",
+    "none(\\_)*available|",
+    "noneonfile|",
+    "noneprovide(d)*|",
+    "noneofyourbusiness|",
+    "nonegiven|",
+    "noneusa|",
+    "nonetext|",
+    "none.*texas|",
+    "none.*tpw(d)*|",
+    "noneyet|",
+    "noneatall|",
+    "nonewalmart|",
+    "noneyab.+|noneyou(r)*b.+|",
+    "(abc)+|",
+    "123abc|",
+    "abc123|",
+    "(xyz)+|",
+    "123xyz|",
+    "xyz123|",
     "unknown|unknown[0-9]+|[0-9]+unknown|",
     "notprovided|notprovided[0-9]+|[0-9]+notprovided|",
     "refused|refused[0-9]+|[0-9]+refused|",
@@ -272,9 +305,18 @@ REGEX_EMAIL_OBFUSCATIVE_LOCALPART <-
 REGEX_EMAIL_OBFUSCATIVE_DOMAIN <-
   paste0(
     "\\@(no|na|none|example|guerillamail|tpw|twp|test|spambog|fake|",
-    "email\\-fake|temp\\-mail|www|spam|junk|[0-9]+gmail|[0-9]+yahoo|null).*$")
+    "email\\-fake|temp\\-mail|www|spam|junk|[0-9]+gmail|[0-9]+yahoo|null|dnr|",
+    "that|gov|mil|org|net|edu|com)\\.(com|net|edu|org|us|gov|mil|biz|co|me|io)",
+    "$")
 
-# Regular expression for an obfuscative email address
+# Regular expression for an obfuscative repeated letter or number email address,
+# e.g. zz@zzz.com or 22@22.gov
+REGEX_EMAIL_REPEATED_CHAR <-
+  "^([a-z0-9])\\1*\\@\\1+\\.(com|net|edu|org|us|gov|mil|biz|co|me|io)$"
+
+# Reference examples of obviously obfuscative email address that can't be
+# filtered using local part or domain alone
 REF_EMAIL_OBFUSCATIVE_ADDRESS <-
   c("email@email.com", "email@gmail.com", "email@yahoo.com", "email@aol.com",
-    "email@mail.com", "email@me.com", "email@hotmail.com")
+    "email@mail.com", "email@me.com", "email@hotmail.com", "bob@bob.com",
+    "n@o.no", "n@a.com", "n@o.com", "f@u.com", "x@y.com", "me@u.com")

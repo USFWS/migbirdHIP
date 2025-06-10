@@ -176,6 +176,7 @@ proofBadEmails <-
           # Obfuscative emails
           str_detect(email, REGEX_EMAIL_OBFUSCATIVE_LOCALPART) |
           str_detect(email, REGEX_EMAIL_OBFUSCATIVE_DOMAIN) |
+          str_detect(email, REGEX_EMAIL_REPEATED_CHAR) |
           email %in% REF_EMAIL_OBFUSCATIVE_ADDRESS |
           # Longer than 100 characters (max length of a valid address is 254 but
           # this would be very rare; we only accept 100)
@@ -185,12 +186,27 @@ proofBadEmails <-
             email,
             paste0(
               "(?<=\\@)(gmaill|gmai|gamil|gmial|gmal|gmil|gail|gmali|gmall|gla",
-              "il|gmaim|gamil|gimal|gmai|gmaii)\\.com$")) |
-          str_detect(email, "(?<=\\@)(yahooo+|ahoo|yhoo|yaho|yahoh|yahohh|yyahoo|ayahoo)\\.com$") |
+              "il|gmaim|gamil|gimal|gmai|gmaii|gnail)\\.com$")) |
+          str_detect(
+            email,
+            paste0(
+              "(?<=\\@)(yahooo+|ahoo|yhoo|yaho|yahoh|yahohh|yyahoo|ayahoo)\\.c",
+              "om$")) |
           str_detect(email, "(?<=\\@)(attt+|at|aatt)\\.net$") |
           str_detect(email, "(?<=\\@)(iclould|icoud|icould)\\.com$") |
-          str_detect(email, "(?<=\\@)(sbcgobal|sbcglobel|sbcgloble|sbcgolbal|sbcglobe|sbcglobl|sbcgloabl|sbcgloabal|sbcgloal|sbcgobel|sbcglbal|sbcglob|sbcgoble|sbclobal|sbc\\.gobal|sbcglabal|sbcglibal|sbcgllobal|sbcgloba|sbcglobale|sbcglobol|sbcglobsl|spcglobal)\\.net$") |
-          str_detect(email, "(?<=\\@)(concast|commcast|comacast|cmcast|compcast|conmcast|c0mcast|comcst|comacst)\\.net$") |
+          str_detect(email, "(?<=\\@)(hatmail)\\.com$") |
+          str_detect(
+            email,
+            paste0(
+              "(?<=\\@)(sbcgobal|sbcglobel|sbcgloble|sbcgolbal|sbcglobe|sbcglo",
+              "bl|sbcgloabl|sbcgloabal|sbcgloal|sbcgobel|sbcglbal|sbcglob|sbcg",
+              "oble|sbclobal|sbc\\.gobal|sbcglabal|sbcglibal|sbcgllobal|sbcglo",
+              "ba|sbcglobale|sbcglobol|sbcglobsl|spcglobal)\\.net$")) |
+          str_detect(
+            email,
+            paste0(
+              "(?<=\\@)(concast|commcast|comacast|cmcast|compcast|conmcast|c0m",
+              "cast|comcst|comacst)\\.net$")) |
           # Popular domain doesn't have matching top level domain
           str_detect(email, "(?<=\\@)gmail(?!\\.com$)") |
           str_detect(email, "(?<=\\@)yahoo\\.(?!(com|co\\.uk|fr|es|ca|de)$)") |
