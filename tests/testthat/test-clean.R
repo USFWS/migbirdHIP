@@ -239,6 +239,7 @@ test_that("change BTPI permit file state BTPI bag values to 0", {
   test_data <-
     DF_TEST_MINI |>
     dplyr::slice_head(n = 10) |>
+    missingPIIFilter() |>
     dplyr::mutate(
       dl_state =
         dplyr::case_when(
