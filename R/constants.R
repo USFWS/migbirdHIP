@@ -223,6 +223,7 @@ REGEX_EMAIL_OBFUSCATIVE_LOCALPART <-
     "noen|nnon|onoene|nnnnnne|nonen|nonoe|nnoe|onoennoneo|nonne|nnone|nnno|",
     "onon|onoe|nonn|noeone|nonneee|nonnee|nonoeone|onne|nononon|oonono|onoen|",
     "noneo|",
+    "www\\.no|www\\.none|",
     "(nope)+|(nope)+[0-9]+|[0-9]+(nope)+|",
     "(no)+|(no)+[0-9]+|[0-9]+(no)+|",
     "(na)+|(na)+[0-9]+|[0-9]+(na)+|",
@@ -249,7 +250,18 @@ REGEX_EMAIL_OBFUSCATIVE_LOCALPART <-
     "fake\\.fake|[0-9]+fake\\.fake|fake\\.fake[0-9]+|",
     "fakeemail|[0-9]+fakeemail|fakeemail[0-9]+|",
     "walmartfakeemail|[0-9]+walmartfakeemail|walmartfakeemail[0-9]+|",
+    "www\\.tpwd|www\\.none\\.tpwd|",
+    "texastpw|texastpwd|tpwdtexas|tpwtexas|",
+    "tpw\\.texas|tpwd\\.texas|tpw\\.texas\\.gov|tpwd\\.texas\\.gov|",
+    "tpwd\\.gov|tpw\\.gov|",
+    "natpw|na\\.tpw|natpwd|na\\.tpwd|",
+    "notpw|no\\.tpw|notpwd|no\\.tpwd|",
+    "nontpw|non\\-tpw|non\\.tpw|",
+    "nontpwd|non\\-tpwd|non\\.tpwd|",
+    "nontpwd\\.texas|",
+    "nonetpw|[0-9]+nonetpw|nonetpw[0-9]+|",
     "nonetpwd|[0-9]+nonetpwd|nonetpwd[0-9]+|",
+    "none\\.tpw|none\\.tpwd|none\\.tpwd\\.texas|none\\.tpw\\.texas|",
     "tpwd|[0-9]+tpwd|tpwd[0-9]+|",
     "123|1234|12345|123456|1234567|12345678|123456789|",
     "0{1,100}",
@@ -259,5 +271,5 @@ REGEX_EMAIL_OBFUSCATIVE_LOCALPART <-
 REGEX_EMAIL_OBFUSCATIVE_DOMAIN <-
   paste0(
     "\\@(no|na|none|example|guerillamail|tpw|twp|test|spambog|fake|",
-    "email\\-fake|temp\\-mail).*$")
+    "email\\-fake|temp\\-mail|www|spam|junk|[0-9]+gmail|[0-9]+yahoo).*$")
 
