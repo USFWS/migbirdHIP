@@ -155,6 +155,8 @@ proof <-
 #' @importFrom dplyr filter
 #' @importFrom stringr str_detect
 #' @importFrom stringr str_length
+#' @importFrom stringr str_extract
+#' @importFrom dplyr select
 #'
 #' @param keyed_data An tibble used internally in \code{\link{proof}}
 #'
@@ -166,7 +168,9 @@ proofBadEmails <-
 
     # Filter data to email addresses that do not meet expectations
     keyed_data |>
-      mutate(email = tolower(email)) |>
+      mutate(
+        email = tolower(email),
+        tld = paste0(".", str_extract(email, "(?<=\\.)[a-zA-Z0-9\\-]+$"))) |>
       filter(
         !str_detect(email, REGEX_EMAIL) |
           # Obfuscative emails
@@ -197,11 +201,8 @@ proofBadEmails <-
           str_detect(email, "(?<=\\@)protonmail\\.(?!(com|ch)$)") |
           str_detect(email, "(?<=\\@)pm\\.(?!me$)") |
           # Bad top level domain
-          str_detect(
-            email,
-            paste0(
-              "(?<=\\.)(com(\\.com)+|com(com)+|con|ccom|coom|comm|c0m|ocm|cm|o",
-              "m|cim|common)$")) |
+          str_detect(email, "(?<=\\.)com(\\.com)+$") |
+          !tld %in% REF_EMAIL_TLDS |
           # Missing top level domain endings
           str_detect(
             email,
@@ -215,6 +216,7 @@ proofBadEmails <-
             paste0(
               "(?<!\\.)(com|net|edu|gov|org|navymil|usnavymil|usafmil|mailmil|",
               "armymil|usarmymil|usacearmymil)$"))
-      )
+      ) |>
+      select(-tld)
   }
 
