@@ -225,6 +225,7 @@ REGEX_EMAIL_OBFUSCATIVE_LOCALPART <-
     "noneo|",
     "www\\.no|www\\.none|",
     "(nope)+|(nope)+[0-9]+|[0-9]+(nope)+|",
+    "(null)+|(null)+[0-9]+|[0-9]+(null)+|",
     "(no)+|(no)+[0-9]+|[0-9]+(no)+|",
     "(na)+|(na)+[0-9]+|[0-9]+(na)+|",
     "not|not[0-9]+|[0-9]+not|",
@@ -271,5 +272,9 @@ REGEX_EMAIL_OBFUSCATIVE_LOCALPART <-
 REGEX_EMAIL_OBFUSCATIVE_DOMAIN <-
   paste0(
     "\\@(no|na|none|example|guerillamail|tpw|twp|test|spambog|fake|",
-    "email\\-fake|temp\\-mail|www|spam|junk|[0-9]+gmail|[0-9]+yahoo).*$")
+    "email\\-fake|temp\\-mail|www|spam|junk|[0-9]+gmail|[0-9]+yahoo|null).*$")
 
+# Regular expression for an obfuscative email address
+REF_EMAIL_OBFUSCATIVE_ADDRESS <-
+  c("email@email.com", "email@gmail.com", "email@yahoo.com", "email@aol.com",
+    "email@mail.com", "email@me.com", "email@hotmail.com")
