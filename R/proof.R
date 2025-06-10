@@ -181,8 +181,11 @@ proofBadEmails <-
             paste0(
               "(?<=\\@)(gmaill|gmai|gamil|gmial|gmal|gmil|gail|gmali|gmall|gla",
               "il|gmaim|gamil|gimal|gmai|gmaii)\\.com$")) |
-          str_detect(email, "(?<=\\@)yahooo\\.com$") |
-          str_detect(email, "(?<=\\@)attt\\.net$") |
+          str_detect(email, "(?<=\\@)(yahooo+|ahoo|yhoo|yaho|yahoh|yahohh|yyahoo|ayahoo)\\.com$") |
+          str_detect(email, "(?<=\\@)(attt+|at|aatt)\\.net$") |
+          str_detect(email, "(?<=\\@)(iclould|icoud|icould)\\.com$") |
+          str_detect(email, "(?<=\\@)(sbcgobal|sbcglobel|sbcgloble|sbcgolbal|sbcglobe|sbcglobl|sbcgloabl|sbcgloabal|sbcgloal|sbcgobel|sbcglbal|sbcglob|sbcgoble|sbclobal|sbc\\.gobal|sbcglabal|sbcglibal|sbcgllobal|sbcgloba|sbcglobale|sbcglobol|sbcglobsl|spcglobal)\\.net$") |
+          str_detect(email, "(?<=\\@)(concast|commcast|comacast|cmcast|compcast|conmcast|c0mcast|comcst|comacst)\\.net$") |
           # Popular domain doesn't have matching top level domain
           str_detect(email, "(?<=\\@)gmail(?!\\.com$)") |
           str_detect(email, "(?<=\\@)yahoo\\.(?!(com|co\\.uk|fr|es|ca|de)$)") |
