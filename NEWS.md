@@ -37,6 +37,7 @@
         -   First name and last name rules were slightly relaxed
             -   No limit on number of spaces, apostrophes, or hyphens as long as they are not consecutive
             -   For first name, apostrophe or letter allowed as first character
+        -   Email proofing rules now more strict
     -   `duplicateFinder()`
         -   New internal function `duplicateFields()` uses `purrr` to significantly reduce redundancy in `duplicateFinder()`; overall, refactoring reduced the function's length from 151 lines to 50 lines and improved processing speed.
     -   `duplicateFix()`
@@ -89,7 +90,7 @@
 -   `read_hip()` now catches file names with incorrect MMDDYYYY or DDMMYYYY date format.
 -   `issueCheck()` now returns an error for NA values in `record_key` field.
 -   Added release tags to README.
--   Replace deprecated `~ .x` anonymous function notation with `\(x)` across the following functions: `read_hip()`, `clean()`, and `glyphCheck()`.
+-   Replace deprecated `~ .x` anonymous function notation with `\(x)`.
 
 # migbirdHIP 1.3.0
 

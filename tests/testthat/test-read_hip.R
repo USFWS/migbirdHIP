@@ -27,19 +27,21 @@ test_that("read_hip works for a download", {
 
 test_that("listFiles works", {
 
+  yr <- as.numeric(REF_CURRENT_SEASON)
+
   files_listed <-
     listFiles(
-      paste0(testthat::test_path("data", "DL0902"), "/"),
-      as.numeric(REF_CURRENT_SEASON))
+      testthat::test_path("data", "DL0902"),
+      yr)
 
-  expect_true(nrow(files_listed) == 6)
+  expect_equal(nrow(files_listed), 6)
 })
 
 # ignorePermits -----------------------------------------------------------
 
 test_that("ignorePermits works", {
 
-  bad_file <- list.files(testthat::test_path("data", "DL0902", "permit"))
+  pmt_file <- list.files(testthat::test_path("data", "DL0902", "permit"))
 
   suppressMessages(
     invisible(
@@ -50,15 +52,14 @@ test_that("ignorePermits works", {
           pull()
         )))
 
-
-  expect_true(!bad_file %in% read_data_files)
+  expect_false(pmt_file %in% read_data_files)
 })
 
 # ignoreHolds -------------------------------------------------------------
 
 test_that("ignoreHolds works", {
 
-  bad_file <- list.files(testthat::test_path("data", "DL0902", "hold"))
+  hold_file <- list.files(testthat::test_path("data", "DL0902", "hold"))
 
   suppressMessages(
     invisible(
@@ -69,14 +70,14 @@ test_that("ignoreHolds works", {
           pull()
       )))
 
-  expect_true(!bad_file %in% read_data_files)
+  expect_false(hold_file %in% read_data_files)
 })
 
 # ignoreLifetime ----------------------------------------------------------
 
 test_that("ignoreLifetime works", {
 
-  bad_file <- list.files(testthat::test_path("data", "DL0902", "lifetime"))
+  lifetime_file <- list.files(testthat::test_path("data", "DL0902", "lifetime"))
 
   suppressMessages(
     invisible(
@@ -87,7 +88,7 @@ test_that("ignoreLifetime works", {
           pull()
       )))
 
-  expect_true(!bad_file %in% read_data_files)
+  expect_false(lifetime_file %in% read_data_files)
 })
 
 # idBlankFiles ------------------------------------------------------------
