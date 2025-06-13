@@ -263,5 +263,7 @@ REGEX_EMAIL_OBFUSCATIVE_WALMART <- "^[0-9]+\\@walmart\\.com$"
 # filtered using local part or domain alone
 REF_EMAIL_OBFUSCATIVE_ADDRESS <-
   c("email@email.com", "email@gmail.com", "email@yahoo.com", "email@aol.com",
-    "email@mail.com", "email@me.com", "email@hotmail.com", "bob@bob.com",
+    "email@mail.com", "email@me.com", "email@hotmail.com",
+    "mail@email.com", "mail@gmail.com", "mail@yahoo.com", "mail@aol.com",
+    "mail@mail.com", "mail@me.com", "mail@hotmail.com", "bob@bob.com",
     "n@o.no", "n@a.com", "n@o.com", "f@u.com", "x@y.com", "me@u.com")
