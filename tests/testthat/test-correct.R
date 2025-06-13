@@ -50,12 +50,24 @@ test_that("correct middle initial works", {
 
 # email -------------------------------------------------------------------
 
-test_that("correct email initial works", {
+test_that("correct email: adding period before TLD works", {
 
   bad_email <-
     DF_TEST_TINI_PROOFED |>
     mutate(
       email = ifelse(record_key == "record_1", "bugsbunny@gmailcom", email),
+      errors = ifelse(record_key == "record_1", "email", NA))
+
+  test_correct <- correct(bad_email, as.numeric(REF_CURRENT_SEASON))
+  expect_false(identical(test_correct$email, bad_email$email))
+})
+
+test_that("correct email: adding TLD works", {
+
+  bad_email <-
+    DF_TEST_TINI_PROOFED |>
+    mutate(
+      email = ifelse(record_key == "record_1", "bugsbunny@gmail", email),
       errors = ifelse(record_key == "record_1", "email", NA))
 
   test_correct <- correct(bad_email, as.numeric(REF_CURRENT_SEASON))
