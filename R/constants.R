@@ -215,22 +215,26 @@ REGEX_EMAIL <-
 # Regular expression for an obfuscative email address local-part
 REGEX_EMAIL_OBFUSCATIVE_LOCALPART <-
   paste0(
-    "^(([0-9]+)?(none|123)*[\\.\\-\\_\\+]*(none|nope|null|not|non|no|na|fake([\\_\\.\\-]fake)?|unknown|abc|xyz|fu)+[\\.\\-\\_\\+]*(none|123)*([0-9]+)?|",
+    "^(([0-9]+)?(none|123)*[\\.\\-\\_\\+]*(none|nope|null|not|non|no|na|fake([\\_\\.\\-]fake)?|unknown|abc|xyz|fu|name|dont)+[\\.\\-\\_\\+]*(none|123)*([0-9]+)?|",
     "none\\..+|",
     "www\\.(none|nope|null|no|na|fake|unknown|abc|xyz|(none\\.?)?tpw(d)?)+|",
     "(o|n|e){4,100}|",
     "noen|nnon|onoene|nnnnnne|nonen|nonoe|nnoe|onoennoneo|nonne|nnone|nnno|onon|onoe|nonn|noeone|nonneee|nonnee|nonoeone|onne|nononon|oonono|onoen|noneo|",
-    "([0-9]+)?no(ne)?[\\.\\-]?(one|(e)?mai(l)?(none)?|emial|emal|eamil|emsil)([0-9]+)?|",
-    "([0-9]+)?(no(n|t)?|in)[\\.\\-]?valid(email)?([0-9]+)?|",
+    "([0-9]+)?no((n|p)e)?[\\_\\.\\-]*(one|(e)?mai(l)?(none)?|emial|emal|eamil|emsil|thank(s|you)?)([0-9]+)?|",
+    "([0-9]+)?(no(n|t)?|in)[\\_\\.\\-]*valid(email)?([0-9]+)?|",
     "([0-9]+)?(no)?[\\_\\.\\-]*(done|(un)?subscribe|customer|email[\\_\\.\\-]*address)([0-9]+)?|",
-    "([0-9]+)?(no|do[\\.\\-\\_]*not)[\\.\\-\\_]*reply([0-9]+)?|",
-    "([0-9]+)?none(ya|yab.+|you(r)?b.+|onfile|ofyourbusiness|given|usa|text|yet|atall|walmart)([0-9]+)?|",
-    "([0-9]+)?(not|none)[\\_\\.\\-]*(available|provide(d)?)([0-9]+)?|",
-    "([0-9]+)?(customer)?refused(email)?([0-9]+)?|",
+    "([0-9]+)?(no|(do)?[\\.\\-\\_]*not)[\\.\\-\\_]*reply([0-9]+)?|",
+    "([0-9]+)?non(e)?(ya|yab.+|you(r)?b.+|onfile|ofyourbusiness|given|usa|text|yet|atall|walmart)([0-9]+)?|",
+    "([0-9]+)?(not|none)[\\_\\.\\-]*(ava(i)?la(i)?ble|ap(p)?lic(able)?|provide(d)?|interest(e)?(d)?|me|one|you|(e)?mail|again)([0-9]+)?|",
+    "([0-9]+)?(have|got|nope(aint(got)?)?)[\\_\\.\\-]*none([0-9]+)?|",
+    "([0-9]+)?nope[\\_\\.\\-]((e)?mail)[\\_\\.\\-]*([0-9]+)?|",
+    "([0-9]+)?(nope)?[\\_\\.\\-]*not[\\_\\.\\-]*to(t)?(d)?ay[\\_\\.\\-]*([0-9]+)?|",
+    "([0-9]+)?(customer)?[\\_\\.\\-]*refused[\\_\\.\\-]*(email)?([0-9]+)?|",
     "([0-9]+)?(walmart)?[\\_\\.\\-]*fake[\\_\\.\\-]*email([0-9]+)?|",
-    "([0-9]+)?(na|non*e*)?([0-9]+)?\\.?\\-?tpw([0-9]+)?d?([0-9]+)?\\.?\\-?(texas)?(\\.gov)?|",
-    "([0-9]+)?[\\_\\.\\-]*texas[\\_\\.\\-]*tpw(d)?[\\_\\.\\-]*([0-9]+)?|",
-    "none.*texas|",
+    "([0-9]+)?(na|non*(e*)?)?([0-9]+)?[\\_\\.\\-]*(tpw(d)?|twd|twp(d)?)([0-9]+)?([0-9]+)?[\\_\\.\\-]*(texas|na|non*(e*)?)?(\\.gov)?|",
+    "([0-9]+)?[\\_\\.\\-]*texas[\\_\\.\\-]*(tpw(d)?|twd|twp(d)?)[\\_\\.\\-]*([0-9]+)?|",
+    "none.*texas|notexas|notex|",
+    "(john|jane)\\.?doe|",
     "123|1234|12345|123456|1234567|12345678|123456789|",
     "0{1,100}",
     ")\\@")
@@ -238,15 +242,22 @@ REGEX_EMAIL_OBFUSCATIVE_LOCALPART <-
 # Regular expression for an obfuscative email address domain
 REGEX_EMAIL_OBFUSCATIVE_DOMAIN <-
   paste0(
-    "\\@(no|na|none|example|guerillamail|tpw|twp|test|spambog|fake|",
-    "email\\-fake|temp\\-mail|www|spam|junk|[0-9]+gmail|[0-9]+yahoo|null|dnr|",
-    "that|gov|mil|org|net|edu|com)\\.(com|net|edu|org|us|gov|mil|biz|co|me|io)",
-    "$")
+    "\\@(no|na|none|example|guerillamail|test|spambog|fake|email\\-fake|",
+    "temp\\-mail|www|spam|junk|[0-9]+gmail|[0-9]+yahoo|null|dnr|that|gov|mil|",
+    "org|net|edu|com|done|customer|tpw|twp|twd|twpd|twdp|tx)\\.(com|net|edu|",
+    "org|us|gov|mil|biz|co|me|io)$")
 
 # Regular expression for an obfuscative repeated letter or number email address,
 # e.g. zz@zzz.com or 22@22.gov
 REGEX_EMAIL_REPEATED_CHAR <-
   "^([a-z0-9])\\1*\\@\\1+\\.(com|net|edu|org|us|gov|mil|biz|co|me|io)$"
+
+# Regular expression for a fake Texas email addresses (correct format is
+# firstname.lastname@)
+REGEX_EMAIL_OBFUSCATIVE_TPWD <- "^[^\\.]+\\@tpwd\\.texas\\.gov$"
+
+# Regular expression for a fake Walmart email address
+REGEX_EMAIL_OBFUSCATIVE_WALMART <- "^[0-9]+\\@walmart\\.com$"
 
 # Reference examples of obviously obfuscative email address that can't be
 # filtered using local part or domain alone

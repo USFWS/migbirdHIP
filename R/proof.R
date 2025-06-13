@@ -177,6 +177,8 @@ proofBadEmails <-
           str_detect(email, REGEX_EMAIL_OBFUSCATIVE_LOCALPART) |
           str_detect(email, REGEX_EMAIL_OBFUSCATIVE_DOMAIN) |
           str_detect(email, REGEX_EMAIL_REPEATED_CHAR) |
+          str_detect(email, REGEX_EMAIL_OBFUSCATIVE_TPWD) |
+          str_detect(email, REGEX_EMAIL_OBFUSCATIVE_WALMART) |
           email %in% REF_EMAIL_OBFUSCATIVE_ADDRESS |
           # Longer than 100 characters (max length of a valid address is 254 but
           # this would be very rare; we only accept 100)
