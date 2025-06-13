@@ -146,10 +146,8 @@ Use `unique = TRUE` to read in a frame without exact duplicates, or `unique = FA
 We will use the default settings to read in all of the states from download 0901. Fake HIP data files located in the `extdata/DL0901/` directory of the R package will be used as an example.
 
 ```{r, readhip}
-raw_data <- read_hip("C:/HIP/DL0901/")
+raw_data <- read_hip(paste0(here::here(), "/inst/extdata/DL0901/"))
 ```
-
-Did you get a warning? Read an explanation of common `read_hip` warnings [below](#common-read_hip-warnings).
 
 ### glyphCheck {#glyphcheck}
 
@@ -265,6 +263,41 @@ Data that are considered irregular are flagged in a new column called "errors". 
 
 The year of the Harvest Information Program must be supplied as a parameter. This aids in checking dates when licenses were issued, as one example.
 
+The data fields are evaluated as follows:
+
+-   Test records are flagged if:
+    - `firstname` and `lastname` are `"TEST"`
+    - `lastname` is `"INAUDIBLE"`
+    - `firstname` is one of: `"INAUDIBLE", "BLANK", "USER", "TEST", "RESIDENT"`
+-   `title` should be one of: `r REF_TITLES`
+-   `firstname` is flagged as an error if:
+    -   Contains anything other than letters, apostrophe(s), space(s), and/or hyphen(s)
+    -   Contains less than 2 letters
+    -   Contains `"AKA"`
+-   `middle` should be exactly 1 letter or `NA`
+-   `lastname` is flagged as an error if:
+    -   Contains anything except letters, apostrophe(s), space(s), hyphen(s), and/or period(s)
+    -   Contains less than 2 letters
+-   `suffix` should be one of: `r REF_SUFFIXES`
+-   `address` is flagged if it contains a \|, tab, or non-UTF8 character
+-   `city` is flagged as an error if:
+    -   Contains anything other than letters, space(s), hyphen(s), apostrophe(s), and/or period(s)
+    -   Contains less than 3 letters
+-   `state` is flagged if it is not contained in the following list of abbreviations for US and Canada states, provinces, and territories:
+    -   `r REF_USA_CANADA`
+-   `zip` is flagged if the hunter's address doesn't have a zip that should be in their reported state of residence (checked against a master list of USA postal codes)
+-   `birth_date` is flagged if the birth year was \> `100` or \< `0` years ago
+-   `hunt_mig_birds` is flagged if it is not equal to `1` or `2`
+-   `registration_yr` flagged if it is not equal to the HIP data collection year
+-   `email` is flagged if:
+    -   The email address is obfuscative (e.g. `none@gmail.com`, `nottoday@gmail.com`, `brian@na.com`, etc.)
+    -  The address is longer than 100 characters
+    -  A common domain name (e.g., gmail, yahoo) has a common typo
+    -  A common domain name doesn't have a matching top-level domain (e.g., `gmail.net` or `hotmail.gov`)
+    -  The address has a bad top-level domain (e.g., `.comcom`, `.ccom`, etc.)
+    -  The email is missing a top-level domain
+    -  The top-level domain period is missing (e.g., `gmailcom`).
+
 ### correct {#correct}
 
 After the download data are proofed, the next step is to fix the data to the best of our ability. Data can be corrected by running the `correct` function on the proofed tibble. The year of the Harvest Information Program must be supplied as a parameter. Since the "errors" column is re-created using `correct`, supplying the year is necessary for the same reasons it is required by `proof`.
@@ -273,58 +306,11 @@ After the download data are proofed, the next step is to fix the data to the bes
 corrected_data <- correct(proofed_data, year = 2024)
 ```
 
-The following changes are made by the `correct` function:
+The following changes are made by the `correct` function if the field is flagged in the `errors` column:
 
--   *Title* is changed to NA if it does not equal 1 or 2
--   *First name* is not changed, but remains flagged as an error if it breaks a following rule:
-    -   Not \> 1 letter
-    -   Contains a first initial and middle name
-    -   Contains a first name and middle initial
-    -   Contains non-alpha characters other than space or hyphen
-    -   No full names (detected with 2+ spaces)
-    -   Is not "BLANK", "INAUDIBLE", "TEST", "USER", or "RESIDENT"
--   *Middle initial* is not changed, but remains flagged if it is not exactly 1 letter
--   *Last name* is not changed, but remains flagged as an error if it breaks a following rule:
-    -   Not \> 1 letter
-    -   Contains a non-alpha character other than space, period, hyphen, or apostrophe
-    -   No full names (Detected with 2+ spaces)
-    -   Is not "INAUDIBLE"
--   *Suffix* is changed to NA if it is not equal to:
-    -   JR or SR
-    -   A value from I to VII in Roman numerals
-    -   An value from 1ST to 9TH
--   *Address* is not changed, but remains flagged if it contains a \|, tab, or non-UTF8 character
--   *City* is not changed, but remains flagged if it contains any non-alpha character
--   *State* is not changed, but remains flagged if it is not contained in the following list of abbreviations for US and Canada states, provinces, and territories:
-    -   AL, AK, AZ, AR, CA, CO, CT, DE, DC, FL, GA, HI, ID, IL, IN, IA, KS, KY, LA, ME, MD, MA, MI, MN, MS, MO, MT, NE, NV, NH, NJ, NM, NY, NC, ND, OH, OK, OR, PA, RI, SC, SD, TN, TX, UT, VT, VA, WA, WV, WI, WY, AS, GU, MP, PR, VI, UM, FM, MH, PW, AA, AE, AP, CM, CZ, NB, PI, TT, ON, QC, NS, NB, MB, BC, PE, SK, AB, NL
--   *Zip* is not changed, but is flagged if:
-    -   If the hunter's address doesn't have a zip that should be in their reported state of residence (checked against a master list of USA postal codes), it's flagged
-    -   Foreign zip codes are flagged
-    -   Zip codes that do not match a 5-digit or 9-digit hyphenated format are flagged
--   *Birth date* is not changed, but remains flagged if the birth year was \> 100 or \< 16 years ago
--   *Issue date* is not changed, but remains flagged if it is not equal to or +/- 1 year from the HIP data collection year
--   *Hunt migratory birds* is not changed, and remains flagged if it is not equal to 1 or 2
--   *Bag values* remain unchanged
--   *Registration year* is not changed, but remains flagged if it is not equal to or +/- 1 year from the HIP data collection year
--   *Email* is corrected by:
-    -   Removing spaces, commas, and/or forward slash symbols
-    -   Changing to lowercase
-    -   Replacing multiple \@ symbols with a single \@
-    -   Adding periods and three-letter endings to common domains, including:
-        -   gmail -\> gmail.com
-        -   yahoo -\> yahoo.com
-        -   aol -\> aol.com
-        -   comcast -\> comcast.net
-        -   verizon -\> verizon.net
-        -   cox -\> cox.net
-        -   outlook -\> outlook.com
-        -   hotmail -\> hotmail.com
-    -   Replace .ccom with .com
-    -   Add missing periods before net, com, edu, and gov
-    -   Change email to NA if:
-        -   There is no \@ symbol in the email string
-        -   If the email is invalid (i.e. none<!-- breaklink -->@none, noemail, n/a)
-    -   Any email that wasn't corrected and doesn't fit the standardized email regex remains flagged
+-   `title` is changed to `NA`
+-   `middle` is changed to `NA`
+-   `suffix` is changed to `NA`
 
 All functions in [Part C](#part-c-data-visualization-and-tabulation) will run on the corrected tibble, `corrected_data`, just as they worked on the example tibble `proofed_data`. Errors can be compared between the proofed stage and corrected stage to get a better idea of which errors were serious (i.e. difficult to correct automatically) and determine how serious errors can be prevented in the future.
 
@@ -467,33 +453,3 @@ errorTable(proofed_data, loc = "CA", field = "dove_bag")
 ## Troubleshooting {#troubleshooting}
 
 If you encounter a problem while using this R package, please [report an issue](https://github.com/USFWS/migbirdHIP/issues) on the [migbirdHIP GitHub repository](https://github.com/USFWS/migbirdHIP).
-
-### Common read_hip warnings {#common-read_hip-warnings}
-
-Sometimes `read_hip` will throw one or more warnings. Warnings are usually benign, but for clarity I provide examples and explanations of common warnings below.
-
-#### Example 1
-
-This parsing failure occurs when a .txt file is missing the last two columns in the fixed-width file (registration_yr and email). For the offending file(s), these columns are filled with NA in the output tibble. No action must be taken.
-
-```{r echo = FALSE, fig.cap = "Example 1. Common warning that results after running read_hip with missing columns in fixed-width text files.", out.width = "60%", dpi = 300, fig.align = "center"}
-knitr::include_graphics("image/parsing_failure_1.png")
-```
-
-#### Example 2
-
-Another version of a parsing failure occurs when a file is missing the last column in last row of the fixed-width file. This value is set to NA in the output tibble. No action must be taken.
-
-```{r echo = FALSE, fig.cap = "Example 2. Common warning that results after running read_hip with a missing column in one row of a fixed-width text file.", out.width = "60%", dpi = 300, fig.align = "center"}
-knitr::include_graphics("image/parsing_failure_2.png")
-```
-
-### Memory problems {#memory-problems}
-
-Some of these functions require a lot of memory to run. To help your R session process these data, especially when working with the large season totals, you can do a few things:
-
-1.  Remove objects from the environment. If you have already run `read_hip`, `clean`, and `proof`, you may no longer need your original dataframe or your cleaned dataframe, since most error checking functions work from the proofed or corrected versions of the data. To remove an unneeded object like the cleaned dataframe, run `rm(clean_data)`, or set it to `NULL` via `clean_data <- NULL`.
-
-2.  Check your memory using `memory.limit()`
-
-3.  Increase your memory, e.g. `memory.limit(size = 55000)`

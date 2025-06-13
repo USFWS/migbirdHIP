@@ -148,45 +148,37 @@ We will use the default settings to read in all of the states from download 0901
 
 
 ``` r
-raw_data <- read_hip("C:/HIP/DL0901/")
+raw_data <- read_hip(paste0(here::here(), "/inst/extdata/DL0901/"))
 #> Error: NA values detected in one or more ID fields (firstname, lastname, state, birth date) for >10% of a file and/or >100 records.
-#> # A tibble: 4 × 3
+#> # A tibble: 7 × 3
 #>   dl_state     n proportion
 #>   <chr>    <int>      <dbl>
-#> 1 CO          22       0.1 
-#> 2 MN          24       0.11
-#> 3 VA          23       0.1 
-#> 4 VT          24       0.11
+#> 1 GA          23       0.1 
+#> 2 MN          22       0.1 
+#> 3 MO          23       0.1 
+#> 4 NJ          22       0.1 
+#> 5 SC          23       0.1 
+#> 6 SD          25       0.11
+#> 7 WY          22       0.1
 #> Error: One or more records contain 'TEST' in first name and last name fields.
 #> # A tibble: 1 × 4
 #>   source_file    record_key  firstname lastname
 #>   <chr>          <chr>       <chr>     <chr>   
-#> 1 LA20240829.txt record_3840 TEST      TEST
+#> 1 KY20240906.txt record_3516 TEST      TEST
 #> Error: One or more records has a '0' in every bag field; these records will be filtered out in clean().
-#> # A tibble: 18 × 2
-#>    source_file    record_key  
-#>    <chr>          <chr>       
-#>  1 KY20240811.txt record_3489 
-#>  2 OK20240809.txt record_7840 
-#>  3 OR20240827.txt record_7924 
-#>  4 OR20240827.txt record_7985 
-#>  5 OR20240827.txt record_8016 
-#>  6 OR20240827.txt record_8082 
-#>  7 SC20240829.txt record_8663 
-#>  8 TN20240902.txt record_9042 
-#>  9 TN20240902.txt record_9156 
-#> 10 WA20240823.txt record_10175
-#> 11 WA20240823.txt record_10225
-#> 12 WA20240823.txt record_10228
-#> 13 WA20240823.txt record_10242
-#> 14 WA20240823.txt record_10294
-#> 15 WA20240823.txt record_10300
-#> 16 WA20240823.txt record_10306
-#> 17 WA20240823.txt record_10319
-#> 18 WA20240823.txt record_10350
+#> # A tibble: 9 × 2
+#>   source_file    record_key  
+#>   <chr>          <chr>       
+#> 1 CO20240905.txt record_1194 
+#> 2 KS20240830.txt record_3229 
+#> 3 NV20240810.txt record_7176 
+#> 4 OK20240822.txt record_7848 
+#> 5 OR20240828.txt record_8037 
+#> 6 OR20240828.txt record_8078 
+#> 7 TN20240822.txt record_9076 
+#> 8 WA20240818.txt record_10234
+#> 9 WA20240818.txt record_10286
 ```
-
-Did you get a warning? Read an explanation of common `read_hip` warnings [below](#common-read_hip-warnings).
 
 ### glyphCheck {#glyphcheck}
 
@@ -217,20 +209,20 @@ clean_data <- clean(raw_data)
 #> # A tibble: 8 × 3
 #>   dl_state     n spp   
 #>   <chr>    <int> <chr> 
-#> 1 CO          98 cranes
-#> 2 KS          99 cranes
-#> 3 MT         108 cranes
-#> 4 ND         115 cranes
-#> 5 NM          95 cranes
+#> 1 CO         102 cranes
+#> 2 KS         101 cranes
+#> 3 MT         110 cranes
+#> 4 ND         102 cranes
+#> 5 NM         113 cranes
 #> 6 OK         107 cranes
-#> 7 TX         106 cranes
-#> 8 WY          87 cranes
+#> 7 TX         118 cranes
+#> 8 WY          69 cranes
 #> 2s converted to 0s for permit file states:
 #> # A tibble: 2 × 3
 #>   dl_state     n spp               
 #>   <chr>    <int> <chr>             
 #> 1 CO          99 band_tailed_pigeon
-#> 2 NM         101 band_tailed_pigeon
+#> 2 NM         105 band_tailed_pigeon
 ```
 
 The `clean` function does simple data cleaning. Importantly, records are discarded if first name, last name, birth date, state of residence, address AND email, OR city AND zip AND email are missing.
@@ -269,12 +261,12 @@ The `duplicateFinder` function finds hunters that have more than one registratio
 
 ``` r
 duplicateFinder(current_data)
-#> There are 32 registrations with duplicates; 64 total duplicated records.
+#> There are 36 registrations with duplicates; 72 total duplicated records.
 #> # A tibble: 2 × 2
 #>   duplicate_field     n
 #>   <chr>           <int>
-#> 1 bag                18
-#> 2 issue_date         14
+#> 1 bag                13
+#> 2 issue_date         23
 ```
 
 ### duplicatePlot {#duplicateplot}
@@ -284,7 +276,7 @@ Plot duplicates.
 
 ``` r
 duplicatePlot(current_data)
-#> There are 32 registrations with duplicates; 64 total duplicated records.
+#> There are 36 registrations with duplicates; 72 total duplicated records.
 ```
 
 <div class="figure" style="text-align: center">
@@ -324,20 +316,20 @@ If a value for a species group is given in the HIP data that doesn't match anyth
 bagCheck(deduplicated_data)
 #> Joining with `by = join_by(dl_state, spp)`
 #> Joining with `by = join_by(dl_state, spp, stateBagValue)`
-#> # A tibble: 97 × 6
-#>    dl_state spp          bad_bag_value expected_bag_value     n proportion
-#>    <chr>    <chr>        <chr>         <chr>              <int> <chr>     
-#>  1 TX       geese_bag    0             2, 3, 4                3 1%        
-#>  2 AL       dove_bag     9             1, 2, 3, 5             1 0%        
-#>  3 IL       dove_bag     9             1, 2, 3, 5             1 0%        
-#>  4 KS       dove_bag     9             1, 2, 3, 5             2 1%        
-#>  5 ME       woodcock_bag 9             1, 2, 3, 5             1 0%        
-#>  6 ND       dove_bag     9             1, 2, 3, 5             1 0%        
-#>  7 NV       dove_bag     9             1, 2, 3, 5             2 1%        
-#>  8 WV       woodcock_bag 9             1, 2, 3, 5             1 0%        
-#>  9 IN       woodcock_bag 9             1, 2, 3, 4, 5          1 0%        
-#> 10 CA       geese_bag    9             1, 2, 3, 4             1 0%        
-#> # ℹ 87 more rows
+#> # A tibble: 96 × 6
+#>    dl_state spp              bad_bag_value expected_bag_value     n proportion
+#>    <chr>    <chr>            <chr>         <chr>              <int> <chr>     
+#>  1 MD       woodcock_bag     9             2, 3, 5                1 0%        
+#>  2 DE       woodcock_bag     9             1, 2, 3, 5             1 0%        
+#>  3 MO       dove_bag         9             1, 2, 3, 5             1 0%        
+#>  4 MS       dove_bag         9             1, 2, 3, 5             1 0%        
+#>  5 NJ       woodcock_bag     9             1, 2, 3, 5             1 0%        
+#>  6 OH       dove_bag         9             1, 2, 3, 5             1 0%        
+#>  7 SC       rails_gallinules 9             1, 2, 3, 5             1 0%        
+#>  8 SC       woodcock_bag     9             1, 2, 3, 5             1 0%        
+#>  9 UT       dove_bag         9             1, 2, 3, 5             1 0%        
+#> 10 VA       dove_bag         9             1, 2, 3, 5             1 0%        
+#> # ℹ 86 more rows
 ```
 
 ## Part B: Data Proofing and Correction {#part-b-data-proofing-and-correction}
@@ -355,6 +347,41 @@ Data that are considered irregular are flagged in a new column called "errors". 
 
 The year of the Harvest Information Program must be supplied as a parameter. This aids in checking dates when licenses were issued, as one example.
 
+The data fields are evaluated as follows:
+
+-   Test records are flagged if:
+    - `firstname` and `lastname` are `"TEST"`
+    - `lastname` is `"INAUDIBLE"`
+    - `firstname` is one of: `"INAUDIBLE", "BLANK", "USER", "TEST", "RESIDENT"`
+-   `title` should be one of: NA, 0, 1, 2
+-   `firstname` is flagged as an error if:
+    -   Contains anything other than letters, apostrophe(s), space(s), and/or hyphen(s)
+    -   Contains less than 2 letters
+    -   Contains `"AKA"`
+-   `middle` should be exactly 1 letter or `NA`
+-   `lastname` is flagged as an error if:
+    -   Contains anything except letters, apostrophe(s), space(s), hyphen(s), and/or period(s)
+    -   Contains less than 2 letters
+-   `suffix` should be one of: I, II, III, IV, V, VI, VII, VIII, IX, X, XI, XII, XIII, XIV, XV, XVI, XVII, XIX, XX, 1ST, 2ND, 3RD, 4TH, 5TH, 6TH, 7TH, 8TH, 9TH, 10TH, 11TH, 12TH, 13TH, 14TH, 15TH, 16TH, 17TH, 18TH, 19TH, 20TH, JR, SR
+-   `address` is flagged if it contains a \|, tab, or non-UTF8 character
+-   `city` is flagged as an error if:
+    -   Contains anything other than letters, space(s), hyphen(s), apostrophe(s), and/or period(s)
+    -   Contains less than 3 letters
+-   `state` is flagged if it is not contained in the following list of abbreviations for US and Canada states, provinces, and territories:
+    -   AL, AK, AZ, AR, CA, CO, CT, DE, FL, GA, HI, ID, IL, IN, IA, KS, KY, LA, ME, MD, MA, MI, MN, MS, MO, MT, NE, NV, NH, NJ, NM, NY, NC, ND, OH, OK, OR, PA, RI, SC, SD, TN, TX, UT, VT, VA, WA, WV, WI, WY, DC, AS, GU, MP, PR, VI, UM, MH, FM, PW, AA, AE, AP, AB, BC, MB, NB, NL, NS, NT, NU, ON, PE, PQ, QC, SK, YT
+-   `zip` is flagged if the hunter's address doesn't have a zip that should be in their reported state of residence (checked against a master list of USA postal codes)
+-   `birth_date` is flagged if the birth year was \> `100` or \< `0` years ago
+-   `hunt_mig_birds` is flagged if it is not equal to `1` or `2`
+-   `registration_yr` flagged if it is not equal to the HIP data collection year
+-   `email` is flagged if:
+    -   The email address is obfuscative (e.g. `none@gmail.com`, `nottoday@gmail.com`, `brian@na.com`, etc.)
+    -  The address is longer than 100 characters
+    -  A common domain name (e.g., gmail, yahoo) has a common typo
+    -  A common domain name doesn't have a matching top-level domain (e.g., `gmail.net` or `hotmail.gov`)
+    -  The address has a bad top-level domain (e.g., `.comcom`, `.ccom`, etc.)
+    -  The email is missing a top-level domain
+    -  The top-level domain period is missing (e.g., `gmailcom`).
+
 ### correct {#correct}
 
 After the download data are proofed, the next step is to fix the data to the best of our ability. Data can be corrected by running the `correct` function on the proofed tibble. The year of the Harvest Information Program must be supplied as a parameter. Since the "errors" column is re-created using `correct`, supplying the year is necessary for the same reasons it is required by `proof`.
@@ -364,58 +391,11 @@ After the download data are proofed, the next step is to fix the data to the bes
 corrected_data <- correct(proofed_data, year = 2024)
 ```
 
-The following changes are made by the `correct` function:
+The following changes are made by the `correct` function if the field is flagged in the `errors` column:
 
--   *Title* is changed to NA if it does not equal 1 or 2
--   *First name* is not changed, but remains flagged as an error if it breaks a following rule:
-    -   Not \> 1 letter
-    -   Contains a first initial and middle name
-    -   Contains a first name and middle initial
-    -   Contains non-alpha characters other than space or hyphen
-    -   No full names (detected with 2+ spaces)
-    -   Is not "BLANK", "INAUDIBLE", "TEST", "USER", or "RESIDENT"
--   *Middle initial* is not changed, but remains flagged if it is not exactly 1 letter
--   *Last name* is not changed, but remains flagged as an error if it breaks a following rule:
-    -   Not \> 1 letter
-    -   Contains a non-alpha character other than space, period, hyphen, or apostrophe
-    -   No full names (Detected with 2+ spaces)
-    -   Is not "INAUDIBLE"
--   *Suffix* is changed to NA if it is not equal to:
-    -   JR or SR
-    -   A value from I to VII in Roman numerals
-    -   An value from 1ST to 9TH
--   *Address* is not changed, but remains flagged if it contains a \|, tab, or non-UTF8 character
--   *City* is not changed, but remains flagged if it contains any non-alpha character
--   *State* is not changed, but remains flagged if it is not contained in the following list of abbreviations for US and Canada states, provinces, and territories:
-    -   AL, AK, AZ, AR, CA, CO, CT, DE, DC, FL, GA, HI, ID, IL, IN, IA, KS, KY, LA, ME, MD, MA, MI, MN, MS, MO, MT, NE, NV, NH, NJ, NM, NY, NC, ND, OH, OK, OR, PA, RI, SC, SD, TN, TX, UT, VT, VA, WA, WV, WI, WY, AS, GU, MP, PR, VI, UM, FM, MH, PW, AA, AE, AP, CM, CZ, NB, PI, TT, ON, QC, NS, NB, MB, BC, PE, SK, AB, NL
--   *Zip* is not changed, but is flagged if:
-    -   If the hunter's address doesn't have a zip that should be in their reported state of residence (checked against a master list of USA postal codes), it's flagged
-    -   Foreign zip codes are flagged
-    -   Zip codes that do not match a 5-digit or 9-digit hyphenated format are flagged
--   *Birth date* is not changed, but remains flagged if the birth year was \> 100 or \< 16 years ago
--   *Issue date* is not changed, but remains flagged if it is not equal to or +/- 1 year from the HIP data collection year
--   *Hunt migratory birds* is not changed, and remains flagged if it is not equal to 1 or 2
--   *Bag values* remain unchanged
--   *Registration year* is not changed, but remains flagged if it is not equal to or +/- 1 year from the HIP data collection year
--   *Email* is corrected by:
-    -   Removing spaces, commas, and/or forward slash symbols
-    -   Changing to lowercase
-    -   Replacing multiple \@ symbols with a single \@
-    -   Adding periods and three-letter endings to common domains, including:
-        -   gmail -\> gmail.com
-        -   yahoo -\> yahoo.com
-        -   aol -\> aol.com
-        -   comcast -\> comcast.net
-        -   verizon -\> verizon.net
-        -   cox -\> cox.net
-        -   outlook -\> outlook.com
-        -   hotmail -\> hotmail.com
-    -   Replace .ccom with .com
-    -   Add missing periods before net, com, edu, and gov
-    -   Change email to NA if:
-        -   There is no \@ symbol in the email string
-        -   If the email is invalid (i.e. none<!-- breaklink -->@none, noemail, n/a)
-    -   Any email that wasn't corrected and doesn't fit the standardized email regex remains flagged
+-   `title` is changed to `NA`
+-   `middle` is changed to `NA`
+-   `suffix` is changed to `NA`
 
 All functions in [Part C](#part-c-data-visualization-and-tabulation) will run on the corrected tibble, `corrected_data`, just as they worked on the example tibble `proofed_data`. Errors can be compared between the proofed stage and corrected stage to get a better idea of which errors were serious (i.e. difficult to correct automatically) and determine how serious errors can be prevented in the future.
 
@@ -426,7 +406,7 @@ The `pullErrors` function can be used to view all of the actual values that were
 
 ``` r
 pullErrors(proofed_data, field = "suffix")
-#> [1] "MD"  NA    "JR"  "PHD" "DVM" "SR"  "DDS"
+#> [1] "MD"  "PHD" "DDS" "DVM"
 ```
 
 Running `pullErrors` on a field that has no errors will return a message.
@@ -545,20 +525,20 @@ The `errorTable` function is a flexible way to obtain error data as a tibble, wh
 
 ``` r
 errorTable(proofed_data)
-#> # A tibble: 293 × 3
+#> # A tibble: 236 × 3
 #>    dl_state error     error_count
 #>    <chr>    <chr>           <int>
-#>  1 AK       email               4
-#>  2 AK       firstname         206
-#>  3 AK       lastname          205
-#>  4 AK       middle             69
-#>  5 AK       suffix            208
-#>  6 AK       zip               110
-#>  7 AL       email               5
-#>  8 AL       firstname         203
-#>  9 AL       lastname          198
-#> 10 AL       middle             70
-#> # ℹ 283 more rows
+#>  1 AK       email               1
+#>  2 AK       firstname           2
+#>  3 AK       lastname            3
+#>  4 AK       suffix             61
+#>  5 AK       zip               119
+#>  6 AL       email               8
+#>  7 AL       firstname           2
+#>  8 AL       lastname            1
+#>  9 AL       suffix             61
+#> 10 AL       zip               125
+#> # ℹ 226 more rows
 ```
 
 Errors can be reported by only location by turning off the `field` parameter.
@@ -569,16 +549,16 @@ errorTable(proofed_data, field = "none")
 #> # A tibble: 49 × 2
 #>    dl_state error_count
 #>    <chr>          <int>
-#>  1 AK               802
-#>  2 AL               795
-#>  3 AR               828
-#>  4 AZ               865
-#>  5 CA               823
-#>  6 CO               766
-#>  7 CT               807
-#>  8 DE               811
-#>  9 FL               834
-#> 10 GA               795
+#>  1 AK               186
+#>  2 AL               197
+#>  3 AR               200
+#>  4 AZ               195
+#>  5 CA               198
+#>  6 CO               197
+#>  7 CT               185
+#>  8 DE               209
+#>  9 FL               212
+#> 10 GA               212
 #> # ℹ 39 more rows
 ```
 
@@ -587,15 +567,14 @@ Errors can be reported by only field by turning off the `loc` parameter.
 
 ``` r
 errorTable(proofed_data, loc = "none")
-#> # A tibble: 6 × 2
+#> # A tibble: 5 × 2
 #>   error     error_count
 #>   <chr>           <int>
-#> 1 email             234
-#> 2 firstname       10131
-#> 3 lastname        10110
-#> 4 middle           3076
-#> 5 suffix          10237
-#> 6 zip              5921
+#> 1 email             228
+#> 2 firstname         113
+#> 3 lastname          126
+#> 4 suffix           3329
+#> 5 zip              5857
 ```
 
 Location can be specified.
@@ -603,15 +582,13 @@ Location can be specified.
 
 ``` r
 errorTable(proofed_data, loc = "CA")
-#> # A tibble: 6 × 3
-#>   dl_state error     error_count
-#>   <chr>    <chr>           <int>
-#> 1 CA       email               2
-#> 2 CA       firstname         209
-#> 3 CA       lastname          213
-#> 4 CA       middle             58
-#> 5 CA       suffix            214
-#> 6 CA       zip               127
+#> # A tibble: 4 × 3
+#>   dl_state error    error_count
+#>   <chr>    <chr>          <int>
+#> 1 CA       email              5
+#> 2 CA       lastname           3
+#> 3 CA       suffix            66
+#> 4 CA       zip              124
 ```
 
 Field can be specified.
@@ -622,7 +599,7 @@ errorTable(proofed_data, field = "suffix")
 #> # A tibble: 1 × 2
 #>   error  error_count
 #>   <chr>        <int>
-#> 1 suffix       10237
+#> 1 suffix        3329
 ```
 
 Total errors for a location can be pulled.
@@ -633,7 +610,7 @@ errorTable(proofed_data, loc = "CA", field = "none")
 #> # A tibble: 1 × 2
 #>   dl_state total_errors
 #>   <chr>           <int>
-#> 1 CA                823
+#> 1 CA                198
 ```
 
 Total errors for a field in a particular location can be pulled.
@@ -647,35 +624,3 @@ errorTable(proofed_data, loc = "CA", field = "dove_bag")
 ## Troubleshooting {#troubleshooting}
 
 If you encounter a problem while using this R package, please [report an issue](https://github.com/USFWS/migbirdHIP/issues) on the [migbirdHIP GitHub repository](https://github.com/USFWS/migbirdHIP).
-
-### Common read_hip warnings {#common-read_hip-warnings}
-
-Sometimes `read_hip` will throw one or more warnings. Warnings are usually benign, but for clarity I provide examples and explanations of common warnings below.
-
-#### Example 1
-
-This parsing failure occurs when a .txt file is missing the last two columns in the fixed-width file (registration_yr and email). For the offending file(s), these columns are filled with NA in the output tibble. No action must be taken.
-
-<div class="figure" style="text-align: center">
-<img src="image/parsing_failure_1.png" alt="Example 1. Common warning that results after running read_hip with missing columns in fixed-width text files." width="60%" />
-<p class="caption">Example 1. Common warning that results after running read_hip with missing columns in fixed-width text files.</p>
-</div>
-
-#### Example 2
-
-Another version of a parsing failure occurs when a file is missing the last column in last row of the fixed-width file. This value is set to NA in the output tibble. No action must be taken.
-
-<div class="figure" style="text-align: center">
-<img src="image/parsing_failure_2.png" alt="Example 2. Common warning that results after running read_hip with a missing column in one row of a fixed-width text file." width="60%" />
-<p class="caption">Example 2. Common warning that results after running read_hip with a missing column in one row of a fixed-width text file.</p>
-</div>
-
-### Memory problems {#memory-problems}
-
-Some of these functions require a lot of memory to run. To help your R session process these data, especially when working with the large season totals, you can do a few things:
-
-1.  Remove objects from the environment. If you have already run `read_hip`, `clean`, and `proof`, you may no longer need your original dataframe or your cleaned dataframe, since most error checking functions work from the proofed or corrected versions of the data. To remove an unneeded object like the cleaned dataframe, run `rm(clean_data)`, or set it to `NULL` via `clean_data <- NULL`.
-
-2.  Check your memory using `memory.limit()`
-
-3.  Increase your memory, e.g. `memory.limit(size = 55000)`
