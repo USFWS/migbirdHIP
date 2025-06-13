@@ -32,12 +32,15 @@ correct <-
       correctSuffix() |>
       # Correct middle initial (change to NA if error detected)
       correctMiddleInitial() |>
-      # Change "none"s back to NAs in errors col
-      mutate(errors = ifelse(errors == "none", NA, errors)) |>
+      mutate(
+        # Change "none"s back to NAs in errors col
+        errors = ifelse(errors == "none", NA, errors),
+        # Change email to lower case
+        email = tolower(email)) |>
       # Email correction
       correctEmail()
 
-    # Re-run the proof script to get an updated errors column
+    # Re-run proof() to get an updated errors column
     corrected_proofed <- suppressMessages(proof(corrected_data, year = year))
 
     return(corrected_proofed)
@@ -115,8 +118,6 @@ correctMiddleInitial <-
 #' @importFrom dplyr case_when
 #' @importFrom stringr str_detect
 #' @importFrom stringr str_replace
-#' @importFrom stringr str_remove
-#' @importFrom stringr str_remove_all
 #'
 #' @param proofed_data The object created after error flagging data with \code{\link{proof}}
 #'
@@ -130,109 +131,6 @@ correctEmail <-
     email_corrected <-
       proofed_data |>
         mutate(
-          # Delete spaces, slashes, and commas; change to lowercase
-          email =
-            tolower(str_remove_all(email, "( |\\/|\\,)")),
-          # Delete ! from domain part
-          email =
-            ifelse(
-              str_detect(email, "\\!+(?!.*\\@.*)"),
-              str_remove_all(email, "\\!+(?!.*\\@.*)"),
-              email),
-          # Fix multiple @
-          email =
-            ifelse(
-              str_detect(email, "\\@\\@+"),
-              str_replace(email, "\\@\\@+", "\\@"),
-              email),
-          # Fix multiple .
-          email =
-            ifelse(
-              str_detect(email, "\\.\\.+"),
-              str_replace(email, "\\.\\.+", "\\."),
-              email),
-          # Delete dot when it is first character in local part
-          email =
-            ifelse(
-              str_detect(email, "^\\."),
-              str_remove(email, "^\\."),
-              email),
-          # Delete dot when it is last character in local part
-          email =
-            ifelse(
-              str_detect(email, "\\.(?=\\@)"),
-              str_remove(email, "\\.(?=\\@)"),
-              email),
-          # Delete dot when it is last character
-          email =
-            ifelse(
-              str_detect(email, "\\.$"),
-              str_remove(email, "\\.$"),
-              email),
-          # Delete hyphen when it is first character in domain part
-          email =
-            ifelse(
-              str_detect(email, "(?<=\\@)\\-"),
-              str_remove(email, "(?<=\\@)\\-"),
-              email),
-          # Correct top level domain
-          email =
-            case_when(
-              # gmail
-              str_detect(email, "(?<=\\@)gmail\\.(co|net|edu|org)$") ~
-                str_replace(email, "gmail\\.(co|net|edu|org)$", "gmail.com"),
-              # ATT
-              str_detect(email, "(?<=\\@)att\\.(com|org)$") ~
-                str_replace(email, "att\\.(com|org)$", "att.net"),
-              # Comcast
-              str_detect(email, "(?<=\\@)comcast\\.(com|org)$") ~
-                str_replace(email, "comcast\\.(com|org)$", "comcast.net"),
-              # iCloud
-              str_detect(email, "(?<=\\@)icloud\\.(net|org)$") ~
-                str_replace(email, "icloud\\.(net|org)$", "icloud.com"),
-              TRUE ~ email
-            ),
-          # Correct top level domain typos
-          email =
-            case_when(
-              # .com.com (2 or more)
-              str_detect(email, "(?<=\\.)com(\\.com)+$") ~
-                str_replace(email, "com(\\.com)+$", "com"),
-              # .comcom (2 or more)
-              str_detect(email, "(?<=\\.)com(com)+$") ~
-                str_replace(email, "com(com)+$", "com"),
-              # .con
-              str_detect(email, "(?<=\\.)con$") ~
-                str_replace(email, "con$", "com"),
-              # .ccom
-              str_detect(email, "(?<=\\.)ccom$") ~
-                str_replace(email, "ccom$", "com"),
-              # .coom
-              str_detect(email, "(?<=\\.)coom$") ~
-                str_replace(email, "coom$", "com"),
-              # .comm
-              str_detect(email, "(?<=\\.)comm$") ~
-                str_replace(email, "comm$", "com"),
-              # .c0m
-              str_detect(email, "(?<=\\.)c0m$") ~
-                str_replace(email, "c0m$", "com"),
-              # .ocm
-              str_detect(email, "(?<=\\.)ocm$") ~
-                str_replace(email, "ocm$", "com"),
-              # .cm
-              str_detect(email, "(?<=\\.)cm$") ~
-                str_replace(email, "cm$", "com"),
-              # .om
-              str_detect(email, "(?<=\\.)om$") ~
-                str_replace(email, "om$", "com"),
-              # .cim
-              str_detect(email, "(?<=\\.)cim$") ~
-                str_replace(email, "cim$", "com"),
-              # .common
-              str_detect(email, "(?<=\\.)common$") ~
-                str_replace(email, "common$", "com"),
-              TRUE ~ email
-            ),
           # Add in missing top level domain endings
           email =
             case_when(
