@@ -212,9 +212,11 @@ proofBadEmails <-
           # Popular domain doesn't have matching top level domain
           str_detect(email, "(?<=\\@)gmail(?!\\.com$)") |
           str_detect(email, "(?<=\\@)yahoo\\.(?!(com|co\\.uk|fr|es|ca|de)$)") |
-          str_detect(email, "(?<=\\@)hotmail\\.(?!(com|co\\.uk|fr|es|ca|de)$)") |
-          str_detect(email, "(?<=\\@)(icloud|aol|outlook|msn|live|ymail|me|mac)\\.(?!com$)") |
-          str_detect(email, "(?<=\\@)(att|cox|comcast|sbcglobal|bellsouth|verizon|earthlink|charter)\\.(?!net$)") |
+          str_detect(email, "(?<=\\@)hotmail\\.(?!(com|co\\.uk|fr|es|ca|de)$)")|
+          str_detect(email, paste0("(?<=\\@)(icloud|aol|outlook|msn|live|ymail",
+                                   "|me|mac)\\.(?!com$)")) |
+          str_detect(email, paste0("(?<=\\@)(att|cox|comcast|sbcglobal|bellsou",
+                                   "th|verizon|earthlink|charter)\\.(?!net$)"))|
           str_detect(email, "(?<=\\@)proton\\.(?!(me|mail\\.com|mail\\.ch)$)") |
           str_detect(email, "(?<=\\@)protonmail\\.(?!(com|ch)$)") |
           str_detect(email, "(?<=\\@)pm\\.(?!me$)") |
