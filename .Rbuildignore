@@ -8,3 +8,5 @@
 ^\.gitignore$
 ^\.git$
 ^data-raw$
+*.qmd
+^Thumbs.db$
