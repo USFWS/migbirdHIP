@@ -27,6 +27,7 @@ Suggests:
     DT,
     kableExtra,
     knitr,
+    rmarkdown,
     sf,
     spelling,
     stringi,

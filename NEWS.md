@@ -77,6 +77,10 @@
 
 ## Minor changes / bug fixes
 
+-   Vignette
+    -   Since the package now contains comprehensive test data, there is no need to pre-compute the vignette using HIP data stored locally.
+    -   The `vignettes/man/migbirdHIP_workflow.Rmd.orig` file was deleted.
+    -   Unused files in the `vignettes/image/` subdirectory were deleted; used files were moved to `man/figures/`.
 -   Template `dl_report.qmd`:
     -   Sorted errors by descending in "causes of errors by state" table.
     -   Eliminated breaking error in report rendering if there is no field exceeding the error threshold.
