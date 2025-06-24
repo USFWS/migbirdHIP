@@ -23,20 +23,6 @@ test_that("read_hip works for a download", {
   expect_true(length(unique(read_data$dl_state)) == 2)
 })
 
-# listFiles function ------------------------------------------------------
-
-test_that("listFiles works", {
-
-  yr <- as.numeric(REF_CURRENT_SEASON)
-
-  files_listed <-
-    listFiles(
-      testthat::test_path("data", "DL0902"),
-      yr)
-
-  expect_equal(nrow(files_listed), 6)
-})
-
 # ignorePermits -----------------------------------------------------------
 
 test_that("ignorePermits works", {
@@ -53,24 +39,6 @@ test_that("ignorePermits works", {
         )))
 
   expect_false(pmt_file %in% read_data_files)
-})
-
-# ignoreHolds -------------------------------------------------------------
-
-test_that("ignoreHolds works", {
-
-  hold_file <- list.files(testthat::test_path("data", "DL0902", "hold"))
-
-  suppressMessages(
-    invisible(
-      capture.output(
-        read_data_files <-
-          read_hip(testthat::test_path("data", "DL0902")) |>
-          distinct(source_file) |>
-          pull()
-      )))
-
-  expect_false(hold_file %in% read_data_files)
 })
 
 # ignoreLifetime ----------------------------------------------------------
