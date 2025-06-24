@@ -12,8 +12,9 @@ globalVariables(
       "zip",
       "issue_date",
       "hunt_mig_birds",
-      REF_BAG_FIELDS,
-      "email"),
+      REF_BAG_FIELDS#,
+      #"email"
+      ),
     # Field names in migbirdHIP:::REF_BAGS
     c("stateBagValue",
       "spp",

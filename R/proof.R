@@ -12,10 +12,9 @@
 #' @importFrom dplyr case_when
 #' @importFrom dplyr full_join
 #' @importFrom stringr str_detect
-#' @importFrom dplyr group_by
-#' @importFrom dplyr ungroup
 #' @importFrom stringr str_extract
 #' @importFrom stringr str_remove_all
+#' @importFrom rlang .data
 #'
 #' @param deduplicated_data The object created after deduplicating data with \code{\link{duplicateFix}}
 #' @param year The year in which the Harvest Information Program data were collected
@@ -47,82 +46,82 @@ proof <-
           mutate(error = "test_record"),
         # Title
         keyed_data |>
-          filter(!title %in% REF_TITLES) |>
+          filter(!.data$title %in% REF_TITLES) |>
           mutate(error = "title"),
         # First name
         keyed_data |>
-          filter(!str_detect(firstname, REGEX_FIRSTNAME)) |>
+          filter(!str_detect(.data$firstname, REGEX_FIRSTNAME)) |>
           mutate(error = "firstname"),
         # Middle initial
         keyed_data |>
-          filter(!middle %in% c(LETTERS, NA)) |>
+          filter(!.data$middle %in% c(LETTERS, NA)) |>
           mutate(error = "middle"),
         # Last name
         keyed_data |>
-          filter(!str_detect(lastname, REGEX_LASTNAME)) |>
+          filter(!str_detect(.data$lastname, REGEX_LASTNAME)) |>
           mutate(error = "lastname"),
         # Suffix
         keyed_data |>
-          filter(!suffix %in% c(REF_SUFFIXES, NA)) |>
+          filter(!.data$suffix %in% c(REF_SUFFIXES, NA)) |>
           mutate(error = "suffix"),
         # Address
         keyed_data |>
-          filter(str_detect(address, REGEX_BAD_ADDRESS)) |>
+          filter(str_detect(.data$address, REGEX_BAD_ADDRESS)) |>
           mutate(error = "address"),
         # City
         keyed_data |>
-          filter(!str_detect(city, REGEX_CITY)) |>
+          filter(!str_detect(.data$city, REGEX_CITY)) |>
           mutate(error = "city"),
         # State
         keyed_data |>
-          filter(!state %in% REF_USA_CANADA) |>
+          filter(!.data$state %in% REF_USA_CANADA) |>
           mutate(error = "state"),
         # Zip code should be in the reference table
         keyed_data |>
-          filter(!str_extract(zip, "^[0-9]{5}") %in% REF_ZIP_CODE$zipcode) |>
+          filter(
+            !str_extract(.data$zip, "^[0-9]{5}") %in% REF_ZIP_CODE$zipcode) |>
           mutate(error = "zip"),
         # Birth date should only ever be between 100 and 0 years ago
         keyed_data |>
           filter(
             as.numeric(
-              str_extract(birth_date, "(?<=\\/)[0-9]{4}")) < year - 100 |
+              str_extract(.data$birth_date, "(?<=\\/)[0-9]{4}")) < year - 100 |
               as.numeric(
-                str_extract(birth_date, "(?<=\\/)[0-9]{4}")) > year - 0) |>
+                str_extract(.data$birth_date, "(?<=\\/)[0-9]{4}")) > year - 0) |>
           mutate(error = "birth_date"),
         # hunt_mig_birds
         keyed_data |>
-          filter(!hunt_mig_birds %in% REF_HUNT_MIG_BIRDS) |>
+          filter(!.data$hunt_mig_birds %in% REF_HUNT_MIG_BIRDS) |>
           mutate(error = "hunt_mig_birds"),
         # registration_yr should = survey year
         keyed_data |>
-          filter(registration_yr != year) |>
+          filter(.data$registration_yr != year) |>
           mutate(error = "registration_yr"),
         # Email
         keyed_data |>
           proofBadEmails() |>
           mutate(error = "email")
       ) |>
-      select(temp_key, error)
+      select(c("temp_key", "error"))
 
     graded_x <-
       keyed_data |>
       # Join in the error report
       full_join(markup, by = "temp_key") |>
-      group_by(temp_key) |>
       # Paste errors together (some records might have more than one!)
-      mutate(errors = paste(error, collapse = "-")) |>
-      ungroup() |>
-      select(-c(temp_key, error)) |>
+      mutate(errors = paste(error, collapse = "-"), .by = "temp_key") |>
+      select(-c("temp_key", "error")) |>
       distinct() |>
       # Make the NAs "real NAs" not just strings
       mutate(
         errors =
           ifelse(
-            str_detect(errors, "NA\\-|\\-NA"),
-            str_remove_all(errors, "NA\\-|\\-NA"),
-            errors)) |>
+            str_detect(.data$errors, "NA\\-|\\-NA"),
+            str_remove_all(.data$errors, "NA\\-|\\-NA"),
+            .data$errors)) |>
       # Add a second mutate here because we cannot pipe '.'
-      mutate(errors = ifelse(str_detect(errors, "^NA$"), NA, errors)) |>
+      mutate(errors =
+               ifelse(str_detect(.data$errors, "^NA$"), NA, .data$errors)) |>
       as_tibble()
 
     # Proof the zip codes. Are they associated with the correct states?
@@ -130,18 +129,20 @@ proof <-
       graded_x |>
       left_join(
         REF_ZIP_CODE |>
-          distinct(zip = zipcode, zipState = state),
+          distinct(zip = .data$zipcode, zipState = .data$state),
         by = "zip") |>
       # Add an error if the state doesn't match zipState
       mutate(
         errors =
           case_when(
-            state != zipState & is.na(errors) ~ "zip",
-            state != zipState & !is.na(errors) & !str_detect(errors, "zip") ~
-              paste0(errors, "-zip"),
-            TRUE ~ errors)
+            .data$state != .data$zipState & is.na(.data$errors) ~
+              "zip",
+            .data$state != .data$zipState & !is.na(.data$errors) &
+              !str_detect(.data$errors, "zip") ~
+              paste0(.data$errors, "-zip"),
+            TRUE ~ .data$errors)
       ) |>
-      select(-zipState)
+      select(-"zipState")
 
     return(graded_x)
 
@@ -169,74 +170,82 @@ proofBadEmails <-
     # Filter data to email addresses that do not meet expectations
     keyed_data |>
       mutate(
-        email = tolower(email),
-        tld = paste0(".", str_extract(email, "(?<=\\.)[a-zA-Z0-9\\-]+$"))) |>
+        email = tolower(.data$email),
+        tld =
+          paste0(".", str_extract(.data$email, "(?<=\\.)[a-zA-Z0-9\\-]+$"))) |>
       filter(
-        !str_detect(email, REGEX_EMAIL) |
+        !str_detect(.data$email, REGEX_EMAIL) |
           # Obfuscative emails
-          str_detect(email, REGEX_EMAIL_OBFUSCATIVE_LOCALPART) |
-          str_detect(email, REGEX_EMAIL_OBFUSCATIVE_DOMAIN) |
-          str_detect(email, REGEX_EMAIL_REPEATED_CHAR) |
-          str_detect(email, REGEX_EMAIL_OBFUSCATIVE_TPWD) |
-          str_detect(email, REGEX_EMAIL_OBFUSCATIVE_WALMART) |
-          email %in% REF_EMAIL_OBFUSCATIVE_ADDRESS |
+          str_detect(.data$email, REGEX_EMAIL_OBFUSCATIVE_LOCALPART) |
+          str_detect(.data$email, REGEX_EMAIL_OBFUSCATIVE_DOMAIN) |
+          str_detect(.data$email, REGEX_EMAIL_REPEATED_CHAR) |
+          str_detect(.data$email, REGEX_EMAIL_OBFUSCATIVE_TPWD) |
+          str_detect(.data$email, REGEX_EMAIL_OBFUSCATIVE_WALMART) |
+          .data$email %in% REF_EMAIL_OBFUSCATIVE_ADDRESS |
           # Longer than 100 characters (max length of a valid address is 254 but
           # this would be very rare; we only accept 100)
-          str_length(email) > 100 |
+          str_length(.data$email) > 100 |
           # Domain typo
           str_detect(
-            email,
+            .data$email,
             paste0(
               "(?<=\\@)(gmaill|gmai|gamil|gmial|gmal|gmil|gail|gmali|gmall|gla",
               "il|gmaim|gamil|gimal|gmai|gmaii|gnail)\\.com$")) |
           str_detect(
-            email,
+            .data$email,
             paste0(
               "(?<=\\@)(yahooo+|ahoo|yhoo|yaho|yahoh|yahohh|yyahoo|ayahoo)\\.c",
               "om$")) |
-          str_detect(email, "(?<=\\@)(attt+|at|aatt)\\.net$") |
-          str_detect(email, "(?<=\\@)(iclould|icoud|icould)\\.com$") |
-          str_detect(email, "(?<=\\@)(hatmail)\\.com$") |
+          str_detect(.data$email, "(?<=\\@)(attt+|at|aatt)\\.net$") |
+          str_detect(.data$email, "(?<=\\@)(iclould|icoud|icould)\\.com$") |
+          str_detect(.data$email, "(?<=\\@)(hatmail)\\.com$") |
           str_detect(
-            email,
+            .data$email,
             paste0(
               "(?<=\\@)(sbcgobal|sbcglobel|sbcgloble|sbcgolbal|sbcglobe|sbcglo",
               "bl|sbcgloabl|sbcgloabal|sbcgloal|sbcgobel|sbcglbal|sbcglob|sbcg",
               "oble|sbclobal|sbc\\.gobal|sbcglabal|sbcglibal|sbcgllobal|sbcglo",
               "ba|sbcglobale|sbcglobol|sbcglobsl|spcglobal)\\.net$")) |
           str_detect(
-            email,
+            .data$email,
             paste0(
               "(?<=\\@)(concast|commcast|comacast|cmcast|compcast|conmcast|c0m",
               "cast|comcst|comacst)\\.net$")) |
           # Popular domain doesn't have matching top level domain
-          str_detect(email, "(?<=\\@)gmail(?!\\.com$)") |
-          str_detect(email, "(?<=\\@)yahoo\\.(?!(com|co\\.uk|fr|es|ca|de)$)") |
-          str_detect(email, "(?<=\\@)hotmail\\.(?!(com|co\\.uk|fr|es|ca|de)$)")|
-          str_detect(email, paste0("(?<=\\@)(icloud|aol|outlook|msn|live|ymail",
-                                   "|me|mac)\\.(?!com$)")) |
-          str_detect(email, paste0("(?<=\\@)(att|cox|comcast|sbcglobal|bellsou",
-                                   "th|verizon|earthlink|charter)\\.(?!net$)"))|
-          str_detect(email, "(?<=\\@)proton\\.(?!(me|mail\\.com|mail\\.ch)$)") |
-          str_detect(email, "(?<=\\@)protonmail\\.(?!(com|ch)$)") |
-          str_detect(email, "(?<=\\@)pm\\.(?!me$)") |
+          str_detect(.data$email, "(?<=\\@)gmail(?!\\.com$)") |
+          str_detect(
+            .data$email, "(?<=\\@)yahoo\\.(?!(com|co\\.uk|fr|es|ca|de)$)") |
+          str_detect(
+            .data$email, "(?<=\\@)hotmail\\.(?!(com|co\\.uk|fr|es|ca|de)$)")|
+          str_detect(
+            .data$email,
+            "(?<=\\@)(icloud|aol|outlook|msn|live|ymail|me|mac)\\.(?!com$)") |
+          str_detect(
+            .data$email,
+            paste0(
+              "(?<=\\@)(att|cox|comcast|sbcglobal|bellsouth|verizon|earthlink|",
+              "charter)\\.(?!net$)"))|
+          str_detect(
+            .data$email, "(?<=\\@)proton\\.(?!(me|mail\\.com|mail\\.ch)$)") |
+          str_detect(.data$email, "(?<=\\@)protonmail\\.(?!(com|ch)$)") |
+          str_detect(.data$email, "(?<=\\@)pm\\.(?!me$)") |
           # Bad top level domain
           str_detect(email, "(?<=\\.)com(\\.com)+$") |
-          !tld %in% REF_EMAIL_TLDS |
+          !.data$tld %in% REF_EMAIL_TLDS |
           # Missing top level domain endings
           str_detect(
-            email,
+            .data$email,
             paste0(
               "(?<=\\@)(gmail|yahoo|hotmail|aol|icloud|comcast|outlook|sbcglob",
               "al|att|msn|live|bellsouth|charter|ymail|me|verizon|cox|earthlin",
               "k|protonmail|pm|duck|ducks|mail)$")) |
           # Missing top level domain periods
           str_detect(
-            email,
+            .data$email,
             paste0(
               "(?<!\\.)(com|net|edu|gov|org|navymil|usnavymil|usafmil|mailmil|",
               "armymil|usarmymil|usacearmymil)$"))
       ) |>
-      select(-tld)
+      select(-"tld")
   }
 
