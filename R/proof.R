@@ -1,4 +1,4 @@
-#' Flag errors
+#' Proof data and flag errors
 #'
 #' After cleaning the data with \code{\link{clean}}, compare each field to an expected range of values and flag non-conforming values in a new "errors" column.
 #'
@@ -25,11 +25,8 @@
 #' @export
 
 proof <-
-  function(deduplicated_data, year){
-
-    # Fail if incorrect year supplied
-    stopifnot("Error: `year` parameter must be numeric." = is.numeric(year))
-    stopifnot("Error: Incorrect value supplied for `year` parameter. Please use a 4-digit year in the 2020s, e.g. 2024." = str_detect(year, "^202[0-9]{1}$"))
+  function(deduplicated_data, year) {
+    failyear(year)
 
     # Create a record key so that the errors can be joined in later (there may
     # be more than 1 error per record, so using the record_key field will not
@@ -109,7 +106,7 @@ proof <-
       # Join in the error report
       full_join(markup, by = "temp_key") |>
       # Paste errors together (some records might have more than one!)
-      mutate(errors = paste(error, collapse = "-"), .by = "temp_key") |>
+      mutate(errors = paste(.data$error, collapse = "-"), .by = "temp_key") |>
       select(-c("temp_key", "error")) |>
       distinct() |>
       # Make the NAs "real NAs" not just strings
@@ -230,7 +227,7 @@ proofBadEmails <-
           str_detect(.data$email, "(?<=\\@)protonmail\\.(?!(com|ch)$)") |
           str_detect(.data$email, "(?<=\\@)pm\\.(?!me$)") |
           # Bad top level domain
-          str_detect(email, "(?<=\\.)com(\\.com)+$") |
+          str_detect(.data$email, "(?<=\\.)com(\\.com)+$") |
           !.data$tld %in% REF_EMAIL_TLDS |
           # Missing top level domain endings
           str_detect(

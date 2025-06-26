@@ -63,6 +63,7 @@ clean <-
 #'
 #' @importFrom dplyr mutate
 #' @importFrom stringr str_to_upper
+#' @importFrom rlang .data
 #'
 #' @inheritParams clean
 #'
@@ -75,9 +76,9 @@ namesToUppercase <-
     # Convert name elements to uppercase for easier string cleaning
     raw_data |>
       mutate(
-        firstname = str_to_upper(firstname),
-        lastname = str_to_upper(lastname),
-        suffix = str_to_upper(suffix))
+        firstname = str_to_upper(.data$firstname),
+        lastname = str_to_upper(.data$lastname),
+        suffix = str_to_upper(.data$suffix))
   }
 
 #' Missing PII filter
@@ -121,6 +122,7 @@ missingPIIFilter <-
 #' @importFrom dplyr across
 #' @importFrom dplyr contains
 #' @importFrom stringr str_trim
+#' @importFrom rlang .data
 #'
 #' @inheritParams clean
 #'
@@ -130,8 +132,7 @@ missingPIIFilter <-
 moveSuffixes <-
   function(raw_data) {
 
-    suffixes_moved <-
-      raw_data |>
+    raw_data |>
       mutate(
         # Extract suffixes from lastname and firstname cols to suffix col
         # Catches values from 1-20 in Roman numerals and numeric, excluding
@@ -139,32 +140,30 @@ moveSuffixes <-
         suffix =
           case_when(
             # Lastname
-            str_detect(lastname, REGEX_SUFFIX_SEARCH) ~
-              str_extract(lastname, REGEX_SUFFIX_SEARCH),
+            str_detect(.data$lastname, REGEX_SUFFIX_SEARCH) ~
+              str_extract(.data$lastname, REGEX_SUFFIX_SEARCH),
             # Firstname
-            str_detect(firstname, REGEX_SUFFIX_SEARCH) ~
-              str_extract(firstname, REGEX_SUFFIX_SEARCH),
-            TRUE ~ suffix),
+            str_detect(.data$firstname, REGEX_SUFFIX_SEARCH) ~
+              str_extract(.data$firstname, REGEX_SUFFIX_SEARCH),
+            TRUE ~ .data$suffix),
         # Delete periods and commas from suffixes
-        suffix = str_remove_all(suffix, "\\.|\\,"),
+        suffix = str_remove_all(.data$suffix, "\\.|\\,"),
         # Delete suffixes from lastname col (includes 1-20 in Roman numerals and
         # numeric, excluding XVIII since the db limit is 4 characters)
         lastname =
           ifelse(
-            str_detect(lastname, REGEX_SUFFIX_SEARCH),
-            str_remove(lastname, REGEX_SUFFIX_SEARCH),
-            lastname),
+            str_detect(.data$lastname, REGEX_SUFFIX_SEARCH),
+            str_remove(.data$lastname, REGEX_SUFFIX_SEARCH),
+            .data$lastname),
         # Delete suffixes from firstname col (includes 1-20 in Roman numerals
         # and numeric, excluding XVIII since the db limit is 4 characters)
         firstname =
           ifelse(
-            str_detect(firstname, REGEX_SUFFIX_SEARCH),
-            str_remove(firstname, REGEX_SUFFIX_SEARCH),
-            firstname)) |>
+            str_detect(.data$firstname, REGEX_SUFFIX_SEARCH),
+            str_remove(.data$firstname, REGEX_SUFFIX_SEARCH),
+            .data$firstname)) |>
       # Delete white space around names due to moving the suffixes
       mutate(across(contains("name"), \(x) str_trim(x)))
-
-    return(suffixes_moved)
   }
 
 #' Format zip codes
@@ -176,6 +175,7 @@ moveSuffixes <-
 #' @importFrom stringr str_extract
 #' @importFrom stringr str_remove
 #' @importFrom stringr str_replace
+#' @importFrom rlang .data
 #'
 #' @inheritParams clean
 #'
@@ -185,53 +185,50 @@ moveSuffixes <-
 formatZip <-
   function(raw_data) {
 
-    zips_formatted <-
-      raw_data |>
+    raw_data |>
       # Zip code format corrections
       mutate(
         zip =
           # Remove ending hyphen from zip codes with 5 digits
           ifelse(
-            str_detect(zip, "^[0-9]{5}\\-$"),
-            str_remove(zip, "\\-$"),
-            zip),
+            str_detect(.data$zip, "^[0-9]{5}\\-$"),
+            str_remove(.data$zip, "\\-$"),
+            .data$zip),
         zip =
           # Remove final 0 from zip codes with length of 10 digits
           ifelse(
-            str_detect(zip, "^[0-9]{10}$") &
-              str_extract(zip, "[0-9]{1}(?=$)") == "0",
-            str_remove(zip, "[0-9]{1}(?=$)"),
-            zip),
+            str_detect(.data$zip, "^[0-9]{10}$") &
+              str_extract(.data$zip, "[0-9]{1}(?=$)") == "0",
+            str_remove(.data$zip, "[0-9]{1}(?=$)"),
+            .data$zip),
         zip =
           # Insert a hyphen in continuous 9 digit zip codes
           ifelse(
-            str_detect(zip, "^[0-9]{9}$"),
+            str_detect(.data$zip, "^[0-9]{9}$"),
             paste0(
-              str_extract(zip, "^[0-9]{5}"),
+              str_extract(.data$zip, "^[0-9]{5}"),
               "-",
-              str_extract(zip,"[0-9]{4}$")),
-            zip),
+              str_extract(.data$zip,"[0-9]{4}$")),
+            .data$zip),
         zip =
           # Insert a hyphen in 9 digit zip codes with a middle space
           ifelse(
-            str_detect(zip, "^[0-9]{5}\\s[0-9]{4}$"),
-            str_replace(zip, "\\s", "\\-"),
-            zip),
+            str_detect(.data$zip, "^[0-9]{5}\\s[0-9]{4}$"),
+            str_replace(.data$zip, "\\s", "\\-"),
+            .data$zip),
         zip =
           # Remove trailing -0000
           ifelse(
-            str_detect(zip, "\\-0000"),
-            str_remove(zip, "\\-0000"),
-            zip),
+            str_detect(.data$zip, "\\-0000"),
+            str_remove(.data$zip, "\\-0000"),
+            .data$zip),
         zip =
           # Remove trailing -___
           ifelse(
-            str_detect(zip, "\\-\\_+"),
-            str_remove(zip, "\\-\\_+"),
-            zip)
+            str_detect(.data$zip, "\\-\\_+"),
+            str_remove(.data$zip, "\\-\\_+"),
+            .data$zip)
       )
-
-    return(zips_formatted)
   }
 
 #' In-line permit did-not-hunt fix
@@ -239,6 +236,7 @@ formatZip <-
 #' The internal \code{inLinePermitDNHFix} function changes any presumed solo permit from OR or WA indicating "did not hunt" in the hunt_mig_birds field if one or more of the band_tailed_pigeon, brant, or seaducks fields indicate hunting.
 #'
 #' @importFrom dplyr mutate
+#' @importFrom rlang .data
 #'
 #' @inheritParams clean
 #'
@@ -256,7 +254,7 @@ inLinePermitDNHFix <-
           ifelse(
             !!LOGIC_INLINE_PMT_DNH,
             "2",
-            hunt_mig_birds)
+            .data$hunt_mig_birds)
       )
   }
 
@@ -266,7 +264,6 @@ inLinePermitDNHFix <-
 #'
 #' @importFrom dplyr group_by
 #' @importFrom dplyr mutate
-#' @importFrom dplyr ungroup
 #' @importFrom dplyr filter
 #' @importFrom dplyr select
 #' @importFrom dplyr left_join
@@ -275,6 +272,7 @@ inLinePermitDNHFix <-
 #' @importFrom dplyr arrange
 #' @importFrom dplyr desc
 #' @importFrom dplyr distinct
+#' @importFrom rlang .data
 #'
 #' @inheritParams clean
 #'
@@ -289,20 +287,18 @@ zipCheck <-
       raw_data |>
       left_join(
         REF_ZIP_CODE |>
-          distinct(zip = zipcode, zipState = state),
+          distinct(zip = .data$zipcode, zipState = .data$state),
         by = "zip") |>
-      select(source_file, state, zip, zipState) |>
-      group_by(source_file) |>
-      mutate(total_records = n()) |>
-      ungroup() |>
-      filter(state != zipState) |>
-      group_by(source_file) |>
+      select(c("source_file", "state", "zip", "zipState")) |>
+      mutate(total_records = n(), .by = "source_file") |>
+      filter(.data$state != .data$zipState) |>
+      group_by(.data$source_file) |>
       reframe(
         n = n(),
-        proportion = round(n/total_records, 2)) |>
+        proportion = round(.data$n/.data$total_records, 2)) |>
       distinct() |>
-      arrange(desc(n)) |>
-      filter(n >= 100 | proportion >= 0.1)
+      arrange(desc(.data$n)) |>
+      filter(.data$n >= 100 | .data$proportion >= 0.1)
 
     # Error check: are any zip codes wrong?
     if(nrow(zipcheck) > 0){
@@ -322,6 +318,7 @@ zipCheck <-
 #' @importFrom dplyr count
 #' @importFrom dplyr mutate
 #' @importFrom dplyr bind_rows
+#' @importFrom rlang .data
 #'
 #' @inheritParams clean
 #'
@@ -334,9 +331,10 @@ cranePermitBagFix <-
     bad_cr_2s <-
       raw_data |>
       filter(
-        dl_state %in% REF_PMT_FILES$dl_state[REF_PMT_FILES$spp == "cranes"] &
-          cranes == "2") |>
-      count(dl_state)
+        .data$dl_state %in%
+          REF_PMT_FILES$dl_state[REF_PMT_FILES$spp == "cranes"] &
+          .data$cranes == "2") |>
+      count(.data$dl_state)
 
     if(nrow(bad_cr_2s) > 0) {
 
@@ -345,17 +343,15 @@ cranePermitBagFix <-
         mutate(
           cranes =
             ifelse(
-              dl_state %in%
+              .data$dl_state %in%
                 REF_PMT_FILES$dl_state[REF_PMT_FILES$spp == "cranes"] &
-                cranes == "2",
+                .data$cranes == "2",
               "0",
-              cranes
-            )
+              .data$cranes)
         )
 
       message("2s converted to 0s for permit file states:")
       print(bad_cr_2s |> mutate(spp = "cranes"))
-
       return(corrected_pmt_bags)
 
     } else {
@@ -372,6 +368,7 @@ cranePermitBagFix <-
 #' @importFrom dplyr count
 #' @importFrom dplyr mutate
 #' @importFrom dplyr bind_rows
+#' @importFrom rlang .data
 #'
 #' @inheritParams clean
 #'
@@ -384,10 +381,10 @@ btpiPermitBagFix <-
     bad_bt_2s <-
       raw_data |>
       filter(
-        dl_state %in%
+        .data$dl_state %in%
           REF_PMT_FILES$dl_state[REF_PMT_FILES$spp == "band_tailed_pigeon"] &
-          band_tailed_pigeon == "2") |>
-      count(dl_state)
+          .data$band_tailed_pigeon == "2") |>
+      count(.data$dl_state)
 
     if(nrow(bad_bt_2s) > 0) {
 
@@ -396,17 +393,15 @@ btpiPermitBagFix <-
         mutate(
           band_tailed_pigeon =
             ifelse(
-              dl_state %in%
+              .data$dl_state %in%
                 REF_PMT_FILES$dl_state[REF_PMT_FILES$spp == "band_tailed_pigeon"] &
-                band_tailed_pigeon == "2",
+                .data$band_tailed_pigeon == "2",
               "0",
-              band_tailed_pigeon
-            )
+              .data$band_tailed_pigeon)
         )
 
       message("2s converted to 0s for permit file states:")
       print(bad_bt_2s |> mutate(spp = "band_tailed_pigeon"))
-
       return(corrected_pmt_bags)
 
     } else {

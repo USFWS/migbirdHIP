@@ -33,6 +33,12 @@ REF_HUNTER_ID_FIELDS <-
   c("firstname", "lastname", "state", "birth_date", "dl_state",
     "registration_yr")
 
+# All HIP field names in order
+REF_ALL_FIELDS <-
+  c("title", "firstname", "middle", "lastname", "suffix", "address", "city",
+    "state", "zip", "birth_date", "issue_date", "hunt_mig_birds",
+    REF_BAG_FIELDS, "registration_yr", "email")
+
 # US District and Territory abbreviations:
 # District of Columbia, American Samoa, Guam, Northern Mariana Islands,
 # Puerto Rico, Virgin Islands, US Minor Outlying Islands, Marshall Islands,

@@ -5,9 +5,7 @@
 #' @importFrom dplyr mutate
 #' @importFrom dplyr filter
 #' @importFrom dplyr pull
-#' @importFrom dplyr group_by
 #' @importFrom dplyr n
-#' @importFrom dplyr ungroup
 #' @importFrom dplyr select
 #' @importFrom dplyr distinct
 #' @importFrom dplyr rename
@@ -20,6 +18,7 @@
 #' @importFrom stringr str_detect
 #' @importFrom stringr str_extract
 #' @importFrom stringr str_remove
+#' @importFrom rlang .data
 #'
 #' @param path File path to the folder containing HIP .txt files
 #' @param unique Return a distinct frame? Defaults to TRUE
@@ -78,7 +77,7 @@ read_hip <-
 
     # Filter files to include only specified state (state param NA by default)
     if (!is.na(state)) {
-      file_list <- filter(file_list, str_detect(filepath, state))
+      file_list <- filter(file_list, str_detect(.data$filepath, state))
     }
 
     # Create a vector of file paths
@@ -153,9 +152,9 @@ read_hip <-
         registration_yr = 23,
         email = 24) |>
       # Add a download key
-      group_by(dl_date, dl_state) |>
-      mutate(dl_key = paste0("dl_", cur_group_id())) |>
-      ungroup()
+      mutate(
+        dl_key =
+          paste0("dl_", cur_group_id()), .by = c("dl_date", "dl_state"))
 
     # Remove exact duplicates
     if (unique == TRUE) {
@@ -206,6 +205,7 @@ listFiles <-
 #'
 #' @importFrom dplyr filter
 #' @importFrom stringr str_detect
+#' @importFrom rlang .data
 #'
 #' @param filelist The file list tibble created by \code{\link{listFiles}}
 #'
@@ -217,7 +217,7 @@ ignorePermits <-
 
     # Don't process permit files
     filelist |>
-      filter(!str_detect(filepath, "permit"))
+      filter(!str_detect(.data$filepath, "permit"))
   }
 
 #' Ignore hold files
@@ -226,6 +226,7 @@ ignorePermits <-
 #'
 #' @importFrom dplyr filter
 #' @importFrom stringr str_detect
+#' @importFrom rlang .data
 #'
 #' @param filelist The file list tibble created by \code{\link{listFiles}}
 #'
@@ -237,7 +238,7 @@ ignoreHolds <-
 
     # Don't process hold files
     filelist |>
-      filter(!str_detect(filepath, "hold"))
+      filter(!str_detect(.data$filepath, "hold"))
   }
 
 #' Ignore lifetime files
@@ -256,7 +257,7 @@ ignoreLifetime <-
   function(filelist) {
     # Don't process lifetime files
     filelist |>
-      filter(!str_detect(filepath, "lifetime"))
+      filter(!str_detect(.data$filepath, "lifetime"))
   }
 
 #' Identify blank files
@@ -265,6 +266,7 @@ ignoreLifetime <-
 #'
 #' @importFrom dplyr mutate
 #' @importFrom stringr str_replace
+#' @importFrom rlang .data
 #'
 #' @param filelist The file list tibble created by \code{\link{listFiles}}
 #'
@@ -277,8 +279,8 @@ idBlankFiles <-
     # Identify blank files
     filelist |>
       mutate(
-        filepath = str_replace(filepath, "TXT", "txt"),
-        check = ifelse(file.size(filepath) == 0, "blank", ""))
+        filepath = str_replace(.data$filepath, "TXT", "txt"),
+        check = ifelse(file.size(.data$filepath) == 0, "blank", ""))
   }
 
 #' Drop blank files
@@ -287,6 +289,7 @@ idBlankFiles <-
 #'
 #' @importFrom dplyr filter
 #' @importFrom dplyr pull
+#' @importFrom rlang .data
 #'
 #' @param filelist The file list tibble created by \code{\link{listFiles}}
 #'
@@ -299,13 +302,13 @@ dropBlankFiles <-
     # Error for blank files
     if("blank" %in% filelist$check) {
       message("Error: One or more files are blank in the directory.")
-      print(filter(filelist, check == "blank"))
+      print(filter(filelist, .data$check == "blank"))
     }
 
     # Filter out blank files from the paths list
     filelist_without_blanks <-
       filelist |>
-      filter(check != "blank")
+      filter(.data$check != "blank")
 
     return(filelist_without_blanks)
   }
@@ -440,10 +443,10 @@ readMessages <-
 #' @importFrom dplyr group_by
 #' @importFrom dplyr mutate
 #' @importFrom dplyr n
-#' @importFrom dplyr ungroup
 #' @importFrom dplyr filter
 #' @importFrom dplyr reframe
 #' @importFrom dplyr distinct
+#' @importFrom rlang .data
 #'
 #' @inheritParams readMessages
 #'
@@ -457,17 +460,15 @@ missingPIIMessage <-
     # lastname, state, or birth date
     raw_nas <-
       raw_data |>
-      group_by(dl_state) |>
-      mutate(n_total = n()) |>
-      ungroup() |>
+      mutate(n_total = n(), by = "dl_state") |>
       filter(
         !!LOGIC_MISSING_PII |
           !!LOGIC_MISSING_ADDRESSES |
           !!LOGIC_MISSING_CITY_ZIP_EMAIL) |>
-      group_by(dl_state) |>
-      reframe(n = n(), proportion = round(n/n_total, 2)) |>
+      group_by(.data$dl_state) |>
+      reframe(n = n(), proportion = round(.data$n/.data$n_total, 2)) |>
       distinct() |>
-      filter(n >= 100 | proportion >= 0.1)
+      filter(.data$n >= 100 | .data$proportion >= 0.1)
 
     if (nrow(raw_nas) > 0) {
       message(
@@ -486,11 +487,10 @@ missingPIIMessage <-
 #'
 #' The internal \code{missingEmailsMessage} function is used inside of \code{\link{readMessages}}
 #'
-#' @importFrom dplyr group_by
 #' @importFrom dplyr summarize
-#' @importFrom dplyr ungroup
 #' @importFrom dplyr filter
 #' @importFrom dplyr select
+#' @importFrom rlang .data
 #'
 #' @inheritParams readMessages
 #'
@@ -503,15 +503,13 @@ missingEmailsMessage <-
     # Return a message if all emails are missing from a file
     missing <-
       raw_data |>
-      group_by(source_file) |>
-      summarize(n_emails = length(unique(email))) |>
-      ungroup() |>
-      filter(n_emails == 1)
+      summarize(n_emails = length(unique(.data$email)), .by = "source_file") |>
+      filter(.data$n_emails == 1)
 
     if (nrow(missing) > 0) {
       message("Error: One or more files are missing 100% of emails.")
 
-      print(missing |> select(source_file))
+      print(missing |> select(.data$source_file))
     }
   }
 
@@ -548,7 +546,7 @@ testRecordMessage <-
 
       print(
         bad_test_records |>
-          select(source_file, record_key, firstname, lastname))
+          select(c("source_file", "record_key", "firstname", "lastname")))
     }
   }
 
@@ -583,7 +581,7 @@ zeroBagsMessage <-
         )
       )
 
-      print(zero_bags |> select(source_file, record_key))
+      print(zero_bags |> select(c("source_file", "record_key")))
     }
   }
 
@@ -613,7 +611,7 @@ naBagsMessage <-
     if (nrow(NA_bags) > 0) {
       message("Error: One or more records has an NA in every bag field.")
 
-      print(NA_bags |> select(source_file, record_key))
+      print(NA_bags |> select(c("source_file", "record_key")))
     }
   }
 
@@ -628,6 +626,7 @@ naBagsMessage <-
 #' @importFrom tidyr unite
 #' @importFrom dplyr matches
 #' @importFrom dplyr select
+#' @importFrom rlang .data
 #'
 #' @inheritParams readMessages
 #'
@@ -652,8 +651,8 @@ nonDigitBagsMessage <-
       )
       print(
         nondigit_bags |>
-          unite(bags, matches(REF_BAG_FIELDS), sep = " ") |>
-          select(source_file, record_key, bags)
+          unite("bags", matches(REF_BAG_FIELDS), sep = " ") |>
+          select(c("source_file", "record_key", "bags"))
       )
     }
   }
@@ -664,6 +663,7 @@ nonDigitBagsMessage <-
 #'
 #' @importFrom dplyr distinct
 #' @importFrom dplyr filter
+#' @importFrom rlang .data
 #'
 #' @inheritParams readMessages
 #'
@@ -678,8 +678,8 @@ dlStateNAMessage <-
       message("Error: One or more more NA values detected in dl_state.")
 
       print(raw_data |>
-              distinct(dl_state, source_file) |>
-              filter(is.na(dl_state)))
+              distinct(.data$dl_state, .data$source_file) |>
+              filter(is.na(.data$dl_state)))
     }
   }
 
@@ -690,6 +690,7 @@ dlStateNAMessage <-
 #' @importFrom dplyr select
 #' @importFrom dplyr distinct
 #' @importFrom dplyr filter
+#' @importFrom rlang .data
 #'
 #' @inheritParams readMessages
 #'
@@ -704,8 +705,8 @@ dlDateNAMessage <-
       message("Error: One or more more NA values detected in dl_date.")
 
       print(raw_data |>
-              select(dl_date, source_file) |>
-              filter(is.na(dl_date)) |>
+              select(.data$dl_date, .data$source_file) |>
+              filter(is.na(.data$dl_date)) |>
               distinct())
     }
   }
@@ -716,6 +717,7 @@ dlDateNAMessage <-
 #'
 #' @importFrom dplyr filter
 #' @importFrom dplyr count
+#' @importFrom rlang .data
 #'
 #' @inheritParams readMessages
 #'
@@ -729,11 +731,13 @@ inLinePermitDNHMessage <-
     # message
     inline_pmt_dnh <-
       raw_data |>
-      filter(!is.na(band_tailed_pigeon) &
-               !is.na(brant) &
-               !is.na(seaducks)) |>
+      filter(!is.na(.data$band_tailed_pigeon) &
+               !is.na(.data$brant) &
+               !is.na(.data$seaducks)) |>
       filter(!!LOGIC_INLINE_PMT_DNH) |>
-      count(source_file, hunt_mig_birds, band_tailed_pigeon, brant, seaducks)
+      count(
+        .data$source_file, .data$hunt_mig_birds, .data$band_tailed_pigeon,
+        .data$brant, .data$seaducks)
 
     if (nrow(inline_pmt_dnh) > 0) {
       message(

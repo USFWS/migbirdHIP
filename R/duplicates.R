@@ -2,7 +2,6 @@
 #'
 #' Resolve duplicate HIP records.
 #'
-#' @importFrom dplyr group_by
 #' @importFrom dplyr mutate
 #' @importFrom dplyr case_when
 #' @importFrom dplyr ungroup
@@ -12,6 +11,7 @@
 #' @importFrom rlang syms
 #' @importFrom dplyr n
 #' @importFrom dplyr distinct
+#' @importFrom rlang .data
 #'
 #' @param current_data The object created after filtering to current data with \code{\link{issueCheck}}
 #'
@@ -36,7 +36,7 @@ duplicateFix <-
     seaduck_and_brant_duplicates <-
       duplicates |>
       # Filter to sea duck and brant states
-      filter(dl_state %in% c(REF_STATES_SD_BR, REF_STATES_SD_ONLY)) |>
+      filter(.data$dl_state %in% c(REF_STATES_SD_BR, REF_STATES_SD_ONLY)) |>
       # Keep records with the most recent issue_date
       duplicateNewest() |>
       # Check records for "1" in every bag field
@@ -45,21 +45,22 @@ duplicateFix <-
       mutate(
         sd_or_br_has_2 =
           case_when(
-            dl_state %in% REF_STATES_SD_BR & brant == "2" ~ "has_2",
-            dl_state %in% REF_STATES_SD_BR & seaducks == "2" ~ "has_2",
-            dl_state %in% REF_STATES_SD_ONLY & seaducks == "2" ~ "has_2",
+            .data$dl_state %in% REF_STATES_SD_BR &
+              .data$brant == "2" ~ "has_2",
+            .data$dl_state %in% REF_STATES_SD_BR &
+              .data$seaducks == "2" ~ "has_2",
+            .data$dl_state %in% REF_STATES_SD_ONLY &
+              .data$seaducks == "2" ~ "has_2",
             TRUE ~ "no_2")) |>
       duplicateAllOnesGroupSize() |>
       # If record has 2 in brant, seaduck, or both, put the group size (number
       # of records in the set of duplicates that have hunted brant and/or
       # seaducks); if record DOES NOT have a 2 in brant or seaduck, put "no_2"
-      group_by(duplicate_id, sd_or_br_has_2) |>
       mutate(
         sd_or_br_has_2_group_size =
-          ifelse(sd_or_br_has_2 == "has_2", as.character(n()), "no_2")) |>
-      ungroup() |>
+          ifelse(.data$sd_or_br_has_2 == "has_2", as.character(n()), "no_2"),
+        .by = c("duplicate_id", "sd_or_br_has_2")) |>
       # Make decision on which record to keep for each group
-      group_by(duplicate_id) |>
       mutate(
         decision =
           case_when(
@@ -67,26 +68,29 @@ duplicateFix <-
             n() == 1 ~ "keeper_single",
             # Keep a record if it's the only one in its group that has a 2 in
             # seaduck or brant columns
-            sd_or_br_has_2_group_size == 1 ~ "keeper_sd_or_br_has_2",
+            .data$sd_or_br_has_2_group_size == 1 ~ "keeper_sd_or_br_has_2",
             # For rare cases that still have two or more records: keep a record
             # if it's the only one in its group with the not all 1s bag values
-            all_ones_group_size == 1 ~ "keeper_not_all_1s",
+            .data$all_ones_group_size == 1 ~ "keeper_not_all_1s",
             # When there isn't a 1 value in any of the checking columns, it's a
             # duplicate still and we will need to randomly choose which record
             # in the group to keep later
-            !(1 %in% all_ones_group_size) &
-              !(1 %in% sd_or_br_has_2_group_size) ~
+            !(1 %in% .data$all_ones_group_size) &
+              !(1 %in% .data$sd_or_br_has_2_group_size) ~
               "duplicate",
-            TRUE ~ NA_character_)) |>
+            TRUE ~ NA_character_),
+        .by = "duplicate_id") |>
       # If NA records have another qualifying record in their group, drop them
       mutate(
         decision =
           ifelse(
-            n() > 1 & length(unique(decision)) > 1 & is.na(decision),
+            n() > 1 &
+              length(unique(.data$decision)) > 1 &
+              is.na(.data$decision),
             "drop",
-            decision)) |>
-      ungroup() |>
-      filter(decision != "drop")
+            .data$decision),
+        .by = "duplicate_id") |>
+      filter(.data$decision != "drop")
 
     # Get the final sea duck and brant tibble with 1 record per hunter
     sdbr_deduplicated <- duplicateSample(seaduck_and_brant_duplicates)
@@ -96,9 +100,9 @@ duplicateFix <-
       duplicates |>
       # Record not from seaduck, brant, or permit state
       filter(
-        !(dl_state %in% REF_STATES_SD_BR) &
-        !(dl_state %in% REF_STATES_SD_ONLY) &
-        !(dl_state %in% unique(REF_PMT_INLINE$dl_state))) |>
+        !(.data$dl_state %in% REF_STATES_SD_BR) &
+        !(.data$dl_state %in% REF_STATES_SD_ONLY) &
+        !(.data$dl_state %in% unique(REF_PMT_INLINE$dl_state))) |>
       # Keep records with the most recent issue_date
       duplicateNewest() |>
       # Check records for "1" in every bag field
@@ -117,7 +121,7 @@ duplicateFix <-
     permit_state_duplicates <-
       duplicates |>
       # Filter the duplicates to those that occur in permit states
-      filter(dl_state %in% unique(REF_PMT_INLINE$dl_state)) |>
+      filter(.data$dl_state %in% unique(REF_PMT_INLINE$dl_state)) |>
       # Set record type for HIP registrations and in-line permits
       duplicateRecordType()
 
@@ -126,7 +130,7 @@ duplicateFix <-
     if(nrow(permit_state_duplicates) > 0) {
       hip_permit_state_duplicates <-
         permit_state_duplicates |>
-        filter(record_type == "HIP") |>
+        filter(.data$record_type == "HIP") |>
         # Keep records with the most recent issue_date
         duplicateNewest() |>
         # Check records for "1" in every bag field
@@ -138,12 +142,13 @@ duplicateFix <-
       # Get the final permit state tibble with 1 HIP record per hunter
       hip_deduplicated <-
         duplicateSample(hip_permit_state_duplicates) |>
-        select(-c("duplicate_id", "all_ones", "all_ones_group_size", "decision"))
+        select(
+          -c("duplicate_id", "all_ones", "all_ones_group_size", "decision"))
 
     } else {
       permit_state_duplicates <-
         permit_state_duplicates |>
-        mutate(record_type = as.character(record_type))
+        mutate(record_type = as.character(.data$record_type))
 
       hip_deduplicated <- permit_state_duplicates
     }
@@ -160,21 +165,21 @@ duplicateFix <-
       ungroup() |>
       # Set record type for single HIP registrations and solo in-line permits
       duplicateRecordType() |>
-      mutate(record_type = as.character(record_type)) |>
+      mutate(record_type = as.character(.data$record_type)) |>
       # Add the resolved duplicates back in
       bind_rows(
         # Sea duck and brant states
         sdbr_deduplicated |>
-          select(-(duplicate_id:decision)) |>
+          select(-("duplicate_id":"decision")) |>
           mutate(record_type = "HIP"),
         # Other states
         other_deduplicated |>
-          select(-(duplicate_id:decision)) |>
+          select(-("duplicate_id":"decision")) |>
           mutate(record_type = "HIP"),
         # In-line permit states PMT records
         permit_state_duplicates |>
-          select(-duplicate_id) |>
-          filter(record_type == "PMT"),
+          select(-"duplicate_id") |>
+          filter(.data$record_type == "PMT"),
         # In-line permit states HIP records
         hip_deduplicated
         ) |>
@@ -215,12 +220,11 @@ duplicateID <-
 #'
 #' The internal \code{duplicateNewest} function is used inside of \code{\link{duplicateFix}} to filter groups of duplicates to the most recent records out of each group.
 #'
-#' @importFrom dplyr group_by
 #' @importFrom dplyr mutate
 #' @importFrom lubridate mdy
-#' @importFrom dplyr ungroup
 #' @importFrom dplyr filter
 #' @importFrom dplyr select
+#' @importFrom rlang .data
 #'
 #' @param duplicates The tibble created by \code{\link{duplicateID}}
 #'
@@ -231,20 +235,21 @@ duplicateNewest <-
   function(duplicates) {
     if(nrow(duplicates) > 0) {
       duplicates |>
-        group_by(duplicate_id) |>
         # Identify records with most recent issue date
         mutate(
           x_issue_date =
             ifelse(
-              issue_date ==
-                strftime(max(mdy(issue_date), na.rm = TRUE), format = "%m/%d/%Y"),
+              .data$issue_date ==
+                strftime(
+                  max(mdy(.data$issue_date), na.rm = TRUE),
+                  format = "%m/%d/%Y"),
               "newest",
-              NA)
+              NA),
+          .by = "duplicate_id"
         ) |>
-        ungroup() |>
         # Keep the record(s) from each group that were the most recent
-        filter(!is.na(x_issue_date)) |>
-        select(-x_issue_date)
+        filter(!is.na(.data$x_issue_date)) |>
+        select(-"x_issue_date")
     } else {
       duplicates
     }
@@ -280,10 +285,9 @@ duplicateAllOnes <-
 #'
 #' The internal \code{duplicateAllOnesGroupSize} function is used inside of \code{\link{duplicateFix}}.
 #'
-#' @importFrom dplyr group_by
 #' @importFrom dplyr mutate
 #' @importFrom dplyr n
-#' @importFrom dplyr ungroup
+#' @importFrom rlang .data
 #'
 #' @param duplicates The tibble created by \code{\link{duplicateID}}
 #'
@@ -296,23 +300,24 @@ duplicateAllOnesGroupSize <-
     # of records in the set of duplicates that are not all-1s); if record DOES
     # have 1s in every bag field, put "all_1s"
     duplicates |>
-      group_by(duplicate_id, all_ones) |>
       mutate(
         all_ones_group_size =
-          ifelse(all_ones == "not_all_1s", as.character(n()), all_ones)) |>
-      ungroup()
+          ifelse(
+            .data$all_ones == "not_all_1s",
+            as.character(n()),
+            .data$all_ones),
+        .by = c("duplicate_id", "all_ones"))
   }
 
 #' Decide which duplicate records should be kept or dropped
 #'
 #' The internal \code{duplicateDecide} function is used inside of \code{\link{duplicateFix}} to deduplicate intermediate tibbles.
 #'
-#' @importFrom dplyr group_by
 #' @importFrom dplyr mutate
 #' @importFrom dplyr case_when
 #' @importFrom dplyr n
-#' @importFrom dplyr ungroup
 #' @importFrom dplyr filter
+#' @importFrom rlang .data
 #'
 #' @param dupes Intermediate tibble created in \code{\link{duplicateFix}}
 #'
@@ -324,7 +329,6 @@ duplicateDecide <-
 
     dupes |>
       # Make decisions on which record to keep for each group
-      group_by(duplicate_id) |>
       mutate(
         decision =
           case_when(
@@ -332,21 +336,24 @@ duplicateDecide <-
             n() == 1 ~ "keeper_single",
             # When there's a record in a group and it's the only one that passed
             # the bag check above, keep it
-            all_ones_group_size == 1 ~ "keeper_not_all_1s",
+            .data$all_ones_group_size == 1 ~ "keeper_not_all_1s",
             # When there isn't a 1 value in the checking column, it's a
             # duplicate still and we will need to randomly choose which record
             # in the group to keep later
-            !(1 %in% all_ones_group_size) ~ "duplicate",
-            TRUE ~ NA_character_)) |>
+            !(1 %in% .data$all_ones_group_size) ~ "duplicate",
+            TRUE ~ NA_character_),
+        .by = "duplicate_id") |>
       # If NA records have another qualifying record in their group, drop them
       mutate(
         decision =
           ifelse(
-            n() > 1 & length(unique(decision)) > 1 & is.na(decision),
+            n() > 1 &
+              length(unique(.data$decision)) > 1 &
+              is.na(.data$decision),
             "drop",
-            decision)) |>
-      ungroup() |>
-      filter(decision != "drop")
+            .data$decision),
+        .by = "duplicate_id") |>
+      filter(.data$decision != "drop")
   }
 
 #' De-duplicate by randomly sampling intermediate tibbles
@@ -359,6 +366,7 @@ duplicateDecide <-
 #' @importFrom dplyr slice_sample
 #' @importFrom dplyr ungroup
 #' @importFrom stringr str_detect
+#' @importFrom rlang .data
 #'
 #' @param dupes Intermediate tibble created in \code{\link{duplicateFix}}
 #'
@@ -370,13 +378,13 @@ duplicateSample <-
     bind_rows(
       # Handle "duplicate"s; randomly keep one per group using slice_sample()
       dupes |>
-        filter(decision == "duplicate") |>
-        group_by(duplicate_id) |>
+        filter(.data$decision == "duplicate") |>
+        group_by(.data$duplicate_id) |>
         slice_sample(n = 1) |>
         ungroup(),
       # Row bind in the "keepers" (should already be 1 per hunter)
       dupes |>
-        filter(str_detect(decision, "keeper")))
+        filter(str_detect(.data$decision, "keeper")))
   }
 
 #' Set record type
@@ -386,6 +394,7 @@ duplicateSample <-
 #' @importFrom dplyr mutate
 #' @importFrom dplyr across
 #' @importFrom dplyr matches
+#' @importFrom rlang .data
 #'
 #' @param duplicates The tibble created by \code{\link{duplicateID}}
 #'
@@ -401,7 +410,7 @@ duplicateRecordType <-
       mutate(
         record_type =
           ifelse(
-            dl_state %in% unique(REF_PMT_INLINE$dl_state) &
+            .data$dl_state %in% unique(REF_PMT_INLINE$dl_state) &
               rowSums(across(matches(eval(REGEX_NON_PMT_SPECIES)), as.numeric),
                       na.rm = T) == 0 &
               rowSums(across(matches("band|brant|seaducks"), as.numeric),
@@ -455,6 +464,7 @@ duplicateFields <-
 #' @importFrom rlang syms
 #' @importFrom dplyr reframe
 #' @importFrom dplyr pick
+#' @importFrom rlang .data
 #'
 #' @inheritParams duplicateFix
 #'
@@ -472,7 +482,7 @@ duplicateFinder <-
       # Assign record type
       duplicateRecordType() |>
       # Filter out permits
-      filter(record_type != "PMT") |>
+      filter(.data$record_type != "PMT") |>
       # Filter out non-duplicate records
       group_by(!!!syms(REF_HUNTER_ID_FIELDS)) |>
       filter(n() > 1) |>
@@ -493,7 +503,7 @@ duplicateFinder <-
       # Hunter key per individual
       mutate(hunter_key = cur_group_id()) |>
       ungroup() |>
-      group_by(hunter_key, dl_state) |>
+      group_by(.data$hunter_key, .data$dl_state) |>
       # Determine which fields are different between the duplicates to interpret
       # why hunters are in the data more than once
       reframe(
@@ -502,7 +512,10 @@ duplicateFinder <-
       # Blank strings indicate an unequal bag value among duplicates
       mutate(
         duplicate_field =
-          ifelse(str_detect(duplicate_field, "^$"), "bag", duplicate_field))
+          ifelse(
+            str_detect(.data$duplicate_field, "^$"),
+            "bag",
+            .data$duplicate_field))
 
     # Return a message of how many duplicates are in the data
     message(
@@ -511,7 +524,7 @@ duplicateFinder <-
         "with duplicates;", nrow(duplicates), "total duplicated records."))
 
     if(nrow(dupl_tibble) > 0) {
-      return(dupl_tibble |> count(duplicate_field))
+      return(dupl_tibble |> count(.data$duplicate_field))
     }
   }
 
@@ -536,6 +549,7 @@ duplicateFinder <-
 #' @importFrom ggplot2 theme_classic
 #' @importFrom ggplot2 theme
 #' @importFrom ggplot2 element_text
+#' @importFrom rlang .data
 #'
 #' @param current_data The object created after filtering to current data with \code{\link{issueCheck}}
 #'
@@ -563,34 +577,35 @@ duplicatePlot <-
           case_when(
             # 5+ fields
             str_detect(
-              duplicate_field,
+              .data$duplicate_field,
               paste0(
                 "[a-z|a-z\\_a-z|a-z|a-z\\_a-z\\_a-z|a-z\\_a-z]{1,}",
                 paste(rep(regex_field, 4), collapse = "\\-"))) ~
               "2+ fields",
             # 4 fields
             str_detect(
-              duplicate_field, paste(rep(regex_field, 4), collapse = "\\-")) ~
+              .data$duplicate_field,
+              paste(rep(regex_field, 4), collapse = "\\-")) ~
               "2+ fields",
             # 3 fields
             str_detect(
-              duplicate_field, paste(rep(regex_field, 3), collapse = "\\-")) ~
+              .data$duplicate_field,
+              paste(rep(regex_field, 3), collapse = "\\-")) ~
               "2+ fields",
             str_detect(
-              duplicate_field, paste(rep(regex_field, 2), collapse = "\\-")) ~
+              .data$duplicate_field,
+              paste(rep(regex_field, 2), collapse = "\\-")) ~
               "2+ fields",
-            TRUE ~ duplicate_field)
+            TRUE ~ .data$duplicate_field)
       ) |>
       # Make a new col to reorder the bars
-      group_by(duplicate_field) |>
-      mutate(total_count = n()) |>
-      ungroup() |>
-      ggplot(aes(x = reorder(duplicate_field, -total_count))) +
+      mutate(total_count = n(), .by = "duplicate_field") |>
+      ggplot(aes(x = reorder(.data$duplicate_field, -.data$total_count))) +
       geom_bar(stat = "count") +
       geom_text(
         aes(
-          x = duplicate_field,
-          label = after_stat(count),
+          x = .data$duplicate_field,
+          label = after_stat(.data$count),
           angle = 90),
         stat = "count",
         vjust = 0.2,

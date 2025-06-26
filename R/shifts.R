@@ -10,6 +10,7 @@
 #' @importFrom dplyr filter
 #' @importFrom tidyr unite
 #' @importFrom stringr str_remove_all
+#' @importFrom rlang .data
 #'
 #' @inheritParams clean
 #'
@@ -26,20 +27,21 @@ shiftCheck <-
       mutate(
         n_shift =
           str_length(
-            str_extract(issue_date, "^[0-9]+(?=\\/)")) - 2) |>
-      relocate(record_key, .before = "title") |>
-      relocate(source_file, .before = "record_key") |>
-      select(record_key, n_shift)
+            str_extract(.data$issue_date, "^[0-9]+(?=\\/)")) - 2) |>
+      relocate("record_key", .before = "title") |>
+      relocate("source_file", .before = "record_key") |>
+      select(c("record_key", "n_shift"))
 
     if(nrow(shifted_data) > 0){
       # Summarize the line shifts to help with manual fixing
       shift_summary <-
         raw_data |>
-        filter(record_key %in% shifted_data$record_key) |>
-        unite(shifted, title:zip, sep =  "", remove = F) |>
+        filter(.data$record_key %in% shifted_data$record_key) |>
+        unite("shifted", "title":"zip", sep =  "", remove = F) |>
         mutate(
-          culprit = str_remove_all(shifted, "[A-Z]|[0-9]|\\'|\\/|\\-|\\s")) |>
-        select(-shifted) |>
+          culprit =
+            str_remove_all(.data$shifted, "[A-Z]|[0-9]|\\'|\\/|\\-|\\s")) |>
+        select(-"shifted") |>
         relocate(
           all_of(c("source_file", "record_key", "culprit")), .before = "title")
 
@@ -55,6 +57,7 @@ shiftCheck <-
 #'
 #' @importFrom dplyr filter
 #' @importFrom stringr str_detect
+#' @importFrom rlang .data
 #'
 #' @inheritParams clean
 #'
@@ -63,6 +66,7 @@ shiftCheck <-
 
 shiftFinder <-
   function(raw_data) {
-    filter(raw_data,
-           !str_detect(birth_date, "^[0-9]{2}\\/[0-9]{2}\\/[0-9]{4}$"))
+    filter(
+      raw_data,
+      !str_detect(.data$birth_date, "^[0-9]{2}\\/[0-9]{2}\\/[0-9]{4}$"))
   }

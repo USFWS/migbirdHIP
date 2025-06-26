@@ -8,6 +8,7 @@
 #' @importFrom dplyr filter
 #' @importFrom dplyr arrange
 #' @importFrom stringr str_detect
+#' @importFrom rlang .data
 #'
 #' @param raw_data The tibble created after reading in data with \code{\link{read_hip}}
 #' @param field Field that should be checked for non-UTF-8 characters. One of the fields from the following list may be supplied:
@@ -21,11 +22,11 @@ glyphFinder <-
   function(raw_data, field){
 
     raw_data |>
-      select(source_file, record_key, !!sym(field)) |>
+      select(c("source_file", "record_key", !!sym(field))) |>
       mutate(check = is.na(iconv(!!sym(field), "UTF-8", "UTF-8"))) |>
-      filter(check == TRUE) |>
+      filter(.data$check == TRUE) |>
       arrange(!!sym(field)) |>
-      select(-check)
+      select(-"check")
   }
 
 #' Find non-UTF-8 glyphs/characters in any field
@@ -39,6 +40,7 @@ glyphFinder <-
 #' @importFrom dplyr relocate
 #' @importFrom dplyr filter
 #' @importFrom dplyr arrange
+#' @importFrom rlang .data
 #'
 #' @inheritParams clean
 #'
@@ -57,12 +59,12 @@ glyphCheck <-
           rename(value = !!sym(x)) |>
           mutate(
             field = x,
-            value = as.character(value)) |>
-          relocate(field, .before = "value")
+            value = as.character(.data$value)) |>
+          relocate("field", .before = "value")
         ) |>
       list_rbind() |>
-      filter(!is.na(value)) |>
-      arrange(source_file)
+      filter(!is.na(.data$value)) |>
+      arrange(.data$source_file)
 
     if(nrow(checked) > 0) {
       message("Non-UTF8 characters detected.")

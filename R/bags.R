@@ -19,6 +19,7 @@
 #' @importFrom tidyr pivot_longer
 #' @importFrom purrr map
 #' @importFrom purrr list_rbind
+#' @importFrom rlang .data
 #'
 #' @param deduplicated_data The object created after deduplicating data with \code{\link{duplicateFix}}
 #'
@@ -38,9 +39,9 @@ bagCheck <-
     # Reformat REF_BAGS
     mini_bags_ref <-
       REF_BAGS |>
-      select(-FWSstratum) |>
-      rename(dl_state = state) |>
-      mutate(stateBagValue  = as.character(stateBagValue))
+      select(-"FWSstratum") |>
+      rename(dl_state = "state") |>
+      mutate(stateBagValue  = as.character(.data$stateBagValue))
 
     # The following nested joins remove all values that are not 0 or 1 from
     # REF_BAGS for state/species combinations in REF_PMT_FILES (e.g. 2s are
@@ -52,24 +53,28 @@ bagCheck <-
       anti_join(
         mini_bags_ref,
         mini_bags_ref |>
-          inner_join(REF_PMT_FILES |> select(-value)) |>
-          filter(!stateBagValue %in% c("0", "1"))
+          inner_join(
+            REF_PMT_FILES |> select(-"value"),
+            by = c("dl_state", "spp")) |>
+          filter(!.data$stateBagValue %in% c("0", "1")),
+        by = c("dl_state", "spp", "stateBagValue")
       )
 
     # Create a tibble that contains a column of vectors for all of the possible
     # bags and species in a state (based on non_pmt_file_bags_ref)
     bags_by_state <-
       non_pmt_file_bags_ref |>
-      group_by(dl_state, spp) |>
-      summarize(expected_bag_value = paste(stateBagValue, collapse = ", ")) |>
-      ungroup()
+      summarize(
+        expected_bag_value = paste(.data$stateBagValue, collapse = ", "),
+        .by = c("dl_state", "spp")
+      )
 
     # Do any species bag values in the HIP data fall outside what is expected in
     # the REF_BAGS?
     bad_bag_values <-
       deduplicated_data |>
-      select(dl_state, all_of(REF_BAG_FIELDS)) |>
-      group_by(dl_state) |>
+      select(c("dl_state", all_of(REF_BAG_FIELDS))) |>
+      group_by(.data$dl_state) |>
       pivot_longer(
         cols = !contains("dl"),
         names_to = "spp",
@@ -78,30 +83,31 @@ bagCheck <-
       distinct() |>
       left_join(
         non_pmt_file_bags_ref |>
-          mutate(bad_bag_value = stateBagValue),
+          mutate(bad_bag_value = .data$stateBagValue),
         by = c("dl_state", "spp", "bad_bag_value")
       ) |>
-      filter(is.na(stateBagValue)) |>
+      filter(is.na(.data$stateBagValue)) |>
       # Filter out permit file states with unexpected 0s (they were created by
       # permitBagFix) for btpi and cranes
       filter(
-        !(dl_state %in%
+        !(.data$dl_state %in%
             REF_PMT_FILES$dl_state[REF_PMT_FILES$spp == "band_tailed_pigeon"] &
-          spp == "band_tailed_pigeon" &
-            bad_bag_value == "0")) |>
+            .data$spp == "band_tailed_pigeon" &
+            .data$bad_bag_value == "0")) |>
       filter(
-        !(dl_state %in% REF_PMT_FILES$dl_state[REF_PMT_FILES$spp == "cranes"] &
-            spp == "cranes" &
-            bad_bag_value == "0"))
+        !(.data$dl_state %in%
+            REF_PMT_FILES$dl_state[REF_PMT_FILES$spp == "cranes"] &
+            .data$spp == "cranes" &
+            .data$bad_bag_value == "0"))
 
     if(nrow(bad_bag_values) > 0) {
 
       bad_bag_values |>
-        select(-stateBagValue) |>
+        select(-"stateBagValue") |>
         left_join(
           bags_by_state,
           by = c("dl_state", "spp")) |>
-        arrange(desc(expected_bag_value)) |>
+        arrange(desc(.data$expected_bag_value)) |>
         left_join(
           map(
             1:nrow(bad_bag_values),
@@ -125,9 +131,10 @@ bagCheck <-
 #' @importFrom dplyr mutate
 #' @importFrom rlang sym
 #' @importFrom dplyr n
+#' @importFrom rlang .data
 #'
 #' @param deduplicated_data The object created after deduplicating data with \code{\link{duplicateFix}}
-#' @param bad_bag_values Bad bag values
+#' @param bad_bag_values Bad bag values df
 #' @param x Row number
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
@@ -136,16 +143,18 @@ bagCheck <-
 summarizeBadBags <-
   function(deduplicated_data, bad_bag_values, x) {
     deduplicated_data |>
-      select(dl_state, sym(bad_bag_values[[x,2]])) |>
-      filter(dl_state == bad_bag_values[[x,1]]) |>
+      select(c("dl_state", bad_bag_values[[x,2]])) |>
+      filter(.data$dl_state == bad_bag_values[[x,1]]) |>
       mutate(n_state = n()) |>
       filter(!!sym(bad_bag_values[[x,2]]) == bad_bag_values[[x,3]]) |>
       mutate(
         n_bad_bags = n(),
         spp = bad_bag_values[[x,2]]) |>
-      select(-sym(bad_bag_values[[x,2]])) |>
+      select(-bad_bag_values[[x,2]]) |>
       mutate(
-        proportion = paste0(round(n_bad_bags/n_state, 2)*100,"%"),
+        proportion = paste0(round(.data$n_bad_bags/.data$n_state, 2)*100,"%"),
         bad_bag_value = bad_bag_values[[x,3]]) |>
-      distinct(dl_state, spp, bad_bag_value, n = n_bad_bags, proportion)
+      distinct(
+        .data$dl_state, .data$spp, .data$bad_bag_value, n = .data$n_bad_bags,
+        .data$proportion)
   }

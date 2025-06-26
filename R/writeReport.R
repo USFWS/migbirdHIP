@@ -29,8 +29,7 @@ writeReport <-
         stop("Install package DT to render this report.", call. = F))
 
     # Fail if incorrect year supplied
-    stopifnot("Error: `year` parameter must be numeric." = is.numeric(year))
-    stopifnot("Error: Incorrect value supplied for `year` parameter. Please use a 4-digit year in the 2020s, e.g. 2024." = str_detect(year, "^202[0-9]{1}$"))
+    failyear(year)
 
     # Fail if incorrect dl supplied
     stopifnot("Error: `dl` parameter must be string." = is.character(dl))

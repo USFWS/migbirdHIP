@@ -10,8 +10,8 @@
 #' @importFrom dplyr filter
 #' @importFrom dplyr n
 #' @importFrom dplyr ungroup
-#' @importFrom dplyr select
 #' @importFrom dplyr distinct
+#' @importFrom rlang .data
 #'
 #' @param raw_path Directory of the download folder containing HIP .txt files
 #' @param processed_path Directory of the folder containing processed files
@@ -49,11 +49,10 @@ fileCheck <-
                 list.files(processed_path, recursive = F), "csv", "txt"),
             origin = "processed")
         ) |>
-        group_by(filename) |>
+        group_by(.data$filename) |>
         filter(n() > 1) |>
         ungroup() |>
-        select(filename) |>
-        distinct()
+        distinct(.data$filename)
 
       print(repeated)
     } else {
@@ -77,6 +76,7 @@ fileCheck <-
 #' @importFrom dplyr as_tibble
 #' @importFrom tidyr separate_wider_position
 #' @importFrom tidyr unite
+#' @importFrom rlang .data
 #'
 #' @param path Directory to download folder containing new HIP files
 #' @param year The year in which the Harvest Information Program data were collected
@@ -88,10 +88,7 @@ fileCheck <-
 
 fileRename <-
   function(path, year){
-
-    # Fail if incorrect year supplied
-    stopifnot("Error: `year` parameter must be numeric." = is.numeric(year))
-    stopifnot("Error: Incorrect value supplied for `year` parameter. Please use a 4-digit year in the 2020s, e.g. 2024." = str_detect(year, "^202[0-9]{1}$"))
+    failyear(year)
 
     # Add a final "/" if not included already
     if(!str_detect(path, "\\/$")) {
@@ -110,7 +107,7 @@ fileRename <-
         as_tibble() |>
         # Pull the file name apart so we can convert the date
         separate_wider_position(
-          value, c("state" = 2, "jdate" = 3, "suffix" = 4)) |>
+          .data$value, c("state" = 2, "jdate" = 3, "suffix" = 4)) |>
         # Convert Julian date to YYYYMMDD
         # The as.Date function calculates to the jdate + 1, so subtract a day
         # using - 1 to get the accurate date; str_remove wraps around the
@@ -120,11 +117,11 @@ fileRename <-
             str_remove_all(
               as.character(
                 as.Date(
-                  as.numeric(jdate),
+                  as.numeric(.data$jdate),
                   origin = structure(paste0(as.character(year),"-01-01"))) - 1),
               "-")) |>
-        unite(value, 1:3, sep = "") |>
-        mutate(value = paste0(path, value)) |>
+        unite("value", 1:3, sep = "") |>
+        mutate(value = paste0(path, .data$value)) |>
         pull()
 
       # Add dir to file names
@@ -151,7 +148,7 @@ fileRename <-
         as_tibble() |>
         filter(
           str_detect(
-            value,
+            .data$value,
             "^([a-z]{2}|[A-Z]{1}[a-z]{1}|[a-z]{1}[A-Z]{1})(?=[0-9])")) |>
         pull()
 
@@ -176,6 +173,6 @@ fileRename <-
       print(
         list.files(path) |>
           as_tibble() |>
-          filter(!str_detect(value, "^[A-Z]{2}[0-9]{8}\\.")))
+          filter(!str_detect(.data$value, "^[A-Z]{2}[0-9]{8}\\.")))
     }
   }

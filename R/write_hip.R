@@ -19,6 +19,7 @@
 #' @importFrom purrr walk
 #' @importFrom purrr map
 #' @importFrom data.table fwrite
+#' @importFrom rlang .data
 #'
 #' @param corrected_data The object created after correcting data with \code{\link{correct}}
 #' @param path The file path and file name to write the final table
@@ -144,12 +145,12 @@ write_hip <-
       map(
         1:length(REF_BAG_FIELDS),
         \(x) REF_BAGS |>
-          filter(spp == REF_BAG_FIELDS[x]) |>
-          mutate(!!sym(REF_BAG_FIELDS[x]) := as.character(stateBagValue)) |>
+          filter(.data$spp == REF_BAG_FIELDS[x]) |>
+          mutate(!!sym(REF_BAG_FIELDS[x]) := as.character(.data$stateBagValue)) |>
           select(-c("stateBagValue", "spp")) |>
           rename(
-            dl_state = state,
-            !!sym(REF_STRATA_NAMES[x]) := FWSstratum)
+            dl_state = .data$state,
+            !!sym(REF_STRATA_NAMES[x]) := .data$FWSstratum)
       )
 
     # Left join all the bag translations to the corrected data
@@ -167,16 +168,16 @@ write_hip <-
       map(
         1:length(REF_BAG_FIELDS),
         \(x) REF_BAGS |>
-          select(-stateBagValue) |>
-          group_by(state, spp) |>
+          select(-"stateBagValue") |>
+          group_by(.data$state, .data$spp) |>
           filter(n() == 1) |>
           ungroup() |>
-          filter(spp == REF_BAG_FIELDS[x]) |>
+          filter(.data$spp == REF_BAG_FIELDS[x]) |>
           mutate(!!sym(REF_STRATA_NAMES[x]) := NA) |>
-          select(-spp) |>
+          select(-"spp") |>
           rename(
-            dl_state = state,
-            !!sym(paste0(REF_STRATA_NAMES[x], "_0s")) := FWSstratum)
+            dl_state = .data$state,
+            !!sym(paste0(REF_STRATA_NAMES[x], "_0s")) := .data$FWSstratum)
       )
 
     # If a season doesn't exist, make sure the translation is 0 (not NA)
@@ -207,18 +208,18 @@ write_hip <-
       select(-c("dl_date", "dl_key", "record_key", "errors")) |>
       # Rename columns to desired output
       rename(
-        dl = dl_cycle,
-        postal_code = zip,
-        Q_ducks = ducks_bag,
-        Q_geese = geese_bag,
-        Q_doves = dove_bag,
-        Q_woodcock = woodcock_bag,
-        Q_coot_snipe = coots_snipe,
-        Q_rail_gallinule = rails_gallinules,
-        Q_cranes = cranes,
-        Q_bt_pigeons = band_tailed_pigeon,
-        Q_brant = brant,
-        Q_seaducks = seaducks) |>
+        dl = .data$dl_cycle,
+        postal_code = .data$zip,
+        Q_ducks = .data$ducks_bag,
+        Q_geese = .data$geese_bag,
+        Q_doves = .data$dove_bag,
+        Q_woodcock = .data$woodcock_bag,
+        Q_coot_snipe = .data$coots_snipe,
+        Q_rail_gallinule = .data$rails_gallinules,
+        Q_cranes = .data$cranes,
+        Q_bt_pigeons = .data$band_tailed_pigeon,
+        Q_brant = .data$brant,
+        Q_seaducks = .data$seaducks) |>
       # Only include file names in the "source_file" field, not folder names.
       # The field theoretically shouldn't include DL folder names if the package
       # functions are run on a download-by-download basis, but this will tidy
@@ -226,11 +227,11 @@ write_hip <-
       mutate(
         source_file =
           ifelse(
-            str_detect(source_file, "\\/"),
-            str_remove(source_file, "^.+(?=\\/)"),
-            source_file)) |>
+            str_detect(.data$source_file, "\\/"),
+            str_remove(.data$source_file, "^.+(?=\\/)"),
+            .data$source_file)) |>
       # Remove the last "/" (couldn't pipe a dot above)
-      mutate(source_file = str_remove(source_file, "\\/"))
+      mutate(source_file = str_remove(.data$source_file, "\\/"))
 
     if(split == TRUE) {
       # Split data and write each input file to its own output file
@@ -245,7 +246,7 @@ write_hip <-
             str_replace(
               paste0(path,
                      final_list[[x]] |>
-                       distinct(source_file) |>
+                       distinct(.data$source_file) |>
                        pull()),
               "\\.(txt|xlsx|xls)$",
               ".csv"),
