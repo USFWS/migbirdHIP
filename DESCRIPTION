@@ -11,6 +11,7 @@ URL: https://www.fws.gov/project/migratory-bird-hunter-survey-diary-survey
 Depends: 
     R (>= 4.4.0)
 Imports: 
+    assertthat (>= 0.2.1),
     data.table (>= 1.17.0),
     dplyr (>= 1.1.4),
     ggplot2 (>= 3.5.1),

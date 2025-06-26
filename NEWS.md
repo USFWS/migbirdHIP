@@ -26,14 +26,12 @@
 -   Created `constants.R` to define variables in a central place and thus evaluate data consistently.
     -   Variables are used across functions (e.g., `inLinePermitDNHMessage()` and `inLinePermitDNHFix()` both use `LOGIC_INLINE_PMT_DNH`) and are shared between functions and `testthat` files.
     -   New naming convention helps users to use and find internal reference data objects more quickly by using uppercase letters and categorical prefixes (`REF_`, `LOGIC_`, `REGEX_`, and `SF_`).
--   Created `fails.R` to reduce maintenance of `stopifnot()` functions across the package.
-    -   `failyear()` contains 2 `stopifnot()` to check year parameter.
-    -   
 -   New functions
     -   `testRecordMessage()` added to `read_hip()` and `testRecordFilter()` added to `clean()` to find and filter out any testing records mistakenly sent to us by the states.
     -   New `duplicatePlot()` function added; `duplicateFinder()` (previously named `findDuplicates()`) function no longer outputs a plot.
     -   The `zeroBagsMessage()` internal function is a new feature of `read_hip()` that checks for records with all-zero bag values and returns a message to the console if they are detected.
     -   Added `errorTableSummary()` internal function to be used by `errorTable()`.
+    -   Added internal function `failyear()` to reduce maintenance of assertions across other exported functions.
 -   Refactored functions
     -   In an effort to improve the maintainability of the package code, steps were made toward modularity, clarity, and unit testing in some of the larger functions.
     -   `proof()`
@@ -93,6 +91,8 @@
     -   On the Errors tab, moved the "Bad zip codes" section to its own sub-header after "Causes of errors for top 3 fields".
 -   Add `zzz.R`
     -   Run package startup message which returns the installed `migbirdHIP` package version and which season of HIP data the package version is compatible with.
+-   Deleted `globals.R` and switched to data masking with `{rlang}` pronoun `.data`.
+-   Incorporated some linting with `lintr` and added `.lintr` to `.gitignore` and `.Rbuildignore`.
 -   Almost all data params changed to be less ambiguous (e.g. `x` now `cleaned_data`, `proofed_data`, etc).
 -   `{tibble}` no longer a required import
 -   `read_hip()` now catches file names with incorrect MMDDYYYY or DDMMYYYY date format.
@@ -121,7 +121,7 @@
 -   Edited `identicalBags()` function to exclude matching coots_snipe and rails_gallinules from MI in output; this state uses the response from one question to populate both fields.
 -   Edited `read_hip()` function to exclude "hold" subdirectories when reading season HIP data.
 -   Updated R dependency to v4.4.0.
--   Added programmatic `stopifnot()` to all functions to safeguard against running with incorrect/invalid parameters.
+-   Added programmatic stops to all functions to safeguard against running with incorrect/invalid parameters.
 -   Reduced variation in parameter names:
     -   `distinct` changed to `unique` for `pullErrors()`
     -   `output` changed to `return` for `outOfStateHunters()`

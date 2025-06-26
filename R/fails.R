@@ -2,7 +2,8 @@
 #'
 #' Internal function that fails if an incorrect year is provided.
 #'
-#' @importFrom stringr str_detect
+#' @importFrom assertthat assert_that
+#' @importFrom rlang is_integerish
 #'
 #' @param year The year in which the Harvest Information Program data were collected
 #'
@@ -11,6 +12,15 @@
 
 failyear <-
   function(year) {
-    stopifnot("Error: `year` parameter must be numeric." = is.numeric(year))
-    stopifnot("Error: Incorrect value supplied for `year` parameter. Please use a 4-digit year in the 2020s, e.g. 2024." = str_detect(year, "^202[0-9]{1}$"))
+    assertthat::assert_that(
+      is_integerish(year),
+      year >= 2020,
+      year <= REF_CURRENT_SEASON,
+      msg =
+        paste0(
+          "`year` must be a whole number between 2020 and ",
+          REF_CURRENT_SEASON,
+          "."
+        )
+    )
   }
