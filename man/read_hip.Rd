@@ -11,14 +11,15 @@ read_hip(path, unique = TRUE, state = NA, season = FALSE)
 
 \item{unique}{Return a distinct frame? Defaults to TRUE}
 
-\item{state}{When specified, reads in download data from a specified state. Must match one of the following two-letter abbreviations:
-\itemize{
-\item AL, AK, AZ, AR, CA, CO, CT, DE, DC, FL, GA, ID, IL, IN, IA, KS, KY, LA, ME, MD, MA, MI, MN, MS, MO, MT, NE, NV, NH, NJ, NM, NY, NC, ND, OH, OK, OR, PA, RI, SC, SD, TN, TX, UT, VT, VA, WA, WV, WI, WY}}
+\item{state}{When specified, reads in download data from a specified state.
+Must match a two-letter abbreviation for a US state (excluding HI).}
 
-\item{season}{If set as TRUE, selects only folders starting with "DL" in a a season's upper-level directory}
+\item{season}{If set as TRUE, selects only folders starting with "DL" in a a
+season's upper-level directory}
 }
 \description{
-Compile data from state-exported text files by providing a path to the download directory.
+Compile data from state-exported text files by providing a path to the
+download directory.
 }
 \references{
 \url{https://github.com/USFWS/migbirdHIP}

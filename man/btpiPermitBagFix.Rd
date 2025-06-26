@@ -7,10 +7,17 @@
 btpiPermitBagFix(raw_data)
 }
 \arguments{
-\item{raw_data}{The object created after reading in data with \code{\link{read_hip}}}
+\item{raw_data}{The object created after reading in data with
+\code{\link{read_hip}}}
 }
 \description{
-The internal \code{btpiPermitBagFix} function is used inside of \code{\link{clean}} to edit bag values for states that submit permit files separately from HIP. If records from these states submit a "2" for the band_tailed_pigeon field, they will be mistakenly identified as permit records. This function changes band_tailed_pigeon "2" values to "0" so that they are classified as HIP records until permit files are received later in the hunting season.
+The internal \code{btpiPermitBagFix} function is used inside of
+\code{\link{clean}} to edit bag values for states that submit permit files
+separately from HIP. If records from these states submit a "2" for the
+band_tailed_pigeon field, they will be mistakenly identified as permit
+records. This function changes band_tailed_pigeon "2" values to "0" so that
+they are classified as HIP records until permit files are received later in
+the hunting season.
 }
 \references{
 \url{https://github.com/USFWS/migbirdHIP}

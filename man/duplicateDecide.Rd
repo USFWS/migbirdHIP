@@ -10,7 +10,8 @@ duplicateDecide(dupes)
 \item{dupes}{Intermediate tibble created in \code{\link{duplicateFix}}}
 }
 \description{
-The internal \code{duplicateDecide} function is used inside of \code{\link{duplicateFix}} to deduplicate intermediate tibbles.
+The internal \code{duplicateDecide} function is used inside of
+\code{\link{duplicateFix}} to deduplicate intermediate tibbles.
 }
 \references{
 \url{https://github.com/USFWS/migbirdHIP}

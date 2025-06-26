@@ -7,10 +7,12 @@
 correctMiddleInitial(proofed_data)
 }
 \arguments{
-\item{proofed_data}{The object created after error flagging data with \code{\link{proof}}}
+\item{proofed_data}{The object created after error flagging data with
+\code{\link{proof}}}
 }
 \description{
-The internal \code{correctMiddleInitial} function changes non-alphabetic characters in the middle initial column to NA.
+The internal \code{correctMiddleInitial} function changes non-alphabetic
+characters in the middle initial column to NA.
 }
 \references{
 \url{https://github.com/USFWS/migbirdHIP}

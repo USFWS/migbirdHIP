@@ -2,7 +2,8 @@
 % Please edit documentation in R/read_hip.R
 \name{missingPIIMessage}
 \alias{missingPIIMessage}
-\title{Return message for records with blank or NA values in firstname, lastname, state, or birth date}
+\title{Return message for records with blank or NA values in firstname, lastname,
+state, or birth date}
 \usage{
 missingPIIMessage(raw_data)
 }
@@ -10,7 +11,8 @@ missingPIIMessage(raw_data)
 \item{raw_data}{The product of \code{\link{read_hip}}}
 }
 \description{
-The internal \code{missingPIIMessage} function is used inside of \code{\link{readMessages}}
+The internal \code{missingPIIMessage} function is used inside of
+\code{\link{readMessages}}
 }
 \references{
 \url{https://github.com/USFWS/migbirdHIP}

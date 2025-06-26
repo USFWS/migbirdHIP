@@ -1,6 +1,7 @@
 #' Check bag values
 #'
-#' After fixing the data with \code{\link{duplicateFix}}, see if any unexpected bag values were submitted.
+#' After fixing the data with \code{\link{duplicateFix}}, see if any unexpected
+#' bag values were submitted.
 #'
 #' @importFrom dplyr select
 #' @importFrom dplyr all_of
@@ -21,7 +22,8 @@
 #' @importFrom purrr list_rbind
 #' @importFrom rlang .data
 #'
-#' @param deduplicated_data The object created after deduplicating data with \code{\link{duplicateFix}}
+#' @param deduplicated_data The object created after deduplicating data with
+#'   \code{\link{duplicateFix}}
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}
@@ -123,7 +125,8 @@ bagCheck <-
 
 #' Summarize count and proportion of bad bag values
 #'
-#' The internal \code{filterOutOregonPermits} function calculates the count and proportion of a bad bag value inside of \code{\link{bagCheck}}.
+#' The internal \code{filterOutOregonPermits} function calculates the count and
+#' proportion of a bad bag value inside of \code{\link{bagCheck}}.
 #'
 #' @importFrom dplyr select
 #' @importFrom dplyr distinct
@@ -133,7 +136,8 @@ bagCheck <-
 #' @importFrom dplyr n
 #' @importFrom rlang .data
 #'
-#' @param deduplicated_data The object created after deduplicating data with \code{\link{duplicateFix}}
+#' @param deduplicated_data The object created after deduplicating data with
+#'   \code{\link{duplicateFix}}
 #' @param bad_bag_values Bad bag values df
 #' @param x Row number
 #'

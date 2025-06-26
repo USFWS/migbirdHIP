@@ -7,10 +7,13 @@
 correctTitle(proofed_data)
 }
 \arguments{
-\item{proofed_data}{The object created after error flagging data with \code{\link{proof}}}
+\item{proofed_data}{The object created after error flagging data with
+\code{\link{proof}}}
 }
 \description{
-The internal \code{correctTitle} function is used inside of \code{\link{correct}} to change the value(s) in the title field to NA if an error is detected.
+The internal \code{correctTitle} function is used inside of
+\code{\link{correct}} to change the value(s) in the title field to NA if an
+error is detected.
 }
 \references{
 \url{https://github.com/USFWS/migbirdHIP}

@@ -7,10 +7,12 @@
 correctEmail(proofed_data)
 }
 \arguments{
-\item{proofed_data}{The object created after error flagging data with \code{\link{proof}}}
+\item{proofed_data}{The object created after error flagging data with
+\code{\link{proof}}}
 }
 \description{
-The internal \code{correctEmail} function is used inside of \code{\link{correct}} to ...
+The internal \code{correctEmail} function is used inside of
+\code{\link{correct}} to ...
 }
 \references{
 \url{https://github.com/USFWS/migbirdHIP}

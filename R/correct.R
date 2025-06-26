@@ -1,12 +1,16 @@
 #' Correct data
 #'
-#' After flagging errors in the data with \code{\link{proof}}, attempt corrections in all fields. Errors that cannot be programmatically corrected will be reported for manual correction.
+#' After flagging errors in the data with \code{\link{proof}}, attempt
+#' corrections in all fields. Errors that cannot be programmatically corrected
+#' will be reported for manual correction.
 #'
 #' @importFrom dplyr mutate
 #' @importFrom rlang .data
 #'
-#' @param proofed_data The object created after error flagging data with \code{\link{proof}}
-#' @param year The year in which the Harvest Information Program data were collected
+#' @param proofed_data The object created after error flagging data with
+#'   \code{\link{proof}}
+#' @param year The year in which the Harvest Information Program data were
+#'   collected
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}
@@ -44,13 +48,16 @@ correct <-
 
 #' Correct title
 #'
-#' The internal \code{correctTitle} function is used inside of \code{\link{correct}} to change the value(s) in the title field to NA if an error is detected.
+#' The internal \code{correctTitle} function is used inside of
+#' \code{\link{correct}} to change the value(s) in the title field to NA if an
+#' error is detected.
 #'
 #' @importFrom dplyr mutate
 #' @importFrom stringr str_detect
 #' @importFrom rlang .data
 #'
-#' @param proofed_data The object created after error flagging data with \code{\link{proof}}
+#' @param proofed_data The object created after error flagging data with
+#'   \code{\link{proof}}
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}
@@ -66,13 +73,16 @@ correctTitle <-
 
 #' Correct suffix
 #'
-#' The internal \code{correctSuffix} function is used inside of \code{\link{correct}} to change the value(s) in the suffix field to NA if an error is detected.
+#' The internal \code{correctSuffix} function is used inside of
+#' \code{\link{correct}} to change the value(s) in the suffix field to NA if an
+#' error is detected.
 #'
 #' @importFrom dplyr mutate
 #' @importFrom stringr str_detect
 #' @importFrom rlang .data
 #'
-#' @param proofed_data The object created after error flagging data with \code{\link{proof}}
+#' @param proofed_data The object created after error flagging data with
+#'   \code{\link{proof}}
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}
@@ -89,13 +99,15 @@ correctSuffix <-
 
 #' Correct middle initials
 #'
-#' The internal \code{correctMiddleInitial} function changes non-alphabetic characters in the middle initial column to NA.
+#' The internal \code{correctMiddleInitial} function changes non-alphabetic
+#' characters in the middle initial column to NA.
 #'
 #' @importFrom dplyr mutate
 #' @importFrom stringr str_detect
 #' @importFrom rlang .data
 #'
-#' @param proofed_data The object created after error flagging data with \code{\link{proof}}
+#' @param proofed_data The object created after error flagging data with
+#'   \code{\link{proof}}
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}
@@ -113,7 +125,8 @@ correctMiddleInitial <-
 
 #' Correct email
 #'
-#' The internal \code{correctEmail} function is used inside of \code{\link{correct}} to ...
+#' The internal \code{correctEmail} function is used inside of
+#' \code{\link{correct}} to ...
 #'
 #' @importFrom dplyr mutate
 #' @importFrom dplyr case_when
@@ -121,7 +134,8 @@ correctMiddleInitial <-
 #' @importFrom stringr str_replace
 #' @importFrom rlang .data
 #'
-#' @param proofed_data The object created after error flagging data with \code{\link{proof}}
+#' @param proofed_data The object created after error flagging data with
+#'   \code{\link{proof}}
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}

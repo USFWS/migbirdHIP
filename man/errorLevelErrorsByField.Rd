@@ -7,10 +7,12 @@
 errorLevelErrorsByField(proofed_data)
 }
 \arguments{
-\item{proofed_data}{The object created after error flagging data with \code{\link{proof}} or \code{\link{correct}}}
+\item{proofed_data}{The object created after error flagging data with
+\code{\link{proof}} or \code{\link{correct}}}
 }
 \description{
-The internal \code{errorLevelErrorsByField} function calculates a summary table of the count of errors and proportion of erroneous values by field.
+The internal \code{errorLevelErrorsByField} function calculates a summary
+table of the count of errors and proportion of erroneous values by field.
 }
 \references{
 \url{https://github.com/USFWS/migbirdHIP}

@@ -18,7 +18,8 @@ redFlags(proofed_data, type, threshold = 0)
 \item{threshold}{Value above which errors should be tabulated}
 }
 \description{
-Create a tibble of error data by state or field. Data are reported using a threshold of proportion of error.
+Create a tibble of error data by state or field. Data are reported using a
+threshold of proportion of error.
 }
 \references{
 \url{https://github.com/USFWS/migbirdHIP}

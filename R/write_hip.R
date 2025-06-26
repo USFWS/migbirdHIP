@@ -1,6 +1,8 @@
 #' Modify corrected data table format and write as csv
 #'
-#' After correcting errors in the data with \code{\link{correct}}, this final step will shape up the dataframe into a format ready for the database, and write the data to csv.
+#' After correcting errors in the data with \code{\link{correct}}, this final
+#' step will shape up the dataframe into a format ready for the database, and
+#' write the data to csv.
 #'
 #' @importFrom dplyr select
 #' @importFrom dplyr rename
@@ -21,10 +23,13 @@
 #' @importFrom data.table fwrite
 #' @importFrom rlang .data
 #'
-#' @param corrected_data The object created after correcting data with \code{\link{correct}}
+#' @param corrected_data The object created after correcting data with
+#'   \code{\link{correct}}
 #' @param path The file path and file name to write the final table
-#' @param type The type of HIP file being written out, one of: "HIP", "BT", or "CR"
-#' @param split Split the output into one .csv file per .txt file? Default is TRUE.
+#' @param type The type of HIP file being written out, one of: "HIP", "BT", or
+#'   "CR"
+#' @param split Split the output into one .csv file per .txt file? Default is
+#'   TRUE.
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}
@@ -146,7 +151,8 @@ write_hip <-
         1:length(REF_BAG_FIELDS),
         \(x) REF_BAGS |>
           filter(.data$spp == REF_BAG_FIELDS[x]) |>
-          mutate(!!sym(REF_BAG_FIELDS[x]) := as.character(.data$stateBagValue)) |>
+          mutate(
+            !!sym(REF_BAG_FIELDS[x]) := as.character(.data$stateBagValue)) |>
           select(-c("stateBagValue", "spp")) |>
           rename(
             dl_state = .data$state,

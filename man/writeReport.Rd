@@ -11,16 +11,19 @@ writeReport(raw_path, temp_path, year, dl, dir, file)
 
 \item{temp_path}{Path to directory that contains output .csv files}
 
-\item{year}{The year in which the Harvest Information Program data were collected}
+\item{year}{The year in which the Harvest Information Program data were
+collected}
 
 \item{dl}{Download cycle}
 
 \item{dir}{Folder in which to save the rendered report}
 
-\item{file}{What the report file should be named (do not include an extension or suffix indicating file type, this is done automatically)}
+\item{file}{What the report file should be named (do not include an extension
+or suffix indicating file type, this is done automatically)}
 }
 \description{
-Create documentation with figures and tables that summarizes HIP data at a download cycle scale.
+Create documentation with figures and tables that summarizes HIP data at a
+download cycle scale.
 }
 \references{
 \url{https://github.com/USFWS/migbirdHIP}

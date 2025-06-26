@@ -9,10 +9,13 @@ listFiles(path, season)
 \arguments{
 \item{path}{File path to the folder containing HIP .txt files}
 
-\item{season}{If set as TRUE, selects only folders starting with "DL" in a a season's upper-level directory}
+\item{season}{If set as TRUE, selects only folders starting with "DL" in a a
+season's upper-level directory}
 }
 \description{
-The internal \code{listFiles} function is used inside of \code{\link{read_hip}} and creates a tibble of the HIP .txt files to be read in from the provided directory.
+The internal \code{listFiles} function is used inside of
+\code{\link{read_hip}} and creates a tibble of the HIP .txt files to be read
+in from the provided directory.
 }
 \references{
 \url{https://github.com/USFWS/migbirdHIP}

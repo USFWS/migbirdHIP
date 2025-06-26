@@ -1,6 +1,8 @@
 #' Proof data and flag errors
 #'
-#' After cleaning the data with \code{\link{clean}}, compare each field to an expected range of values and flag non-conforming values in a new "errors" column.
+#' After cleaning the data with \code{\link{clean}}, compare each field to an
+#' expected range of values and flag non-conforming values in a new "errors"
+#' column.
 #'
 #' @importFrom dplyr mutate
 #' @importFrom dplyr row_number
@@ -16,8 +18,10 @@
 #' @importFrom stringr str_remove_all
 #' @importFrom rlang .data
 #'
-#' @param deduplicated_data The object created after deduplicating data with \code{\link{duplicateFix}}
-#' @param year The year in which the Harvest Information Program data were collected
+#' @param deduplicated_data The object created after deduplicating data with
+#'   \code{\link{duplicateFix}}
+#' @param year The year in which the Harvest Information Program data were
+#'   collected
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}
@@ -84,7 +88,8 @@ proof <-
             as.numeric(
               str_extract(.data$birth_date, "(?<=\\/)[0-9]{4}")) < year - 100 |
               as.numeric(
-                str_extract(.data$birth_date, "(?<=\\/)[0-9]{4}")) > year - 0) |>
+                str_extract(
+                  .data$birth_date, "(?<=\\/)[0-9]{4}")) > year - 0) |>
           mutate(error = "birth_date"),
         # hunt_mig_birds
         keyed_data |>
@@ -147,7 +152,9 @@ proof <-
 
 #' Proof bad emails
 #'
-#' The internal \code{proofBadEmails} function is used inside of \code{\link{proof}} to find poorly formatted or intentionally obfuscative email addresses.
+#' The internal \code{proofBadEmails} function is used inside of
+#' \code{\link{proof}} to find poorly formatted or intentionally obfuscative
+#' email addresses.
 #'
 #' @importFrom dplyr mutate
 #' @importFrom dplyr filter
@@ -213,7 +220,7 @@ proofBadEmails <-
           str_detect(
             .data$email, "(?<=\\@)yahoo\\.(?!(com|co\\.uk|fr|es|ca|de)$)") |
           str_detect(
-            .data$email, "(?<=\\@)hotmail\\.(?!(com|co\\.uk|fr|es|ca|de)$)")|
+            .data$email, "(?<=\\@)hotmail\\.(?!(com|co\\.uk|fr|es|ca|de)$)") |
           str_detect(
             .data$email,
             "(?<=\\@)(icloud|aol|outlook|msn|live|ymail|me|mac)\\.(?!com$)") |
@@ -221,7 +228,7 @@ proofBadEmails <-
             .data$email,
             paste0(
               "(?<=\\@)(att|cox|comcast|sbcglobal|bellsouth|verizon|earthlink|",
-              "charter)\\.(?!net$)"))|
+              "charter)\\.(?!net$)")) |
           str_detect(
             .data$email, "(?<=\\@)proton\\.(?!(me|mail\\.com|mail\\.ch)$)") |
           str_detect(.data$email, "(?<=\\@)protonmail\\.(?!(com|ch)$)") |
@@ -245,4 +252,3 @@ proofBadEmails <-
       ) |>
       select(-"tld")
   }
-

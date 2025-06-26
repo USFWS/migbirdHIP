@@ -10,7 +10,9 @@ proofBadEmails(keyed_data)
 \item{keyed_data}{An tibble used internally in \code{\link{proof}}}
 }
 \description{
-The internal \code{proofBadEmails} function is used inside of \code{\link{proof}} to find poorly formatted or intentionally obfuscative email addresses.
+The internal \code{proofBadEmails} function is used inside of
+\code{\link{proof}} to find poorly formatted or intentionally obfuscative
+email addresses.
 }
 \references{
 \url{https://github.com/USFWS/migbirdHIP}

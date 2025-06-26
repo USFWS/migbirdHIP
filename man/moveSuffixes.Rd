@@ -7,10 +7,14 @@
 moveSuffixes(raw_data)
 }
 \arguments{
-\item{raw_data}{The object created after reading in data with \code{\link{read_hip}}}
+\item{raw_data}{The object created after reading in data with
+\code{\link{read_hip}}}
 }
 \description{
-The internal \code{moveSuffixes} function moves suffixes from first name or last name columns into the suffix column and performs other cleaning steps. This function catches values from 1 to 20 in Roman numerals and numeric, excluding
+The internal \code{moveSuffixes} function moves suffixes from first name or
+last name columns into the suffix column and performs other cleaning steps.
+This function catches values from 1 to 20 in Roman numerals and numeric,
+excluding XVIII since the database limit is 4 characters.
 }
 \references{
 \url{https://github.com/USFWS/migbirdHIP}

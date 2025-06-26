@@ -62,7 +62,9 @@ fileCheck <-
 
 #' Raw HIP file name correction
 #'
-#' This function overwrites HIP filenames. Files in the supplied directory are renamed by converting the Julian date to YYYYMMDD format. State abbreviations that are in lowercase format are capitalized.
+#' This function overwrites HIP filenames. Files in the supplied directory are
+#' renamed by converting the Julian date to YYYYMMDD format. State abbreviations
+#' that are in lowercase format are capitalized.
 #'
 #' @importFrom dplyr mutate
 #' @importFrom dplyr pull
@@ -79,7 +81,8 @@ fileCheck <-
 #' @importFrom rlang .data
 #'
 #' @param path Directory to download folder containing new HIP files
-#' @param year The year in which the Harvest Information Program data were collected
+#' @param year The year in which the Harvest Information Program data were
+#'   collected
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}

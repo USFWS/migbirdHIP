@@ -10,7 +10,8 @@ duplicateAllOnesGroupSize(duplicates)
 \item{duplicates}{The tibble created by \code{\link{duplicateID}}}
 }
 \description{
-The internal \code{duplicateAllOnesGroupSize} function is used inside of \code{\link{duplicateFix}}.
+The internal \code{duplicateAllOnesGroupSize} function is used inside of
+\code{\link{duplicateFix}}.
 }
 \references{
 \url{https://github.com/USFWS/migbirdHIP}

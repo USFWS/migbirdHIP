@@ -1,6 +1,7 @@
 #' Check for frame shifts
 #'
-#' Find and print any rows that have a line shift error with number of positions shifted.
+#' Find and print any rows that have a line shift error with number of positions
+#' shifted.
 #'
 #' @importFrom dplyr mutate
 #' @importFrom stringr str_length
@@ -53,7 +54,8 @@ shiftCheck <-
 
 #' Find frame shifts
 #'
-#' The internal \code{shiftFinder} function finds any rows that have a line shift error.
+#' The internal \code{shiftFinder} function finds any rows that have a line
+#' shift error.
 #'
 #' @importFrom dplyr filter
 #' @importFrom stringr str_detect

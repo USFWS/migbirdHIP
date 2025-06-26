@@ -12,7 +12,8 @@ issuePlot(issue_assigned_data, year)
 \item{year}{The year of the HIP season (e.g. 2022 for the 2022-2023 season)}
 }
 \description{
-The internal \code{issuePlot} function plots the output of \code{\link{issueAssign}}.
+The internal \code{issuePlot} function plots the output of
+\code{\link{issueAssign}}.
 }
 \references{
 \url{https://github.com/USFWS/migbirdHIP}

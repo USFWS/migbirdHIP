@@ -7,10 +7,14 @@
 inLinePermitDNHFix(raw_data)
 }
 \arguments{
-\item{raw_data}{The object created after reading in data with \code{\link{read_hip}}}
+\item{raw_data}{The object created after reading in data with
+\code{\link{read_hip}}}
 }
 \description{
-The internal \code{inLinePermitDNHFix} function changes any presumed solo permit from OR or WA indicating "did not hunt" in the hunt_mig_birds field if one or more of the band_tailed_pigeon, brant, or seaducks fields indicate hunting.
+The internal \code{inLinePermitDNHFix} function changes any presumed solo
+permit from OR or WA indicating "did not hunt" in the hunt_mig_birds field if
+one or more of the band_tailed_pigeon, brant, or seaducks fields indicate
+hunting.
 }
 \references{
 \url{https://github.com/USFWS/migbirdHIP}

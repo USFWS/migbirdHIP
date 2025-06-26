@@ -10,7 +10,8 @@ inLinePermitDNHMessage(raw_data)
 \item{raw_data}{The product of \code{\link{read_hip}}}
 }
 \description{
-The internal \code{inLinePermitDNHMessage} function returns a message for in-line permit records from OR or WA that indicate they did not hunt.
+The internal \code{inLinePermitDNHMessage} function returns a message for
+in-line permit records from OR or WA that indicate they did not hunt.
 }
 \references{
 \url{https://github.com/USFWS/migbirdHIP}

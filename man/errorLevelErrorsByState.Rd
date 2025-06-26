@@ -7,10 +7,13 @@
 errorLevelErrorsByState(proofed_data)
 }
 \arguments{
-\item{proofed_data}{The object created after error flagging data with \code{\link{proof}} or \code{\link{correct}}}
+\item{proofed_data}{The object created after error flagging data with
+\code{\link{proof}} or \code{\link{correct}}}
 }
 \description{
-The internal \code{errorLevelErrorsByState} function calculates a summary table of the count of errors, count of correct values, and proportion of erroneous values by state.
+The internal \code{errorLevelErrorsByState} function calculates a summary
+table of the count of errors, count of correct values, and proportion of
+erroneous values by state.
 }
 \references{
 \url{https://github.com/USFWS/migbirdHIP}

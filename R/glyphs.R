@@ -1,6 +1,7 @@
 #' Find non-UTF-8 glyphs/characters in a field
 #'
-#' The internal \code{glyphFinder} function pulls non-UTF-8 characters in a field.
+#' The internal \code{glyphFinder} function pulls non-UTF-8 characters in a
+#' field.
 #'
 #' @importFrom dplyr select
 #' @importFrom rlang sym
@@ -10,10 +11,12 @@
 #' @importFrom stringr str_detect
 #' @importFrom rlang .data
 #'
-#' @param raw_data The tibble created after reading in data with \code{\link{read_hip}}
-#' @param field Field that should be checked for non-UTF-8 characters. One of the fields from the following list may be supplied:
+#' @param raw_data The tibble created after reading in data with
+#'   \code{\link{read_hip}}
+#' @param field Field that should be checked for non-UTF-8 characters. One of
+#'   the fields from the following list may be supplied:
 #' \itemize{
-#' \item title, firstname, middle, lastname, suffix, address, city, state, zip, birth_date, issue_date, hunt_mig_birds, ducks_bag, geese_bag, dove_bag, woodcock_bag, coots_snipe, rails_gallinules, cranes, band_tailed_pigeon, brant, seaducks, registration_yr, email}
+#' \item REF_ALL_FIELDS}
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}
@@ -31,7 +34,8 @@ glyphFinder <-
 
 #' Find non-UTF-8 glyphs/characters in any field
 #'
-#' Pull and view any non-UTF-8 characters in the raw data. This function iterates \code{\link{glyphFinder}} over the entire tibble.
+#' Pull and view any non-UTF-8 characters in the raw data. This function
+#' iterates \code{\link{glyphFinder}} over the entire tibble.
 #'
 #' @importFrom purrr map
 #' @importFrom purrr list_rbind

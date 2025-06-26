@@ -7,10 +7,12 @@
 duplicateID(current_data)
 }
 \arguments{
-\item{current_data}{The object created after filtering to current data with \code{\link{issueCheck}}}
+\item{current_data}{The object created after filtering to current data with
+\code{\link{issueCheck}}}
 }
 \description{
-Return a tibble of duplicates with a duplicate ID column identifying each group of records.
+Return a tibble of duplicates with a duplicate ID column identifying each
+group of records.
 }
 \references{
 \url{https://github.com/USFWS/migbirdHIP}

@@ -2,7 +2,8 @@
 % Please edit documentation in R/read_hip.R
 \name{nonDigitBagsMessage}
 \alias{nonDigitBagsMessage}
-\title{Return message if any record contains a bag value that is not a 1-digit number}
+\title{Return message if any record contains a bag value that is not a 1-digit
+number}
 \usage{
 nonDigitBagsMessage(raw_data)
 }
@@ -10,7 +11,8 @@ nonDigitBagsMessage(raw_data)
 \item{raw_data}{The product of \code{\link{read_hip}}}
 }
 \description{
-The internal \code{nonDigitBagsMessage} function is used inside of \code{\link{readMessages}}
+The internal \code{nonDigitBagsMessage} function is used inside of
+\code{\link{readMessages}}
 }
 \references{
 \url{https://github.com/USFWS/migbirdHIP}

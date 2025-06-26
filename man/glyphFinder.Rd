@@ -7,14 +7,17 @@
 glyphFinder(raw_data, field)
 }
 \arguments{
-\item{raw_data}{The tibble created after reading in data with \code{\link{read_hip}}}
+\item{raw_data}{The tibble created after reading in data with
+\code{\link{read_hip}}}
 
-\item{field}{Field that should be checked for non-UTF-8 characters. One of the fields from the following list may be supplied:
+\item{field}{Field that should be checked for non-UTF-8 characters. One of
+the fields from the following list may be supplied:
 \itemize{
-\item title, firstname, middle, lastname, suffix, address, city, state, zip, birth_date, issue_date, hunt_mig_birds, ducks_bag, geese_bag, dove_bag, woodcock_bag, coots_snipe, rails_gallinules, cranes, band_tailed_pigeon, brant, seaducks, registration_yr, email}}
+\item REF_ALL_FIELDS}}
 }
 \description{
-The internal \code{glyphFinder} function pulls non-UTF-8 characters in a field.
+The internal \code{glyphFinder} function pulls non-UTF-8 characters in a
+field.
 }
 \references{
 \url{https://github.com/USFWS/migbirdHIP}

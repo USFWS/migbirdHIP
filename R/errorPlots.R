@@ -1,6 +1,7 @@
 #' Plot errors across download cycles
 #'
-#' Create a plot of errors per download cycle, either by all states in the data set or a specific state, province, or territory.
+#' Create a plot of errors per download cycle, either by all states in the data
+#' set or a specific state, province, or territory.
 #'
 #' @importFrom stringr str_detect
 #' @importFrom dplyr select
@@ -24,13 +25,13 @@
 #' @importFrom ggplot2 theme
 #' @importFrom rlang .data
 #'
-#' @param proofed_data The object created after error flagging data with \code{\link{proof}} or \code{\link{correct}}
-#' @param loc Which location the error data should be plotted for. Acceptable values include:
+#' @param proofed_data The object created after error flagging data with
+#'   \code{\link{proof}} or \code{\link{correct}}
+#' @param loc Which location the error data should be plotted for. Acceptable
+#'   values include:
 #'  \itemize{
-#'  \item all - All states, provinces, and/or territories that exist in the data
-#'  \item A specific state represented by one of the following abbreviations:
-#'  \itemize{
-#'  \item AL, AK, AZ, AR, CA, CO, CT, DE, DC, FL, GA, ID, IL, IN, IA, KS, KY, LA, ME, MD, MA, MI, MN, MS, MO, MT, NE, NV, NH, NJ, NM, NY, NC, ND, OH, OK, OR, PA, RI, SC, SD, TN, TX, UT, VT, VA, WA, WV, WI, WY}
+#'  \item "all" - all states
+#'  \item a two-letter abbreviation for a US state (excluding HI)
 #'  }
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
@@ -119,7 +120,8 @@ errorPlotDL <-
 
 #' Plot HIP errors by field
 #'
-#' Create a bar plot of proportion of error per field. The plot defaults to all 49 states, but location can be specified.
+#' Create a bar plot of proportion of error per field. The plot defaults to all
+#' 49 states, but location can be specified.
 #'
 #' @importFrom stringr str_detect
 #' @importFrom dplyr filter
@@ -135,13 +137,13 @@ errorPlotDL <-
 #' @importFrom ggplot2 expansion
 #' @importFrom rlang .data
 #'
-#' @param proofed_data The object created after error flagging data with \code{\link{proof}} or \code{\link{correct}}
-#' @param loc The location that errors should be plotted for. Acceptable values include:
+#' @param proofed_data The object created after error flagging data with
+#'   \code{\link{proof}} or \code{\link{correct}}
+#' @param loc The location that errors should be plotted for. Acceptable values
+#'   include:
 #'  \itemize{
-#'  \item all - All states, provinces, and/or territories that exist in the data
-#'  \item A specific state represented by one of the following abbreviations:
-#'  \itemize{
-#'  \item AL, AK, AZ, AR, CA, CO, CT, DE, DC, FL, GA, ID, IL, IN, IA, KS, KY, LA, ME, MD, MA, MI, MN, MS, MO, MT, NE, NV, NH, NJ, NM, NY, NC, ND, OH, OK, OR, PA, RI, SC, SD, TN, TX, UT, VT, VA, WA, WV, WI, WY}
+#'  \item "all" - all states
+#'  \item a two-letter abbreviation for a US state (excluding HI)
 #'  }
 #' @param year The year in which the HIP data were collected.
 #'
@@ -212,8 +214,10 @@ errorPlotFields <-
 #' @importFrom ggplot2 theme_classic
 #' @importFrom ggplot2 element_text
 #'
-#' @param proofed_data The object created after error flagging data with \code{\link{proof}} or \code{\link{correct}}
-#' @param threshold Optional. A decimal value above which error proportions should be plotted.
+#' @param proofed_data The object created after error flagging data with
+#'   \code{\link{proof}} or \code{\link{correct}}
+#' @param threshold Optional. A decimal value above which error proportions
+#'   should be plotted.
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}
@@ -317,7 +321,9 @@ errorPlotStates <-
 
 #' Calculate error-level errors by state
 #'
-#' The internal \code{errorLevelErrorsByState} function calculates a summary table of the count of errors, count of correct values, and proportion of erroneous values by state.
+#' The internal \code{errorLevelErrorsByState} function calculates a summary
+#' table of the count of errors, count of correct values, and proportion of
+#' erroneous values by state.
 #'
 #' @importFrom dplyr select
 #' @importFrom dplyr mutate
@@ -330,7 +336,8 @@ errorPlotStates <-
 #' @importFrom dplyr distinct
 #' @importFrom rlang .data
 #'
-#' @param proofed_data The object created after error flagging data with \code{\link{proof}} or \code{\link{correct}}
+#' @param proofed_data The object created after error flagging data with
+#'   \code{\link{proof}} or \code{\link{correct}}
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}
@@ -356,7 +363,8 @@ errorLevelErrorsByState <-
 
 #' Calculate error-level errors by field
 #'
-#' The internal \code{errorLevelErrorsByField} function calculates a summary table of the count of errors and proportion of erroneous values by field.
+#' The internal \code{errorLevelErrorsByField} function calculates a summary
+#' table of the count of errors and proportion of erroneous values by field.
 #'
 #' @importFrom dplyr select
 #' @importFrom tidyr separate_longer_delim
@@ -365,7 +373,8 @@ errorLevelErrorsByState <-
 #' @importFrom dplyr mutate
 #' @importFrom rlang .data
 #'
-#' @param proofed_data The object created after error flagging data with \code{\link{proof}} or \code{\link{correct}}
+#' @param proofed_data The object created after error flagging data with
+#'   \code{\link{proof}} or \code{\link{correct}}
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}
@@ -389,7 +398,8 @@ errorLevelErrorsByField <-
 
 #' Pull bad data
 #'
-#' Create a tibble of error data by state or field. Data are reported using a threshold of proportion of error.
+#' Create a tibble of error data by state or field. Data are reported using a
+#' threshold of proportion of error.
 #'
 #' @importFrom dplyr mutate
 #' @importFrom dplyr filter

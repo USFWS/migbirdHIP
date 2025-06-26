@@ -10,7 +10,9 @@ duplicateRecordType(duplicates)
 \item{duplicates}{The tibble created by \code{\link{duplicateID}}}
 }
 \description{
-The internal \code{duplicateRecordType} function is used inside of \code{\link{duplicateFix}} to set record type of registrations based on each record's bag values.
+The internal \code{duplicateRecordType} function is used inside of
+\code{\link{duplicateFix}} to set record type of registrations based on each
+record's bag values.
 }
 \references{
 \url{https://github.com/USFWS/migbirdHIP}

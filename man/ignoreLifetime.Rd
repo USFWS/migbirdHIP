@@ -10,7 +10,8 @@ ignoreLifetime(filelist)
 \item{filelist}{The file list tibble created by \code{\link{listFiles}}}
 }
 \description{
-The internal \code{ignoreLifetime} function is used inside of \code{\link{read_hip}} to filter out lifetime files from the file list.
+The internal \code{ignoreLifetime} function is used inside of
+\code{\link{read_hip}} to filter out lifetime files from the file list.
 }
 \references{
 \url{https://github.com/USFWS/migbirdHIP}

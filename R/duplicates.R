@@ -13,7 +13,8 @@
 #' @importFrom dplyr distinct
 #' @importFrom rlang .data
 #'
-#' @param current_data The object created after filtering to current data with \code{\link{issueCheck}}
+#' @param current_data The object created after filtering to current data with
+#'   \code{\link{issueCheck}}
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}
@@ -190,7 +191,8 @@ duplicateFix <-
 
 #' Create a tibble of duplicates with an ID column
 #'
-#' Return a tibble of duplicates with a duplicate ID column identifying each group of records.
+#' Return a tibble of duplicates with a duplicate ID column identifying each
+#' group of records.
 #'
 #' @importFrom dplyr group_by
 #' @importFrom rlang syms
@@ -218,7 +220,9 @@ duplicateID <-
 
 #' Find the most recent records out of a group of duplicates
 #'
-#' The internal \code{duplicateNewest} function is used inside of \code{\link{duplicateFix}} to filter groups of duplicates to the most recent records out of each group.
+#' The internal \code{duplicateNewest} function is used inside of
+#' \code{\link{duplicateFix}} to filter groups of duplicates to the most recent
+#' records out of each group.
 #'
 #' @importFrom dplyr mutate
 #' @importFrom lubridate mdy
@@ -257,7 +261,9 @@ duplicateNewest <-
 
 #' Flag all-one records in a group of duplicates
 #'
-#' The internal \code{duplicateAllOnes} function is used inside of \code{\link{duplicateFix}} to evaluate groups of duplicates for records containing "1" for every bag value.
+#' The internal \code{duplicateAllOnes} function is used inside of
+#' \code{\link{duplicateFix}} to evaluate groups of duplicates for records
+#' containing "1" for every bag value.
 #'
 #' @importFrom dplyr mutate
 #' @importFrom purrr pmap_chr
@@ -283,7 +289,8 @@ duplicateAllOnes <-
 
 #' Evaluate group sizes of all-one/not-all-one records
 #'
-#' The internal \code{duplicateAllOnesGroupSize} function is used inside of \code{\link{duplicateFix}}.
+#' The internal \code{duplicateAllOnesGroupSize} function is used inside of
+#' \code{\link{duplicateFix}}.
 #'
 #' @importFrom dplyr mutate
 #' @importFrom dplyr n
@@ -311,7 +318,8 @@ duplicateAllOnesGroupSize <-
 
 #' Decide which duplicate records should be kept or dropped
 #'
-#' The internal \code{duplicateDecide} function is used inside of \code{\link{duplicateFix}} to deduplicate intermediate tibbles.
+#' The internal \code{duplicateDecide} function is used inside of
+#' \code{\link{duplicateFix}} to deduplicate intermediate tibbles.
 #'
 #' @importFrom dplyr mutate
 #' @importFrom dplyr case_when
@@ -358,7 +366,9 @@ duplicateDecide <-
 
 #' De-duplicate by randomly sampling intermediate tibbles
 #'
-#' The internal \code{duplicateSample} function is used inside of \code{\link{duplicateFix}} to deduplicate intermediate tibbles that have been evaluated using other criteria already.
+#' The internal \code{duplicateSample} function is used inside of
+#' \code{\link{duplicateFix}} to deduplicate intermediate tibbles that have been
+#' evaluated using other criteria already.
 #'
 #' @importFrom dplyr bind_rows
 #' @importFrom dplyr filter
@@ -389,7 +399,9 @@ duplicateSample <-
 
 #' Set record type
 #'
-#' The internal \code{duplicateRecordType} function is used inside of \code{\link{duplicateFix}} to set record type of registrations based on each record's bag values.
+#' The internal \code{duplicateRecordType} function is used inside of
+#' \code{\link{duplicateFix}} to set record type of registrations based on each
+#' record's bag values.
 #'
 #' @importFrom dplyr mutate
 #' @importFrom dplyr across
@@ -421,7 +433,9 @@ duplicateRecordType <-
 
 #' Find causes of duplication
 #'
-#' The internal \code{duplicateFields} function is used inside of \code{\link{duplicateFinder}} to find which fields have different values among a group of duplicate registrations.
+#' The internal \code{duplicateFields} function is used inside of
+#' \code{\link{duplicateFinder}} to find which fields have different values
+#' among a group of duplicate registrations.
 #'
 #' @importFrom purrr map
 #' @importFrom purrr discard
@@ -551,7 +565,8 @@ duplicateFinder <-
 #' @importFrom ggplot2 element_text
 #' @importFrom rlang .data
 #'
-#' @param current_data The object created after filtering to current data with \code{\link{issueCheck}}
+#' @param current_data The object created after filtering to current data with
+#'   \code{\link{issueCheck}}
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}

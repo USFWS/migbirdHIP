@@ -1,10 +1,12 @@
 #' Clean data
 #'
-#' After reading the data with \code{\link{read_hip}}, reformat and clean the HIP registrations.
+#' After reading the data with \code{\link{read_hip}}, reformat and clean the
+#' HIP registrations.
 #'
 #' @importFrom dplyr filter
 #'
-#' @param raw_data The object created after reading in data with \code{\link{read_hip}}
+#' @param raw_data The object created after reading in data with
+#'   \code{\link{read_hip}}
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}
@@ -59,7 +61,8 @@ clean <-
 
 #' Names to uppercase
 #'
-#' The internal \code{namesToUppercase} function converts name elements to uppercase for easier string cleaning.
+#' The internal \code{namesToUppercase} function converts name elements to
+#' uppercase for easier string cleaning.
 #'
 #' @importFrom dplyr mutate
 #' @importFrom stringr str_to_upper
@@ -83,7 +86,8 @@ namesToUppercase <-
 
 #' Missing PII filter
 #'
-#' The internal \code{missingPIIFilter} function filters out HIP registrations that are missing critical pieces of contact information.
+#' The internal \code{missingPIIFilter} function filters out HIP registrations
+#' that are missing critical pieces of contact information.
 #'
 #' @importFrom dplyr filter
 #'
@@ -110,8 +114,10 @@ missingPIIFilter <-
 
 #' Move suffixes
 #'
-#' The internal \code{moveSuffixes} function moves suffixes from first name or last name columns into the suffix column and performs other cleaning steps. This function catches values from 1 to 20 in Roman numerals and numeric, excluding
-# XVIII since the database limit is 4 characters.
+#' The internal \code{moveSuffixes} function moves suffixes from first name or
+#' last name columns into the suffix column and performs other cleaning steps.
+#' This function catches values from 1 to 20 in Roman numerals and numeric,
+#' excluding XVIII since the database limit is 4 characters.
 #'
 #' @importFrom dplyr mutate
 #' @importFrom dplyr case_when
@@ -233,7 +239,10 @@ formatZip <-
 
 #' In-line permit did-not-hunt fix
 #'
-#' The internal \code{inLinePermitDNHFix} function changes any presumed solo permit from OR or WA indicating "did not hunt" in the hunt_mig_birds field if one or more of the band_tailed_pigeon, brant, or seaducks fields indicate hunting.
+#' The internal \code{inLinePermitDNHFix} function changes any presumed solo
+#' permit from OR or WA indicating "did not hunt" in the hunt_mig_birds field if
+#' one or more of the band_tailed_pigeon, brant, or seaducks fields indicate
+#' hunting.
 #'
 #' @importFrom dplyr mutate
 #' @importFrom rlang .data
@@ -260,7 +269,8 @@ inLinePermitDNHFix <-
 
 #' Check if zip codes are associated with the correct state
 #'
-#' The internal \code{zipCheck} function checks to see if zip codes in hunter addresses match the address state.
+#' The internal \code{zipCheck} function checks to see if zip codes in hunter
+#' addresses match the address state.
 #'
 #' @importFrom dplyr group_by
 #' @importFrom dplyr mutate
@@ -312,7 +322,12 @@ zipCheck <-
 
 #' Fix crane permit bag values
 #'
-#' The internal \code{cranePermitBagFix} function is used inside of \code{\link{clean}} to edit bag values for states that submit permit files separately from HIP. If records from these states submit a "2" for the crane field, they will be mistakenly identified as permit records. This function changes crane "2" values to "0" so that they are classified as HIP records until permit files are received later in the hunting season.
+#' The internal \code{cranePermitBagFix} function is used inside of
+#' \code{\link{clean}} to edit bag values for states that submit permit files
+#' separately from HIP. If records from these states submit a "2" for the crane
+#' field, they will be mistakenly identified as permit records. This function
+#' changes crane "2" values to "0" so that they are classified as HIP records
+#' until permit files are received later in the hunting season.
 #'
 #' @importFrom dplyr filter
 #' @importFrom dplyr count
@@ -362,7 +377,13 @@ cranePermitBagFix <-
 
 #' Fix band-tailed pigeon permit bag values
 #'
-#' The internal \code{btpiPermitBagFix} function is used inside of \code{\link{clean}} to edit bag values for states that submit permit files separately from HIP. If records from these states submit a "2" for the band_tailed_pigeon field, they will be mistakenly identified as permit records. This function changes band_tailed_pigeon "2" values to "0" so that they are classified as HIP records until permit files are received later in the hunting season.
+#' The internal \code{btpiPermitBagFix} function is used inside of
+#' \code{\link{clean}} to edit bag values for states that submit permit files
+#' separately from HIP. If records from these states submit a "2" for the
+#' band_tailed_pigeon field, they will be mistakenly identified as permit
+#' records. This function changes band_tailed_pigeon "2" values to "0" so that
+#' they are classified as HIP records until permit files are received later in
+#' the hunting season.
 #'
 #' @importFrom dplyr filter
 #' @importFrom dplyr count

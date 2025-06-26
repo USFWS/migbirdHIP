@@ -7,12 +7,16 @@
 proof(deduplicated_data, year)
 }
 \arguments{
-\item{deduplicated_data}{The object created after deduplicating data with \code{\link{duplicateFix}}}
+\item{deduplicated_data}{The object created after deduplicating data with
+\code{\link{duplicateFix}}}
 
-\item{year}{The year in which the Harvest Information Program data were collected}
+\item{year}{The year in which the Harvest Information Program data were
+collected}
 }
 \description{
-After cleaning the data with \code{\link{clean}}, compare each field to an expected range of values and flag non-conforming values in a new "errors" column.
+After cleaning the data with \code{\link{clean}}, compare each field to an
+expected range of values and flag non-conforming values in a new "errors"
+column.
 }
 \references{
 \url{https://github.com/USFWS/migbirdHIP}

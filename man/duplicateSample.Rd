@@ -10,7 +10,9 @@ duplicateSample(dupes)
 \item{dupes}{Intermediate tibble created in \code{\link{duplicateFix}}}
 }
 \description{
-The internal \code{duplicateSample} function is used inside of \code{\link{duplicateFix}} to deduplicate intermediate tibbles that have been evaluated using other criteria already.
+The internal \code{duplicateSample} function is used inside of
+\code{\link{duplicateFix}} to deduplicate intermediate tibbles that have been
+evaluated using other criteria already.
 }
 \references{
 \url{https://github.com/USFWS/migbirdHIP}

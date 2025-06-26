@@ -7,10 +7,12 @@
 glyphCheck(raw_data)
 }
 \arguments{
-\item{raw_data}{The object created after reading in data with \code{\link{read_hip}}}
+\item{raw_data}{The object created after reading in data with
+\code{\link{read_hip}}}
 }
 \description{
-Pull and view any non-UTF-8 characters in the raw data. This function iterates \code{\link{glyphFinder}} over the entire tibble.
+Pull and view any non-UTF-8 characters in the raw data. This function
+iterates \code{\link{glyphFinder}} over the entire tibble.
 }
 \references{
 \url{https://github.com/USFWS/migbirdHIP}

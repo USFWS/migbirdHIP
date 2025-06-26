@@ -10,7 +10,9 @@ duplicateAllOnes(duplicates)
 \item{duplicates}{The tibble created by \code{\link{duplicateID}}}
 }
 \description{
-The internal \code{duplicateAllOnes} function is used inside of \code{\link{duplicateFix}} to evaluate groups of duplicates for records containing "1" for every bag value.
+The internal \code{duplicateAllOnes} function is used inside of
+\code{\link{duplicateFix}} to evaluate groups of duplicates for records
+containing "1" for every bag value.
 }
 \references{
 \url{https://github.com/USFWS/migbirdHIP}

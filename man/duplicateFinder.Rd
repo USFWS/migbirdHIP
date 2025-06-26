@@ -7,7 +7,8 @@
 duplicateFinder(current_data)
 }
 \arguments{
-\item{current_data}{The object created after filtering to current data with \code{\link{issueCheck}}}
+\item{current_data}{The object created after filtering to current data with
+\code{\link{issueCheck}}}
 }
 \description{
 Determine how many duplicate records are in the data and return a table.

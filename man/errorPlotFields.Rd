@@ -7,20 +7,21 @@
 errorPlotFields(proofed_data, loc = "all", year)
 }
 \arguments{
-\item{proofed_data}{The object created after error flagging data with \code{\link{proof}} or \code{\link{correct}}}
+\item{proofed_data}{The object created after error flagging data with
+\code{\link{proof}} or \code{\link{correct}}}
 
-\item{loc}{The location that errors should be plotted for. Acceptable values include:
+\item{loc}{The location that errors should be plotted for. Acceptable values
+include:
 \itemize{
-\item all - All states, provinces, and/or territories that exist in the data
-\item A specific state represented by one of the following abbreviations:
-\itemize{
-\item AL, AK, AZ, AR, CA, CO, CT, DE, DC, FL, GA, ID, IL, IN, IA, KS, KY, LA, ME, MD, MA, MI, MN, MS, MO, MT, NE, NV, NH, NJ, NM, NY, NC, ND, OH, OK, OR, PA, RI, SC, SD, TN, TX, UT, VT, VA, WA, WV, WI, WY}
+\item "all" - all states
+\item a two-letter abbreviation for a US state (excluding HI)
 }}
 
 \item{year}{The year in which the HIP data were collected.}
 }
 \description{
-Create a bar plot of proportion of error per field. The plot defaults to all 49 states, but location can be specified.
+Create a bar plot of proportion of error per field. The plot defaults to all
+49 states, but location can be specified.
 }
 \references{
 \url{https://github.com/USFWS/migbirdHIP}

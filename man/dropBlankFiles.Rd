@@ -10,7 +10,9 @@ dropBlankFiles(filelist)
 \item{filelist}{The file list tibble created by \code{\link{listFiles}}}
 }
 \description{
-The internal \code{dropBlankFiles} function is used inside of \code{\link{read_hip}} to return an error message if blank files exist in the directory, and remove them from the file list so they are not read in.
+The internal \code{dropBlankFiles} function is used inside of
+\code{\link{read_hip}} to return an error message if blank files exist in the
+directory, and remove them from the file list so they are not read in.
 }
 \references{
 \url{https://github.com/USFWS/migbirdHIP}

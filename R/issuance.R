@@ -1,6 +1,7 @@
 #' Check issue dates and license years
 #'
-#' After cleaning the data with \code{\link{clean}}, ensure each record is assigned the appropriate registration_yr.
+#' After cleaning the data with \code{\link{clean}}, ensure each record is
+#' assigned the appropriate registration_yr.
 #'
 #' @importFrom dplyr left_join
 #' @importFrom dplyr select
@@ -15,7 +16,8 @@
 #' @importFrom stringr str_detect
 #' @importFrom rlang .data
 #'
-#' @param clean_data The object created after cleaning data with \code{\link{clean}}
+#' @param clean_data The object created after cleaning data with
+#'   \code{\link{clean}}
 #' @param year The year of the HIP season (e.g. 2022 for the 2022-2023 season)
 #' @param plot Create a plot? Default is FALSE
 #'
@@ -139,9 +141,12 @@ issueCheck <-
     return(current_data)
   }
 
-#' Assign decisions to records on how to process them using issue dates and license years
+#' Assign decisions to records on how to process them using issue dates and
+#' license years
 #'
-#' The internal \code{issueAssign} function is used inside of \code{\link{issueCheck}} to determine which records in the output from \code{\link{clean}} are current, past, future, or incorrect.
+#' The internal \code{issueAssign} function is used inside of
+#' \code{\link{issueCheck}} to determine which records in the output from
+#' \code{\link{clean}} are current, past, future, or incorrect.
 #'
 #' @importFrom dplyr left_join
 #' @importFrom dplyr rename
@@ -155,7 +160,8 @@ issueCheck <-
 #' @importFrom stringr str_detect
 #' @importFrom rlang .data
 #'
-#' @param clean_data The object created after cleaning data with \code{\link{clean}}
+#' @param clean_data The object created after cleaning data with
+#'   \code{\link{clean}}
 #' @param year The year of the HIP season (e.g. 2022 for the 2022-2023 season)
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
@@ -207,7 +213,8 @@ issueAssign <-
 
 #' Plot issue date errors
 #'
-#' The internal \code{issuePlot} function plots the output of \code{\link{issueAssign}}.
+#' The internal \code{issuePlot} function plots the output of
+#' \code{\link{issueAssign}}.
 #'
 #' @importFrom stringr str_detect
 #' @importFrom dplyr filter

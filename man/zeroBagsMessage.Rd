@@ -10,7 +10,8 @@ zeroBagsMessage(raw_data)
 \item{raw_data}{The product of \code{\link{read_hip}}}
 }
 \description{
-The internal \code{zeroBagsMessage} function is used inside of \code{\link{readMessages}}
+The internal \code{zeroBagsMessage} function is used inside of
+\code{\link{readMessages}}
 }
 \references{
 \url{https://github.com/USFWS/migbirdHIP}

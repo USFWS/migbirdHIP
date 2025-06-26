@@ -7,16 +7,21 @@
 pullErrors(proofed_data, field, unique = TRUE)
 }
 \arguments{
-\item{proofed_data}{The object created after error flagging data with \code{\link{proof}}}
+\item{proofed_data}{The object created after error flagging data with
+\code{\link{proof}}}
 
-\item{field}{Field that should be pulled. One of the fields from the following list may be supplied:
+\item{field}{Field that should be pulled. One of the fields from the
+following list may be supplied:
 \itemize{
 \item title, firstname, middle, lastname, suffix, address, city, state, zip, birth_date, issue_date, hunt_mig_birds, ducks_bag, geese_bag, dove_bag, woodcock_bag, coots_snipe, rails_gallinules, cranes, band_tailed_pigeon, brant, seaducks, registration_yr, email}}
 
-\item{unique}{If FALSE, returns all error values; if TRUE (default), only returns unique values.}
+\item{unique}{If FALSE, returns all error values; if TRUE (default), only
+returns unique values.}
 }
 \description{
-Pull and view errors that have been flagged for a particular field. This function allows you to easily see what the \code{\link{proof}} function has determined to be unacceptable data.
+Pull and view errors that have been flagged for a particular field. This
+function allows you to easily see what the \code{\link{proof}} function has
+determined to be unacceptable data.
 }
 \references{
 \url{https://github.com/USFWS/migbirdHIP}

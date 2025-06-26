@@ -7,10 +7,12 @@
 zipCheck(raw_data)
 }
 \arguments{
-\item{raw_data}{The object created after reading in data with \code{\link{read_hip}}}
+\item{raw_data}{The object created after reading in data with
+\code{\link{read_hip}}}
 }
 \description{
-The internal \code{zipCheck} function checks to see if zip codes in hunter addresses match the address state.
+The internal \code{zipCheck} function checks to see if zip codes in hunter
+addresses match the address state.
 }
 \references{
 \url{https://github.com/USFWS/migbirdHIP}

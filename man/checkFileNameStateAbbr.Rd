@@ -10,7 +10,9 @@ checkFileNameStateAbbr(file_list_vector)
 \item{file_list_vector}{A file list vector}
 }
 \description{
-The internal \code{checkFileNameStateAbbr} function is used inside of \code{\link{read_hip}} to return an error message if any file does not have an state abbreviation from the expected 49 continental states.
+The internal \code{checkFileNameStateAbbr} function is used inside of
+\code{\link{read_hip}} to return an error message if any file does not have
+an state abbreviation from the expected 49 continental states.
 }
 \references{
 \url{https://github.com/USFWS/migbirdHIP}

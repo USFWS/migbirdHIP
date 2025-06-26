@@ -7,14 +7,16 @@
 issueCheck(clean_data, year, plot = FALSE)
 }
 \arguments{
-\item{clean_data}{The object created after cleaning data with \code{\link{clean}}}
+\item{clean_data}{The object created after cleaning data with
+\code{\link{clean}}}
 
 \item{year}{The year of the HIP season (e.g. 2022 for the 2022-2023 season)}
 
 \item{plot}{Create a plot? Default is FALSE}
 }
 \description{
-After cleaning the data with \code{\link{clean}}, ensure each record is assigned the appropriate registration_yr.
+After cleaning the data with \code{\link{clean}}, ensure each record is
+assigned the appropriate registration_yr.
 }
 \references{
 \url{https://github.com/USFWS/migbirdHIP}

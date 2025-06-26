@@ -7,7 +7,8 @@
 duplicateFix(current_data)
 }
 \arguments{
-\item{current_data}{The object created after filtering to current data with \code{\link{issueCheck}}}
+\item{current_data}{The object created after filtering to current data with
+\code{\link{issueCheck}}}
 }
 \description{
 Resolve duplicate HIP records.

@@ -7,18 +7,19 @@
 errorPlotDL(proofed_data, loc = "all")
 }
 \arguments{
-\item{proofed_data}{The object created after error flagging data with \code{\link{proof}} or \code{\link{correct}}}
+\item{proofed_data}{The object created after error flagging data with
+\code{\link{proof}} or \code{\link{correct}}}
 
-\item{loc}{Which location the error data should be plotted for. Acceptable values include:
+\item{loc}{Which location the error data should be plotted for. Acceptable
+values include:
 \itemize{
-\item all - All states, provinces, and/or territories that exist in the data
-\item A specific state represented by one of the following abbreviations:
-\itemize{
-\item AL, AK, AZ, AR, CA, CO, CT, DE, DC, FL, GA, ID, IL, IN, IA, KS, KY, LA, ME, MD, MA, MI, MN, MS, MO, MT, NE, NV, NH, NJ, NM, NY, NC, ND, OH, OK, OR, PA, RI, SC, SD, TN, TX, UT, VT, VA, WA, WV, WI, WY}
+\item "all" - all states
+\item a two-letter abbreviation for a US state (excluding HI)
 }}
 }
 \description{
-Create a plot of errors per download cycle, either by all states in the data set or a specific state, province, or territory.
+Create a plot of errors per download cycle, either by all states in the data
+set or a specific state, province, or territory.
 }
 \references{
 \url{https://github.com/USFWS/migbirdHIP}

@@ -10,7 +10,9 @@ duplicateNewest(duplicates)
 \item{duplicates}{The tibble created by \code{\link{duplicateID}}}
 }
 \description{
-The internal \code{duplicateNewest} function is used inside of \code{\link{duplicateFix}} to filter groups of duplicates to the most recent records out of each group.
+The internal \code{duplicateNewest} function is used inside of
+\code{\link{duplicateFix}} to filter groups of duplicates to the most recent
+records out of each group.
 }
 \references{
 \url{https://github.com/USFWS/migbirdHIP}

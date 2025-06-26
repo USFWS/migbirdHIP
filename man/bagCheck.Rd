@@ -7,10 +7,12 @@
 bagCheck(deduplicated_data)
 }
 \arguments{
-\item{deduplicated_data}{The object created after deduplicating data with \code{\link{duplicateFix}}}
+\item{deduplicated_data}{The object created after deduplicating data with
+\code{\link{duplicateFix}}}
 }
 \description{
-After fixing the data with \code{\link{duplicateFix}}, see if any unexpected bag values were submitted.
+After fixing the data with \code{\link{duplicateFix}}, see if any unexpected
+bag values were submitted.
 }
 \references{
 \url{https://github.com/USFWS/migbirdHIP}

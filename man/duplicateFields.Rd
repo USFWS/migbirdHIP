@@ -12,7 +12,9 @@ duplicateFields(duplicates, fields)
 \item{fields}{Name of the column to compare values for}
 }
 \description{
-The internal \code{duplicateFields} function is used inside of \code{\link{duplicateFinder}} to find which fields have different values among a group of duplicate registrations.
+The internal \code{duplicateFields} function is used inside of
+\code{\link{duplicateFinder}} to find which fields have different values
+among a group of duplicate registrations.
 }
 \references{
 \url{https://github.com/USFWS/migbirdHIP}

@@ -7,12 +7,16 @@
 correct(proofed_data, year)
 }
 \arguments{
-\item{proofed_data}{The object created after error flagging data with \code{\link{proof}}}
+\item{proofed_data}{The object created after error flagging data with
+\code{\link{proof}}}
 
-\item{year}{The year in which the Harvest Information Program data were collected}
+\item{year}{The year in which the Harvest Information Program data were
+collected}
 }
 \description{
-After flagging errors in the data with \code{\link{proof}}, attempt corrections in all fields. Errors that cannot be programmatically corrected will be reported for manual correction.
+After flagging errors in the data with \code{\link{proof}}, attempt
+corrections in all fields. Errors that cannot be programmatically corrected
+will be reported for manual correction.
 }
 \references{
 \url{https://github.com/USFWS/migbirdHIP}

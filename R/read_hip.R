@@ -1,6 +1,7 @@
 #' Read in data
 #'
-#' Compile data from state-exported text files by providing a path to the download directory.
+#' Compile data from state-exported text files by providing a path to the
+#' download directory.
 #'
 #' @importFrom dplyr mutate
 #' @importFrom dplyr filter
@@ -22,10 +23,10 @@
 #'
 #' @param path File path to the folder containing HIP .txt files
 #' @param unique Return a distinct frame? Defaults to TRUE
-#' @param state When specified, reads in download data from a specified state. Must match one of the following two-letter abbreviations:
-#' \itemize{
-#' \item AL, AK, AZ, AR, CA, CO, CT, DE, DC, FL, GA, ID, IL, IN, IA, KS, KY, LA, ME, MD, MA, MI, MN, MS, MO, MT, NE, NV, NH, NJ, NM, NY, NC, ND, OH, OK, OR, PA, RI, SC, SD, TN, TX, UT, VT, VA, WA, WV, WI, WY}
-#' @param season If set as TRUE, selects only folders starting with "DL" in a a season's upper-level directory
+#' @param state When specified, reads in download data from a specified state.
+#'   Must match a two-letter abbreviation for a US state (excluding HI).
+#' @param season If set as TRUE, selects only folders starting with "DL" in a a
+#'   season's upper-level directory
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}
@@ -173,12 +174,15 @@ read_hip <-
 
 #' List files
 #'
-#' The internal \code{listFiles} function is used inside of \code{\link{read_hip}} and creates a tibble of the HIP .txt files to be read in from the provided directory.
+#' The internal \code{listFiles} function is used inside of
+#' \code{\link{read_hip}} and creates a tibble of the HIP .txt files to be read
+#' in from the provided directory.
 #'
 #' @importFrom dplyr tibble
 #'
 #' @param path File path to the folder containing HIP .txt files
-#' @param season If set as TRUE, selects only folders starting with "DL" in a a season's upper-level directory
+#' @param season If set as TRUE, selects only folders starting with "DL" in a a
+#'   season's upper-level directory
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}
@@ -201,7 +205,8 @@ listFiles <-
 
 #' Ignore permit files
 #'
-#' The internal \code{ignorePermits} function is used inside of \code{\link{read_hip}} to filter out permit files from the file list.
+#' The internal \code{ignorePermits} function is used inside of
+#' \code{\link{read_hip}} to filter out permit files from the file list.
 #'
 #' @importFrom dplyr filter
 #' @importFrom stringr str_detect
@@ -222,7 +227,8 @@ ignorePermits <-
 
 #' Ignore hold files
 #'
-#' The internal \code{ignoreHolds} function is used inside of \code{\link{read_hip}} to filter out hold files from the file list.
+#' The internal \code{ignoreHolds} function is used inside of
+#' \code{\link{read_hip}} to filter out hold files from the file list.
 #'
 #' @importFrom dplyr filter
 #' @importFrom stringr str_detect
@@ -243,7 +249,8 @@ ignoreHolds <-
 
 #' Ignore lifetime files
 #'
-#' The internal \code{ignoreLifetime} function is used inside of \code{\link{read_hip}} to filter out lifetime files from the file list.
+#' The internal \code{ignoreLifetime} function is used inside of
+#' \code{\link{read_hip}} to filter out lifetime files from the file list.
 #'
 #' @importFrom dplyr filter
 #' @importFrom stringr str_detect
@@ -262,7 +269,8 @@ ignoreLifetime <-
 
 #' Identify blank files
 #'
-#' The internal \code{idBlankFiles} function is used inside of \code{\link{read_hip}} to identify files in the list that contain no data.
+#' The internal \code{idBlankFiles} function is used inside of
+#' \code{\link{read_hip}} to identify files in the list that contain no data.
 #'
 #' @importFrom dplyr mutate
 #' @importFrom stringr str_replace
@@ -285,7 +293,9 @@ idBlankFiles <-
 
 #' Drop blank files
 #'
-#' The internal \code{dropBlankFiles} function is used inside of \code{\link{read_hip}} to return an error message if blank files exist in the directory, and remove them from the file list so they are not read in.
+#' The internal \code{dropBlankFiles} function is used inside of
+#' \code{\link{read_hip}} to return an error message if blank files exist in the
+#' directory, and remove them from the file list so they are not read in.
 #'
 #' @importFrom dplyr filter
 #' @importFrom dplyr pull
@@ -315,7 +325,9 @@ dropBlankFiles <-
 
 #' Check HIP file name date formatting
 #'
-#' The internal \code{checkFileNameDateFormat} function is used inside of \code{\link{read_hip}} to return an error message if any file does not have a date formatted as YYYYMMDD.
+#' The internal \code{checkFileNameDateFormat} function is used inside of
+#' \code{\link{read_hip}} to return an error message if any file does not have a
+#' date formatted as YYYYMMDD.
 #'
 #' @importFrom stringr str_extract
 #' @importFrom stringr str_detect
@@ -357,7 +369,9 @@ checkFileNameDateFormat <-
 
 #' Check HIP file name state abbreviations
 #'
-#' The internal \code{checkFileNameStateAbbr} function is used inside of \code{\link{read_hip}} to return an error message if any file does not have an state abbreviation from the expected 49 continental states.
+#' The internal \code{checkFileNameStateAbbr} function is used inside of
+#' \code{\link{read_hip}} to return an error message if any file does not have
+#' an state abbreviation from the expected 49 continental states.
 #'
 #' @importFrom stringr str_extract
 #'
@@ -395,7 +409,10 @@ checkFileNameStateAbbr <-
 
 #' Return messages to console for common or catastrophic read_hip issues
 #'
-#' The internal \code{readMessages} function is used inside of \code{\link{read_hip}} to return messages for missing PII, missing email addresses, all-zero bag records, non-numeric bag values, NAs in dl_state, and NAs in dl_date.
+#' The internal \code{readMessages} function is used inside of
+#' \code{\link{read_hip}} to return messages for missing PII, missing email
+#' addresses, all-zero bag records, non-numeric bag values, NAs in dl_state, and
+#' NAs in dl_date.
 #'
 #' @param raw_data The product of \code{\link{read_hip}}
 #'
@@ -436,9 +453,11 @@ readMessages <-
 
   }
 
-#' Return message for records with blank or NA values in firstname, lastname, state, or birth date
+#' Return message for records with blank or NA values in firstname, lastname,
+#' state, or birth date
 #'
-#' The internal \code{missingPIIMessage} function is used inside of \code{\link{readMessages}}
+#' The internal \code{missingPIIMessage} function is used inside of
+#' \code{\link{readMessages}}
 #'
 #' @importFrom dplyr group_by
 #' @importFrom dplyr mutate
@@ -485,7 +504,8 @@ missingPIIMessage <-
 
 #' Return message if all emails are missing from a file
 #'
-#' The internal \code{missingEmailsMessage} function is used inside of \code{\link{readMessages}}
+#' The internal \code{missingEmailsMessage} function is used inside of
+#' \code{\link{readMessages}}
 #'
 #' @importFrom dplyr summarize
 #' @importFrom dplyr filter
@@ -515,7 +535,8 @@ missingEmailsMessage <-
 
 #' Return message if test record is found
 #'
-#' The internal \code{testRecordMessage} function is used inside of \code{\link{readMessages}}
+#' The internal \code{testRecordMessage} function is used inside of
+#' \code{\link{readMessages}}
 #'
 #' @importFrom dplyr filter
 #' @importFrom dplyr select
@@ -552,7 +573,8 @@ testRecordMessage <-
 
 #' Return message if any record has a "0" in every bag field
 #'
-#' The internal \code{zeroBagsMessage} function is used inside of \code{\link{readMessages}}
+#' The internal \code{zeroBagsMessage} function is used inside of
+#' \code{\link{readMessages}}
 #'
 #' @importFrom dplyr filter
 #' @importFrom dplyr if_all
@@ -587,7 +609,8 @@ zeroBagsMessage <-
 
 #' Return message if any record has an NA in every bag field
 #'
-#' The internal \code{naBagsMessage} function is used inside of \code{\link{readMessages}}
+#' The internal \code{naBagsMessage} function is used inside of
+#' \code{\link{readMessages}}
 #'
 #' @importFrom dplyr filter
 #' @importFrom dplyr if_all
@@ -615,9 +638,11 @@ naBagsMessage <-
     }
   }
 
-#' Return message if any record contains a bag value that is not a 1-digit number
+#' Return message if any record contains a bag value that is not a 1-digit
+#' number
 #'
-#' The internal \code{nonDigitBagsMessage} function is used inside of \code{\link{readMessages}}
+#' The internal \code{nonDigitBagsMessage} function is used inside of
+#' \code{\link{readMessages}}
 #'
 #' @importFrom dplyr filter
 #' @importFrom dplyr if_any
@@ -659,7 +684,8 @@ nonDigitBagsMessage <-
 
 #' Return message if there is an NA in dl_state
 #'
-#' The internal \code{dlStateNAMessage} function is used inside of \code{\link{readMessages}}
+#' The internal \code{dlStateNAMessage} function is used inside of
+#' \code{\link{readMessages}}
 #'
 #' @importFrom dplyr distinct
 #' @importFrom dplyr filter
@@ -685,7 +711,8 @@ dlStateNAMessage <-
 
 #' Return message if there is an NA in dl_date
 #'
-#' The internal \code{dlDateNAMessage} function is used inside of \code{\link{readMessages}}
+#' The internal \code{dlDateNAMessage} function is used inside of
+#' \code{\link{readMessages}}
 #'
 #' @importFrom dplyr select
 #' @importFrom dplyr distinct
@@ -713,7 +740,8 @@ dlDateNAMessage <-
 
 #' In-line permit did-not-hunt message
 #'
-#' The internal \code{inLinePermitDNHMessage} function returns a message for in-line permit records from OR or WA that indicate they did not hunt.
+#' The internal \code{inLinePermitDNHMessage} function returns a message for
+#' in-line permit records from OR or WA that indicate they did not hunt.
 #'
 #' @importFrom dplyr filter
 #' @importFrom dplyr count

@@ -7,9 +7,11 @@
 errorPlotStates(proofed_data, threshold = NA)
 }
 \arguments{
-\item{proofed_data}{The object created after error flagging data with \code{\link{proof}} or \code{\link{correct}}}
+\item{proofed_data}{The object created after error flagging data with
+\code{\link{proof}} or \code{\link{correct}}}
 
-\item{threshold}{Optional. A decimal value above which error proportions should be plotted.}
+\item{threshold}{Optional. A decimal value above which error proportions
+should be plotted.}
 }
 \description{
 Create a bar plot of errors by state, either by count or proportion.

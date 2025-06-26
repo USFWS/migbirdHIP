@@ -1,6 +1,7 @@
 #' Table of errors
 #'
-#' Create a tibble of existing errors in the data, customizing the output with value specifications.
+#' Create a tibble of existing errors in the data, customizing the output with
+#' value specifications.
 #'
 #' @importFrom dplyr select
 #' @importFrom dplyr filter
@@ -14,22 +15,23 @@
 #' @importFrom stringr str_detect
 #' @importFrom rlang .data
 #'
-#' @param proofed_data The object created after error flagging data with \code{\link{proof}} or \code{\link{correct}}
-#' @param loc Which location the error data should be tabulated by. Acceptable values include:
+#' @param proofed_data The object created after error flagging data with
+#'   \code{\link{proof}} or \code{\link{correct}}
+#' @param loc Which location the error data should be tabulated by. Acceptable
+#'   values include:
 #'  \itemize{
-#'  \item One of the following abbreviations:
-#'  \itemize{
-#'  \item AL, AK, AZ, AR, CA, CO, CT, DE, DC, FL, GA, ID, IL, IN, IA, KS, KY, LA, ME, MD, MA, MI, MN, MS, MO, MT, NE, NV, NH, NJ, NM, NY, NC, ND, OH, OK, OR, PA, RI, SC, SD, TN, TX, UT, VT, VA, WA, WV, WI, WY}
-#'  \item all - All states, provinces, and/or territories that exist in the data
-#'  \item none - Table will not include location in its output
+#'  \item a two-letter abbreviation for a US state (excluding HI)
+#'  \item "all" - all states
+#'  \item "none" - table will not include location in its output
 #'  }
-#' @param field Field the error data should be tabulated by. Acceptable values include:
+#' @param field Field the error data should be tabulated by. Acceptable values
+#'   include:
 #'  \itemize{
-#'  \item If loc = "none", field must be "all". Otherwise, choose one of the following values:
+#'  \item If loc = "none", field must be "all". Otherwise, choose one of:
 #'  \itemize{
-#'  \item title, firstname, middle, lastname, suffix, address, city, state, zip, birth_date, issue_date, hunt_mig_birds, ducks_bag, geese_bag, dove_bag, woodcock_bag, coots_snipe, rails_gallinules, cranes, band_tailed_pigeon, brant, seaducks, registration_yr, email}
-#'  \item all - All fields in the data
-#'  \item none - Table will not include field in its output
+#'  \item REF_ALL_FIELDS}
+#'  \item "all" - all fields
+#'  \item "none" - table will not include field in its output
 #'  }
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
@@ -82,23 +84,24 @@ errorTable <-
 #' @importFrom dplyr count
 #' @importFrom rlang .data
 #'
-#' @param proofed_data The object created after error flagging data with \code{\link{proof}} or \code{\link{correct}}
+#' @param proofed_data The object created after error flagging data with
+#'   \code{\link{proof}} or \code{\link{correct}}
 #' @param initial_tbl \code{\link{errorTable}} intermediate object
-#' @param loc Which location the error data should be tabulated by. Acceptable values include:
+#' @param loc Which location the error data should be tabulated by. Acceptable
+#'   values include:
 #'  \itemize{
-#'  \item One of the following abbreviations:
-#'  \itemize{
-#'  \item AL, AK, AZ, AR, CA, CO, CT, DE, DC, FL, GA, ID, IL, IN, IA, KS, KY, LA, ME, MD, MA, MI, MN, MS, MO, MT, NE, NV, NH, NJ, NM, NY, NC, ND, OH, OK, OR, PA, RI, SC, SD, TN, TX, UT, VT, VA, WA, WV, WI, WY}
-#'  \item all - All states, provinces, and/or territories that exist in the data
-#'  \item none - Table will not include location in its output
+#'  \item a two-letter abbreviation for a US state (excluding HI)
+#'  \item "all" - all states
+#'  \item "none" - table will not include location in its output
 #'  }
-#' @param field Field the error data should be tabulated by. Acceptable values include:
+#' @param field Field the error data should be tabulated by. Acceptable values
+#'   include:
 #'  \itemize{
-#'  \item If loc = "none", field must be "all". Otherwise, choose one of the following values:
+#'  \item If loc = "none", field must be "all". Otherwise, choose one of:
 #'  \itemize{
-#'  \item title, firstname, middle, lastname, suffix, address, city, state, zip, birth_date, issue_date, hunt_mig_birds, ducks_bag, geese_bag, dove_bag, woodcock_bag, coots_snipe, rails_gallinules, cranes, band_tailed_pigeon, brant, seaducks, registration_yr, email}
-#'  \item all - All fields in the data
-#'  \item none - Table will not include field in its output
+#'  \item REF_ALL_FIELDS}
+#'  \item "all" - all fields
+#'  \item "none" - table will not include field in its output
 #'  }
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
@@ -170,7 +173,9 @@ errorTableSummary <-
 
 #' Pull flagged errors
 #'
-#' Pull and view errors that have been flagged for a particular field. This function allows you to easily see what the \code{\link{proof}} function has determined to be unacceptable data.
+#' Pull and view errors that have been flagged for a particular field. This
+#' function allows you to easily see what the \code{\link{proof}} function has
+#' determined to be unacceptable data.
 #'
 #' @importFrom dplyr filter
 #' @importFrom dplyr select
@@ -180,11 +185,14 @@ errorTableSummary <-
 #' @importFrom rlang sym
 #' @importFrom rlang .data
 #'
-#' @param proofed_data The object created after error flagging data with \code{\link{proof}}
-#' @param field Field that should be pulled. One of the fields from the following list may be supplied:
+#' @param proofed_data The object created after error flagging data with
+#'   \code{\link{proof}}
+#' @param field Field that should be pulled. One of the fields from the
+#'   following list may be supplied:
 #' \itemize{
 #' \item title, firstname, middle, lastname, suffix, address, city, state, zip, birth_date, issue_date, hunt_mig_birds, ducks_bag, geese_bag, dove_bag, woodcock_bag, coots_snipe, rails_gallinules, cranes, band_tailed_pigeon, brant, seaducks, registration_yr, email}
-#' @param unique If FALSE, returns all error values; if TRUE (default), only returns unique values.
+#' @param unique If FALSE, returns all error values; if TRUE (default), only
+#'   returns unique values.
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}
