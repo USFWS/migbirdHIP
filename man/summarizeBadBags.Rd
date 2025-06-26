@@ -9,7 +9,7 @@ summarizeBadBags(deduplicated_data, bad_bag_values, x)
 \arguments{
 \item{deduplicated_data}{The object created after deduplicating data with \code{\link{duplicateFix}}}
 
-\item{bad_bag_values}{Bad bag values}
+\item{bad_bag_values}{Bad bag values df}
 
 \item{x}{Row number}
 }

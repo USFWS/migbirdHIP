@@ -2,7 +2,7 @@
 % Please edit documentation in R/proof.R
 \name{proof}
 \alias{proof}
-\title{Flag errors}
+\title{Proof data and flag errors}
 \usage{
 proof(deduplicated_data, year)
 }
