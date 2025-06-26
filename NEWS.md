@@ -26,10 +26,14 @@
 -   Created `constants.R` to define variables in a central place and thus evaluate data consistently.
     -   Variables are used across functions (e.g., `inLinePermitDNHMessage()` and `inLinePermitDNHFix()` both use `LOGIC_INLINE_PMT_DNH`) and are shared between functions and `testthat` files.
     -   New naming convention helps users to use and find internal reference data objects more quickly by using uppercase letters and categorical prefixes (`REF_`, `LOGIC_`, `REGEX_`, and `SF_`).
+-   Created `fails.R` to reduce maintenance of `stopifnot()` functions across the package.
+    -   `failyear()` contains 2 `stopifnot()` to check year parameter.
+    -   
 -   New functions
     -   `testRecordMessage()` added to `read_hip()` and `testRecordFilter()` added to `clean()` to find and filter out any testing records mistakenly sent to us by the states.
     -   New `duplicatePlot()` function added; `duplicateFinder()` (previously named `findDuplicates()`) function no longer outputs a plot.
     -   The `zeroBagsMessage()` internal function is a new feature of `read_hip()` that checks for records with all-zero bag values and returns a message to the console if they are detected.
+    -   Added `errorTableSummary()` internal function to be used by `errorTable()`.
 -   Refactored functions
     -   In an effort to improve the maintainability of the package code, steps were made toward modularity, clarity, and unit testing in some of the larger functions.
     -   `proof()`
