@@ -28,9 +28,8 @@
 
 issueCheck <-
   function(clean_data, year, plot = FALSE){
-    failyear(year)
-
-    stopifnot("Error: Please supply TRUE or FALSE for `plot` parameter." = plot %in% c(TRUE, FALSE, T, F))
+    failYear(year)
+    failTF(plot)
 
     # Return message if all values in record_key field are NA (causes problems
     # with joining later)
@@ -169,7 +168,7 @@ issueCheck <-
 
 issueAssign <-
   function(clean_data, year) {
-    failyear(year)
+    failYear(year)
 
     clean_data |>
       # Join in licensing dates
@@ -247,7 +246,7 @@ issueAssign <-
 
 issuePlot <-
   function(issue_assigned_data, year) {
-    failyear(year)
+    failYear(year)
 
     rectangles <-
       tibble(
