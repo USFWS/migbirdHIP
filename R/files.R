@@ -91,7 +91,7 @@ fileCheck <-
 
 fileRename <-
   function(path, year){
-    failyear(year)
+    failYear(year)
 
     # Add a final "/" if not included already
     if(!str_detect(path, "\\/$")) {
