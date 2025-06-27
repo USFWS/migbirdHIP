@@ -186,7 +186,6 @@ read_hip <-
 
 listFiles <-
   function(path, season) {
-    failTF(season)
 
     # Create a tibble of the HIP .txt files to be read from the provided
     # directory
