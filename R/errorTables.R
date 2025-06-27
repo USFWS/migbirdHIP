@@ -65,7 +65,7 @@ errorTable <-
     # Fail if incorrect field supplied
     stopifnot("Error: Incorrect value supplied for `field` parameter. Please supply one of: all, none, title, firstname, middle, lastname, suffix, address, city, state, zip, birth_date, issue_date, hunt_mig_birds, ducks_bag, geese_bag, dove_bag, woodcock_bag, coots_snipe, rails_gallinules, cranes, band_tailed_pigeon, brant, seaducks, registration_yr, email." = field %in% c("all", "none", "title", "firstname", "middle", "lastname", "suffix", "address", "city", "state", "zip", "birth_date", "issue_date", "hunt_mig_birds", "ducks_bag", "geese_bag", "dove_bag", "woodcock_bag", "coots_snipe", "rails_gallinules", "cranes", "band_tailed_pigeon", "brant", "seaducks", "registration_yr", "email"))
 
-    if (loc == "none" & field != "all"){
+    if (loc == "none" & field != "all") {
       message("Error! If `loc = 'none'` then `field` must be 'all'.")
     } else {
 
@@ -85,7 +85,7 @@ errorTable <-
 
       summary_table <- errorTableSummary(proofed_data, initial_tbl, loc, field)
 
-      if(!is.null(summary_table)) {
+      if (!is.null(summary_table)) {
         return(summary_table)
       }
 
@@ -220,7 +220,7 @@ errorTableSummary <-
 #' @export
 
 pullErrors <-
-  function(proofed_data, field, unique = TRUE){
+  function(proofed_data, field, unique = TRUE) {
     failProofed(proofed_data)
     failTF(unique)
 

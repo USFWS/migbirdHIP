@@ -40,12 +40,12 @@ read_hip <-
     failTF(season)
 
     # Add a final "/" if not included already
-    if(!str_detect(path, "\\/$")) {
+    if (!str_detect(path, "\\/$")) {
       path <- paste0(path, "/")
     }
 
     # Error for possibly wrong path
-    if(str_detect(path, "DL") & season == TRUE) {
+    if (str_detect(path, "DL") & season == TRUE) {
       message("Are you sure you supplied a season path?")
     }
 
@@ -96,7 +96,7 @@ read_hip <-
     # Read in HIP data
     raw_data <-
       map(
-        1:length(file_list_vector),
+        seq_along(file_list_vector),
         function(i) {
           # Compile each state's file into one table
           read_fwf(
@@ -307,7 +307,7 @@ dropBlankFiles <-
   function(filelist) {
 
     # Error for blank files
-    if("blank" %in% filelist$check) {
+    if ("blank" %in% filelist$check) {
       message("Error: One or more files are blank in the directory.")
       print(filter(filelist, .data$check == "blank"))
     }
@@ -353,7 +353,7 @@ checkFileNameDateFormat <-
       bad_dates <- dl_date_test[str_detect(dl_date_test, "^[0-9]{4}202") &
                                   !str_detect(dl_date_test, "^202")]
 
-      for (i in 1:length(bad_dates)) {
+      for (i in seq_along(bad_dates)) {
         print(
           file_list_vector[str_detect(file_list_vector, bad_dates[i])]
         )
@@ -482,7 +482,7 @@ missingPIIMessage <-
           !!LOGIC_MISSING_ADDRESSES |
           !!LOGIC_MISSING_CITY_ZIP_EMAIL) |>
       group_by(.data$dl_state) |>
-      reframe(n = n(), proportion = round(.data$n/.data$n_total, 2)) |>
+      reframe(n = n(), proportion = round(.data$n / .data$n_total, 2)) |>
       distinct() |>
       filter(.data$n >= 100 | .data$proportion >= 0.1)
 

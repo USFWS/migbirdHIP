@@ -37,12 +37,12 @@
 #' @export
 
 write_hip <-
-  function(corrected_data, path, type, split = TRUE){
+  function(corrected_data, path, type, split = TRUE) {
     failProofed(corrected_data)
     failTF(split)
 
     # Add a final "/" if not included already
-    if(!str_detect(path, "\\/$")) {
+    if (!str_detect(path, "\\/$")) {
       path <- paste0(path, "/")
     }
 
@@ -145,7 +145,7 @@ write_hip <-
     # Generate a list of translated bags for each species/species group
     bag_translations <-
       map(
-        1:length(REF_BAG_FIELDS),
+        seq_along(REF_BAG_FIELDS),
         \(x) REF_BAGS |>
           filter(.data$spp == REF_BAG_FIELDS[x]) |>
           mutate(
@@ -157,7 +157,7 @@ write_hip <-
       )
 
     # Left join all the bag translations to the corrected data
-    for(i in 1:length(REF_BAG_FIELDS)) {
+    for (i in seq_along(REF_BAG_FIELDS)) {
       corrected_data <-
         corrected_data |>
         left_join(
@@ -169,7 +169,7 @@ write_hip <-
     # Generate a list of zeros for each no-season state/species
     zero_translations <-
       map(
-        1:length(REF_BAG_FIELDS),
+        seq_along(REF_BAG_FIELDS),
         \(x) REF_BAGS |>
           select(-"stateBagValue") |>
           group_by(.data$state, .data$spp) |>
@@ -184,8 +184,8 @@ write_hip <-
       )
 
     # If a season doesn't exist, make sure the translation is 0 (not NA)
-    for(i in 1:length(REF_BAG_FIELDS)) {
-      if(nrow(zero_translations[[i]]) > 0) {
+    for (i in seq_along(REF_BAG_FIELDS)) {
+      if (nrow(zero_translations[[i]]) > 0) {
         corrected_data <-
           corrected_data |>
           left_join(
@@ -236,13 +236,13 @@ write_hip <-
       # Remove the last "/" (couldn't pipe a dot above)
       mutate(source_file = str_remove(.data$source_file, "\\/"))
 
-    if(split == TRUE) {
+    if (split == TRUE) {
       # Split data and write each input file to its own output file
       final_list <- split(final_table, f = final_table$source_file)
       rm(final_table)
 
       walk(
-        1:length(final_list),
+        seq_along(final_list),
         \(x) fwrite(
           final_list[[x]],
           file =

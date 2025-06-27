@@ -27,7 +27,7 @@
 #' @export
 
 issueCheck <-
-  function(clean_data, year, plot = FALSE){
+  function(clean_data, year, plot = FALSE) {
     failYear(year)
     failTF(plot)
 
@@ -53,7 +53,7 @@ issueCheck <-
       filter(.data$orig_yr != .data$eval_yr) |>
       count(.data$dl_state, .data$orig_yr, .data$eval_yr)
 
-    if(nrow(eval_yrs) >= 1) {
+    if (nrow(eval_yrs) >= 1) {
       message(
         paste0(
           "Current registrations with registration_yr values not equal to ",
@@ -66,7 +66,7 @@ issueCheck <-
     }
 
     # Return message if issue_date = "00/00/0000" detected
-    if(TRUE %in% str_detect(clean_data$issue_date, "00/00/0000")) {
+    if (TRUE %in% str_detect(clean_data$issue_date, "00/00/0000")) {
       message(
         paste(
           "Error: issue_date value of 00/00/0000 detected in",
@@ -74,11 +74,11 @@ issueCheck <-
           "record(s), which will be dropped."))
     }
     # Return message if "bad issue dates" detected
-    if(TRUE %in% str_detect(issue_assignments$decision, "bad issue dates")) {
+    if (TRUE %in% str_detect(issue_assignments$decision, "bad issue dates")) {
       message("Error: Bad issue_date value(s) detected.")
     }
     # Return message for how many future records detected
-    if(nrow(filter(issue_assignments, .data$decision == "future")) == 0) {
+    if (nrow(filter(issue_assignments, .data$decision == "future")) == 0) {
       message("* 0 records need to be postponed for next season.")
     } else {
       message(
@@ -92,7 +92,7 @@ issueCheck <-
         sep = " ")
     }
     # Return message for how many past records were found
-    if(nrow(issue_assignments |> filter(.data$decision == "past")) == 0) {
+    if (nrow(issue_assignments |> filter(.data$decision == "past")) == 0) {
       message("* 0 past records detected.")
     } else {
       message(
@@ -115,7 +115,9 @@ issueCheck <-
     )
 
     # Plot results
-    if(plot == TRUE) { issuePlot(issue_assignments, year) }
+    if (plot == TRUE) {
+      issuePlot(issue_assignments, year)
+    }
 
     # Create a frame of current data
     current_data <-
@@ -203,7 +205,7 @@ issueAssign <-
         registration_yr =
           ifelse(
             .data$decision == "future",
-            as.character(year+1),
+            as.character(year + 1),
             as.character(year))
       ) |>
       select(-c("hunting_season", "issue_start", "issue_end",
@@ -250,16 +252,16 @@ issuePlot <-
 
     rectangles <-
       tibble(
-        season = c(paste(year-1, year, sep = "-"),
-                   paste(year, year+1, sep = "-"),
-                   paste(year+1, year+2, sep = "-")),
+        season = c(paste(year - 1, year, sep = "-"),
+                   paste(year, year + 1, sep = "-"),
+                   paste(year + 1, year + 2, sep = "-")),
         values = c("#F0E442", "#56B4E9", "#0072B2"),
-        xmin = c(as.Date(paste(year-1, "09-01", sep = "-")),
+        xmin = c(as.Date(paste(year - 1, "09-01", sep = "-")),
                  as.Date(paste(year, "09-01", sep = "-")),
-                 as.Date(paste(year+1, "09-01", sep = "-"))),
+                 as.Date(paste(year + 1, "09-01", sep = "-"))),
         xmax = c(as.Date(paste(year, "03-11", sep = "-")),
-                 as.Date(paste(year+1, "03-11", sep = "-")),
-                 as.Date(paste(year+2, "03-11", sep = "-"))),
+                 as.Date(paste(year + 1, "03-11", sep = "-")),
+                 as.Date(paste(year + 2, "03-11", sep = "-"))),
         ymin = -Inf,
         ymax = Inf)
 
@@ -275,7 +277,7 @@ issuePlot <-
         by = "dl_state") |>
       distinct()
 
-    if(nrow(badplot_data > 0)) {
+    if (nrow(badplot_data > 0)) {
       badplot <-
         badplot_data |>
         ggplot() +
@@ -309,9 +311,9 @@ issuePlot <-
              title = "Non-current registrations",
              color = "Registration year") +
         scale_fill_manual("Seasons",
-                          labels = c(paste(year-1, year, sep = "-"),
-                                     paste(year, year+1, sep = "-"),
-                                     paste(year+1, year+2, sep = "-")),
+                          labels = c(paste(year - 1, year, sep = "-"),
+                                     paste(year, year + 1, sep = "-"),
+                                     paste(year + 1, year + 2, sep = "-")),
                           values = c("#F0E442", "#56B4E9", "#0072B2")) +
         scale_shape_manual(name = "", values = c(4, 1, 2)) +
         scale_x_date(breaks = c(rectangles$xmin[1], rectangles$xmax[1],

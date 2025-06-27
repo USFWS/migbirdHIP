@@ -21,7 +21,7 @@
 #' @export
 
 shiftCheck <-
-  function(raw_data){
+  function(raw_data) {
 
     shifted_data <-
       shiftFinder(raw_data) |>
@@ -33,7 +33,7 @@ shiftCheck <-
       relocate("source_file", .before = "record_key") |>
       select(c("record_key", "n_shift"))
 
-    if(nrow(shifted_data) > 0){
+    if (nrow(shifted_data) > 0) {
       # Summarize the line shifts to help with manual fixing
       shift_summary <-
         raw_data |>

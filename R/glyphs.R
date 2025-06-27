@@ -22,7 +22,7 @@
 #' @references \url{https://github.com/USFWS/migbirdHIP}
 
 glyphFinder <-
-  function(raw_data, field){
+  function(raw_data, field) {
 
     raw_data |>
       select(c("source_file", "record_key", !!sym(field))) |>
@@ -70,7 +70,7 @@ glyphCheck <-
       filter(!is.na(.data$value)) |>
       arrange(.data$source_file)
 
-    if(nrow(checked) > 0) {
+    if (nrow(checked) > 0) {
       message("Non-UTF8 characters detected.")
       return(checked)
     } else {
@@ -78,4 +78,3 @@ glyphCheck <-
     }
 
   }
-

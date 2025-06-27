@@ -31,7 +31,7 @@
 #' @export
 
 bagCheck <-
-  function(deduplicated_data){
+  function(deduplicated_data) {
 
     # Filter out in-line permits
     deduplicated_data <-
@@ -102,7 +102,7 @@ bagCheck <-
             .data$spp == "cranes" &
             .data$bad_bag_value == "0"))
 
-    if(nrow(bad_bag_values) > 0) {
+    if (nrow(bad_bag_values) > 0) {
 
       bad_bag_values |>
         select(-"stateBagValue") |>
@@ -112,7 +112,7 @@ bagCheck <-
         arrange(desc(.data$expected_bag_value)) |>
         left_join(
           map(
-            1:nrow(bad_bag_values),
+            seq_len(nrow(bad_bag_values)),
             \(x) summarizeBadBags(deduplicated_data, bad_bag_values, x)
             ) |>
             list_rbind(),
@@ -147,17 +147,18 @@ bagCheck <-
 summarizeBadBags <-
   function(deduplicated_data, bad_bag_values, x) {
     deduplicated_data |>
-      select(c("dl_state", bad_bag_values[[x,2]])) |>
-      filter(.data$dl_state == bad_bag_values[[x,1]]) |>
+      select(c("dl_state", bad_bag_values[[x, 2]])) |>
+      filter(.data$dl_state == bad_bag_values[[x, 1]]) |>
       mutate(n_state = n()) |>
-      filter(!!sym(bad_bag_values[[x,2]]) == bad_bag_values[[x,3]]) |>
+      filter(!!sym(bad_bag_values[[x, 2]]) == bad_bag_values[[x, 3]]) |>
       mutate(
         n_bad_bags = n(),
-        spp = bad_bag_values[[x,2]]) |>
-      select(-bad_bag_values[[x,2]]) |>
+        spp = bad_bag_values[[x, 2]]) |>
+      select(-bad_bag_values[[x, 2]]) |>
       mutate(
-        proportion = paste0(round(.data$n_bad_bags/.data$n_state, 2)*100,"%"),
-        bad_bag_value = bad_bag_values[[x,3]]) |>
+        proportion =
+          paste0(round(.data$n_bad_bags / .data$n_state, 2) * 100, "%"),
+        bad_bag_value = bad_bag_values[[x, 3]]) |>
       distinct(
         .data$dl_state, .data$spp, .data$bad_bag_value, n = .data$n_bad_bags,
         .data$proportion)

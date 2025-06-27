@@ -214,7 +214,7 @@ formatZip <-
             paste0(
               str_extract(.data$zip, "^[0-9]{5}"),
               "-",
-              str_extract(.data$zip,"[0-9]{4}$")),
+              str_extract(.data$zip, "[0-9]{4}$")),
             .data$zip),
         zip =
           # Insert a hyphen in 9 digit zip codes with a middle space
@@ -305,13 +305,13 @@ zipCheck <-
       group_by(.data$source_file) |>
       reframe(
         n = n(),
-        proportion = round(.data$n/.data$total_records, 2)) |>
+        proportion = round(.data$n / .data$total_records, 2)) |>
       distinct() |>
       arrange(desc(.data$n)) |>
       filter(.data$n >= 100 | .data$proportion >= 0.1)
 
     # Error check: are any zip codes wrong?
-    if(nrow(zipcheck) > 0){
+    if (nrow(zipcheck) > 0) {
       message(
         paste0("Warning: Zip codes detected that do not correspond to provided",
                " state of residence for >10% of a file and/or >100 records."))
@@ -351,7 +351,7 @@ cranePermitBagFix <-
           .data$cranes == "2") |>
       count(.data$dl_state)
 
-    if(nrow(bad_cr_2s) > 0) {
+    if (nrow(bad_cr_2s) > 0) {
 
       corrected_pmt_bags <-
         raw_data |>
@@ -407,7 +407,7 @@ btpiPermitBagFix <-
           .data$band_tailed_pigeon == "2") |>
       count(.data$dl_state)
 
-    if(nrow(bad_bt_2s) > 0) {
+    if (nrow(bad_bt_2s) > 0) {
 
       corrected_pmt_bags <-
         raw_data |>

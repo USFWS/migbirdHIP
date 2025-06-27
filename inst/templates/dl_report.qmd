@@ -86,8 +86,8 @@ record_check <-
   # missing elements of an address AND email
   dplyr::filter(
     dplyr::if_any(
-      c("firstname", "lastname", "state", "birth_date"), ~is.na(.x))|
-      dplyr::if_all(c("address", "email"), ~is.na(.x))|
+      c("firstname", "lastname", "state", "birth_date"), ~is.na(.x)) |
+      dplyr::if_all(c("address", "email"), ~is.na(.x)) |
       dplyr::if_all(c("city", "zip", "email"), ~is.na(.x)))
 
 # Standardize birth date format
@@ -126,7 +126,7 @@ fixed_data <- NULL
 # Read in the completed download data (for better/more accurate figures and tables)
 final_data <-
   purrr::map_df(
-    1:length(list.files(params$temp_path)),
+    seq_along(list.files(params$temp_path)),
     ~data.table::fread(
       paste0(params$temp_path, list.files(params$temp_path)[.x]),
       colClasses = rep("character", 38),
@@ -241,7 +241,7 @@ pii_summary <-
       dplyr::mutate(total_rows = dplyr::n()) |> 
       dplyr::ungroup(),
     by = "source_file") |> 
-  dplyr::mutate(prop = round(n/total_rows, digits = 2)) |> 
+  dplyr::mutate(prop = round(n / total_rows, digits = 2)) |> 
   dplyr::select(-total_rows) |> 
   dplyr::distinct() |> 
   dplyr::arrange(dplyr::desc(prop)) 
@@ -263,7 +263,7 @@ bad_issue <-
   dplyr::group_by(source_file, dl_state, file_total, issue_date) |> 
   dplyr::count() |> 
   dplyr::ungroup() |> 
-  dplyr::mutate(prop = paste0(round((n/file_total), 2)*100, "%"))
+  dplyr::mutate(prop = paste0(round((n / file_total), 2) * 100, "%"))
 
 `%>%` <- tidyr::`%>%`
 
@@ -402,7 +402,7 @@ duplicates <-
     n_dupes = sum(n),
     n_files_with_dupes = dplyr::n(),
     total_records = sum(filesize),
-    total_prop_dupes = n_dupes/total_records
+    total_prop_dupes = n_dupes / total_records
   ) |> 
   dplyr::ungroup() |> 
   dplyr::mutate(
@@ -416,39 +416,10 @@ duplicates <-
       ifelse(
         round(total_prop_dupes, 2) < 0.01,
         "< 1%",
-        paste0(round(total_prop_dupes, 2)*100, "%")
+        paste0(round(total_prop_dupes, 2) * 100, "%")
       )
     ) |> 
   dplyr::arrange(dplyr::desc(n_dupes))
-
-# Number of registrations that are duplicated
-# duplicate_individuals <-
-#   cleaned_data |>
-#   # Filter out permits
-#   dplyr::filter(!record_key %in% pmts) |>
-#   dplyr::group_by(source_file, dl_state) |> 
-#   dplyr::mutate(filesize = dplyr::n()) |> 
-#   dplyr::ungroup() |> 
-#   # Group by registrant information; first name, last name, state,
-#   # birthday, registration year, dl_state
-#   dplyr::group_by(
-#     firstname,
-#     lastname,
-#     state,
-#     birth_date,
-#     registration_yr,
-#     dl_state) |>
-#   # Filter out non-duplicate records
-#   dplyr::filter(dplyr::n() > 1) |>
-#   dplyr::ungroup() |> 
-#   dplyr::select(
-#     firstname,
-#     lastname,
-#     state,
-#     birth_date,
-#     registration_yr,
-#     dl_state) |>
-#   dplyr::n_distinct()
 
 # States that have overlapping HIP issue windows are categorized as "2 season" states
 states_twoseason <-

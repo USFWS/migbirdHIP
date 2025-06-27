@@ -24,14 +24,14 @@
 fileCheck <-
   function(raw_path, processed_path) {
     # Add a final "/" to raw_path if not included already
-    if(!str_detect(raw_path, "\\/$")) {
+    if (!str_detect(raw_path, "\\/$")) {
       raw_path <- paste0(raw_path, "/")
     }
     # Add a final "/" to processed_path if not included already
-    if(!str_detect(processed_path, "\\/$")) {
+    if (!str_detect(processed_path, "\\/$")) {
       processed_path <- paste0(processed_path, "/")
     }
-    if(TRUE %in%
+    if (TRUE %in%
        (str_replace(list.files(raw_path, recursive = F), "TXT", "txt") %in%
         str_replace(list.files(processed_path, recursive = F), "csv", "txt"))) {
       message(
@@ -90,16 +90,17 @@ fileCheck <-
 #' @export
 
 fileRename <-
-  function(path, year){
+  function(path, year) {
     failYear(year)
 
     # Add a final "/" if not included already
-    if(!str_detect(path, "\\/$")) {
+    if (!str_detect(path, "\\/$")) {
       path <- paste0(path, "/")
     }
 
     # Run if there are files in the dir with 5 digits (old Julian data format)
-    if(TRUE %in% str_detect(list.files(path), "^[A-Z]{2}[0-9]{3}\\.(txt|TXT)$")){
+    if (TRUE %in%
+        str_detect(list.files(path), "^[A-Z]{2}[0-9]{3}\\.(txt|TXT)$")) {
 
       # File name(s) with 5-digit format
       names5 <- list.files(path, pattern = "^[A-Z]{2}[0-9]{3}\\.(txt|TXT)$")
@@ -121,7 +122,8 @@ fileRename <-
               as.character(
                 as.Date(
                   as.numeric(.data$jdate),
-                  origin = structure(paste0(as.character(year),"-01-01"))) - 1),
+                  origin =
+                    structure(paste0(as.character(year), "-01-01"))) - 1),
               "-")) |>
         unite("value", 1:3, sep = "") |>
         mutate(value = paste0(path, .data$value)) |>
@@ -141,10 +143,10 @@ fileRename <-
     }
 
     # Run if there's a lowercase letter in the state abbreviation
-    if(TRUE %in%
+    if (TRUE %in%
        str_detect(
          list.files(path),
-         "^([a-z]{2}|[A-Z]{1}[a-z]{1}|[a-z]{1}[A-Z]{1})(?=[0-9])")){
+         "^([a-z]{2}|[A-Z]{1}[a-z]{1}|[a-z]{1}[A-Z]{1})(?=[0-9])")) {
 
       names_lower <-
         list.files(path) |>
@@ -171,7 +173,7 @@ fileRename <-
       print(
         bind_cols(old = names_lower, new = names_upper))
     }
-    if(FALSE %in% str_detect(list.files(path), "^[A-Z]{2}[0-9]{8}\\.")){
+    if (FALSE %in% str_detect(list.files(path), "^[A-Z]{2}[0-9]{8}\\.")) {
       message("Error: Unresolved issue(s) with file name(s) in directory.")
       print(
         list.files(path) |>

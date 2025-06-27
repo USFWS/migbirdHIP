@@ -21,14 +21,14 @@
 #' @export
 
 writeReport <-
-  function(raw_path, temp_path, year, dl, dir, file){
+  function(raw_path, temp_path, year, dl, dir, file) {
 
     # Fail if required packages are missing
     try(
-      if(length(find.package("kableExtra", quiet = T)) == 0)
+      if (length(find.package("kableExtra", quiet = T)) == 0)
         stop("Install package kableExtra to render this report.", call. = F))
     try(
-      if(length(find.package("DT", quiet = T)) == 0)
+      if (length(find.package("DT", quiet = T)) == 0)
         stop("Install package DT to render this report.", call. = F))
 
     # Fail if incorrect year supplied
@@ -36,21 +36,22 @@ writeReport <-
 
     # Fail if incorrect dl supplied
     stopifnot("Error: `dl` parameter must be string." = is.character(dl))
-    stopifnot("Error: Incorrect value supplied for `dl` parameter. Please use a 4-character download cycle, e.g. '0901'." = str_detect(dl, "^[0-9]{4}$"))
+    stopifnot("Error: Incorrect `dl`; use a 4-char dl cycle, e.g. '0901'." =
+                str_detect(dl, "^[0-9]{4}$"))
 
     # Fail if incorrect file supplied
     stopifnot("Error: `file` parameter must not contain a period or a file suffix. Please supply a plain file name, e.g. 'dl1501_report_2023'." = !str_detect(file, "\\."))
 
     # Add a final "/" to path if not included already
-    if(!str_detect(raw_path, "\\/$")) {
+    if (!str_detect(raw_path, "\\/$")) {
       raw_path <- paste0(raw_path, "/")
     }
     # Add a final "/" to temp_path if not included already
-    if(!str_detect(temp_path, "\\/$")) {
+    if (!str_detect(temp_path, "\\/$")) {
       temp_path <- paste0(temp_path, "/")
     }
     # Add a final "/" to dir if not included already
-    if(!str_detect(dir, "\\/$")) {
+    if (!str_detect(dir, "\\/$")) {
       dir <- paste0(dir, "/")
     }
 

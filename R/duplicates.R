@@ -128,7 +128,7 @@ duplicateFix <-
 
     # If there is more than one HIP record per person from an in-line permit
     # state, decide which one to keep
-    if(nrow(permit_state_duplicates) > 0) {
+    if (nrow(permit_state_duplicates) > 0) {
       hip_permit_state_duplicates <-
         permit_state_duplicates |>
         filter(.data$record_type == "HIP") |>
@@ -153,9 +153,6 @@ duplicateFix <-
 
       hip_deduplicated <- permit_state_duplicates
     }
-
-    # # Get the final permit state tibble with 1 HIP record per hunter
-    # hip_deduplicated <- duplicateSample(hip_permit_state_duplicates)
 
     # Combine all resolved records into one tibble
     resolved_duplicates <-
@@ -237,7 +234,7 @@ duplicateID <-
 
 duplicateNewest <-
   function(duplicates) {
-    if(nrow(duplicates) > 0) {
+    if (nrow(duplicates) > 0) {
       duplicates |>
         # Identify records with most recent issue date
         mutate(
@@ -542,7 +539,7 @@ duplicateFinder <-
         "There are", length(unique(dupl_tibble$hunter_key)), "registrations",
         "with duplicates;", nrow(duplicates), "total duplicated records."))
 
-    if(nrow(dupl_tibble) > 0) {
+    if (nrow(dupl_tibble) > 0) {
       return(dupl_tibble |> count(.data$duplicate_field))
     }
   }
@@ -595,7 +592,7 @@ duplicatePlot <-
       mutate(
         duplicate_field =
           case_when(
-            # 5+ fields
+            # 5 or more fields
             str_detect(
               .data$duplicate_field,
               paste0(

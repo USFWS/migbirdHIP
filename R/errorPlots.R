@@ -54,7 +54,7 @@ errorPlotDL <-
           REF_ABBR_49_STATES, ".")
     )
 
-    if(loc == "all") {
+    if (loc == "all") {
       # Plot for all states
       dl_plot <-
         proofed_data |>
@@ -70,7 +70,7 @@ errorPlotDL <-
           errors = sum(!is.na(.data$value)),
           total = n(),
           .by = "dl_cycle") |>
-        mutate(proportion = .data$errors/.data$total) |>
+        mutate(proportion = .data$errors / .data$total) |>
         # Plot
         ggplot() +
         geom_bar(
@@ -105,7 +105,7 @@ errorPlotDL <-
               errors = sum(!is.na(.data$value)),
               total = n(),
               by = "dl_cycle") |>
-            mutate(proportion = .data$errors/.data$total) |>
+            mutate(proportion = .data$errors / .data$total) |>
             # Plot
             ggplot() +
             geom_bar(aes(x = .data$dl_cycle, y = .data$proportion),
@@ -246,13 +246,15 @@ errorPlotStates <-
     failProofed(proofed_data)
 
     # Fail if incorrect threshold supplied
-    stopifnot("Error: `threshold` parameter must be numeric." = (is.numeric(threshold) | is.na(threshold)))
-    stopifnot("Error: Please supply a value between 0 and 1 for the `threshold` parameter." = ((0 <= threshold & threshold <= 1) | is.na(threshold)))
+    stopifnot("Error: `threshold` parameter must be numeric." =
+                (is.numeric(threshold) | is.na(threshold)))
+    stopifnot("Error: Supply a value between 0 and 1 for `threshold`." =
+                (0 <= threshold & threshold <= 1))
 
     # Generate a table of error proportions
     state_tbl <- errorLevelErrorsByState(proofed_data)
 
-    if(is.na(threshold)) {
+    if (is.na(threshold)) {
 
       # Proportion plot: no threshold specified
       state_plot <-
@@ -287,7 +289,7 @@ errorPlotStates <-
         # Keep only the states with more than specified error percentage
         filter(.data$proportion >= threshold)
 
-      if(nrow(state_tbl) == 0) {
+      if (nrow(state_tbl) == 0) {
 
         # If the threshold was set too high, return a message that says so
         message(
@@ -331,7 +333,7 @@ errorPlotStates <-
       }
     }
 
-    if(exists("state_plot")) {
+    if (exists("state_plot")) {
       return(state_plot)
     }
 
@@ -361,7 +363,7 @@ errorPlotStates <-
 #' @references \url{https://github.com/USFWS/migbirdHIP}
 
 errorLevelErrorsByState <-
-  function(proofed_data){
+  function(proofed_data) {
     failProofed(proofed_data)
 
     proofed_data |>
@@ -375,8 +377,8 @@ errorLevelErrorsByState <-
       select(c("dl_state", "total_records", errors = "value")) |>
       reframe(
         count_errors = n(),
-        count_correct = (.data$total_records*14) - .data$count_errors,
-        proportion = .data$count_errors/(.data$total_records*14),
+        count_correct = (.data$total_records * 14) - .data$count_errors,
+        proportion = .data$count_errors / (.data$total_records * 14),
         .by = "dl_state") |>
       distinct()
   }
@@ -400,7 +402,7 @@ errorLevelErrorsByState <-
 #' @references \url{https://github.com/USFWS/migbirdHIP}
 
 errorLevelErrorsByField <-
-  function(proofed_data){
+  function(proofed_data) {
     failProofed(proofed_data)
 
     proofed_data |>
@@ -415,7 +417,7 @@ errorLevelErrorsByField <-
       # Calculate error proportion
       mutate(
         total = nrow(proofed_data),
-        proportion = .data$count_errors/nrow(proofed_data))
+        proportion = .data$count_errors / nrow(proofed_data))
   }
 
 #' Pull bad data
@@ -449,11 +451,14 @@ redFlags <-
     failProofed(proofed_data)
 
     # Fail if incorrect type supplied
-    stopifnot("Error: Please supply 'state' or 'field' for `type` parameter." = type %in% c("state", "field"))
+    stopifnot("Error: Please supply 'state' or 'field' for `type` parameter." =
+                type %in% c("state", "field"))
 
     # Fail if incorrect threshold supplied
-    stopifnot("Error: `threshold` parameter must be numeric." = is.numeric(threshold))
-    stopifnot("Error: Please supply a value between 0 and 1 for the `threshold` parameter." = (0 <= threshold & threshold <= 1))
+    stopifnot("Error: `threshold` parameter must be numeric." =
+                is.numeric(threshold))
+    stopifnot("Error: Supply a value between 0 and 1 for `threshold`." =
+                (0 <= threshold & threshold <= 1))
 
     if (type == "state") {
 
@@ -502,4 +507,3 @@ redFlags <-
       message("Error: Invalid type provided.")
     }
   }
-

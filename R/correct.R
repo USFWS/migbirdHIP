@@ -18,7 +18,7 @@
 #' @export
 
 correct <-
-  function(proofed_data, year){
+  function(proofed_data, year) {
     failYear(year)
     failProofed(proofed_data)
 
