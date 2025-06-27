@@ -13,7 +13,9 @@ errorTable(proofed_data, loc = "all", field = "all")
 \item{loc}{Which location the error data should be tabulated by. Acceptable
 values include:
 \itemize{
-\item a two-letter abbreviation for a US state (excluding HI)
+\item a two-letter abbreviation for a US state; one of:
+\itemize{
+\item AL, AK, AZ, AR, CA, CO, CT, DE, FL, GA, ID, IL, IN, IA, KS, KY, LA, ME, MD, MA, MI, MN, MS, MO, MT, NE, NV, NH, NJ, NM, NY, NC, ND, OH, OK, OR, PA, RI, SC, SD, TN, TX, UT, VT, VA, WA, WV, WI, WY}
 \item "all" - all states
 \item "none" - table will not include location in its output
 }}
@@ -23,7 +25,7 @@ include:
 \itemize{
 \item If loc = "none", field must be "all". Otherwise, choose one of:
 \itemize{
-\item REF_ALL_FIELDS}
+\item title, firstname, middle, lastname, suffix, address, city, state, zip, birth_date, issue_date, hunt_mig_birds, ducks_bag, geese_bag, dove_bag, woodcock_bag, coots_snipe, rails_gallinules, cranes, band_tailed_pigeon, brant, seaducks, registration_yr, email}
 \item "all" - all fields
 \item "none" - table will not include field in its output
 }}
