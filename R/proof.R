@@ -30,7 +30,7 @@
 
 proof <-
   function(deduplicated_data, year) {
-    failyear(year)
+    failYear(year)
 
     # Create a record key so that the errors can be joined in later (there may
     # be more than 1 error per record, so using the record_key field will not
