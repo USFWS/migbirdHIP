@@ -63,7 +63,7 @@ vignette(topic = "migbirdHIP_workflow", package = "migbirdHIP")
 
 ## Function Flow
 
-<img src="vignettes/image/migbirdHIP_flowchart.svg" title="Overview of migbirdHIP functions in a flowchart format." alt="Overview of migbirdHIP functions in a flowchart format." width="100%" style="display: block; margin: auto;" />
+<img src="man/figures/migbirdHIP_flowchart.svg" title="Overview of migbirdHIP functions in a flowchart format." alt="Overview of migbirdHIP functions in a flowchart format." width="100%" style="display: block; margin: auto;" />
 
 ## USFWS Disclaimer
 

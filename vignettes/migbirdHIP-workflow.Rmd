@@ -89,7 +89,7 @@ library(migbirdHIP)
 The flowchart below is a visual guide to the order in which functions are used. Some functions are only used situationally and some issues with the data cannot be solved using a function at all. The general process of handling HIP data is demonstrated here; every function in the `migbirdHIP` package is included.
 
 <div class="figure" style="text-align: center">
-<img src="image/migbirdHIP_flowchart.svg" alt="Overview of migbirdHIP functions in a flowchart format." width="100%" />
+<img src="man/figures/migbirdHIP_flowchart.svg" alt="Overview of migbirdHIP functions in a flowchart format." width="100%" />
 <p class="caption">Overview of migbirdHIP functions in a flowchart format.</p>
 </div>
 
