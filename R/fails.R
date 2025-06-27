@@ -41,7 +41,8 @@ failYear <-
 
 failProofed <-
   function(proofed_data) {
-    assert_that(!is.null(.data$errors), msg = "`errors` field not in data.")
+    assert_that(
+      "errors" %in% names(proofed_data), msg = "`errors` field not in data.")
   }
 
 #' Fail if bad field supplied
@@ -63,7 +64,7 @@ failField <-
       field %in% REF_ALL_FIELDS,
       msg =
         paste0(
-          "`field` not in list of acceptable field names:", REF_ALL_FIELDS, ".")
+          "`field` not one of acceptable field names: ", REF_ALL_FIELDS, ".")
     )
   }
 
@@ -86,7 +87,56 @@ failState <-
       state %in% REF_ABBR_49_STATES,
       msg =
         paste0(
-          "`state` not in list of acceptable state abbreviations:",
+          "`state` one of acceptable state abbreviations: ",
           REF_ABBR_49_STATES, ".")
     )
+  }
+
+#' Fail if bad location supplied
+#'
+#' Internal function that fails if something other than a state abbreviation,
+#' "all", or "none" is provided.
+#'
+#' @importFrom assertthat assert_that
+#'
+#' @param loc Must be one of:
+#'  \itemize{
+#'  \item "all"
+#'  \item "none"
+#'  \item a two-letter abbreviation for a US state; one of:
+#'    \itemize{
+#'    \item `r REF_ABBR_49_STATES`}
+#'  }
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
+
+failLocation <-
+  function(loc) {
+    assert_that(
+      loc %in% c("all", "none", REF_ABBR_49_STATES),
+      msg =
+        paste0(
+          "`loc` not 'all', 'none', or an acceptable state abbreviation: ",
+          REF_ABBR_49_STATES, ".")
+    )
+  }
+
+#' Fail if TRUE or FALSE is not supplied
+#'
+#' Internal function that fails if something other than TRUE or FALSE is
+#' supplied.
+#'
+#' @importFrom assertthat assert_that
+#'
+#' @param TF Must be TRUE, FALSE, T, or F
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
+
+failTF <-
+  function(TF) {
+    assert_that(
+      TF %in% c(TRUE, FALSE, T, F),
+      msg = "param not TRUE, FALSE, T, or F.")
   }
