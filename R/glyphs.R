@@ -16,13 +16,14 @@
 #' @param field Field that should be checked for non-UTF-8 characters. One of
 #'   the fields from the following list may be supplied:
 #' \itemize{
-#' \item REF_ALL_FIELDS}
+#' \item `r REF_ALL_FIELDS`}
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}
 
 glyphFinder <-
   function(raw_data, field){
+    failField(field)
 
     raw_data |>
       select(c("source_file", "record_key", !!sym(field))) |>
