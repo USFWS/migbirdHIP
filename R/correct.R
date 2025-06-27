@@ -19,8 +19,8 @@
 
 correct <-
   function(proofed_data, year){
-    failyear(year)
-    failproofed(proofed_data)
+    failYear(year)
+    failProofed(proofed_data)
 
     corrected_data <-
       proofed_data |>
@@ -65,6 +65,7 @@ correct <-
 
 correctTitle <-
   function(proofed_data) {
+    failProofed(proofed_data)
 
     # Change title to NA if error detected
     proofed_data |>
@@ -90,6 +91,7 @@ correctTitle <-
 
 correctSuffix <-
   function(proofed_data) {
+    failProofed(proofed_data)
 
     # Change suffix to NA if error detected
     proofed_data |>
@@ -115,6 +117,7 @@ correctSuffix <-
 
 correctMiddleInitial <-
   function(proofed_data) {
+    failProofed(proofed_data)
 
     # Change any character that's not a letter to NA in the from middle
     # initial field
@@ -143,6 +146,7 @@ correctMiddleInitial <-
 
 correctEmail <-
   function(proofed_data) {
+    failProofed(proofed_data)
 
     proofed_data |>
       mutate(
