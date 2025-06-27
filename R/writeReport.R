@@ -32,7 +32,7 @@ writeReport <-
         stop("Install package DT to render this report.", call. = F))
 
     # Fail if incorrect year supplied
-    failyear(year)
+    failYear(year)
 
     # Fail if incorrect dl supplied
     stopifnot("Error: `dl` parameter must be string." = is.character(dl))
