@@ -11,7 +11,7 @@
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}
 
-failyear <-
+failYear <-
   function(year) {
     assertthat::assert_that(
       is_integerish(year),
@@ -39,7 +39,54 @@ failyear <-
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}
 
-failproofed <-
+failProofed <-
   function(proofed_data) {
     assert_that(!is.null(.data$errors), msg = "`errors` field not in data.")
+  }
+
+#' Fail if bad field supplied
+#'
+#' Internal function that fails if a bad field name is provided.
+#'
+#' @importFrom assertthat assert_that
+#'
+#' @param field Any field name in HIP tibble; should be one of:
+#' \itemize{
+#' \item `r REF_ALL_FIELDS`}
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
+
+failField <-
+  function(field) {
+    assert_that(
+      field %in% REF_ALL_FIELDS,
+      msg =
+        paste0(
+          "`field` not in list of acceptable field names:", REF_ALL_FIELDS, ".")
+    )
+  }
+
+#' Fail if bad state abbreviation supplied
+#'
+#' Internal function that fails if a bad state abbreviation is provided.
+#'
+#' @importFrom assertthat assert_that
+#'
+#' @param state Any abbreviation for one of the 49 contiguous states:
+#' \itemize{
+#' \item `r REF_ABBR_49_STATES`}
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
+
+failState <-
+  function(state) {
+    assert_that(
+      state %in% REF_ABBR_49_STATES,
+      msg =
+        paste0(
+          "`state` not in list of acceptable state abbreviations:",
+          REF_ABBR_49_STATES, ".")
+    )
   }
