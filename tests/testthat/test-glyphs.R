@@ -13,4 +13,3 @@ test_that("glyphCheck finds non-utf8 characters", {
 
   expect_true(nrow(glyph_checked) == 1)
 })
-

@@ -4,4 +4,3 @@ test_that("bagCheck works", {
 
   expect_true(nrow(bags_checked) > 1)
 })
-

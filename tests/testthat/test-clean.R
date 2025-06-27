@@ -17,7 +17,7 @@ test_that("filter out any record if any bag value is not a 1-digit number", {
             TRUE ~ ducks_bag)) |>
       clean())
 
-  expect_equal(nrow(DF_TEST_TINI_READ)-2, nrow(test_clean))
+  expect_equal(nrow(DF_TEST_TINI_READ) - 2, nrow(test_clean))
 })
 
 test_that("filter out any record with all-NA or all-0 bag values", {
@@ -35,7 +35,7 @@ test_that("filter out any record with all-NA or all-0 bag values", {
 
   suppressMessages(test_clean <- clean(test_data))
 
-  expect_equal(nrow(DF_TEST_TINI_READ)-2, nrow(test_clean))
+  expect_equal(nrow(DF_TEST_TINI_READ) - 2, nrow(test_clean))
 })
 
 # missing PII filter ------------------------------------------------------
@@ -53,7 +53,7 @@ test_that("filter out if firstname, lastname, state, or DOB missing", {
 
   suppressMessages(invisible(capture.output(test_clean <- clean(test_missing))))
 
-  expect_equal(nrow(test_missing)-4, nrow(test_clean))
+  expect_equal(nrow(test_missing) - 4, nrow(test_clean))
 })
 
 test_that("filter out if email AND address are missing", {
@@ -65,7 +65,7 @@ test_that("filter out if email AND address are missing", {
 
   test_clean <- suppressMessages(clean(test_missing))
 
-  expect_equal(nrow(test_missing)-1, nrow(test_clean))
+  expect_equal(nrow(test_missing) - 1, nrow(test_clean))
 })
 
 test_that("filter out if email AND city AND zip are missing", {
@@ -78,7 +78,7 @@ test_that("filter out if email AND city AND zip are missing", {
 
   test_clean <- suppressMessages(clean(test_missing))
 
-  expect_equal(nrow(test_missing)-1, nrow(test_clean))
+  expect_equal(nrow(test_missing) - 1, nrow(test_clean))
 })
 
 # names to uppercase ------------------------------------------------------
@@ -132,7 +132,7 @@ test_that("filter out test records", {
 
   suppressMessages(invisible(capture.output(test_clean <- clean(test_data))))
 
-  expect_equal(nrow(test_data)-7, nrow(test_clean))
+  expect_equal(nrow(test_data) - 7, nrow(test_clean))
 })
 
 # zip formatting ----------------------------------------------------------
@@ -229,7 +229,7 @@ test_that("change crane permit file state crane bag values to 0", {
   suppressMessages(invisible(capture.output(cleaned_data <- clean(test_data))))
 
   expect_equal(
-    nrow(test_data)-9,
+    nrow(test_data) - 9,
     nrow(filter(cleaned_data, cranes == "2"))
   )
 
@@ -253,7 +253,7 @@ test_that("change BTPI permit file state BTPI bag values to 0", {
   suppressMessages(invisible(capture.output(cleaned_data <- clean(test_data))))
 
   expect_equal(
-    nrow(test_data)-3,
+    nrow(test_data) - 3,
     nrow(filter(cleaned_data, band_tailed_pigeon == "2"))
   )
 

@@ -18,4 +18,3 @@ test_that("shiftCheck finds line shifts", {
 
   expect_true(nrow(shift_checked) == 1)
 })
-

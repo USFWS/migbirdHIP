@@ -43,7 +43,7 @@ test_that("issueCheck keeps future registrations", {
     dplyr::slice_head(n = 1) |>
     dplyr::mutate(
       dl_state = "DE",
-      issue_date = paste0("01/01/", as.numeric(REF_CURRENT_SEASON)+5))
+      issue_date = paste0("01/01/", as.numeric(REF_CURRENT_SEASON) + 5))
 
   suppressMessages(
     invisible(
@@ -71,7 +71,7 @@ test_that("issueAssign evaluates issue_date values correctly", {
           record_key == "record_2" ~
             "01/01/2022",
           record_key == "record_3" ~
-            paste0("01/01/", as.numeric(REF_CURRENT_SEASON)+5),
+            paste0("01/01/", as.numeric(REF_CURRENT_SEASON) + 5),
           TRUE ~ NA_character_)
     )
 

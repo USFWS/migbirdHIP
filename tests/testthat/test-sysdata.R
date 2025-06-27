@@ -18,4 +18,3 @@ test_that("SF_HEXMAP contains 49 states", {
 test_that("REF_BAGS contains 49 states", {
   expect_equal(length(unique(REF_BAGS$state)), 49)
 })
-

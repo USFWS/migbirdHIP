@@ -31,7 +31,7 @@ test_that("the most recent record in a set of duplicates is kept", {
           issue_date =
             paste(
               stringr::str_sub(lubridate::mdy(issue_date), 6, 7),
-              stringr::str_sub(lubridate::mdy(issue_date)-1, 9, 10),
+              stringr::str_sub(lubridate::mdy(issue_date) - 1, 9, 10),
               stringr::str_sub(lubridate::mdy(issue_date), 1, 4),
               sep = "/")))
 
@@ -65,7 +65,7 @@ test_that("HIP duplicates resolved in solo PMT state, WA", {
 
   expect_equal(
     nrow(deduped_data),
-    (nrow(hip_test)+nrow(inline_pmt_test))
+    (nrow(hip_test) + nrow(inline_pmt_test))
   )
 })
 
@@ -92,7 +92,7 @@ test_that("HIP duplicates resolved in solo PMT state, OR", {
 
   expect_equal(
     nrow(deduped_data),
-    (nrow(hip_test)+nrow(inline_pmt_test))
+    (nrow(hip_test) + nrow(inline_pmt_test))
   )
 })
 
@@ -127,7 +127,7 @@ test_that("multiple solo PMTs retained, WA", {
 
   expect_equal(
     nrow(deduped_data),
-    (nrow(hip_test)+nrow(inline_pmt_test1)+nrow(inline_pmt_test2))
+    (nrow(hip_test) + nrow(inline_pmt_test1) + nrow(inline_pmt_test2))
   )
 })
 
@@ -162,7 +162,7 @@ test_that("multiple solo PMTs retained, OR", {
 
   expect_equal(
     nrow(deduped_data),
-    (nrow(hip_test)+nrow(inline_pmt_test1)+nrow(inline_pmt_test2))
+    (nrow(hip_test) + nrow(inline_pmt_test1) + nrow(inline_pmt_test2))
   )
 })
 

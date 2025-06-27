@@ -35,4 +35,3 @@ test_that("ignoreHolds works", {
 
   expect_false(hold_file %in% read_data_files)
 })
-

@@ -1026,7 +1026,9 @@ test_that("bad email addresses fail proofing", {
         "johnsmith@tpwd.texas.gov",
         "nine@tpwd.texas.gov",
         # Too long
-        "peter______________________________________________________________________________parker@example.com",
+        paste0(
+          "peter______________________________________________________________",
+          "________________parker@example.com"),
         # Consecutive periods
         "Dead..Pool@comcast.net",
         "DeadPool@comc..ast.net",
