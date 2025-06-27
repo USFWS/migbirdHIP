@@ -41,6 +41,7 @@
 
 errorTable <-
   function(proofed_data, loc = "all", field = "all") {
+    failproofed(proofed_data)
 
     # Fail if incorrect loc supplied
     stopifnot("Error: Incorrect value supplied for `loc` parameter. Please supply a two-letter state abbreviation of a `dl_state` value contained within the data, 'all', or 'none'." = loc %in% c(unique(proofed_data$dl_state), "all", "none"))
@@ -109,6 +110,8 @@ errorTable <-
 
 errorTableSummary <-
   function(proofed_data, initial_tbl, loc, field) {
+    failproofed(proofed_data)
+
     if (loc == "all" & field == "all") {
       # Summary table of errors by state and field
       initial_tbl |>
@@ -201,6 +204,7 @@ errorTableSummary <-
 
 pullErrors <-
   function(proofed_data, field, unique = TRUE){
+    failproofed(proofed_data)
 
     # Fail if incorrect field supplied
     stopifnot("Error: Incorrect value supplied for `field` parameter." = field %in% REF_ALL_FIELDS)

@@ -20,6 +20,7 @@
 correct <-
   function(proofed_data, year){
     failyear(year)
+    failproofed(proofed_data)
 
     corrected_data <-
       proofed_data |>
