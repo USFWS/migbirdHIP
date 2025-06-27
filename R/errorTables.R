@@ -20,7 +20,9 @@
 #' @param loc Which location the error data should be tabulated by. Acceptable
 #'   values include:
 #'  \itemize{
-#'  \item a two-letter abbreviation for a US state (excluding HI)
+#'  \item a two-letter abbreviation for a US state; one of:
+#'    \itemize{
+#'    \item `r REF_ABBR_49_STATES`}
 #'  \item "all" - all states
 #'  \item "none" - table will not include location in its output
 #'  }
@@ -29,7 +31,7 @@
 #'  \itemize{
 #'  \item If loc = "none", field must be "all". Otherwise, choose one of:
 #'  \itemize{
-#'  \item REF_ALL_FIELDS}
+#'  \item `r REF_ALL_FIELDS`}
 #'  \item "all" - all fields
 #'  \item "none" - table will not include field in its output
 #'  }
@@ -41,7 +43,7 @@
 
 errorTable <-
   function(proofed_data, loc = "all", field = "all") {
-    failproofed(proofed_data)
+    failProofed(proofed_data)
 
     # Fail if incorrect loc supplied
     stopifnot("Error: Incorrect value supplied for `loc` parameter. Please supply a two-letter state abbreviation of a `dl_state` value contained within the data, 'all', or 'none'." = loc %in% c(unique(proofed_data$dl_state), "all", "none"))
@@ -110,7 +112,7 @@ errorTable <-
 
 errorTableSummary <-
   function(proofed_data, initial_tbl, loc, field) {
-    failproofed(proofed_data)
+    failProofed(proofed_data)
 
     if (loc == "all" & field == "all") {
       # Summary table of errors by state and field
@@ -204,7 +206,7 @@ errorTableSummary <-
 
 pullErrors <-
   function(proofed_data, field, unique = TRUE){
-    failproofed(proofed_data)
+    failProofed(proofed_data)
 
     # Fail if incorrect field supplied
     stopifnot("Error: Incorrect value supplied for `field` parameter." = field %in% REF_ALL_FIELDS)
