@@ -14,7 +14,9 @@ errorPlotFields(proofed_data, loc = "all", year)
 include:
 \itemize{
 \item "all" - all states
-\item a two-letter abbreviation for a US state (excluding HI)
+\item a two-letter abbreviation for a US state; one of:
+\itemize{
+\item AL, AK, AZ, AR, CA, CO, CT, DE, FL, GA, ID, IL, IN, IA, KS, KY, LA, ME, MD, MA, MI, MN, MS, MO, MT, NE, NV, NH, NJ, NM, NY, NC, ND, OH, OK, OR, PA, RI, SC, SD, TN, TX, UT, VT, VA, WA, WV, WI, WY}
 }}
 
 \item{year}{The year in which the HIP data were collected.}
