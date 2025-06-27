@@ -208,12 +208,7 @@ pullErrors <-
   function(proofed_data, field, unique = TRUE){
     failProofed(proofed_data)
     failTF(unique)
-
-    # Fail if incorrect field supplied
-    stopifnot("Error: Incorrect value supplied for `field` parameter." = field %in% REF_ALL_FIELDS)
-
-    # Fail if incorrect unique supplied
-    stopifnot("Error: Please supply TRUE or FALSE for `unique` parameter." = unique %in% c(TRUE, FALSE, T, F))
+    failField(field)
 
     pulled_error <-
       proofed_data |>
