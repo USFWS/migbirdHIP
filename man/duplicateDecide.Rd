@@ -7,7 +7,7 @@
 duplicateDecide(dupes)
 }
 \arguments{
-\item{duplicates}{The tibble created by \code{\link{duplicateID}}}
+\item{dupes}{The tibble created by \code{\link{duplicateID}}}
 }
 \description{
 The internal \code{duplicateDecide} function is used inside of

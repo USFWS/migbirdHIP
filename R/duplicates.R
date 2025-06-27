@@ -327,7 +327,7 @@ duplicateAllOnesGroupSize <-
 #' @importFrom dplyr filter
 #' @importFrom rlang .data
 #'
-#' @param duplicates The tibble created by \code{\link{duplicateID}}
+#' @param dupes The tibble created by \code{\link{duplicateID}}
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}
