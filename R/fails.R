@@ -45,29 +45,6 @@ failProofed <-
       "errors" %in% names(proofed_data), msg = "`errors` field not in data.")
   }
 
-#' Fail if bad field supplied
-#'
-#' Internal function that fails if a bad field name is provided.
-#'
-#' @importFrom assertthat assert_that
-#'
-#' @param field Any field name in HIP tibble; should be one of:
-#' \itemize{
-#' \item `r REF_ALL_FIELDS`}
-#'
-#' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
-
-failField <-
-  function(field) {
-    assert_that(
-      field %in% REF_ALL_FIELDS,
-      msg =
-        paste0(
-          "`field` not one of acceptable field names: ", REF_ALL_FIELDS, ".")
-    )
-  }
-
 #' Fail if bad state abbreviation supplied
 #'
 #' Internal function that fails if a bad state abbreviation is provided.
@@ -88,36 +65,6 @@ failState <-
       msg =
         paste0(
           "`state` one of acceptable state abbreviations: ",
-          REF_ABBR_49_STATES, ".")
-    )
-  }
-
-#' Fail if bad location supplied
-#'
-#' Internal function that fails if something other than a state abbreviation,
-#' "all", or "none" is provided.
-#'
-#' @importFrom assertthat assert_that
-#'
-#' @param loc Must be one of:
-#'  \itemize{
-#'  \item "all"
-#'  \item "none"
-#'  \item a two-letter abbreviation for a US state; one of:
-#'    \itemize{
-#'    \item `r REF_ABBR_49_STATES`}
-#'  }
-#'
-#' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
-
-failLocation <-
-  function(loc) {
-    assert_that(
-      loc %in% c("all", "none", REF_ABBR_49_STATES),
-      msg =
-        paste0(
-          "`loc` not 'all', 'none', or an acceptable state abbreviation: ",
           REF_ABBR_49_STATES, ".")
     )
   }
