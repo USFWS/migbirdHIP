@@ -10,8 +10,7 @@ pullErrors(proofed_data, field, unique = TRUE)
 \item{proofed_data}{The object created after error flagging data with
 \code{\link{proof}}}
 
-\item{field}{Field that should be pulled. One of the fields from the
-following list may be supplied:
+\item{field}{Field that should be pulled. Acceptable values include:
 \itemize{
 \item title, firstname, middle, lastname, suffix, address, city, state, zip, birth_date, issue_date, hunt_mig_birds, ducks_bag, geese_bag, dove_bag, woodcock_bag, coots_snipe, rails_gallinules, cranes, band_tailed_pigeon, brant, seaducks, registration_yr, email}}
 
