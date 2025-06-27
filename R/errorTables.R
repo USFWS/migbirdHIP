@@ -44,9 +44,7 @@
 errorTable <-
   function(proofed_data, loc = "all", field = "all") {
     failProofed(proofed_data)
-
-    # Fail if incorrect loc supplied
-    stopifnot("Error: Incorrect value supplied for `loc` parameter. Please supply a two-letter state abbreviation of a `dl_state` value contained within the data, 'all', or 'none'." = loc %in% c(unique(proofed_data$dl_state), "all", "none"))
+    failLocation(loc)
 
     # Fail if incorrect field supplied
     stopifnot("Error: Incorrect value supplied for `field` parameter. Please supply one of: all, none, title, firstname, middle, lastname, suffix, address, city, state, zip, birth_date, issue_date, hunt_mig_birds, ducks_bag, geese_bag, dove_bag, woodcock_bag, coots_snipe, rails_gallinules, cranes, band_tailed_pigeon, brant, seaducks, registration_yr, email." = field %in% c("all", "none", "title", "firstname", "middle", "lastname", "suffix", "address", "city", "state", "zip", "birth_date", "issue_date", "hunt_mig_birds", "ducks_bag", "geese_bag", "dove_bag", "woodcock_bag", "coots_snipe", "rails_gallinules", "cranes", "band_tailed_pigeon", "brant", "seaducks", "registration_yr", "email"))
@@ -93,7 +91,9 @@ errorTable <-
 #' @param loc Which location the error data should be tabulated by. Acceptable
 #'   values include:
 #'  \itemize{
-#'  \item a two-letter abbreviation for a US state (excluding HI)
+#'  \item a two-letter abbreviation for a US state; one of:
+#'    \itemize{
+#'    \item `r REF_ABBR_49_STATES`}
 #'  \item "all" - all states
 #'  \item "none" - table will not include location in its output
 #'  }
@@ -102,7 +102,7 @@ errorTable <-
 #'  \itemize{
 #'  \item If loc = "none", field must be "all". Otherwise, choose one of:
 #'  \itemize{
-#'  \item REF_ALL_FIELDS}
+#'  \item `r REF_ALL_FIELDS`}
 #'  \item "all" - all fields
 #'  \item "none" - table will not include field in its output
 #'  }
@@ -113,6 +113,7 @@ errorTable <-
 errorTableSummary <-
   function(proofed_data, initial_tbl, loc, field) {
     failProofed(proofed_data)
+    failLocation(loc)
 
     if (loc == "all" & field == "all") {
       # Summary table of errors by state and field
@@ -192,10 +193,9 @@ errorTableSummary <-
 #'
 #' @param proofed_data The object created after error flagging data with
 #'   \code{\link{proof}}
-#' @param field Field that should be pulled. One of the fields from the
-#'   following list may be supplied:
+#' @param field Field that should be pulled. Acceptable values include:
 #' \itemize{
-#' \item title, firstname, middle, lastname, suffix, address, city, state, zip, birth_date, issue_date, hunt_mig_birds, ducks_bag, geese_bag, dove_bag, woodcock_bag, coots_snipe, rails_gallinules, cranes, band_tailed_pigeon, brant, seaducks, registration_yr, email}
+#' \item `r REF_ALL_FIELDS`}
 #' @param unique If FALSE, returns all error values; if TRUE (default), only
 #'   returns unique values.
 #'
@@ -207,6 +207,7 @@ errorTableSummary <-
 pullErrors <-
   function(proofed_data, field, unique = TRUE){
     failProofed(proofed_data)
+    failTF(unique)
 
     # Fail if incorrect field supplied
     stopifnot("Error: Incorrect value supplied for `field` parameter." = field %in% REF_ALL_FIELDS)
