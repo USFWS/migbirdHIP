@@ -327,7 +327,7 @@ duplicateAllOnesGroupSize <-
 #' @importFrom dplyr filter
 #' @importFrom rlang .data
 #'
-#' @param dupes Intermediate tibble created in \code{\link{duplicateFix}}
+#' @param duplicates The tibble created by \code{\link{duplicateID}}
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}
@@ -442,13 +442,18 @@ duplicateRecordType <-
 #' @importFrom stringr str_c
 #'
 #' @param duplicates The tibble created by \code{\link{duplicateID}}
-#' @param fields Name of the column to compare values for
+#' @param fields Name of the columns to compare values for. One or more of
+#'   the fields from the following list may be supplied:
+#' \itemize{
+#' \item `r REF_ALL_FIELDS`}
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}
 
 duplicateFields <-
   function(duplicates, fields) {
+    failField(fields)
+
     # Return the field name if there is more than one unique value in
     # that field for a hunter, otherwise return NA
     map(
