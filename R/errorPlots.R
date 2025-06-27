@@ -27,11 +27,13 @@
 #'
 #' @param proofed_data The object created after error flagging data with
 #'   \code{\link{proof}} or \code{\link{correct}}
-#' @param loc Which location the error data should be plotted for. Acceptable
-#'   values include:
+#' @param loc The location that errors should be plotted for. Acceptable values
+#'   include:
 #'  \itemize{
 #'  \item "all" - all states
-#'  \item a two-letter abbreviation for a US state (excluding HI)
+#'  \item a two-letter abbreviation for a US state; one of:
+#'    \itemize{
+#'    \item `r REF_ABBR_49_STATES`}
 #'  }
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
