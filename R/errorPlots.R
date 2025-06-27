@@ -144,7 +144,9 @@ errorPlotDL <-
 #'   include:
 #'  \itemize{
 #'  \item "all" - all states
-#'  \item a two-letter abbreviation for a US state (excluding HI)
+#'  \item a two-letter abbreviation for a US state; one of:
+#'    \itemize{
+#'    \item `r REF_ABBR_49_STATES`}
 #'  }
 #' @param year The year in which the HIP data were collected.
 #'
