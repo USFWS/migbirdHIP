@@ -41,7 +41,7 @@
 
 errorPlotDL <-
   function(proofed_data, loc = "all") {
-    failproofed(proofed_data)
+    failProofed(proofed_data)
 
     # Fail if incorrect loc supplied
     stopifnot("Error: Incorrect value supplied for `loc` parameter. Please supply a two-letter state abbreviation of a `dl_state` value contained within the data, or 'all'." = loc %in% c(unique(proofed_data$dl_state), "all"))
@@ -159,8 +159,8 @@ errorPlotFields <-
     # Fail if incorrect loc supplied
     stopifnot("Error: Incorrect value supplied for `loc` parameter. Please supply a two-letter state abbreviation of a `dl_state` value contained within the data, or 'all'." = loc %in% c(unique(proofed_data$dl_state), "all"))
 
-    failyear(year)
-    failproofed(proofed_data)
+    failYear(year)
+    failProofed(proofed_data)
 
     if (loc != "all") {
       proofed_data <-
@@ -228,7 +228,7 @@ errorPlotFields <-
 errorPlotStates <-
   function(proofed_data, threshold = NA) {
 
-    failproofed(proofed_data)
+    failProofed(proofed_data)
 
     # Fail if incorrect threshold supplied
     stopifnot("Error: `threshold` parameter must be numeric." = (is.numeric(threshold) | is.na(threshold)))
@@ -347,7 +347,7 @@ errorPlotStates <-
 
 errorLevelErrorsByState <-
   function(proofed_data){
-    failproofed(proofed_data)
+    failProofed(proofed_data)
 
     proofed_data |>
       select(c("errors", "dl_state")) |>
@@ -386,7 +386,7 @@ errorLevelErrorsByState <-
 
 errorLevelErrorsByField <-
   function(proofed_data){
-    failproofed(proofed_data)
+    failProofed(proofed_data)
 
     proofed_data |>
       select("errors") |>
@@ -431,7 +431,7 @@ errorLevelErrorsByField <-
 redFlags <-
   function(proofed_data, type, threshold = 0) {
 
-    failproofed(proofed_data)
+    failProofed(proofed_data)
 
     # Fail if incorrect type supplied
     stopifnot("Error: Please supply 'state' or 'field' for `type` parameter." = type %in% c("state", "field"))

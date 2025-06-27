@@ -38,7 +38,7 @@
 
 write_hip <-
   function(corrected_data, path, type, split = TRUE){
-    failproofed(corrected_data)
+    failProofed(corrected_data)
 
     # Add a final "/" if not included already
     if(!str_detect(path, "\\/$")) {
