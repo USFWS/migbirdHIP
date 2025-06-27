@@ -112,8 +112,6 @@ errorTable <-
 
 errorTableSummary <-
   function(proofed_data, initial_tbl, loc, field) {
-    failProofed(proofed_data)
-    failLocation(loc)
 
     if (loc == "all" & field == "all") {
       # Summary table of errors by state and field
