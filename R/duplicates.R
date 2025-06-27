@@ -452,7 +452,6 @@ duplicateRecordType <-
 
 duplicateFields <-
   function(duplicates, fields) {
-    failField(fields)
 
     # Return the field name if there is more than one unique value in
     # that field for a hunter, otherwise return NA
