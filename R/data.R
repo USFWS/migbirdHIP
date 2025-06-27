@@ -21,7 +21,8 @@
 #'   \item{geese_bag}{Code to indicate goose harvest from last season}
 #'   \item{dove_bag}{Code to indicate dove harvest from last season}
 #'   \item{woodcock_bag}{Code to indicate woodcock harvest from last season}
-#'   \item{coots_snipe}{Code to indicate coot and snipe harvest from last season}
+#'   \item{coots_snipe}{Code to indicate coot and snipe harvest from last
+#'   season}
 #'   \item{rails_gallinules}{Code to indicate rail and gallinule harvest from
 #'   last season}
 #'   \item{cranes}{Code to indicate crane harvest from last season}
