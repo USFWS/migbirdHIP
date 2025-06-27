@@ -20,6 +20,7 @@
 #' @importFrom stringr str_extract
 #' @importFrom stringr str_remove
 #' @importFrom rlang .data
+#' @importFrom assertthat assert_that
 #'
 #' @param path File path to the folder containing HIP .txt files
 #' @param unique Return a distinct frame? Defaults to TRUE
@@ -49,9 +50,13 @@ read_hip <-
     }
 
     # Fail if incorrect state supplied
-    stopifnot(
-      "Use a 2-letter abbreviation for `state`, e.g. 'DE'." =
-        state %in% c(NA, REF_ABBR_49_STATES))
+    assert_that(
+      state %in% c(NA, REF_ABBR_49_STATES),
+      msg =
+        paste0(
+          "`state` one of acceptable state abbreviations: ",
+          REF_ABBR_49_STATES, " or `NA`.")
+    )
 
     # Create a tibble of the HIP .txt files to be read from the provided
     # directory
