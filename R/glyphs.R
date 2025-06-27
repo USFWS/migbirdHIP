@@ -23,7 +23,6 @@
 
 glyphFinder <-
   function(raw_data, field){
-    failField(field)
 
     raw_data |>
       select(c("source_file", "record_key", !!sym(field))) |>
