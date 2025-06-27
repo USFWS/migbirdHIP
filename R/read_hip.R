@@ -35,6 +35,8 @@
 
 read_hip <-
   function(path, unique = TRUE, state = NA, season = FALSE) {
+    failTF(unique)
+    failTF(season)
 
     # Add a final "/" if not included already
     if(!str_detect(path, "\\/$")) {
@@ -46,20 +48,10 @@ read_hip <-
       message("Are you sure you supplied a season path?")
     }
 
-    # Fail if incorrect unique supplied
-    stopifnot(
-      "Please supply TRUE or FALSE for `unique`." =
-        unique %in% c(TRUE, FALSE, T, F))
-
     # Fail if incorrect state supplied
     stopifnot(
       "Use a 2-letter abbreviation for `state`, e.g. 'DE'." =
         state %in% c(NA, REF_ABBR_49_STATES))
-
-    # Fail if incorrect season supplied
-    stopifnot(
-      "Please supply TRUE or FALSE for `season`." =
-        season %in% c(TRUE, FALSE, T, F))
 
     # Create a tibble of the HIP .txt files to be read from the provided
     # directory
@@ -189,6 +181,7 @@ read_hip <-
 
 listFiles <-
   function(path, season) {
+    failTF(season)
 
     # Create a tibble of the HIP .txt files to be read from the provided
     # directory
