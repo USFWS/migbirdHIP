@@ -24,6 +24,7 @@
 #' @importFrom ggplot2 theme_classic
 #' @importFrom ggplot2 theme
 #' @importFrom rlang .data
+#' @importFrom assertthat assert_that
 #'
 #' @param proofed_data The object created after error flagging data with
 #'   \code{\link{proof}} or \code{\link{correct}}
@@ -45,8 +46,13 @@ errorPlotDL <-
   function(proofed_data, loc = "all") {
     failProofed(proofed_data)
 
-    # Fail if incorrect loc supplied
-    stopifnot("Error: Incorrect value supplied for `loc` parameter. Please supply a two-letter state abbreviation of a `dl_state` value contained within the data, or 'all'." = loc %in% c(unique(proofed_data$dl_state), "all"))
+    assert_that(
+      loc %in% c("all", REF_ABBR_49_STATES),
+      msg =
+        paste0(
+          "`loc` not 'all' or an acceptable state abbreviation: ",
+          REF_ABBR_49_STATES, ".")
+    )
 
     if(loc == "all") {
       # Plot for all states
@@ -139,6 +145,7 @@ errorPlotDL <-
 #' @importFrom ggplot2 element_text
 #' @importFrom ggplot2 expansion
 #' @importFrom rlang .data
+#' @importFrom assertthat assert_that
 #'
 #' @param proofed_data The object created after error flagging data with
 #'   \code{\link{proof}} or \code{\link{correct}}
@@ -159,12 +166,16 @@ errorPlotDL <-
 
 errorPlotFields <-
   function(proofed_data, loc = "all", year) {
-
-    # Fail if incorrect loc supplied
-    stopifnot("Error: Incorrect value supplied for `loc` parameter. Please supply a two-letter state abbreviation of a `dl_state` value contained within the data, or 'all'." = loc %in% c(unique(proofed_data$dl_state), "all"))
-
     failYear(year)
     failProofed(proofed_data)
+
+    assert_that(
+      loc %in% c("all", REF_ABBR_49_STATES),
+      msg =
+        paste0(
+          "`loc` not 'all' or an acceptable state abbreviation: ",
+          REF_ABBR_49_STATES, ".")
+    )
 
     if (loc != "all") {
       proofed_data <-

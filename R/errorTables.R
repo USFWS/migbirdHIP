@@ -14,6 +14,7 @@
 #' @importFrom dplyr count
 #' @importFrom stringr str_detect
 #' @importFrom rlang .data
+#' @importFrom assertthat assert_that
 #'
 #' @param proofed_data The object created after error flagging data with
 #'   \code{\link{proof}} or \code{\link{correct}}
@@ -44,7 +45,22 @@
 errorTable <-
   function(proofed_data, loc = "all", field = "all") {
     failProofed(proofed_data)
-    failLocation(loc)
+
+    assert_that(
+      loc %in% c("all", "none", REF_ABBR_49_STATES),
+      msg =
+        paste0(
+          "`loc` not 'all', 'none', or an acceptable state abbreviation: ",
+          REF_ABBR_49_STATES, ".")
+    )
+
+    assert_that(
+      field %in% c("all", "none", REF_ALL_FIELDS),
+      msg =
+        paste0(
+          "`field` not one of acceptable field names: ",
+          c("all", "none", REF_ALL_FIELDS), ".")
+    )
 
     # Fail if incorrect field supplied
     stopifnot("Error: Incorrect value supplied for `field` parameter. Please supply one of: all, none, title, firstname, middle, lastname, suffix, address, city, state, zip, birth_date, issue_date, hunt_mig_birds, ducks_bag, geese_bag, dove_bag, woodcock_bag, coots_snipe, rails_gallinules, cranes, band_tailed_pigeon, brant, seaducks, registration_yr, email." = field %in% c("all", "none", "title", "firstname", "middle", "lastname", "suffix", "address", "city", "state", "zip", "birth_date", "issue_date", "hunt_mig_birds", "ducks_bag", "geese_bag", "dove_bag", "woodcock_bag", "coots_snipe", "rails_gallinules", "cranes", "band_tailed_pigeon", "brant", "seaducks", "registration_yr", "email"))
@@ -188,6 +204,7 @@ errorTableSummary <-
 #' @importFrom stringr str_detect
 #' @importFrom rlang sym
 #' @importFrom rlang .data
+#' @importFrom assertthat assert_that
 #'
 #' @param proofed_data The object created after error flagging data with
 #'   \code{\link{proof}}
@@ -206,7 +223,13 @@ pullErrors <-
   function(proofed_data, field, unique = TRUE){
     failProofed(proofed_data)
     failTF(unique)
-    failField(field)
+
+    assert_that(
+      field %in% REF_ALL_FIELDS,
+      msg =
+        paste0(
+          "`field` not one of acceptable field names: ", REF_ALL_FIELDS, ".")
+    )
 
     pulled_error <-
       proofed_data |>
