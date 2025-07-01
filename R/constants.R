@@ -170,8 +170,8 @@ REGEX_NON_PMT_SPECIES <- "bag|coots|rails"
 # which consecutive) and 2+ capital letters
 REGEX_FIRSTNAME <-
   paste0(
-    "^(?!.*\\'\\')(?!.*\\s\\s)(?!.*\\-\\-)(?!.*\\sAKA\\s.*)[A-Z+\\'?]\\-?\\s?\\",
-    "'?[A-Z\\-?\\s?\\'?]*[A-Z]+$")
+    "^(?!.*\\'\\')(?!.*\\s\\s)(?!.*\\-\\-)(?!.*\\sAKA\\s.*)[A-Z+\\'?]\\-?\\s?",
+    "\\'?[A-Z\\-?\\s?\\'?]*[A-Z]+$")
 
 # Last name regular expression; may contain apostrophe, space, hyphen, period,
 # (none of which consecutive) and 2+ capital letters
@@ -221,24 +221,35 @@ REGEX_EMAIL <-
 # Regular expression for an obfuscative email address local-part
 REGEX_EMAIL_OBFUSCATIVE_LOCALPART <-
   paste0(
-    "^(([0-9]+)?(none|123)*[\\.\\-\\_\\+]*(none|nope|null|not|non|no|na|fake([\\_\\.\\-]fake)?|unknown|abc|xyz|fu|name|dont)+[\\.\\-\\_\\+]*(none|123)*([0-9]+)?|",
+    "^(([0-9]+)?(none|123)*[\\.\\-\\_\\+]*(none|nope|null|not|non|no|na|",
+      "fake([\\_\\.\\-]fake)?|unknown|abc|xyz|fu|name|dont)+[\\.\\-\\_\\+]*",
+      "(none|123)*([0-9]+)?|",
     "none\\..+|",
     "www\\.(none|nope|null|no|na|fake|unknown|abc|xyz|(none\\.?)?tpw(d)?)+|",
     "(o|n|e){4,100}|",
-    "noen|nnon|onoene|nnnnnne|nonen|nonoe|nnoe|onoennoneo|nonne|nnone|nnno|onon|onoe|nonn|noeone|nonneee|nonnee|nonoeone|onne|nononon|oonono|onoen|noneo|",
-    "([0-9]+)?no((n|p)e)?[\\_\\.\\-]*(one|(e)?mai(l)?(none)?|emial|emal|eamil|emsil|thank(s|you)?)([0-9]+)?|",
+    "noen|nnon|onoene|nnnnnne|nonen|nonoe|nnoe|onoennoneo|nonne|nnone|nnno|",
+      "onon|onoe|nonn|noeone|nonneee|nonnee|nonoeone|onne|nononon|oonono|",
+      "onoen|noneo|",
+    "([0-9]+)?no((n|p)e)?[\\_\\.\\-]*(one|(e)?mai(l)?(none)?|emial|emal|eamil|",
+      "emsil|thank(s|you)?)([0-9]+)?|",
     "([0-9]+)?(no(n|t)?|in)[\\_\\.\\-]*valid(email)?([0-9]+)?|",
-    "([0-9]+)?(no)?[\\_\\.\\-]*(done|(un)?subscribe|customer|email[\\_\\.\\-]*address)([0-9]+)?|",
+    "([0-9]+)?(no)?[\\_\\.\\-]*(done|(un)?subscribe|customer|email[\\_\\.\\-]*",
+      "address)([0-9]+)?|",
     "([0-9]+)?(no|(do)?[\\.\\-\\_]*not)[\\.\\-\\_]*reply([0-9]+)?|",
-    "([0-9]+)?non(e)?(ya|yab.+|you(r)?b.+|onfile|ofyourbusiness|given|usa|text|yet|atall|walmart)([0-9]+)?|",
-    "([0-9]+)?(not|none)[\\_\\.\\-]*(ava(i)?la(i)?ble|ap(p)?lic(able)?|provide(d)?|interest(e)?(d)?|me|one|you|(e)?mail|again)([0-9]+)?|",
+    "([0-9]+)?non(e)?(ya|yab.+|you(r)?b.+|onfile|ofyourbusiness|given|usa|text",
+      "|yet|atall|walmart)([0-9]+)?|",
+    "([0-9]+)?(not|none)[\\_\\.\\-]*(ava(i)?la(i)?ble|ap(p)?lic(able)?|provide",
+      "(d)?|interest(e)?(d)?|me|one|you|(e)?mail|again)([0-9]+)?|",
     "([0-9]+)?(have|got|nope(aint(got)?)?)[\\_\\.\\-]*none([0-9]+)?|",
     "([0-9]+)?nope[\\_\\.\\-]((e)?mail)[\\_\\.\\-]*([0-9]+)?|",
-    "([0-9]+)?(nope)?[\\_\\.\\-]*not[\\_\\.\\-]*to(t)?(d)?ay[\\_\\.\\-]*([0-9]+)?|",
+    "([0-9]+)?(nope)?[\\_\\.\\-]*not[\\_\\.\\-]*to(t)?(d)?ay[\\_\\.\\-]*",
+      "([0-9]+)?|",
     "([0-9]+)?(customer)?[\\_\\.\\-]*refused[\\_\\.\\-]*(email)?([0-9]+)?|",
     "([0-9]+)?(walmart)?[\\_\\.\\-]*fake[\\_\\.\\-]*email([0-9]+)?|",
-    "([0-9]+)?(na|non*(e*)?)?([0-9]+)?[\\_\\.\\-]*(tpw(d)?|twd|twp(d)?)([0-9]+)?([0-9]+)?[\\_\\.\\-]*(texas|na|non*(e*)?)?(\\.gov)?|",
-    "([0-9]+)?[\\_\\.\\-]*texas[\\_\\.\\-]*(tpw(d)?|twd|twp(d)?)[\\_\\.\\-]*([0-9]+)?|",
+    "([0-9]+)?(na|non*(e*)?)?([0-9]+)?[\\_\\.\\-]*(tpw(d)?|twd|twp(d)?)",
+      "([0-9]+)?([0-9]+)?[\\_\\.\\-]*(texas|na|non*(e*)?)?(\\.gov)?|",
+    "([0-9]+)?[\\_\\.\\-]*texas[\\_\\.\\-]*(tpw(d)?|twd|twp(d)?)[\\_\\.\\-]*",
+      "([0-9]+)?|",
     "none.*texas|notexas|notex|",
     "(john|jane)\\.?doe|",
     "123|1234|12345|123456|1234567|12345678|123456789|",
