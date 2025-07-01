@@ -40,7 +40,9 @@ writeReport <-
                 str_detect(dl, "^[0-9]{4}$"))
 
     # Fail if incorrect file supplied
-    stopifnot("Error: `file` parameter must not contain a period or a file suffix. Please supply a plain file name, e.g. 'dl1501_report_2023'." = !str_detect(file, "\\."))
+    stopifnot(
+      "Error: `file` must not contain period or file suffix." =
+        !str_detect(file, "\\."))
 
     # Add a final "/" to path if not included already
     if (!str_detect(raw_path, "\\/$")) {
