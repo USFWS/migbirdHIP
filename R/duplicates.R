@@ -455,10 +455,12 @@ duplicateFields <-
     # that field for a hunter, otherwise return NA
     map(
       fields,
-      \(x) if (length(unique(duplicates[[x]])) > 1) {
-        x
-      } else {
-        NA_character_
+      \(x) {
+        if (length(unique(duplicates[[x]])) > 1) {
+          x
+        } else {
+          NA_character_
+        }
       }) |>
       # Remove NA values
       discard(is.na) |>
@@ -581,14 +583,11 @@ duplicatePlot <-
     # Find duplicates
     dupl_tibble <- duplicateFinder(current_data)
 
-    # Define regular expression for one field
-    regex_field <- "[a-z|a-z\\_a-z]{1,}"
-
     # Plot
     dupl_plot <-
       dupl_tibble |>
       # Bin into generic "2+ fields" if more than one field contributes to a
-      # duplicate
+      # duplicate; regex to define one field is "[a-z|a-z\\_a-z]{1,}"
       mutate(
         duplicate_field =
           case_when(
@@ -597,21 +596,21 @@ duplicatePlot <-
               .data$duplicate_field,
               paste0(
                 "[a-z|a-z\\_a-z|a-z|a-z\\_a-z\\_a-z|a-z\\_a-z]{1,}",
-                paste(rep(regex_field, 4), collapse = "\\-"))) ~
+                paste(rep("[a-z|a-z\\_a-z]{1,}", 4), collapse = "\\-"))) ~
               "2+ fields",
             # 4 fields
             str_detect(
               .data$duplicate_field,
-              paste(rep(regex_field, 4), collapse = "\\-")) ~
+              paste(rep("[a-z|a-z\\_a-z]{1,}", 4), collapse = "\\-")) ~
               "2+ fields",
             # 3 fields
             str_detect(
               .data$duplicate_field,
-              paste(rep(regex_field, 3), collapse = "\\-")) ~
+              paste(rep("[a-z|a-z\\_a-z]{1,}", 3), collapse = "\\-")) ~
               "2+ fields",
             str_detect(
               .data$duplicate_field,
-              paste(rep(regex_field, 2), collapse = "\\-")) ~
+              paste(rep("[a-z|a-z\\_a-z]{1,}", 2), collapse = "\\-")) ~
               "2+ fields",
             TRUE ~ .data$duplicate_field)
       ) |>
