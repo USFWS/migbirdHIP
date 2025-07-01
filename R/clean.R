@@ -399,11 +399,13 @@ cranePermitBagFix <-
 btpiPermitBagFix <-
   function(raw_data) {
 
+    short_btpi <- "band_tailed_pigeon"
+
     bad_bt_2s <-
       raw_data |>
       filter(
         .data$dl_state %in%
-          REF_PMT_FILES$dl_state[REF_PMT_FILES$spp == "band_tailed_pigeon"] &
+          REF_PMT_FILES$dl_state[REF_PMT_FILES$spp == short_btpi] &
           .data$band_tailed_pigeon == "2") |>
       count(.data$dl_state)
 
@@ -415,14 +417,14 @@ btpiPermitBagFix <-
           band_tailed_pigeon =
             ifelse(
               .data$dl_state %in%
-                REF_PMT_FILES$dl_state[REF_PMT_FILES$spp == "band_tailed_pigeon"] &
+                REF_PMT_FILES$dl_state[REF_PMT_FILES$spp == short_btpi] &
                 .data$band_tailed_pigeon == "2",
               "0",
               .data$band_tailed_pigeon)
         )
 
       message("2s converted to 0s for permit file states:")
-      print(bad_bt_2s |> mutate(spp = "band_tailed_pigeon"))
+      print(bad_bt_2s |> mutate(spp = short_btpi))
       return(corrected_pmt_bags)
 
     } else {
