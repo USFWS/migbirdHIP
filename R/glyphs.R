@@ -59,12 +59,14 @@ glyphCheck <-
     checked <-
       map(
         names(raw_data),
-        \(x) glyphFinder(raw_data, x) |>
-          rename(value = !!sym(x)) |>
-          mutate(
-            field = x,
-            value = as.character(.data$value)) |>
-          relocate("field", .before = "value")
+        \(x) {
+          glyphFinder(raw_data, x) |>
+            rename(value = !!sym(x)) |>
+            mutate(
+              field = x,
+              value = as.character(.data$value)) |>
+            relocate("field", .before = "value")
+        }
         ) |>
       list_rbind() |>
       filter(!is.na(.data$value)) |>

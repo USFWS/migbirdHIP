@@ -146,14 +146,16 @@ write_hip <-
     bag_translations <-
       map(
         seq_along(REF_BAG_FIELDS),
-        \(x) REF_BAGS |>
-          filter(.data$spp == REF_BAG_FIELDS[x]) |>
-          mutate(
-            !!sym(REF_BAG_FIELDS[x]) := as.character(.data$stateBagValue)) |>
-          select(-c("stateBagValue", "spp")) |>
-          rename(
-            dl_state = .data$state,
-            !!sym(REF_STRATA_NAMES[x]) := .data$FWSstratum)
+        \(x) {
+          REF_BAGS |>
+            filter(.data$spp == REF_BAG_FIELDS[x]) |>
+            mutate(
+              !!sym(REF_BAG_FIELDS[x]) := as.character(.data$stateBagValue)) |>
+            select(-c("stateBagValue", "spp")) |>
+            rename(
+              dl_state = .data$state,
+              !!sym(REF_STRATA_NAMES[x]) := .data$FWSstratum)
+        }
       )
 
     # Left join all the bag translations to the corrected data
@@ -170,17 +172,19 @@ write_hip <-
     zero_translations <-
       map(
         seq_along(REF_BAG_FIELDS),
-        \(x) REF_BAGS |>
-          select(-"stateBagValue") |>
-          group_by(.data$state, .data$spp) |>
-          filter(n() == 1) |>
-          ungroup() |>
-          filter(.data$spp == REF_BAG_FIELDS[x]) |>
-          mutate(!!sym(REF_STRATA_NAMES[x]) := NA) |>
-          select(-"spp") |>
-          rename(
-            dl_state = .data$state,
-            !!sym(paste0(REF_STRATA_NAMES[x], "_0s")) := .data$FWSstratum)
+        \(x) {
+          REF_BAGS |>
+            select(-"stateBagValue") |>
+            group_by(.data$state, .data$spp) |>
+            filter(n() == 1) |>
+            ungroup() |>
+            filter(.data$spp == REF_BAG_FIELDS[x]) |>
+            mutate(!!sym(REF_STRATA_NAMES[x]) := NA) |>
+            select(-"spp") |>
+            rename(
+              dl_state = .data$state,
+              !!sym(paste0(REF_STRATA_NAMES[x], "_0s")) := .data$FWSstratum)
+        }
       )
 
     # If a season doesn't exist, make sure the translation is 0 (not NA)
@@ -243,17 +247,20 @@ write_hip <-
 
       walk(
         seq_along(final_list),
-        \(x) fwrite(
-          final_list[[x]],
-          file =
-            str_replace(
-              paste0(path,
-                     final_list[[x]] |>
-                       distinct(.data$source_file) |>
-                       pull()),
-              "\\.(txt|xlsx|xls)$",
-              ".csv"),
-          na = ""))
+        \(x) {
+          fwrite(
+            final_list[[x]],
+            file =
+              str_replace(
+                paste0(path,
+                       final_list[[x]] |>
+                         distinct(.data$source_file) |>
+                         pull()),
+                "\\.(txt|xlsx|xls)$",
+                ".csv"),
+            na = "")
+        }
+      )
     } else {
       # Write data to a single csv
       fwrite(
