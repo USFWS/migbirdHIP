@@ -144,11 +144,11 @@ LOGIC_TEST_RECORD <-
 
 # Define non-digit bag records; used by read_hip() and clean()
 LOGIC_NONDIGIT_BAGS <-
-  expr(if_any(all_of(REF_BAG_FIELDS), \(x) !str_detect(x, "^[0-9]{1}$")))
+  expr(if_any(all_of(REF_FIELDS_BAG), \(x) !str_detect(x, "^[0-9]{1}$")))
 
 # Define all-zero bag records; used by read_hip() and clean()
 LOGIC_ZERO_BAGS <-
-  expr(if_all(all_of(REF_BAG_FIELDS), \(x) x == "0"))
+  expr(if_all(all_of(REF_FIELDS_BAG), \(x) x == "0"))
 
 # Define missing personal information; used by read_hip() and missingPIIFilter()
 LOGIC_MISSING_PII <-
