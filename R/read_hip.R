@@ -626,7 +626,7 @@ naBagsMessage <-
     NA_bags <-
       raw_data |>
       # Find any records that have an NA in every bag field
-      filter(if_all(all_of(REF_BAG_FIELDS), \(x) is.na(x)))
+      filter(if_all(all_of(REF_FIELDS_BAG), \(x) is.na(x)))
 
     if (nrow(NA_bags) > 0) {
       message("Error: One or more records has an NA in every bag field.")
@@ -673,7 +673,7 @@ nonDigitBagsMessage <-
       )
       print(
         nondigit_bags |>
-          unite("bags", matches(REF_BAG_FIELDS), sep = " ") |>
+          unite("bags", matches(REF_FIELDS_BAG), sep = " ") |>
           select(c("source_file", "record_key", "bags"))
       )
     }

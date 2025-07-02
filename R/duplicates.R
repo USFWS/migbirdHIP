@@ -158,7 +158,7 @@ duplicateFix <-
     resolved_duplicates <-
       # Remove duplicates from the input frame
       current_data |>
-      group_by(!!!syms(REF_HUNTER_ID_FIELDS)) |>
+      group_by(!!!syms(REF_FIELDS_HUNTER_ID)) |>
       filter(n() == 1) |>
       ungroup() |>
       # Set record type for single HIP registrations and solo in-line permits
@@ -207,8 +207,8 @@ duplicateFix <-
 duplicateID <-
   function(current_data) {
     current_data |>
-      # Group by REF_HUNTER_ID_FIELDS to determine each unique hunter
-      group_by(!!!syms(REF_HUNTER_ID_FIELDS)) |>
+      # Group by REF_FIELDS_HUNTER_ID to determine each unique hunter
+      group_by(!!!syms(REF_FIELDS_HUNTER_ID)) |>
       # Identify duplicates, aka records in groups of n() > 1
       filter(n() > 1) |>
       mutate(duplicate_id = paste0("duplicate_", cur_group_id())) |>
@@ -279,7 +279,7 @@ duplicateAllOnes <-
       mutate(
         all_ones =
           pmap_chr(
-            select(duplicates, all_of(REF_BAG_FIELDS)),
+            select(duplicates, all_of(REF_FIELDS_BAG)),
             \(...) ifelse(all(c(...) == "1"), "all_1s", "not_all_1s"))
       )
   }
@@ -442,7 +442,7 @@ duplicateRecordType <-
 #' @param fields Name of the columns to compare values for. One or more of
 #'   the fields from the following list may be supplied:
 #' \itemize{
-#' \item `r REF_ALL_FIELDS`}
+#' \item `r REF_FIELDS_ALL`}
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}
@@ -502,11 +502,11 @@ duplicateFinder <-
       # Filter out permits
       filter(.data$record_type != "PMT") |>
       # Filter out non-duplicate records
-      group_by(!!!syms(REF_HUNTER_ID_FIELDS)) |>
+      group_by(!!!syms(REF_FIELDS_HUNTER_ID)) |>
       filter(n() > 1) |>
       ungroup() |>
       # Sort
-      arrange(!!!syms(REF_HUNTER_ID_FIELDS))
+      arrange(!!!syms(REF_FIELDS_HUNTER_ID))
 
     # Define the fields to check for cause of duplication
     fields_to_check <-
@@ -517,7 +517,7 @@ duplicateFinder <-
     # Determine the cause(s) of registration duplication for each hunter
     dupl_tibble <-
       duplicates |>
-      group_by(!!!syms(REF_HUNTER_ID_FIELDS)) |>
+      group_by(!!!syms(REF_FIELDS_HUNTER_ID)) |>
       # Hunter key per individual
       mutate(hunter_key = cur_group_id()) |>
       ungroup() |>

@@ -32,7 +32,7 @@
 #'  \itemize{
 #'  \item If loc = "none", field must be "all". Otherwise, choose one of:
 #'  \itemize{
-#'  \item `r REF_ALL_FIELDS`}
+#'  \item `r REF_FIELDS_ALL`}
 #'  \item "all" - all fields
 #'  \item "none" - table will not include field in its output
 #'  }
@@ -55,11 +55,11 @@ errorTable <-
     )
 
     assert_that(
-      field %in% c("all", "none", REF_ALL_FIELDS),
+      field %in% c("all", "none", REF_FIELDS_ALL),
       msg =
         paste0(
           "`field` not one of acceptable field names: ",
-          c("all", "none", REF_ALL_FIELDS), ".")
+          c("all", "none", REF_FIELDS_ALL), ".")
     )
 
     if (loc == "none" & field != "all") {
@@ -115,7 +115,7 @@ errorTable <-
 #'  \itemize{
 #'  \item If loc = "none", field must be "all". Otherwise, choose one of:
 #'  \itemize{
-#'  \item `r REF_ALL_FIELDS`}
+#'  \item `r REF_FIELDS_ALL`}
 #'  \item "all" - all fields
 #'  \item "none" - table will not include field in its output
 #'  }
@@ -207,7 +207,7 @@ errorTableSummary <-
 #'   \code{\link{proof}}
 #' @param field Field that should be pulled. Acceptable values include:
 #' \itemize{
-#' \item `r REF_ALL_FIELDS`}
+#' \item `r REF_FIELDS_ALL`}
 #' @param unique If FALSE, returns all error values; if TRUE (default), only
 #'   returns unique values.
 #'
@@ -222,10 +222,10 @@ pullErrors <-
     failTF(unique)
 
     assert_that(
-      field %in% REF_ALL_FIELDS,
+      field %in% REF_FIELDS_ALL,
       msg =
         paste0(
-          "`field` not one of acceptable field names: ", REF_ALL_FIELDS, ".")
+          "`field` not one of acceptable field names: ", REF_FIELDS_ALL, ".")
     )
 
     pulled_error <-

@@ -25,13 +25,13 @@ test_that("filter out any record with all-NA or all-0 bag values", {
     bind_rows(
       DF_TEST_TINI_READ |>
         filter(record_key == "record_1") |>
-        mutate(across(contains(REF_BAG_FIELDS), \(x) "0")),
+        mutate(across(contains(REF_FIELDS_BAG), \(x) "0")),
       DF_TEST_TINI_READ |>
         filter(record_key == "record_2") |>
-        mutate(across(contains(REF_BAG_FIELDS), \(x) "1")),
+        mutate(across(contains(REF_FIELDS_BAG), \(x) "1")),
       DF_TEST_TINI_READ |>
         filter(record_key == "record_3") |>
-        mutate(across(contains(REF_BAG_FIELDS), \(x) NA)))
+        mutate(across(contains(REF_FIELDS_BAG), \(x) NA)))
 
   suppressMessages(test_clean <- clean(test_data))
 

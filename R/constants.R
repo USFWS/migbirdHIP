@@ -20,24 +20,24 @@ REF_STATES_SD_ONLY <- "ME"
 
 # Vector of Harvest Information Program species/species group fields containing
 # bag values
-REF_BAG_FIELDS <-
+REF_FIELDS_BAG <-
   c("ducks_bag", "geese_bag", "dove_bag", "woodcock_bag", "coots_snipe",
     "rails_gallinules", "cranes", "band_tailed_pigeon", "brant", "seaducks")
 
-REF_STRATA_NAMES <-
-  c("S_ducks", "S_geese", "S_doves", "S_woodcock", "S_coot_snipe",
-    "S_rail_gallinule", "S_cranes", "S_bt_pigeons", "S_brant", "S_seaducks")
-
 # Vector of fields that are used to deduplicate hunters
-REF_HUNTER_ID_FIELDS <-
+REF_FIELDS_HUNTER_ID <-
   c("firstname", "lastname", "state", "birth_date", "dl_state",
     "registration_yr")
 
 # All HIP field names in order
-REF_ALL_FIELDS <-
+REF_FIELDS_ALL <-
   c("title", "firstname", "middle", "lastname", "suffix", "address", "city",
     "state", "zip", "birth_date", "issue_date", "hunt_mig_birds",
-    REF_BAG_FIELDS, "registration_yr", "email")
+    REF_FIELDS_BAG, "registration_yr", "email")
+
+REF_STRATA_NAMES <-
+  c("S_ducks", "S_geese", "S_doves", "S_woodcock", "S_coot_snipe",
+    "S_rail_gallinule", "S_cranes", "S_bt_pigeons", "S_brant", "S_seaducks")
 
 # US District and Territory abbreviations:
 # District of Columbia, American Samoa, Guam, Northern Mariana Islands,

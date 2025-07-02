@@ -5,7 +5,7 @@
 -   Changed contents of `R/sysdata.rda`
     -   Fewer objects are now stored in `sysdata.rda` (reduced from 14 to 4). This enhances transparency and reduces the number of objects that must be generated outside of the R package itself.
     -   Eight objects were moved to `constants.R`:
-        -   `ref_bagfields`, `abbr_usa`, `abbr_canada`, `pmt_inline`, `pmt_files`, `states_twoseason`, `states_sdbr`, and `states_seaducks` were moved and renamed `REF_BAG_FIELDS`, `REF_ABBR_USA`, `REF_ABBR_CANADA`, `REF_PMT_INLINE`, `REF_PMT_FILES`, `REF_STATES_SD_BR`, and `REF_STATES_SD_ONLY`, respectively.
+        -   `ref_bagfields`, `abbr_usa`, `abbr_canada`, `pmt_inline`, `pmt_files`, `states_twoseason`, `states_sdbr`, and `states_seaducks` were moved and renamed `REF_FIELDS_BAG`, `REF_ABBR_USA`, `REF_ABBR_CANADA`, `REF_PMT_INLINE`, `REF_PMT_FILES`, `REF_STATES_SD_BR`, and `REF_STATES_SD_ONLY`, respectively.
     -   Three objects were dropped entirely. `MS_firstday` and `MS_lastday` are no longer needed by `issueCheck()`, and `states_twoseason` is only used by the download report, so the code to generate that vector was moved to the download report template.
     -   Four internal data objects were renamed: `REF_BAGS` (previously `hip_bags_ref`), `REF_DATES` (previously `licenses_ref`), `REF_ZIP_CODE` (previously `zip_code_ref`), and `SF_HEXMAP` (previously `hexmap`).
 -   Added test data

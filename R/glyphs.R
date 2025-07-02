@@ -16,7 +16,7 @@
 #' @param field Field that should be checked for non-UTF-8 characters. One of
 #'   the fields from the following list may be supplied:
 #' \itemize{
-#' \item `r REF_ALL_FIELDS`}
+#' \item `r REF_FIELDS_ALL`}
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}

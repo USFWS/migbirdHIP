@@ -145,12 +145,12 @@ write_hip <-
     # Generate a list of translated bags for each species/species group
     bag_translations <-
       map(
-        seq_along(REF_BAG_FIELDS),
+        seq_along(REF_FIELDS_BAG),
         \(x) {
           REF_BAGS |>
-            filter(.data$spp == REF_BAG_FIELDS[x]) |>
+            filter(.data$spp == REF_FIELDS_BAG[x]) |>
             mutate(
-              !!sym(REF_BAG_FIELDS[x]) := as.character(.data$stateBagValue)) |>
+              !!sym(REF_FIELDS_BAG[x]) := as.character(.data$stateBagValue)) |>
             select(-c("stateBagValue", "spp")) |>
             rename(
               dl_state = .data$state,
@@ -159,26 +159,26 @@ write_hip <-
       )
 
     # Left join all the bag translations to the corrected data
-    for (i in seq_along(REF_BAG_FIELDS)) {
+    for (i in seq_along(REF_FIELDS_BAG)) {
       corrected_data <-
         corrected_data |>
         left_join(
           bag_translations[[i]],
-          by = c("dl_state", REF_BAG_FIELDS[i])
+          by = c("dl_state", REF_FIELDS_BAG[i])
         )
     }
 
     # Generate a list of zeros for each no-season state/species
     zero_translations <-
       map(
-        seq_along(REF_BAG_FIELDS),
+        seq_along(REF_FIELDS_BAG),
         \(x) {
           REF_BAGS |>
             select(-"stateBagValue") |>
             group_by(.data$state, .data$spp) |>
             filter(n() == 1) |>
             ungroup() |>
-            filter(.data$spp == REF_BAG_FIELDS[x]) |>
+            filter(.data$spp == REF_FIELDS_BAG[x]) |>
             mutate(!!sym(REF_STRATA_NAMES[x]) := NA) |>
             select(-"spp") |>
             rename(
@@ -188,7 +188,7 @@ write_hip <-
       )
 
     # If a season doesn't exist, make sure the translation is 0 (not NA)
-    for (i in seq_along(REF_BAG_FIELDS)) {
+    for (i in seq_along(REF_FIELDS_BAG)) {
       if (nrow(zero_translations[[i]]) > 0) {
         corrected_data <-
           corrected_data |>

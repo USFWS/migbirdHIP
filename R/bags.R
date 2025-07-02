@@ -75,7 +75,7 @@ bagCheck <-
     # the REF_BAGS?
     bad_bag_values <-
       deduplicated_data |>
-      select(c("dl_state", all_of(REF_BAG_FIELDS))) |>
+      select(c("dl_state", all_of(REF_FIELDS_BAG))) |>
       group_by(.data$dl_state) |>
       pivot_longer(
         cols = !contains("dl"),
