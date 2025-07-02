@@ -44,7 +44,7 @@ library(sf) # Required to render map, otherwise get errors from indirect call
 # - kableExtra (in DESCRIPTION list of Suggests)
 # - lubridate (in DESCRIPTION list of Imports)
 # - datasets (base R)
-# - migbirdHIP 
+# - migbirdHIP
 # - purrr (in DESCRIPTION list of Imports)
 # - quarto (in DESCRIPTION list of Imports)
 # - sf (in DESCRIPTION list of Suggests)
@@ -59,18 +59,18 @@ library(sf) # Required to render map, otherwise get errors from indirect call
 message_log <- list()
 
 catch_messages <-
-  function(fun) { 
+  function(fun) {
     withCallingHandlers(
       fun,
-      message = 
+      message =
         function(m) {
           message_log[length(message_log) + 1] <<- m[1]
         }
     )
   }
 
-dl_data <- 
-  catch_messages(migbirdHIP::read_hip(params$raw_path)) |> 
+dl_data <-
+  catch_messages(migbirdHIP::read_hip(params$raw_path)) |>
   dplyr::mutate(dl_cycle = params$dl)
 ```
 
@@ -78,7 +78,7 @@ dl_data <-
 #| include: false
 
 # Record check
-record_check <- 
+record_check <-
   dl_data |>
   # Filter out records if firstname, lastname, state, birth date, OR address AND
   # email, OR city, zip AND email are missing -- records discarded because these
@@ -92,7 +92,7 @@ record_check <-
 
 # Standardize birth date format
 fixed_dates_data <-
-  dl_data |> 
+  dl_data |>
   dplyr::mutate(
     birth_date2 =
       ifelse(
@@ -106,16 +106,17 @@ fixed_dates_data <-
           stringr::str_sub(birth_date2, 1, 3),
           "0",
           stringr::str_sub(birth_date2, 4, 9)),
-        birth_date2)) |> 
+        birth_date2)) |>
   dplyr::select(-c("birth_date", "birth_date2")) |>
   dplyr::rename(birth_date = birth_date3) |>
-  dplyr::relocate(birth_date, .before = "issue_date") 
+  dplyr::relocate(birth_date, .before = "issue_date")
 
 cleaned_data <- catch_messages(migbirdHIP::clean(fixed_dates_data))
 
 fixed_dates_data <- NULL
 
-current_data <- catch_messages(migbirdHIP::issueCheck(cleaned_data, params$year))
+current_data <-
+  catch_messages(migbirdHIP::issueCheck(cleaned_data, params$year))
 
 fixed_data <- catch_messages(migbirdHIP::duplicateFix(current_data))
 
@@ -123,15 +124,16 @@ proofed_data <- migbirdHIP::proof(fixed_data, year = params$year)
 
 fixed_data <- NULL
 
-# Read in the completed download data (for better/more accurate figures and tables)
+# Read in the completed download data (for better/more accurate figures and
+# tables)
 final_data <-
   purrr::map_df(
     seq_along(list.files(params$temp_path)),
     ~data.table::fread(
       paste0(params$temp_path, list.files(params$temp_path)[.x]),
       colClasses = rep("character", 38),
-      na.strings = "") |> 
-      dplyr::select(1:28) |> 
+      na.strings = "") |>
+      dplyr::select(1:28) |>
       dplyr::rename(
         zip = postal_code,
         ducks_bag = Q_ducks,
@@ -144,8 +146,8 @@ final_data <-
         band_tailed_pigeon = Q_bt_pigeons,
         brant = Q_brant,
         seaducks = Q_seaducks,
-        dl_cycle = dl)) |> 
-  migbirdHIP::proof(year = params$year) |> 
+        dl_cycle = dl)) |>
+  migbirdHIP::proof(year = params$year) |>
   dplyr::mutate(
     # Add the download date as a column
     dl_date =
@@ -163,25 +165,29 @@ bit <-
   issue_assignments |>
   dplyr::select(dl_state, source_file, issue_date, registration_yr, decision) |>
   dplyr::mutate(
-    type = 
+    type =
       dplyr::case_when(
-        # Issue date is before the first day of the hunting season 
-        decision == "past" ~ 
-          "issue date before the first day of issuance (past records filtered out)",
+        # Issue date is before the first day of the hunting season
+        decision == "past" ~
+          paste0(
+            "issue date before the first day of issuance (past records",
+            " filtered out)"),
         # Issue date is after issue_end (and is not 2 season state)
-        decision == "future" ~ 
-          "issue date after end of issue window (future records to be sampled next season)",
+        decision == "future" ~
+          paste0(
+            "issue date after end of issue window (future records to be ",
+            "sampled next season)"),
         TRUE ~ NA_character_
       )
-  ) |> 
-  dplyr::filter(!is.na(type)) |> 
+  ) |>
+  dplyr::filter(!is.na(type)) |>
   dplyr::mutate(message = paste("Records with", type, sep = " ")) |>
-  dplyr::count(dl_state, message) |> 
-  dplyr::arrange(dplyr::desc(n)) |> 
+  dplyr::count(dl_state, message) |>
+  dplyr::arrange(dplyr::desc(n)) |>
   dplyr::mutate(n = format.default(n, big.mark = ","))
 
 split_bit <- split(bit, bit$message)
-  
+
 bit <- NULL
 
 ```
@@ -192,101 +198,105 @@ bit <- NULL
 
 # Summarize number of records from Canada
 canada_records <-
-  final_data |> 
-  dplyr::select(state) |> 
-  dplyr::filter(state %in% migbirdHIP:::REF_ABBR_CANADA) |> 
+  final_data |>
+  dplyr::select(state) |>
+  dplyr::filter(state %in% migbirdHIP:::REF_ABBR_CANADA) |>
   nrow()
 
 # Missing emails
 emails_missing <-
-  final_data |> 
-  dplyr::select(source_file, dl_state, email, errors) |> 
+  final_data |>
+  dplyr::select(source_file, dl_state, email, errors) |>
   dplyr::mutate(
     errors = ifelse(is.na(errors), "na", errors),
-    Category = 
+    Category =
       dplyr::case_when(
         !is.na(email) & !stringr::str_detect(errors, "email") ~ "Good",
         !is.na(email) & stringr::str_detect(errors, "email") ~ "Incorrect",
         is.na(email) ~ "Missing",
-        TRUE ~ NA_character_)) 
+        TRUE ~ NA_character_))
 
-# >90% email missing/incorrect 
+# >90% email missing/incorrect
 emails_missing_flagged <-
-  emails_missing |> 
-  dplyr::select(-c("email", "errors")) |> 
-  dplyr::group_by(source_file) |> 
-  dplyr::mutate(total = dplyr::n()) |> 
-  dplyr::ungroup() |> 
-  dplyr::filter(Category != "Good") |> 
-  dplyr::group_by(source_file) |> 
+  emails_missing |>
+  dplyr::select(-c("email", "errors")) |>
+  dplyr::group_by(source_file) |>
+  dplyr::mutate(total = dplyr::n()) |>
+  dplyr::ungroup() |>
+  dplyr::filter(Category != "Good") |>
+  dplyr::group_by(source_file) |>
   # Calculate proportion of file with missing or incorrect emails
   dplyr::mutate(
     count = dplyr::n(),
-    proportion = count/total) |> 
-  dplyr::ungroup() |> 
-  dplyr::select(-c("Category", "dl_state", "total")) |> 
-  dplyr::distinct() |> 
-  dplyr::filter(proportion >= 0.9) 
+    proportion = count / total) |>
+  dplyr::ungroup() |>
+  dplyr::select(-c("Category", "dl_state", "total")) |>
+  dplyr::distinct() |>
+  dplyr::filter(proportion >= 0.9)
 
 # Missing PII
-pii_summary <- 
-  record_check |> 
-  dplyr::group_by(source_file) |> 
-  dplyr::summarize(n = dplyr::n()) |> 
-  dplyr::ungroup() |> 
+pii_summary <-
+  record_check |>
+  dplyr::group_by(source_file) |>
+  dplyr::summarize(n = dplyr::n()) |>
+  dplyr::ungroup() |>
   dplyr::left_join(
-    dl_data |> 
-      dplyr::select(source_file) |> 
-      dplyr::group_by(source_file) |> 
-      dplyr::mutate(total_rows = dplyr::n()) |> 
+    dl_data |>
+      dplyr::select(source_file) |>
+      dplyr::group_by(source_file) |>
+      dplyr::mutate(total_rows = dplyr::n()) |>
       dplyr::ungroup(),
-    by = "source_file") |> 
-  dplyr::mutate(prop = round(n / total_rows, digits = 2)) |> 
-  dplyr::select(-total_rows) |> 
-  dplyr::distinct() |> 
-  dplyr::arrange(dplyr::desc(prop)) 
+    by = "source_file") |>
+  dplyr::mutate(prop = round(n / total_rows, digits = 2)) |>
+  dplyr::select(-total_rows) |>
+  dplyr::distinct() |>
+  dplyr::arrange(dplyr::desc(prop))
 
 # 100% missing PII
 pii2 <- pii_summary |> dplyr::filter(prop >= 0.1 | n >= 100)
 
 # Issue dates errors
 bad_issue <-
-  cleaned_data |> 
-  dplyr::group_by(source_file) |> 
-  dplyr::mutate(file_total = dplyr::n()) |> 
-  dplyr::ungroup() |> 
-  dplyr::select(source_file, dl_state, file_total, issue_date) |> 
+  cleaned_data |>
+  dplyr::group_by(source_file) |>
+  dplyr::mutate(file_total = dplyr::n()) |>
+  dplyr::ungroup() |>
+  dplyr::select(source_file, dl_state, file_total, issue_date) |>
   dplyr::filter(
     !stringr::str_detect(
-      issue_date, 
-      "(0[1-9]|1[0-2])\\/(0[1-9]|[12][0-9]|3[01])\\/(2023|2024|2025)")) |> 
-  dplyr::group_by(source_file, dl_state, file_total, issue_date) |> 
-  dplyr::count() |> 
-  dplyr::ungroup() |> 
+      issue_date,
+      "(0[1-9]|1[0-2])\\/(0[1-9]|[12][0-9]|3[01])\\/(2023|2024|2025)")) |>
+  dplyr::group_by(source_file, dl_state, file_total, issue_date) |>
+  dplyr::count() |>
+  dplyr::ungroup() |>
   dplyr::mutate(prop = paste0(round((n / file_total), 2) * 100, "%"))
 
 `%>%` <- tidyr::`%>%`
 
 # Captured messages
-important_statistics <- 
+important_statistics <-
   dplyr::bind_rows(
-    message_log |> 
-    unlist() |> 
-    dplyr::as_tibble() |> 
+    message_log |>
+    unlist() |>
+    dplyr::as_tibble() |>
     dplyr::filter(
       !stringr::str_detect(
-        value, 
-        "Current registrations with|are blank|ID fields|provided state|write-out|past records|0 future|issue_date in the|Mississippi|100% of emails|00/00/0000|2s converted|0 records need to be postponed|single digit|non-MS records")
-    ) |> 
+        value,
+        paste0(
+          "Current registrations with|are blank|ID fields|provided state|",
+          "write-out|past records|0 future|issue_date in the|Mississippi|",
+          "100% of emails|00/00/0000|2s converted|0 records need to be ",
+          "postponed|single digit|non-MS records")
+      )
+    ) |>
     dplyr::mutate(
-      value = 
+      value =
         stringr::str_remove(value, "^(Warning: |Error: |\\* )") %>%
         stringr::str_remove(., "\\\n$") %>%
         stringr::str_remove(., " They .+ registration_yr.") %>%
         paste0("* ", .)
       )
-  ) 
-    
+  )
 rm(`%>%`)
 
 # Blank files
@@ -294,10 +304,10 @@ blanks <-
   dplyr::tibble(
     filepath =
       list.files(
-        params$raw_path, 
-        recursive = F, 
-        pattern = "*\\.txt$", 
-        ignore.case = T, 
+        params$raw_path,
+        recursive = F,
+        pattern = "*\\.txt$",
+        ignore.case = T,
         full.names = TRUE)) |>
   # Don't process permit files
   dplyr::filter(!stringr::str_detect(filepath, "permit")) |>
@@ -307,51 +317,51 @@ blanks <-
       ifelse(
         file.size(filepath) == 0,
         "blank",
-        "")) |> 
-  dplyr::filter(check == "blank") |> 
+        "")) |>
+  dplyr::filter(check == "blank") |>
   dplyr::transmute(
-    files = 
+    files =
       stringr::str_extract(
         filepath, "[A-Z]{2}[0-9]{8}\\.(txt|TXT)"))
 
 # HuntY check table
 huntcheck <-
-  final_data |> 
-  dplyr::select(source_file, hunt_mig_birds) |> 
-  dplyr::group_by(source_file) |> 
-  dplyr::mutate(total = dplyr::n()) |> 
-  dplyr::ungroup() |> 
-  dplyr::group_by(source_file, total, hunt_mig_birds) |> 
-  dplyr::count() |> 
-  dplyr::ungroup() |> 
-  dplyr::filter(hunt_mig_birds != 2) |> 
-  dplyr::mutate(prop = round(n/total, 2)) |> 
+  final_data |>
+  dplyr::select(source_file, hunt_mig_birds) |>
+  dplyr::group_by(source_file) |>
+  dplyr::mutate(total = dplyr::n()) |>
+  dplyr::ungroup() |>
+  dplyr::group_by(source_file, total, hunt_mig_birds) |>
+  dplyr::count() |>
+  dplyr::ungroup() |>
+  dplyr::filter(hunt_mig_birds != 2) |>
+  dplyr::mutate(prop = round(n / total, 2)) |>
   dplyr::arrange(dplyr::desc(prop))
 
 # Bag check table
 bagcheck_tbl <- migbirdHIP::bagCheck(final_data)
 
-if(is.null(bagcheck_tbl)) {
+if (is.null(bagcheck_tbl)) {
   bagcheck_tbl_non0 <- NULL
 } else {
-  bagcheck_tbl_non0 <- 
-    bagcheck_tbl |> 
+  bagcheck_tbl_non0 <-
+    bagcheck_tbl |>
     # Filter out bad bags that make up ~0% of a file
-    dplyr::filter(prop != "0%") |> 
+    dplyr::filter(prop != "0%") |>
     # Filter out bad bags that are interchangeable for "no season" (e.g.
     # received a 0 instead of a 1, or a 1 instead of a 0)
     dplyr::filter(
-      !((bad_bag_value == 0 & expected_bag_value == 1) | 
+      !((bad_bag_value == 0 & expected_bag_value == 1) |
           (bad_bag_value == 1 & expected_bag_value == 0))
     )
 }
 
 # Vector of source files
-file_list <- 
+file_list <-
   list.files(
-    params$raw_path, 
-    recursive = F, 
-    pattern = "*\\.txt$", 
+    params$raw_path,
+    recursive = F,
+    pattern = "*\\.txt$",
     ignore.case = TRUE)
 
 # Duplicates for summary message
@@ -366,10 +376,13 @@ pmts <-
     other_sum =
       rowSums(dplyr::across(dplyr::matches("bag|coots|rails")), na.rm = T),
     special_sum =
-      rowSums(dplyr::across(dplyr::matches("cranes|band|brant|seaducks")), na.rm = T),
+      rowSums(dplyr::across(dplyr::matches("cranes|band|brant|seaducks")),
+              na.rm = T),
     record_type =
       ifelse(
-        other_sum == 0 & special_sum > 0 & dl_state %in% unique(migbirdHIP:::REF_PMT_INLINE$dl_state),
+        other_sum == 0 &
+          special_sum > 0 &
+          dl_state %in% unique(migbirdHIP:::REF_PMT_INLINE$dl_state),
         "PMT",
         NA)) |>
   dplyr::filter(record_type == "PMT") |>
@@ -379,9 +392,9 @@ duplicates <-
   cleaned_data |>
   # Filter out permits
   dplyr::filter(!record_key %in% pmts) |>
-  dplyr::group_by(source_file, dl_state) |> 
-  dplyr::mutate(filesize = dplyr::n()) |> 
-  dplyr::ungroup() |> 
+  dplyr::group_by(source_file, dl_state) |>
+  dplyr::mutate(filesize = dplyr::n()) |>
+  dplyr::ungroup() |>
   # Group by registrant information; first name, last name, state,
   # birthday, registration year, dl_state
   dplyr::group_by(
@@ -394,19 +407,19 @@ duplicates <-
   # Filter out non-duplicate records
   dplyr::filter(dplyr::n() > 1) |>
   dplyr::ungroup() |>
-  dplyr::group_by(dl_state, source_file, filesize) |> 
-  dplyr::count() |> 
-  dplyr::ungroup() |> 
-  dplyr::group_by(dl_state) |> 
+  dplyr::group_by(dl_state, source_file, filesize) |>
+  dplyr::count() |>
+  dplyr::ungroup() |>
+  dplyr::group_by(dl_state) |>
   dplyr::reframe(
     n_dupes = sum(n),
     n_files_with_dupes = dplyr::n(),
     total_records = sum(filesize),
     total_prop_dupes = n_dupes / total_records
-  ) |> 
-  dplyr::ungroup() |> 
+  ) |>
+  dplyr::ungroup() |>
   dplyr::mutate(
-    n_files_with_dupes = 
+    n_files_with_dupes =
       ifelse(
         n_files_with_dupes == 1,
         "in 1 file",
@@ -418,10 +431,11 @@ duplicates <-
         "< 1%",
         paste0(round(total_prop_dupes, 2) * 100, "%")
       )
-    ) |> 
+    ) |>
   dplyr::arrange(dplyr::desc(n_dupes))
 
-# States that have overlapping HIP issue windows are categorized as "2 season" states
+# States that have overlapping HIP issue windows are categorized as "2 season"
+# states
 states_twoseason <-
   migbirdHIP:::REF_DATES |>
   dplyr::filter(category == "2 season") |>
@@ -442,7 +456,7 @@ sumLines <-
   function(path) {
 
     # Add a final "/" if not included already
-    if(!str_detect(path, "\\/$")){
+    if (!str_detect(path, "\\/$")) {
       path <- paste0(path, "/")
     }
 
@@ -463,44 +477,44 @@ sumLines <-
   }
 
 
-bullets <- 
+bullets <-
   c(
     # Count of received lines of data, files, states
     paste0(
-      "* This cycle, ", 
+      "* This cycle, ",
       suppressWarnings(
         format.default(
           sum(migbirdHIP:::sumLines(params$raw_path)$num_lines),
           big.mark = ",")
-        ), 
-      " lines of data were submitted in ", 
-      format.default(length(file_list), big.mark = ","), 
+        ),
+      " lines of data were submitted in ",
+      format.default(length(file_list), big.mark = ","),
       " files from ",
       length(
         unique(
-          stringr::str_extract(file_list, "^[A-Z]{2}"))), 
+          stringr::str_extract(file_list, "^[A-Z]{2}"))),
       " states.")
     ,
     # Count of retained lines of data, files, states
     paste0(
-      "* We retained ", 
-      format.default(nrow(final_data), big.mark = ","), 
-      " unique records in the final data from ", 
+      "* We retained ",
+      format.default(nrow(final_data), big.mark = ","),
+      " unique records in the final data from ",
       format.default(length(unique(final_data$source_file)), big.mark = ","),
-      " files and ", 
-      length(unique(final_data$dl_state)), 
+      " files and ",
+      length(unique(final_data$dl_state)),
       " states.")
     ,
     # Captured message outputs from other functions
     purrr::map(
-      1:nrow(important_statistics),
+      seq_len(nrow(important_statistics)),
       ~dplyr::slice(important_statistics, .x) |> dplyr::pull())
-    , 
+    ,
     # Canada summary
-    if(canada_records > 0){
+    if (canada_records > 0) {
       paste0(
-        "* A total of ", 
-        format.default(canada_records, big.mark = ","), 
+        "* A total of ",
+        format.default(canada_records, big.mark = ","),
         " records were received from Canada.")
       }
   )
@@ -518,24 +532,24 @@ important_statistics <- NULL
 #| echo: false
 #| output: asis
 
-if(nrow(blanks) > 0) {
-  if(nrow(blanks) == 1) {
+if (nrow(blanks) > 0) {
+  if (nrow(blanks) == 1) {
     cat(
       paste0(
-      "❌", 
+      "❌",
       " One file is blank in the directory."))
-  } else if(nrow(blanks) > 1) {
+  } else if (nrow(blanks) > 1) {
     cat(
       paste0(
-      "❌", 
-      " ", nrow(blanks), 
+      "❌",
+      " ", nrow(blanks),
       " files are blank in the directory."))
   }
   cat("\n\n")
   writeLines(
     unlist(
       purrr::map(
-        1:nrow(blanks),
+        seq_len(nrow(blanks)),
         ~paste0("* ", blanks$files[.x]))
     )
   )
@@ -548,30 +562,29 @@ cat("\n\n")
 cat("### PII")
 cat("\n\n")
 
-if(nrow(pii2 |> dplyr::filter(prop >= 0.1 | n >= 100)) > 0) {
-  if(nrow(pii2) == 1) {
+if (nrow(pii2 |> dplyr::filter(prop >= 0.1 | n >= 100)) > 0) {
+  if (nrow(pii2) == 1) {
     cat(
       paste0(
-      "❌", 
+      "❌",
       " One file is missing PII in > 10% or 100+ records."))
-  } else if(nrow(pii2) > 1) {
+  } else if (nrow(pii2) > 1) {
     cat(
       paste0(
-      "❌", 
-      " ", nrow(pii2), 
-      " files are missing PII in > 10% or 100+ records."))
+      "❌",
+      " ", nrow(pii2), " files are missing PII in > 10% or 100+ records."))
   }
   cat("\n\n")
-  pii2 |> 
-    dplyr::mutate(prop = paste0(prop*100, "%")) |> 
+  pii2 |>
+    dplyr::mutate(prop = paste0(prop * 100, "%")) |>
     dplyr::rename(
       File = source_file,
       `Number of records` = n,
-      `Proportion of file` = prop) |> 
-    kableExtra::kbl() |> 
-    kableExtra::kable_styling(full_width = F) |> 
+      `Proportion of file` = prop) |>
+    kableExtra::kbl() |>
+    kableExtra::kable_styling(full_width = F) |>
     kableExtra::row_spec(
-      1:nrow(pii2), extra_css = "padding: 3px;")
+      seq_len(nrow(pii2)), extra_css = "padding: 3px;")
 } else {
   cat(paste0("✔️", " No files are missing PII in > 10% or 100+ records."))
 }
@@ -579,30 +592,30 @@ if(nrow(pii2 |> dplyr::filter(prop >= 0.1 | n >= 100)) > 0) {
 cat("\n\n")
 cat("### Emails")
 cat("\n\n")
-if(nrow(emails_missing_flagged) > 0) {
-  if(nrow(emails_missing_flagged) == 1) {
+if (nrow(emails_missing_flagged) > 0) {
+  if (nrow(emails_missing_flagged) == 1) {
     cat(
       paste0(
-      "❌", 
+      "❌",
       " One file is missing > 90% of emails."))
-  } else if(nrow(emails_missing_flagged) > 1) {
+  } else if (nrow(emails_missing_flagged) > 1) {
     cat(
       paste0(
-      "❌", 
-      " ", nrow(emails_missing_flagged), 
+      "❌",
+      " ", nrow(emails_missing_flagged),
       " files are missing > 90% of emails."))
   }
   cat("\n\n")
-  emails_missing_flagged |> 
-    dplyr::mutate(proportion = paste0(proportion*100, "%")) |> 
+  emails_missing_flagged |>
+    dplyr::mutate(proportion = paste0(proportion * 100, "%")) |>
     dplyr::rename(
       File = source_file,
       `Number of records` = count,
-      `Proportion of file` = proportion) |> 
-    kableExtra::kbl() |> 
-    kableExtra::kable_styling(full_width = F) |> 
+      `Proportion of file` = proportion) |>
+    kableExtra::kbl() |>
+    kableExtra::kable_styling(full_width = F) |>
     kableExtra::row_spec(
-      1:nrow(emails_missing_flagged), extra_css = "padding: 3px;")
+      seq_len(nrow(emails_missing_flagged)), extra_css = "padding: 3px;")
 } else {
   cat(paste0("✔️", " No files are missing > 90% of emails."))
 }
@@ -610,36 +623,36 @@ if(nrow(emails_missing_flagged) > 0) {
 cat("\n\n")
 cat("## HuntY")
 cat("\n\n")
-if(nrow(huntcheck) > 0) {
-  if(nrow(huntcheck) == 1) {
+if (nrow(huntcheck) > 0) {
+  if (nrow(huntcheck) == 1) {
     cat(
       paste0(
-        "❌", 
+        "❌",
         " ",
         huntcheck$source_file,
         " reported ",
-        paste0(huntcheck$prop*100, "%"),
-        " HuntY = ", 
+        paste0(huntcheck$prop * 100, "%"),
+        " HuntY = ",
         huntcheck$hunt_mig_birds, "."))
-  } else if(length(unique(huntcheck$source_file)) > 1) {
+  } else if (length(unique(huntcheck$source_file)) > 1) {
     cat(
       paste0(
-        "❌", 
-        " ", length(unique(huntcheck$source_file)), 
+        "❌",
+        " ", length(unique(huntcheck$source_file)),
         " files reported HuntY other than 2."))
   }
   cat("\n\n")
-  huntcheck |> 
-    dplyr::mutate(prop = paste0(prop*100, "%")) |> 
+  huntcheck |>
+    dplyr::mutate(prop = paste0(prop * 100, "%")) |>
     dplyr::select(
       File = source_file,
       HuntY = hunt_mig_birds,
       `Number of records` = n,
-      `Proportion of file` = prop) |> 
-    kableExtra::kbl() |> 
-    kableExtra::kable_styling(full_width = F) |> 
+      `Proportion of file` = prop) |>
+    kableExtra::kbl() |>
+    kableExtra::kable_styling(full_width = F) |>
     kableExtra::row_spec(
-      1:nrow(huntcheck), extra_css = "padding: 3px;")
+      seq_len(nrow(huntcheck)), extra_css = "padding: 3px;")
 } else {
   cat(paste0("✔️", " No values other than HuntY = 2 submitted."))
 }
@@ -660,31 +673,31 @@ if(nrow(huntcheck) > 0) {
 # nrow == 0:  bag abnormalities not a concern
 # nrow > 0:   bag abnormalities reported
 
-if (is.null(bagcheck_tbl_non0)) { 
+if (is.null(bagcheck_tbl_non0)) {
   cat(paste0("✔️", " All bag values are correct."))
-} else if(nrow(bagcheck_tbl_non0) == 0) {
+} else if (nrow(bagcheck_tbl_non0) == 0) {
   cat(paste0("❌", " Incorrect bag values detected (0% of file)."))
-} else if(nrow(bagcheck_tbl_non0) > 0) {
+} else if (nrow(bagcheck_tbl_non0) > 0) {
   cat(paste0("❌", " Incorrect bag values detected (> 0% of file)."))
   cat("\n\n")
-  
+
   kableExtra::kbl(
-    bagcheck_tbl_non0 |> 
+    bagcheck_tbl_non0 |>
       dplyr::mutate(
         nprop = as.numeric(stringr::str_extract(prop, "[0-9]{1,3}"))) |>
-      dplyr::arrange(dplyr::desc(nprop)) |> 
-      dplyr::select(-nprop) |> 
+      dplyr::arrange(dplyr::desc(nprop)) |>
+      dplyr::select(-nprop) |>
       dplyr::rename(
         `State` = dl_state,
         Species = spp,
         `Bag provided` = bad_bag_value,
         `Bag expected` = expected_bag_value,
         Count = n,
-        Proportion = prop)) |> 
-    kableExtra::kable_styling(full_width = T) |> 
+        Proportion = prop)) |>
+    kableExtra::kable_styling(full_width = T) |>
     kableExtra::row_spec(
-      1:nrow(bagcheck_tbl_non0), extra_css = "padding: 3px;")
-    
+      seq_len(nrow(bagcheck_tbl_non0)), extra_css = "padding: 3px;")
+
 }
 ```
 
@@ -695,51 +708,52 @@ if (is.null(bagcheck_tbl_non0)) {
 #| output: asis
 
 
-if (is.null(bagcheck_tbl_non0)) { 
+if (is.null(bagcheck_tbl_non0)) {
   cat(paste0("✔️", " All bag values are correct."))
-} else if(nrow(bagcheck_tbl_non0) == 0) {
+} else if (nrow(bagcheck_tbl_non0) == 0) {
   cat(paste0("❌", " Incorrect bag values detected (0% of file)."))
-} else if(nrow(bagcheck_tbl_non0) > 0) {
+} else if (nrow(bagcheck_tbl_non0) > 0) {
   cat(paste0("❌", " Incorrect bag values detected (> 0% of file)."))
   cat("\n\n")
-  
-  if(nrow(bagcheck_tbl_non0) == 1) {
+
+  if (nrow(bagcheck_tbl_non0) == 1) {
     cat(
       paste0(
-        "* ", bagcheck_tbl_non0$dl_state, " reported ", 
-        bagcheck_tbl_non0$bad_bag_value, " for ", 
-        bagcheck_tbl_non0$prop, " of ", 
-        bagcheck_tbl_non0$spp, 
+        "* ", bagcheck_tbl_non0$dl_state, " reported ",
+        bagcheck_tbl_non0$bad_bag_value, " for ",
+        bagcheck_tbl_non0$prop, " of ",
+        bagcheck_tbl_non0$spp,
         " (expected ", bagcheck_tbl_non0$expected_bag_value, ").")
     )
-  } else if(nrow(bagcheck_tbl_non0) > 1) {
-    bagcheck_split <- 
+  } else if (nrow(bagcheck_tbl_non0) > 1) {
+    bagcheck_split <-
       split(
-        bagcheck_tbl_non0 |> 
+        bagcheck_tbl_non0 |>
           dplyr::mutate(
-            value = 
+            value =
               ifelse(
-                prop == "100%", 
-                prop, 
-                paste0(prop, " (n = ", n, ")"))), 
+                prop == "100%",
+                prop,
+                paste0(prop, " (n = ", n, ")"))),
         bagcheck_tbl_non0$dl_state)
-    
+
     writeLines(
       unlist(
         purrr::map(
-          1:length(bagcheck_split),
+          seq_along(bagcheck_split),
           function(x) {
             list(
               paste0("* ", names(bagcheck_split[x])),
               purrr::map(
-                1:nrow(bagcheck_split[[x]]),
+                seq_len(nrow(bagcheck_split[[x]])),
                 function(y) {
                   paste0(
-                    "    + ",  
-                    bagcheck_split[[x]]$bad_bag_value[y], " for ", 
-                    bagcheck_split[[x]]$value[y], " of ", 
-                    bagcheck_split[[x]]$spp[y], 
-                    " (expected ", bagcheck_split[[x]]$expected_bag_value[y], ")")
+                    "    + ",
+                    bagcheck_split[[x]]$bad_bag_value[y], " for ",
+                    bagcheck_split[[x]]$value[y], " of ",
+                    bagcheck_split[[x]]$spp[y],
+                    " (expected ",
+                    bagcheck_split[[x]]$expected_bag_value[y], ")")
                 }
               )
             )
@@ -759,63 +773,62 @@ bagcheck_tbl_non0 <- NULL
 
 ```{r agenda_details_2}
 
-if(nrow(bad_issue) > 0) {
+if (nrow(bad_issue) > 0) {
   cat(paste0("❌", " Incorrectly formatted issue dates detected."))
   cat("\n\n")
-  if(nrow(bad_issue) == 1) {
-    if(bad_issue$n == 1) {
+  if (nrow(bad_issue) == 1) {
+    if (bad_issue$n == 1) {
       bad_issue_n <- c("1 record")
     } else if (bad_issue$n > 1) {
       bad_issue_n <- paste(bad_issue$n, "records", sep = " ")
     }
     cat(
       paste0(
-        "* ", bad_issue$source_file, 
-        " has ", bad_issue_n, 
+        "* ", bad_issue$source_file,
+        " has ", bad_issue_n,
         " with ",
         bad_issue$issue_date, ".")
     )
-  } else if(nrow(bad_issue) > 1) {
+  } else if (nrow(bad_issue) > 1) {
     writeLines(
       unlist(
         purrr::map(
-          1:nrow(bad_issue),
+          seq_len(nrow(bad_issue)),
             ~paste0(
-              "* ", bad_issue$source_file[.x], " has ", 
-              bad_issue$issue_date[.x], 
+              "* ", bad_issue$source_file[.x], " has ",
+              bad_issue$issue_date[.x],
               " for issue_date in ",
-              bad_issue$n[.x], " records (", 
+              bad_issue$n[.x], " records (",
               bad_issue$prop[.x], " of file).")
         )
       )
     )
   }
-} else { 
+} else {
   cat(paste0("✔️", " All issue dates formatted correctly."))
 }
 cat("\n\n")
 cat("## Registrations out of season")
 cat("\n\n")
-if(length(split_bit) > 0) {
+if (length(split_bit) > 0) {
   cat(
     paste0(
-      "❌", 
+      "❌",
       " Issue dates found that don't fit within a current season window."))
   cat("\n\n")
   writeLines(
   unlist(
     purrr::map(
-      1:length(split_bit),
+      seq_along(split_bit),
       function(x) {
         list(
           paste(
             "*", names(split_bit[x]), sep = " "),
           purrr::map(
-            1:nrow(split_bit[[x]]),
+            seq_len(nrow(split_bit[[x]])),
             function(y) {
               paste0(
-                "    + ", split_bit[[x]]$n[y], 
-                " from ", 
+                "    + ", split_bit[[x]]$n[y], " from ",
                 split_bit[[x]]$dl_state[y])
             }
           )
@@ -824,45 +837,46 @@ if(length(split_bit) > 0) {
     )
   )
 )
-} else { 
+} else {
   cat(paste0("✔️", " All issue dates fall in the current season windows."))
 }
 
 cat("\n\n")
 cat("## Duplicates")
 cat("\n\n")
-if(nrow(duplicates) > 0) { 
-  dupe_prop <- 
-    if(sum(duplicates$n_dupes)/nrow(cleaned_data) < 0.01) {
+if (nrow(duplicates) > 0) {
+  dupe_prop <-
+    if (sum(duplicates$n_dupes) / nrow(cleaned_data) < 0.01) {
       "< 1%"
     } else {
-      paste0(round(sum(duplicates$n_dupes)/nrow(cleaned_data), 3)*100, "%")
+      paste0(round(sum(duplicates$n_dupes) / nrow(cleaned_data), 3) * 100, "%")
     }
   cat(
     paste0(
       "❌",
-      " Out of ", format.default(nrow(cleaned_data), big.mark = ","), " records, ", 
-      format.default(sum(duplicates$n_dupes), big.mark = ","), " (", 
+      " Out of ", format.default(nrow(cleaned_data), big.mark = ","),
+      " records, ",
+      format.default(sum(duplicates$n_dupes), big.mark = ","), " (",
       dupe_prop, ") were duplicated.")
   )
   cat("\n\n")
   duplicates2 <- dplyr::filter(duplicates, n_dupes >= 100 | dupe_prop >= 3)
-  if(nrow(duplicates2) > 0) {
+  if (nrow(duplicates2) > 0) {
     writeLines(
       unlist(
         purrr::map(
-          1:nrow(duplicates2),
+          seq_len(nrow(duplicates2)),
           ~paste0(
-            "* ", duplicates2$dl_state[.x], " has ", 
-            duplicates2$n_dupes[.x], 
+            "* ", duplicates2$dl_state[.x], " has ",
+            duplicates2$n_dupes[.x],
             " duplicates ",
-            duplicates2$n_files_with_dupes[.x], " (", 
+            duplicates2$n_files_with_dupes[.x], " (",
             duplicates2$total_prop_dupes[.x], " of records).")
         )
       )
     )
   }
-} else { 
+} else {
   cat(paste0("✔️", " No duplicate records received."))
 }
 
@@ -890,25 +904,29 @@ States with more than 1% error before correction
 rfstate <-
   suppressMessages(
     migbirdHIP:::redFlags(
-      proofed_data, 
-      type = "state", 
-      threshold = 0.01) 
+      proofed_data,
+      type = "state",
+      threshold = 0.01)
   )
 
-if(!is.null(rfstate)) {
-  cat("Values in the table below are reported at the field level (14 fields per record).")
+if (!is.null(rfstate)) {
+  cat(
+    paste(
+      "Values in the table below are reported at the field level (14 fields ",
+      "per record).")
+  )
   kableExtra::kbl(
     rfstate |>
-    dplyr::mutate(proportion = paste0(round(proportion, 2)*100, "%")) |>
+    dplyr::mutate(proportion = paste0(round(proportion, 2) * 100, "%")) |>
     dplyr::select(
       State = dl_state,
       `Error count` = format.default(count_errors, big.mark = ","),
       `Correct count` = format.default(count_correct, big.mark = ","),
       Proportion = proportion)
     ) |>
-    kableExtra::kable_styling(full_width = F) |> 
+    kableExtra::kable_styling(full_width = F) |>
     kableExtra::row_spec(
-      1:nrow(rfstate), extra_css = "padding: 3px;")
+      seq_len(nrow(rfstate)), extra_css = "padding: 3px;")
 } else {
   cat("✔️ No states exceeded the error threshold!")
 }
@@ -924,16 +942,16 @@ Fields with more than 1% error before correction
 rffield <-
   suppressMessages(
     migbirdHIP:::redFlags(
-      proofed_data, 
-      type = "field", 
+      proofed_data,
+      type = "field",
       threshold = 0.01)
     )
 
-if(!is.null(rffield)) {
+if (!is.null(rffield)) {
   cat("Values in the table below are reported at the record level.")
   kableExtra::kbl(
-    rffield |> 
-      dplyr::mutate(proportion = paste0(round(proportion, 2)*100, "%")) |>
+    rffield |>
+      dplyr::mutate(proportion = paste0(round(proportion, 2) * 100, "%")) |>
       dplyr::select(
         Field = errors,
         `Error count` = format.default(count_errors, big.mark = ","),
@@ -941,9 +959,9 @@ if(!is.null(rffield)) {
         Proportion = proportion
       )
     ) |>
-    kableExtra::kable_styling(full_width = F) |> 
+    kableExtra::kable_styling(full_width = F) |>
     kableExtra::row_spec(
-      1:nrow(rffield), extra_css = "padding: 3px;")
+      seq_len(nrow(rffield)), extra_css = "padding: 3px;")
 } else {
   cat("✔️ No data fields exceeded the error threshold!")
 }
@@ -963,52 +981,52 @@ Files were received from the following yellow states. Hexagons shaded blue, oran
 #| echo: false
 #| fig-align: center
 
-files_received <- 
+files_received <-
     # Get all of the received files up to and including this download
     list.files(
-      stringr::str_remove(params$raw_path, "\\/D.+"), recursive = T) |> 
-    dplyr::as_tibble() |> 
-    tidyr::separate(value, into = c("dl", "file"), sep = "/", extra = "drop") |> 
-    tidyr::separate(file, into = c("state", "date"), sep = 2, extra = "drop") |> 
-    dplyr::select(-date) |> 
-    dplyr::distinct() |> 
-    dplyr::mutate(dl = stringr::str_remove(dl, "DL")) |> 
+      stringr::str_remove(params$raw_path, "\\/D.+"), recursive = T) |>
+    dplyr::as_tibble() |>
+    tidyr::separate(value, into = c("dl", "file"), sep = "/", extra = "drop") |>
+    tidyr::separate(file, into = c("state", "date"), sep = 2, extra = "drop") |>
+    dplyr::select(-date) |>
+    dplyr::distinct() |>
+    dplyr::mutate(dl = stringr::str_remove(dl, "DL")) |>
     # Keep only the download data information
-    dplyr::filter(stringr::str_detect(dl, "^[0-9]{4}$")) |> 
-    dplyr::mutate(dl = as.numeric(dl)) |> 
+    dplyr::filter(stringr::str_detect(dl, "^[0-9]{4}$")) |>
+    dplyr::mutate(dl = as.numeric(dl)) |>
     # Discard any downloads before 0800 and keep only actual states
-    dplyr::filter(dl >= 800 & state %in% migbirdHIP:::REF_ABBR_49_STATES) |> 
+    dplyr::filter(dl >= 800 & state %in% migbirdHIP:::REF_ABBR_49_STATES) |>
     # Filter out downloads that occur after this one
-    dplyr::filter(dl <= as.numeric(params$dl)) |> 
-    dplyr::group_by(dl) |> 
-    dplyr::mutate(ord = dplyr::cur_group_id()) |> 
-    dplyr::ungroup() |> 
-    dplyr::group_by(state) |> 
+    dplyr::filter(dl <= as.numeric(params$dl)) |>
+    dplyr::group_by(dl) |>
+    dplyr::mutate(ord = dplyr::cur_group_id()) |>
+    dplyr::ungroup() |>
+    dplyr::group_by(state) |>
     dplyr::mutate(most_recent_dl = max(dl)) |>
-    dplyr::ungroup() |> 
-    dplyr::filter(dl == most_recent_dl) |> 
+    dplyr::ungroup() |>
+    dplyr::filter(dl == most_recent_dl) |>
     dplyr::mutate(
-      lag = 
+      lag =
         ifelse(
           (max(ord) - ord) < 4,
           as.character(max(ord) - ord),
-          "4+")) |> 
-    dplyr::select(state, lag) |> 
+          "4+")) |>
+    dplyr::select(state, lag) |>
     # Add an ID for the hex map
     dplyr::left_join(
       dplyr::tibble(
         state = datasets::state.abb,
         id = datasets::state.name),
       by = "state"
-    ) |> 
+    ) |>
     dplyr::arrange(id)
 
-if(params$dl == "0800") {
+if (params$dl == "0800") {
   cat("Map not available for this report.")
 } else {
-  
+
   migbirdHIP:::SF_HEXMAP |>
-    dplyr::left_join(files_received, by = c("id", "state")) |> 
+    dplyr::left_join(files_received, by = c("id", "state")) |>
     ggplot2::ggplot() +
     ggplot2::geom_sf(
       ggplot2::aes(geometry = geometry, fill = lag),
@@ -1038,18 +1056,18 @@ The table below summarizes the total of number of records per download state in 
 #| echo: false
 
 DT::datatable(
-  final_data |> 
-    dplyr::select(dl_state) |> 
-    dplyr::group_by(dl_state) |> 
-    dplyr::count() |> 
+  final_data |>
+    dplyr::select(dl_state) |>
+    dplyr::group_by(dl_state) |>
+    dplyr::count() |>
     dplyr::ungroup() |>
-    dplyr::arrange(dplyr::desc(n)) |> 
+    dplyr::arrange(dplyr::desc(n)) |>
     dplyr::rename(
       State = dl_state,
       `Number of records` = n
     ),
     extensions = "Buttons",
-    options = 
+    options =
       list(
         dom = "Bfrtip",
         buttons = c("csv", "excel", "pdf"))
@@ -1062,29 +1080,34 @@ DT::datatable(
 ```{r exclusions_per_state}
 #| echo: false
 
-excluded <- 
-  files_received |> 
+excluded <-
+  files_received |>
   dplyr::left_join(
-    final_data |> 
-      dplyr::select(state = dl_state) |> 
-      dplyr::group_by(state) |> 
-      dplyr::count() |> 
+    final_data |>
+      dplyr::select(state = dl_state) |>
+      dplyr::group_by(state) |>
+      dplyr::count() |>
       dplyr::ungroup(),
-    by = "state") |> 
-  dplyr::mutate(none = ifelse(is.na(n) & lag == 0, "No records", NA)) |> 
-  dplyr::filter(none == "No records") |> 
-  dplyr::select(state) |> 
+    by = "state") |>
+  dplyr::mutate(none = ifelse(is.na(n) & lag == 0, "No records", NA)) |>
+  dplyr::filter(none == "No records") |>
+  dplyr::select(state) |>
   dplyr::pull()
-  
-if(length(excluded) > 0) {
+
+if (length(excluded) > 0) {
   cat(
     paste0(
       "❌",
-      " These states submitted files for this download, but no records were used: ",
+      " These states submitted files for this download, but no records were",
+      " used: ",
     paste0(excluded, collapse = ", ")))
-  
+
   } else {
-    cat("✔️ All download states that submitted files are included in the final data!")
+    cat(
+      paste(
+        "✔️ All download states that submitted files are included in the final",
+        " data!")
+    )
 }
 
 files_received <- NULL
@@ -1099,13 +1122,15 @@ excluded <- NULL
 #| echo: false
 #| fig.align: center
 
-if(nrow(record_check) > 0){
+if (nrow(record_check) > 0) {
   cat(
     paste0(
-      "The following records are missing first name, last name, date of birth, address AND email, OR city AND zip AND email. They are not included in the final data."
+      "The following records are missing first name, last name, date of birth,",
+      " address AND email, OR city AND zip AND email. They are not included in",
+      " the final data."
     )
   )
-  
+
   missing_plot <-
     record_check |>
     dplyr::select(
@@ -1128,7 +1153,7 @@ if(nrow(record_check) > 0){
       legend.position = "none",
       axis.text.y = ggplot2::element_blank(),
       axis.ticks.y = ggplot2::element_blank())
-  
+
   print(missing_plot)
   } else {
     cat("✔️ No records detected with missing PII.")
@@ -1137,23 +1162,24 @@ if(nrow(record_check) > 0){
 
 ```{r pii_by_file}
 #| echo: false
-
-if(nrow(pii_summary) > 0) {
+if (nrow(pii_summary) > 0) {
   cat(
     paste0(
-      "❌", " There are ", nrow(record_check), " total records with missing PII. Below is a summary of the number of records missing from each HIP file."
+      "❌", " There are ", nrow(record_check),
+      " total records with missing PII. Below is a summary of the number of ",
+      "records missing from each HIP file."
       )
   )
   DT::datatable(
-    pii_summary |> 
+    pii_summary |>
       dplyr::mutate(
-        prop = paste0(round(prop, 2)*100, "%")) |> 
+        prop = paste0(round(prop, 2) * 100, "%")) |>
       dplyr::rename(
         `Source file` = source_file,
         `Number of records` = n,
         `Proportion` = prop)
     )
-} 
+}
 
 pii_summary <- NULL
 dl_data <- NULL
@@ -1168,22 +1194,22 @@ Emails missing or detected to be incorrect are shown below. Values are sourced f
 #| fig.align: center
 #| warning: false
 
-emails_missing |> 
-  dplyr::filter(Category != "Good") |> 
-  dplyr::select(-c("source_file", "email", "errors")) |> 
-  dplyr::group_by(dl_state) |> 
+emails_missing |>
+  dplyr::filter(Category != "Good") |>
+  dplyr::select(-c("source_file", "email", "errors")) |>
+  dplyr::group_by(dl_state) |>
   dplyr::mutate(
     total_rows = dplyr::n(),
-    total_proportion = dplyr::n()/nrow(final_data)) |> 
-  dplyr::ungroup() |> 
-  dplyr::group_by(dl_state, Category) |> 
-  dplyr::mutate(proportion = dplyr::n()/nrow(final_data)) |> 
-  dplyr::ungroup() |> 
-  dplyr::distinct() |> 
-  dplyr::group_by(dl_state) |> 
+    total_proportion = dplyr::n() / nrow(final_data)) |>
+  dplyr::ungroup() |>
+  dplyr::group_by(dl_state, Category) |>
+  dplyr::mutate(proportion = dplyr::n() / nrow(final_data)) |>
+  dplyr::ungroup() |>
+  dplyr::distinct() |>
+  dplyr::group_by(dl_state) |>
   # Create a label once per state (so that they are not overlaid on plot)
-  dplyr::mutate(label = ifelse(dplyr::row_number() == 1, total_rows, NA)) |> 
-  dplyr::ungroup() |> 
+  dplyr::mutate(label = ifelse(dplyr::row_number() == 1, total_rows, NA)) |>
+  dplyr::ungroup() |>
   # Plot
   ggplot2::ggplot() +
   ggplot2::geom_bar(
@@ -1207,11 +1233,11 @@ emails_missing |>
     expand = ggplot2::expansion(mult = c(-0, 0.3))) +
   ggplot2::theme_classic() +
   ggplot2::theme(
-    axis.text.x = 
+    axis.text.x =
       ggplot2::element_text(angle = 45, vjust = 1, hjust = 1)) +
   ggplot2::scale_fill_manual(
-    "Category", 
-    labels = c("Incorrect", "Missing"), 
+    "Category",
+    labels = c("Incorrect", "Missing"),
     values = c("#F8766D", "grey35"))
 
 ```
@@ -1225,10 +1251,10 @@ Files that submitted records with any value for `hunt_mig_birds` other than `2` 
 ```{r hunty_check}
 #| echo: false
 
-if(nrow(huntcheck) > 0) {
+if (nrow(huntcheck) > 0) {
   DT::datatable(
     huntcheck |>
-      dplyr::mutate(prop = paste0(prop*100, "%")) |> 
+      dplyr::mutate(prop = paste0(prop * 100, "%")) |>
       dplyr::select(
         File = source_file,
         HuntY = hunt_mig_birds,
@@ -1250,13 +1276,13 @@ Export the bag value issues table as a CSV, Excel, or PDF document by clicking a
 ```{r bagcheck}
 #| echo: false
 
-if(!is.null(bagcheck_tbl)) { 
+if (!is.null(bagcheck_tbl)) {
   DT::datatable(
-    bagcheck_tbl |> 
+    bagcheck_tbl |>
       dplyr::mutate(
         nprop = as.numeric(stringr::str_extract(prop, "[0-9]{1,3}"))) |>
-      dplyr::arrange(dplyr::desc(nprop)) |> 
-      dplyr::select(-nprop) |> 
+      dplyr::arrange(dplyr::desc(nprop)) |>
+      dplyr::select(-nprop) |>
       dplyr::rename(
         `State` = dl_state,
         Species = spp,
@@ -1266,7 +1292,7 @@ if(!is.null(bagcheck_tbl)) {
         Proportion = prop
       ),
     extensions = "Buttons",
-    options = 
+    options =
       list(
         dom = "Bfrtip",
         buttons = c("csv", "excel", "pdf"))
@@ -1288,9 +1314,9 @@ Records below do not have an issue date that is current.
 #| echo: false
 #| fig.align: center
 
-if(nrow(dplyr::filter(issue_assignments, decision != "nochange")) > 0){
+if (nrow(dplyr::filter(issue_assignments, decision != "nochange")) > 0) {
   migbirdHIP:::issuePlot(issue_assignments, params$year)
-}else{
+} else {
   cat("✔️ No bad data to plot.")
 }
 ```
@@ -1300,9 +1326,17 @@ if(nrow(dplyr::filter(issue_assignments, decision != "nochange")) > 0){
 #| message: false
 #| warning: false
 
-if(nrow(dplyr::filter(issue_assignments, decision != "nochange") |> dplyr::filter(!(dl_state %in% states_twoseason & decision == "copy"))) > 0){
+bad_issue_nrow <-
+  issue_assignments |>
+  dplyr::filter(decision != "nochange") |>
+  dplyr::filter(
+    !(dl_state %in% states_twoseason &
+        decision == "copy")) |>
+  nrow()
+
+if (bad_issue_nrow > 0) {
   stamp_format <- lubridate::stamp("Apr 15, 1993")
-  
+
   bad_issue_table <-
     issue_assignments |>
     dplyr::filter(decision != "current" & dl_state != "MS") |>
@@ -1310,11 +1344,11 @@ if(nrow(dplyr::filter(issue_assignments, decision != "nochange") |> dplyr::filte
     dplyr::left_join(
       migbirdHIP:::REF_DATES |>
         dplyr::select(
-          -c("hunting_season", "category")) |> 
+          -c("hunting_season", "category")) |>
         dplyr::rename(dl_state = state),
       by = "dl_state") |>
     dplyr::group_by(
-      dl_state, source_file, registration_yr, issue_start, issue_end) |> 
+      dl_state, source_file, registration_yr, issue_start, issue_end) |>
     dplyr::summarize(
       n = dplyr::n(),
       `Error window` =
@@ -1322,19 +1356,19 @@ if(nrow(dplyr::filter(issue_assignments, decision != "nochange") |> dplyr::filte
           min(stamp_format(lubridate::mdy(issue_date))),
           max(stamp_format(lubridate::mdy(issue_date))),
           sep = " to ")
-    )|> 
-    dplyr::ungroup() |> 
-    dplyr::relocate(n, .after = "source_file") |> 
+    ) |>
+    dplyr::ungroup() |>
+    dplyr::relocate(n, .after = "source_file") |>
     dplyr::mutate(
-      `Issue window` = 
-        paste(stamp_format(issue_start), 
-              stamp_format(issue_end), sep = " to ")) |> 
-    dplyr::select(-c("issue_start", "issue_end")) |> 
-    dplyr::relocate(`Error window`, .after = `Issue window`) |> 
+      `Issue window` =
+        paste(stamp_format(issue_start),
+              stamp_format(issue_end), sep = " to ")) |>
+    dplyr::select(-c("issue_start", "issue_end")) |>
+    dplyr::relocate(`Error window`, .after = `Issue window`) |>
     dplyr::relocate(n, .after = registration_yr)
-  
+
   DT::datatable(
-    bad_issue_table |> 
+    bad_issue_table |>
       dplyr::rename(
         State = dl_state,
         File = source_file,
@@ -1354,15 +1388,15 @@ Records below have an issue date and registration year indicating they should be
 ```{r future_records}
 #| echo: false
 
-if(nrow(dplyr::filter(issue_assignments, decision == "future")) > 0){
+if (nrow(dplyr::filter(issue_assignments, decision == "future")) > 0) {
   DT::datatable(
     suppressMessages(
-      issue_assignments |> 
+      issue_assignments |>
         dplyr::filter(decision == "future") |>
         dplyr::group_by(dl_state) |>
         dplyr::count() |>
         dplyr::ungroup() |>
-        dplyr::arrange(dplyr::desc(n)) |> 
+        dplyr::arrange(dplyr::desc(n)) |>
         dplyr::left_join(
           migbirdHIP:::REF_DATES |>
             dplyr::select(dl_state = state, last_day_migbird_hunting),
@@ -1386,10 +1420,10 @@ Records below have an issue date and registration year indicating they qualify f
 ```{r past_records}
 #| echo: false
 
-if(nrow(dplyr::filter(issue_assignments, decision == "past")) > 0){
+if (nrow(dplyr::filter(issue_assignments, decision == "past")) > 0) {
   DT::datatable(
     suppressMessages(
-      issue_assignments |> 
+      issue_assignments |>
         dplyr::filter(decision == "past") |>
         dplyr::group_by(dl_state, registration_yr) |>
         dplyr::count() |>
@@ -1428,11 +1462,11 @@ current_data <- NULL
 
 fixed_dupes <- migbirdHIP::duplicateFinder(proofed_data)
 
-if(!is.null(fixed_dupes)) {
+if (!is.null(fixed_dupes)) {
   migbirdHIP::duplicatePlot(proofed_data)
-  
+
   DT::datatable(fixed_dupes)
-} 
+}
 
 fixed_dupes <- NULL
 ```
@@ -1477,8 +1511,8 @@ x_order <-
   dplyr::mutate(
     total = nrow(proofed_data),
     proportion = count_errors / nrow(proofed_data)) |>
-  dplyr::arrange(proportion) |> 
-  dplyr::select(errors) |> 
+  dplyr::arrange(proportion) |>
+  dplyr::select(errors) |>
   dplyr::mutate(order = dplyr::row_number())
 
 table_1 <-
@@ -1491,7 +1525,7 @@ table_1 <-
   dplyr::select(errors = value) |>
   dplyr::filter(!is.na(errors))
 
-# Step 2: table of errors with proportions calculated 
+# Step 2: table of errors with proportions calculated
 table_2 <-
   table_1 |>
   dplyr::group_by(errors) |>
@@ -1517,19 +1551,19 @@ barlabels <-
 
 # Plot
 x_order |>
-  dplyr::left_join(table_2, by = "errors") |> 
+  dplyr::left_join(table_2, by = "errors") |>
   dplyr::mutate(
     proportion = ifelse(is.na(proportion), 0, proportion),
     total = ifelse(is.na(total), 0, total)) |>
-  dplyr::group_by(errors) |> 
+  dplyr::group_by(errors) |>
   dplyr::mutate(
     count_errors = sum(count_errors),
-    cumulative_prop = sum(proportion)) |> 
-  dplyr::ungroup() |> 
+    cumulative_prop = sum(proportion)) |>
+  dplyr::ungroup() |>
   ggplot2::ggplot() +
   ggplot2::geom_bar(
     ggplot2::aes(
-      x = stats::reorder(errors, order), 
+      x = stats::reorder(errors, order),
       y = proportion),
     stat = "identity") +
   ggplot2::geom_text(
@@ -1546,7 +1580,7 @@ x_order |>
     expand = ggplot2::expansion(mult = c(-0, 0.25))) +
   ggplot2::theme_classic() +
   ggplot2::theme(
-    axis.text.x = ggplot2::element_text(angle = 45, vjust = 1, hjust = 1)) 
+    axis.text.x = ggplot2::element_text(angle = 45, vjust = 1, hjust = 1))
 
 x_order <- NULL
 table_1 <- NULL
@@ -1560,7 +1594,7 @@ barlabels <- NULL
 ```{r errortable}
 #| include: false
 
-et <- 
+et <-
   migbirdHIP::errorTable(proofed_data, loc = "none") |>
   dplyr::arrange(dplyr::desc(error_count))
 ```
@@ -1575,26 +1609,28 @@ et <-
 ```{r errortable_field1}
 #| echo: false
 
-if(et$error[1] != "birth_date"){
-  err1 <- 
+if (et$error[1] != "birth_date") {
+  err1 <-
     migbirdHIP::pullErrors(
-      proofed_data, field = et$error[1], unique = FALSE) |> 
-    dplyr::as_tibble() |> 
+      proofed_data, field = et$error[1], unique = FALSE) |>
+    dplyr::as_tibble() |>
     dplyr::mutate(
-      value = stringi::stri_enc_toutf8(value, is_unknown_8bit = T, validate = T)) |>
-    dplyr::group_by(value) |> 
-    dplyr::summarize(count = dplyr::n()) |> 
-    dplyr::ungroup() |> 
+      value =
+        stringi::stri_enc_toutf8(
+          value, is_unknown_8bit = T, validate = T)) |>
+    dplyr::group_by(value) |>
+    dplyr::summarize(count = dplyr::n()) |>
+    dplyr::ungroup() |>
     dplyr::arrange(dplyr::desc(count))
-  }else{
-  err1 <- 
+  } else {
+  err1 <-
     migbirdHIP::pullErrors(
-      proofed_data, field = et$error[1], unique = FALSE) |> 
-    dplyr::as_tibble() |> 
-    dplyr::mutate(value = stringr::str_extract(value, ".{4}$")) |> 
-    dplyr::group_by(value) |> 
-    dplyr::summarize(count = dplyr::n()) |> 
-    dplyr::ungroup() |> 
+      proofed_data, field = et$error[1], unique = FALSE) |>
+    dplyr::as_tibble() |>
+    dplyr::mutate(value = stringr::str_extract(value, ".{4}$")) |>
+    dplyr::group_by(value) |>
+    dplyr::summarize(count = dplyr::n()) |>
+    dplyr::ungroup() |>
     dplyr::arrange(dplyr::desc(count))
 }
 
@@ -1606,27 +1642,27 @@ DT::datatable(err1)
 ```{r errortable_field2}
 #| echo: false
 
-if(et$error[2] != "birth_date"){
-  err2 <- 
+if (et$error[2] != "birth_date") {
+  err2 <-
     migbirdHIP::pullErrors(
-      proofed_data, field = et$error[2], unique = FALSE) |> 
-    dplyr::as_tibble() |> 
+      proofed_data, field = et$error[2], unique = FALSE) |>
+    dplyr::as_tibble() |>
     dplyr::mutate(
-      value = 
+      value =
         stringi::stri_enc_toutf8(value, is_unknown_8bit = T, validate = T)) |>
-    dplyr::group_by(value) |> 
-    dplyr::summarize(count = dplyr::n()) |> 
-    dplyr::ungroup() |> 
+    dplyr::group_by(value) |>
+    dplyr::summarize(count = dplyr::n()) |>
+    dplyr::ungroup() |>
     dplyr::arrange(dplyr::desc(count))
-  }else{
-  err2 <- 
+  } else {
+  err2 <-
     migbirdHIP::pullErrors(
-      proofed_data, field = et$error[2], unique = FALSE) |> 
-    dplyr::as_tibble() |> 
-    dplyr::mutate(value = stringr::str_extract(value, ".{4}$")) |> 
-    dplyr::group_by(value) |> 
-    dplyr::summarize(count = dplyr::n()) |> 
-    dplyr::ungroup() |> 
+      proofed_data, field = et$error[2], unique = FALSE) |>
+    dplyr::as_tibble() |>
+    dplyr::mutate(value = stringr::str_extract(value, ".{4}$")) |>
+    dplyr::group_by(value) |>
+    dplyr::summarize(count = dplyr::n()) |>
+    dplyr::ungroup() |>
     dplyr::arrange(dplyr::desc(count))
 }
 
@@ -1638,27 +1674,27 @@ DT::datatable(err2)
 ```{r errortable_field3}
 #| echo: false
 
-if(et$error[3] != "birth_date"){
-  err3 <- 
+if (et$error[3] != "birth_date") {
+  err3 <-
     migbirdHIP::pullErrors(
-      proofed_data, field = et$error[3], unique = FALSE) |> 
-    dplyr::as_tibble() |> 
+      proofed_data, field = et$error[3], unique = FALSE) |>
+    dplyr::as_tibble() |>
     dplyr::mutate(
-      value = 
+      value =
         stringi::stri_enc_toutf8(value, is_unknown_8bit = T, validate = T)) |>
-    dplyr::group_by(value) |> 
-    dplyr::summarize(count = dplyr::n()) |> 
-    dplyr::ungroup() |> 
+    dplyr::group_by(value) |>
+    dplyr::summarize(count = dplyr::n()) |>
+    dplyr::ungroup() |>
     dplyr::arrange(dplyr::desc(count))
-  }else{
-  err3 <- 
+  } else {
+  err3 <-
     migbirdHIP::pullErrors(
-      proofed_data, field = et$error[3], unique = FALSE) |> 
-    dplyr::as_tibble() |>  
-    dplyr::mutate(value = stringr::str_extract(value, ".{4}$")) |> 
-    dplyr::group_by(value) |> 
-    dplyr::summarize(count = dplyr::n()) |> 
-    dplyr::ungroup() |> 
+      proofed_data, field = et$error[3], unique = FALSE) |>
+    dplyr::as_tibble() |>
+    dplyr::mutate(value = stringr::str_extract(value, ".{4}$")) |>
+    dplyr::group_by(value) |>
+    dplyr::summarize(count = dplyr::n()) |>
+    dplyr::ungroup() |>
     dplyr::arrange(dplyr::desc(count))
 }
 
@@ -1672,36 +1708,37 @@ DT::datatable(err3)
 #| echo: false
 
 # Summarize number of bad zip codes
-zipcheck <- 
-  final_data |> 
-  dplyr::select(dl_state, state, zip) |> 
-  dplyr::filter(!state %in% migbirdHIP:::REF_ABBR_CANADA) |> 
+zipcheck <-
+  final_data |>
+  dplyr::select(dl_state, state, zip) |>
+  dplyr::filter(!state %in% migbirdHIP:::REF_ABBR_CANADA) |>
   dplyr::left_join(
     migbirdHIP:::REF_ZIP_CODE |>
       dplyr::select(zip = zipcode, zipState = state),
     by = "zip") |>
-  dplyr::filter(state != zipState) |> 
-  dplyr::group_by(dl_state, state, zip, zipState) |> 
-  dplyr::count() |> 
+  dplyr::filter(state != zipState) |>
+  dplyr::group_by(dl_state, state, zip, zipState) |>
+  dplyr::count() |>
   dplyr::ungroup() |>
-  dplyr::arrange(dplyr::desc(n)) |> 
+  dplyr::arrange(dplyr::desc(n)) |>
   dplyr::rename(
     `Download state` = dl_state,
     `Address state` = state,
     `Zip code` = zip,
     `Actual state` = zipState
-  ) 
-
-if(nrow(zipcheck) > 0){
-  cat("The following table shows records in the final data with zip codes that do not match the address state.")
-  
+  )
+if (nrow(zipcheck) > 0) {
+  cat(
+    paste(
+      "The following table shows records in the final data with zip codes that",
+      "do not match the address state.")
+  )
   DT::datatable(zipcheck)
-}else{
+} else {
   cat("✔️ No bad zip codes detected.")
 }
 
 zipcheck <- NULL
-  
 ```
 
 ## By state
@@ -1737,8 +1774,8 @@ migbirdHIP::errorPlotStates(final_data)
 #| echo: false
 
 DT::datatable(
-  migbirdHIP::errorTable(proofed_data, loc = "all") |> 
-    dplyr::arrange(dplyr::desc(error_count)) |> 
+  migbirdHIP::errorTable(proofed_data, loc = "all") |>
+    dplyr::arrange(dplyr::desc(error_count)) |>
     dplyr::rename(
       State = dl_state,
       Error = error,
@@ -1752,8 +1789,8 @@ DT::datatable(
 #| echo: false
 
 DT::datatable(
-  migbirdHIP::errorTable(final_data, loc = "all") |> 
-    dplyr::arrange(dplyr::desc(error_count)) |> 
+  migbirdHIP::errorTable(final_data, loc = "all") |>
+    dplyr::arrange(dplyr::desc(error_count)) |>
     dplyr::rename(
       State = dl_state,
       Error = error,
