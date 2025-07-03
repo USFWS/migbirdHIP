@@ -10,3 +10,5 @@
 ^data-raw$
 ^Thumbs.db$
 ^\.lintr$
+^doc$
+^Meta$
