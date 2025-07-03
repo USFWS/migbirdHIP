@@ -61,7 +61,7 @@ devtools::install_github("USFWS/migbirdHIP@v1.2.8", build_vignettes = T)
 ## Vignette
 
 ```r
-vignette(topic = "migbirdHIP_workflow", package = "migbirdHIP")
+vignette(topic = "migbirdHIP-workflow", package = "migbirdHIP")
 ```
 
 ## Function Flow
