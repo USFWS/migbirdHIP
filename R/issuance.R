@@ -11,6 +11,7 @@
 #' @importFrom dplyr arrange
 #' @importFrom dplyr desc
 #' @importFrom dplyr mutate
+#' @importFrom dplyr case_when
 #' @importFrom lubridate ymd
 #' @importFrom lubridate mdy
 #' @importFrom stringr str_detect
@@ -38,7 +39,16 @@ issueCheck <-
     }
 
     # Determine the destination of each record
-    issue_assignments <- issueAssign(clean_data, year)
+    issue_assignments <-
+      issueAssign(clean_data, year) |>
+      # Edit registration_yr: current year for current records, yr+1 for future
+      mutate(
+        registration_yr =
+          case_when(
+            .data$decision == "future" ~ as.character(year + 1),
+            .data$decision == "current" ~ as.character(year),
+            TRUE ~ .data$registration_yr)
+      )
 
     # Return message for future registration years being changed to the current
     # year for registrations with a current issue_date (e.g. current record with
@@ -158,7 +168,6 @@ issueCheck <-
 #' @importFrom lubridate interval
 #' @importFrom lubridate %within%
 #' @importFrom dplyr select
-#' @importFrom stringr str_detect
 #' @importFrom rlang .data
 #'
 #' @param clean_data The object created after cleaning data with
@@ -199,14 +208,7 @@ issueAssign <-
               # needs to be +1
               mdy(.data$issue_date) > .data$last_day_migbird_hunting ~ "future",
               TRUE ~ "bad issue dates"),
-            "MS"),
-        # Edit registration_yr: current year for current records, yr+1 for
-        # future
-        registration_yr =
-          ifelse(
-            .data$decision == "future",
-            as.character(year + 1),
-            as.character(year))
+            "MS")
       ) |>
       select(-c("hunting_season", "issue_start", "issue_end",
                 "last_day_migbird_hunting", "category"))
@@ -217,7 +219,6 @@ issueAssign <-
 #' The internal \code{issuePlot} function plots the output of
 #' \code{\link{issueAssign}}.
 #'
-#' @importFrom stringr str_detect
 #' @importFrom dplyr filter
 #' @importFrom dplyr select
 #' @importFrom dplyr left_join
