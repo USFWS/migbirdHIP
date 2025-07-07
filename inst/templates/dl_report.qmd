@@ -192,7 +192,7 @@ bit <- NULL
 
 ```
 
-```{r overview_statistics}
+```{r overview_statistics_canada}
 #| echo: false
 #| message: false
 
@@ -202,7 +202,11 @@ canada_records <-
   dplyr::select(state) |>
   dplyr::filter(state %in% migbirdHIP:::REF_ABBR_CANADA) |>
   nrow()
+```
 
+```{r overview_statistics_missingemails}
+#| echo: false
+#| message: false
 # Missing emails
 emails_missing <-
   final_data |>
@@ -233,6 +237,11 @@ emails_missing_flagged <-
   dplyr::select(-c("Category", "dl_state", "total")) |>
   dplyr::distinct() |>
   dplyr::filter(proportion >= 0.9)
+```
+
+```{r overview_statistics_missingpii}
+#| echo: false
+#| message: false
 
 # Missing PII
 pii_summary <-
@@ -254,6 +263,11 @@ pii_summary <-
 
 # 100% missing PII
 pii2 <- pii_summary |> dplyr::filter(prop >= 0.1 | n >= 100)
+```
+
+```{r overview_statistics_issuedate}
+#| echo: false
+#| message: false
 
 # Issue dates errors
 bad_issue <-
@@ -270,6 +284,11 @@ bad_issue <-
   dplyr::count() |>
   dplyr::ungroup() |>
   dplyr::mutate(prop = paste0(round((n / file_total), 2) * 100, "%"))
+```
+
+```{r overview_statistics_capturedmessages}
+#| echo: false
+#| message: false
 
 `%>%` <- tidyr::`%>%`
 
@@ -298,6 +317,11 @@ important_statistics <-
       )
   )
 rm(`%>%`)
+```
+
+```{r overview_statistics_blankfiles}
+#| echo: false
+#| message: false
 
 # Blank files
 blanks <-
@@ -323,6 +347,11 @@ blanks <-
     files =
       stringr::str_extract(
         filepath, "[A-Z]{2}[0-9]{8}\\.(txt|TXT)"))
+```
+
+```{r overview_statistics_hunty}
+#| echo: false
+#| message: false
 
 # HuntY check table
 huntcheck <-
@@ -337,6 +366,11 @@ huntcheck <-
   dplyr::filter(hunt_mig_birds != 2) |>
   dplyr::mutate(prop = round(n / total, 2)) |>
   dplyr::arrange(dplyr::desc(prop))
+```
+
+```{r overview_statistics_bagcheck}
+#| echo: false
+#| message: false
 
 # Bag check table
 bagcheck_tbl <- migbirdHIP::bagCheck(final_data)
@@ -347,7 +381,7 @@ if (is.null(bagcheck_tbl)) {
   bagcheck_tbl_non0 <-
     bagcheck_tbl |>
     # Filter out bad bags that make up ~0% of a file
-    dplyr::filter(prop != "0%") |>
+    dplyr::filter(proportion != "0%") |>
     # Filter out bad bags that are interchangeable for "no season" (e.g.
     # received a 0 instead of a 1, or a 1 instead of a 0)
     dplyr::filter(
@@ -355,6 +389,11 @@ if (is.null(bagcheck_tbl)) {
           (bad_bag_value == 1 & expected_bag_value == 0))
     )
 }
+```
+
+```{r overview_statistics_dupls}
+#| echo: false
+#| message: false
 
 # Vector of source files
 file_list <-
@@ -433,6 +472,11 @@ duplicates <-
       )
     ) |>
   dplyr::arrange(dplyr::desc(n_dupes))
+```
+
+```{r overview_statistics_2season}
+#| echo: false
+#| message: false
 
 # States that have overlapping HIP issue windows are categorized as "2 season"
 # states
