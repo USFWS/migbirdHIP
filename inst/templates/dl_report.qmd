@@ -500,7 +500,7 @@ sumLines <-
   function(path) {
 
     # Add a final "/" if not included already
-    if (!str_detect(path, "\\/$")) {
+    if (!stringr::str_detect(path, "\\/$")) {
       path <- paste0(path, "/")
     }
 
@@ -528,7 +528,7 @@ bullets <-
       "* This cycle, ",
       suppressWarnings(
         format.default(
-          sum(migbirdHIP:::sumLines(params$raw_path)$num_lines),
+          sum(sumLines(params$raw_path)$num_lines),
           big.mark = ",")
         ),
       " lines of data were submitted in ",
@@ -728,7 +728,7 @@ if (is.null(bagcheck_tbl_non0)) {
   kableExtra::kbl(
     bagcheck_tbl_non0 |>
       dplyr::mutate(
-        nprop = as.numeric(stringr::str_extract(prop, "[0-9]{1,3}"))) |>
+        nprop = as.numeric(stringr::str_extract(proportion, "[0-9]{1,3}"))) |>
       dplyr::arrange(dplyr::desc(nprop)) |>
       dplyr::select(-nprop) |>
       dplyr::rename(
@@ -737,7 +737,7 @@ if (is.null(bagcheck_tbl_non0)) {
         `Bag provided` = bad_bag_value,
         `Bag expected` = expected_bag_value,
         Count = n,
-        Proportion = prop)) |>
+        Proportion = proportion)) |>
     kableExtra::kable_styling(full_width = T) |>
     kableExtra::row_spec(
       seq_len(nrow(bagcheck_tbl_non0)), extra_css = "padding: 3px;")
@@ -765,7 +765,7 @@ if (is.null(bagcheck_tbl_non0)) {
       paste0(
         "* ", bagcheck_tbl_non0$dl_state, " reported ",
         bagcheck_tbl_non0$bad_bag_value, " for ",
-        bagcheck_tbl_non0$prop, " of ",
+        bagcheck_tbl_non0$proportion, " of ",
         bagcheck_tbl_non0$spp,
         " (expected ", bagcheck_tbl_non0$expected_bag_value, ").")
     )
@@ -776,9 +776,9 @@ if (is.null(bagcheck_tbl_non0)) {
           dplyr::mutate(
             value =
               ifelse(
-                prop == "100%",
-                prop,
-                paste0(prop, " (n = ", n, ")"))),
+                proportion == "100%",
+                proportion,
+                paste0(proportion, " (n = ", n, ")"))),
         bagcheck_tbl_non0$dl_state)
 
     writeLines(
@@ -816,6 +816,8 @@ bagcheck_tbl_non0 <- NULL
 ## Issue dates
 
 ```{r agenda_details_2}
+#| echo: false
+#| output: asis
 
 if (nrow(bad_issue) > 0) {
   cat(paste0("❌", " Incorrectly formatted issue dates detected."))
@@ -961,11 +963,15 @@ if (!is.null(rfstate)) {
   )
   kableExtra::kbl(
     rfstate |>
-    dplyr::mutate(proportion = paste0(round(proportion, 2) * 100, "%")) |>
+    dplyr::mutate(
+      proportion = paste0(round(proportion, 2) * 100, "%"),
+      `Error count` = format.default(count_errors, big.mark = ","),
+      `Correct count` = format.default(count_correct, big.mark = ",")
+      ) |>
     dplyr::select(
       State = dl_state,
-      `Error count` = format.default(count_errors, big.mark = ","),
-      `Correct count` = format.default(count_correct, big.mark = ","),
+      `Error count`,
+      `Correct count`,
       Proportion = proportion)
     ) |>
     kableExtra::kable_styling(full_width = F) |>
@@ -995,14 +1001,17 @@ if (!is.null(rffield)) {
   cat("Values in the table below are reported at the record level.")
   kableExtra::kbl(
     rffield |>
-      dplyr::mutate(proportion = paste0(round(proportion, 2) * 100, "%")) |>
+      dplyr::mutate(
+        proportion = paste0(round(proportion, 2) * 100, "%"),
+        `Error count` = format.default(count_errors, big.mark = ","),
+        `Correct count` = format.default(count_correct, big.mark = ",")
+      ) |>
       dplyr::select(
         Field = errors,
-        `Error count` = format.default(count_errors, big.mark = ","),
-        `Correct count` = format.default(count_correct, big.mark = ","),
-        Proportion = proportion
-      )
-    ) |>
+        `Error count`,
+        `Correct count`,
+        Proportion = proportion)
+    ) |> 
     kableExtra::kable_styling(full_width = F) |>
     kableExtra::row_spec(
       seq_len(nrow(rffield)), extra_css = "padding: 3px;")
@@ -1324,7 +1333,7 @@ if (!is.null(bagcheck_tbl)) {
   DT::datatable(
     bagcheck_tbl |>
       dplyr::mutate(
-        nprop = as.numeric(stringr::str_extract(prop, "[0-9]{1,3}"))) |>
+        nprop = as.numeric(stringr::str_extract(proportion, "[0-9]{1,3}"))) |>
       dplyr::arrange(dplyr::desc(nprop)) |>
       dplyr::select(-nprop) |>
       dplyr::rename(
@@ -1333,7 +1342,7 @@ if (!is.null(bagcheck_tbl)) {
         `Bag provided` = bad_bag_value,
         `Bag expected` = expected_bag_value,
         Count = n,
-        Proportion = prop
+        Proportion = proportion
       ),
     extensions = "Buttons",
     options =
@@ -1486,8 +1495,7 @@ issue_assignments <- NULL
 
 ## Duplicate records
 
-::: panel-tabset
-## Before duplicateFix (all 49 states)
+### Before duplicateFix (all 49 states)
 
 ```{r before_fixduplicates}
 #| fig.align: center
@@ -1497,24 +1505,6 @@ migbirdHIP::duplicatePlot(current_data)
 
 current_data <- NULL
 ```
-
-## After duplicateFix (all 49 states)
-
-```{r after_fixduplicates}
-#| echo: false
-#| fig.align: center
-
-fixed_dupes <- migbirdHIP::duplicateFinder(proofed_data)
-
-if (!is.null(fixed_dupes)) {
-  migbirdHIP::duplicatePlot(proofed_data)
-
-  DT::datatable(fixed_dupes)
-}
-
-fixed_dupes <- NULL
-```
-:::
 
 # Errors
 
@@ -1794,7 +1784,7 @@ zipcheck <- NULL
 #| echo: false
 #| fig.align: center
 
-migbirdHIP::errorPlotStates(proofed_data)
+migbirdHIP::errorPlotStates(proofed_data, threshold = 0)
 ```
 
 ### After correction
@@ -1803,7 +1793,7 @@ migbirdHIP::errorPlotStates(proofed_data)
 #| echo: false
 #| fig.align: center
 
-migbirdHIP::errorPlotStates(final_data)
+migbirdHIP::errorPlotStates(final_data, threshold = 0)
 
 ```
 :::
