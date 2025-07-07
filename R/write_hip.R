@@ -13,6 +13,7 @@
 #' @importFrom dplyr pull
 #' @importFrom dplyr group_by
 #' @importFrom dplyr ungroup
+#' @importFrom dplyr count
 #' @importFrom rlang sym
 #' @importFrom rlang :=
 #' @importFrom stringr str_detect
@@ -55,7 +56,16 @@ write_hip <-
     if (type == "HIP") {
       stopifnot(
         "Error: HIP files must contain record_type = HIP." =
-          unique(corrected_data$record_type) == "HIP")
+          "HIP" %in% unique(corrected_data$record_type))
+
+      hip_v_pmt <-
+        corrected_data |>
+        count(.data$record_type)
+
+      stopifnot(
+        "Error: More HIP records than PMT records expected." =
+          hip_v_pmt$n[hip_v_pmt$record_type == "HIP"] >
+            hip_v_pmt$n[hip_v_pmt$record_type == "PMT"])
     }
 
     if (type == "BT") {
@@ -215,18 +225,18 @@ write_hip <-
       select(-c("dl_date", "dl_key", "record_key", "errors")) |>
       # Rename columns to desired output
       rename(
-        dl = .data$dl_cycle,
-        postal_code = .data$zip,
-        Q_ducks = .data$ducks_bag,
-        Q_geese = .data$geese_bag,
-        Q_doves = .data$dove_bag,
-        Q_woodcock = .data$woodcock_bag,
-        Q_coot_snipe = .data$coots_snipe,
-        Q_rail_gallinule = .data$rails_gallinules,
-        Q_cranes = .data$cranes,
-        Q_bt_pigeons = .data$band_tailed_pigeon,
-        Q_brant = .data$brant,
-        Q_seaducks = .data$seaducks) |>
+        dl = "dl_cycle",
+        postal_code = "zip",
+        Q_ducks = "ducks_bag",
+        Q_geese = "geese_bag",
+        Q_doves = "dove_bag",
+        Q_woodcock = "woodcock_bag",
+        Q_coot_snipe = "coots_snipe",
+        Q_rail_gallinule = "rails_gallinules",
+        Q_cranes = "cranes",
+        Q_bt_pigeons = "band_tailed_pigeon",
+        Q_brant = "brant",
+        Q_seaducks = "seaducks") |>
       # Only include file names in the "source_file" field, not folder names.
       # The field theoretically shouldn't include DL folder names if the package
       # functions are run on a download-by-download basis, but this will tidy
