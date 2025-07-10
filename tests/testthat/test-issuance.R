@@ -61,6 +61,8 @@ test_that("issueAssign evaluates issue_date values correctly", {
   bad_date <-
     DF_TEST_MINI |>
     dplyr::slice_head(n = 4) |>
+    dplyr::select(
+      c("record_key", "issue_date", "registration_yr", "dl_state")) |>
     dplyr::mutate(
       dl_state =
         ifelse(record_key == "record_1", "MS", "CA"),
@@ -84,4 +86,164 @@ test_that("issueAssign evaluates issue_date values correctly", {
       )))
 
   expect_identical(answers, current$decision)
+})
+
+test_that("issueAssign evaluates 2-season states correctly", {
+
+  twoseason_data <-
+    # Past
+    dplyr::tibble(
+      issue_date = c("02/01/2023"),
+      registration_yr = as.numeric(REF_CURRENT_SEASON),
+      dl_state = REF_DATES$state[REF_DATES$category == "2 season"],
+      answer = "past") |>
+    # Current
+    dplyr::bind_rows(
+      dplyr::tibble(
+        issue_date = c("12/01/2024"),
+        registration_yr = as.numeric(REF_CURRENT_SEASON),
+        dl_state = REF_DATES$state[REF_DATES$category == "2 season"],
+        answer = "current")
+    ) |>
+    # Future
+    dplyr::bind_rows(
+      dplyr::tibble(
+        issue_date = c("03/11/2025"),
+        registration_yr = as.numeric(REF_CURRENT_SEASON) + 1,
+        dl_state = REF_DATES$state[REF_DATES$category == "2 season"],
+        answer = "future")
+    )
+
+  assigned <- issueAssign(twoseason_data, as.numeric(REF_CURRENT_SEASON))
+
+  expect_equal(assigned$answer, assigned$decision)
+})
+
+test_that("issueAssign evaluates 2-season states correctly for all dates", {
+
+  start <- "01/01/2023"
+  end <- "12/31/2026"
+  st <- "CT"
+
+  window_begin <- REF_DATES$issue_start[REF_DATES$state == st]
+  window_end <- REF_DATES$last_day_migbird_hunting[REF_DATES$state == st]
+
+  days_btwn_starts <- window_begin - lubridate::mdy(start)
+  days_btwn_ends <- lubridate::mdy(end) - window_end
+  days_in_window <- window_end - window_begin + 1
+
+  twoseason_data <-
+    dplyr::tibble(
+      yearmonthday =
+        as.character(
+          as.Date(
+            lubridate::mdy(start):lubridate::mdy(end))),
+      issue_date =
+        paste(
+          stringr::str_sub(yearmonthday, 6, 7),
+          stringr::str_sub(yearmonthday, 9, 10),
+          stringr::str_sub(yearmonthday, 1, 4),
+          sep = "/"),
+      registration_yr = as.numeric(REF_CURRENT_SEASON),
+      dl_state = st) |>
+    dplyr::select(-"yearmonthday")
+
+  assigned_count <-
+    issueAssign(twoseason_data, as.numeric(REF_CURRENT_SEASON)) |>
+    dplyr::count(decision)
+
+  expect_equal(
+    assigned_count$n[assigned_count$decision == "past"],
+    as.integer(days_btwn_starts)
+  )
+
+  expect_equal(
+    assigned_count$n[assigned_count$decision == "future"],
+    as.integer(days_btwn_ends)
+  )
+
+  expect_equal(
+    assigned_count$n[assigned_count$decision == "current"],
+    as.integer(days_in_window)
+  )
+})
+
+test_that("issueAssign evaluates 1-season states correctly", {
+
+  oneseason_data <-
+    # Past
+    dplyr::tibble(
+      issue_date = c("02/01/2023"),
+      registration_yr = as.numeric(REF_CURRENT_SEASON),
+      dl_state = REF_DATES$state[REF_DATES$category == "1 season"],
+      answer = "past") |>
+    # Current
+    dplyr::bind_rows(
+      dplyr::tibble(
+        issue_date = c("12/01/2024"),
+        registration_yr = as.numeric(REF_CURRENT_SEASON),
+        dl_state = REF_DATES$state[REF_DATES$category == "1 season"],
+        answer = "current")
+    ) |>
+    # Future
+    dplyr::bind_rows(
+      dplyr::tibble(
+        issue_date = c("03/11/2025"),
+        registration_yr = as.numeric(REF_CURRENT_SEASON) + 1,
+        dl_state = REF_DATES$state[REF_DATES$category == "1 season"],
+        answer = "future")
+    )
+
+  assigned <- issueAssign(twoseason_data, as.numeric(REF_CURRENT_SEASON))
+
+  expect_equal(assigned$answer, assigned$decision)
+})
+
+test_that("issueAssign evaluates 1-season states correctly for all dates", {
+
+  start <- "01/01/2023"
+  end <- "12/31/2026"
+  st <- "KY"
+
+  window_begin <- REF_DATES$issue_start[REF_DATES$state == st]
+  window_end <- REF_DATES$last_day_migbird_hunting[REF_DATES$state == st]
+
+  days_btwn_starts <- window_begin - lubridate::mdy(start)
+  days_btwn_ends <- lubridate::mdy(end) - window_end
+  days_in_window <- window_end - window_begin + 1
+
+  twoseason_data <-
+    dplyr::tibble(
+      yearmonthday =
+        as.character(
+          as.Date(
+            lubridate::mdy(start):lubridate::mdy(end))),
+      issue_date =
+        paste(
+          stringr::str_sub(yearmonthday, 6, 7),
+          stringr::str_sub(yearmonthday, 9, 10),
+          stringr::str_sub(yearmonthday, 1, 4),
+          sep = "/"),
+      registration_yr = as.numeric(REF_CURRENT_SEASON),
+      dl_state = st) |>
+    dplyr::select(-"yearmonthday")
+
+  assigned_count <-
+    issueAssign(twoseason_data, as.numeric(REF_CURRENT_SEASON)) |>
+    dplyr::count(decision)
+
+  expect_equal(
+    assigned_count$n[assigned_count$decision == "past"],
+    as.integer(days_btwn_starts)
+  )
+
+  expect_equal(
+    assigned_count$n[assigned_count$decision == "future"],
+    as.integer(days_btwn_ends)
+  )
+
+  expect_equal(
+    assigned_count$n[assigned_count$decision == "current"],
+    as.integer(days_in_window)
+  )
 })
