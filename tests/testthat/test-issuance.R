@@ -194,7 +194,7 @@ test_that("issueAssign evaluates 1-season states correctly", {
         answer = "future")
     )
 
-  assigned <- issueAssign(twoseason_data, as.numeric(REF_CURRENT_SEASON))
+  assigned <- issueAssign(oneseason_data, as.numeric(REF_CURRENT_SEASON))
 
   expect_equal(assigned$answer, assigned$decision)
 })
@@ -212,7 +212,7 @@ test_that("issueAssign evaluates 1-season states correctly for all dates", {
   days_btwn_ends <- lubridate::mdy(end) - window_end
   days_in_window <- window_end - window_begin + 1
 
-  twoseason_data <-
+  oneseason_data <-
     dplyr::tibble(
       yearmonthday =
         as.character(
@@ -229,7 +229,7 @@ test_that("issueAssign evaluates 1-season states correctly for all dates", {
     dplyr::select(-"yearmonthday")
 
   assigned_count <-
-    issueAssign(twoseason_data, as.numeric(REF_CURRENT_SEASON)) |>
+    issueAssign(oneseason_data, as.numeric(REF_CURRENT_SEASON)) |>
     dplyr::count(decision)
 
   expect_equal(
