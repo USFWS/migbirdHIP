@@ -26,6 +26,7 @@ Imports:
     utils (>= 4.4.0)
 Suggests:
     DT,
+    here (>= 1.0.1),
     kableExtra,
     knitr,
     rmarkdown,
