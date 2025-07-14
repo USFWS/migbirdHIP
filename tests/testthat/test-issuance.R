@@ -93,14 +93,14 @@ test_that("issueAssign evaluates 2-season states correctly", {
   twoseason_data <-
     # Past
     dplyr::tibble(
-      issue_date = c("02/01/2023"),
+      issue_date = paste0("02/01/", as.numeric(REF_CURRENT_SEASON) - 2),
       registration_yr = as.numeric(REF_CURRENT_SEASON),
       dl_state = REF_DATES$state[REF_DATES$category == "2 season"],
       answer = "past") |>
     # Current
     dplyr::bind_rows(
       dplyr::tibble(
-        issue_date = c("12/01/2024"),
+        issue_date = paste0("12/01/", REF_CURRENT_SEASON),
         registration_yr = as.numeric(REF_CURRENT_SEASON),
         dl_state = REF_DATES$state[REF_DATES$category == "2 season"],
         answer = "current")
@@ -108,7 +108,7 @@ test_that("issueAssign evaluates 2-season states correctly", {
     # Future
     dplyr::bind_rows(
       dplyr::tibble(
-        issue_date = c("03/11/2025"),
+        issue_date = paste0("03/11/", as.numeric(REF_CURRENT_SEASON) + 1),
         registration_yr = as.numeric(REF_CURRENT_SEASON) + 1,
         dl_state = REF_DATES$state[REF_DATES$category == "2 season"],
         answer = "future")
@@ -173,14 +173,14 @@ test_that("issueAssign evaluates 1-season states correctly", {
   oneseason_data <-
     # Past
     dplyr::tibble(
-      issue_date = c("02/01/2023"),
+      issue_date = paste0("02/01/", as.numeric(REF_CURRENT_SEASON) - 2),
       registration_yr = as.numeric(REF_CURRENT_SEASON),
       dl_state = REF_DATES$state[REF_DATES$category == "1 season"],
       answer = "past") |>
     # Current
     dplyr::bind_rows(
       dplyr::tibble(
-        issue_date = c("12/01/2024"),
+        issue_date = paste0("12/01/", REF_CURRENT_SEASON),
         registration_yr = as.numeric(REF_CURRENT_SEASON),
         dl_state = REF_DATES$state[REF_DATES$category == "1 season"],
         answer = "current")
@@ -188,7 +188,7 @@ test_that("issueAssign evaluates 1-season states correctly", {
     # Future
     dplyr::bind_rows(
       dplyr::tibble(
-        issue_date = c("03/11/2025"),
+        issue_date = paste0("03/11/", as.numeric(REF_CURRENT_SEASON) + 1),
         registration_yr = as.numeric(REF_CURRENT_SEASON) + 1,
         dl_state = REF_DATES$state[REF_DATES$category == "1 season"],
         answer = "future")
