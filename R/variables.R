@@ -1,7 +1,7 @@
 # Define variables that change with each hunting season
 
 # Current hunting season (the year when the season opens)
-REF_CURRENT_SEASON <- "2024"
+REF_CURRENT_SEASON <- "2025"
 
 # migbirdHIP package versions and their intended HIP season
 REF_RELEASES <-
