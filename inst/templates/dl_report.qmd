@@ -1375,7 +1375,7 @@ bad_issue_nrow <-
   issue_assignments |>
   dplyr::filter(decision != "nochange") |>
   dplyr::filter(
-    !(dl_state %in% REF_STATES_2SEASON &
+    !(dl_state %in% migbirdHIP:::REF_STATES_2SEASON &
         decision == "copy")) |>
   nrow()
 
@@ -1388,8 +1388,7 @@ if (bad_issue_nrow > 0) {
     dplyr::select(dl_state, source_file, issue_date, registration_yr) |>
     dplyr::left_join(
       migbirdHIP:::REF_DATES |>
-        dplyr::select(
-          -c("hunting_season", "category")) |>
+        dplyr::select(-"hunting_season") |>
         dplyr::rename(dl_state = state),
       by = "dl_state") |>
     dplyr::group_by(
