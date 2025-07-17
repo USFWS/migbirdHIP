@@ -559,9 +559,6 @@ issuePlot <-
           ),
           fill = "#FFFFFF", width = 0, size = 3, position = "identity") +
         geom_point(
-          aes(x = .data$last_day_migbird_hunting, y = .data$dl_state,
-              shape = "Last day of hunting")) +
-        geom_point(
           aes(x = .data$issue_start, y = .data$dl_state,
               shape = "Issue start")) +
         geom_point(
