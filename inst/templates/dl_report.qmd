@@ -281,9 +281,9 @@ bad_issue <-
       issue_date,
       paste0(
         "(0[1-9]|1[0-2])\\/(0[1-9]|[12][0-9]|3[01])\\/(",
-        as.numeric(REF_CURRENT_SEASON) - 1, "|",
-        REF_CURRENT_SEASON, "|",
-        as.numeric(REF_CURRENT_SEASON) + 1, ")"))
+        as.numeric(migbirdHIP:::REF_CURRENT_SEASON) - 1, "|",
+        migbirdHIP:::REF_CURRENT_SEASON, "|",
+        as.numeric(migbirdHIP:::REF_CURRENT_SEASON) + 1, ")"))
     )|>
   dplyr::group_by(source_file, dl_state, file_total, issue_date) |>
   dplyr::count() |>
