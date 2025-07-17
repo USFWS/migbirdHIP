@@ -11,9 +11,9 @@ test_that("filter out any record if any bag value is not a 1-digit number", {
       dplyr::mutate(
         ducks_bag =
           case_when(
-            record_key == "record_1" ~ "*",
-            record_key == "record_2" ~ "A",
-            record_key == "record_3" ~ "1",
+            record_key == .data$record_key[1] ~ "*",
+            record_key == .data$record_key[2] ~ "A",
+            record_key == .data$record_key[3] ~ "1",
             TRUE ~ ducks_bag)) |>
       clean())
 
@@ -24,13 +24,13 @@ test_that("filter out any record with all-NA or all-0 bag values", {
   test_data <-
     bind_rows(
       DF_TEST_TINI_READ |>
-        filter(record_key == "record_1") |>
+        filter(record_key == .data$record_key[1]) |>
         mutate(across(contains(REF_FIELDS_BAG), \(x) "0")),
       DF_TEST_TINI_READ |>
-        filter(record_key == "record_2") |>
+        filter(record_key == .data$record_key[2]) |>
         mutate(across(contains(REF_FIELDS_BAG), \(x) "1")),
       DF_TEST_TINI_READ |>
-        filter(record_key == "record_3") |>
+        filter(record_key == .data$record_key[3]) |>
         mutate(across(contains(REF_FIELDS_BAG), \(x) NA)))
 
   suppressMessages(test_clean <- clean(test_data))
@@ -46,10 +46,10 @@ test_that("filter out if firstname, lastname, state, or DOB missing", {
     DF_TEST_MINI |>
     dplyr::slice_head(n = 10) |>
     dplyr::mutate(
-      firstname = ifelse(record_key == "record_1", NA, firstname),
-      lastname = ifelse(record_key == "record_2", NA, lastname),
-      state = ifelse(record_key == "record_3", NA, state),
-      birth_date = ifelse(record_key == "record_4", NA, birth_date))
+      firstname = ifelse(record_key == .data$record_key[1], NA, firstname),
+      lastname = ifelse(record_key == .data$record_key[2], NA, lastname),
+      state = ifelse(record_key == .data$record_key[3], NA, state),
+      birth_date = ifelse(record_key == .data$record_key[4], NA, birth_date))
 
   suppressMessages(invisible(capture.output(test_clean <- clean(test_missing))))
 
@@ -60,8 +60,8 @@ test_that("filter out if email AND address are missing", {
   test_missing <-
     DF_TEST_TINI_READ |>
     dplyr::mutate(
-      email = ifelse(record_key == "record_1", NA, email),
-      address = ifelse(record_key == "record_1", NA, address))
+      email = ifelse(record_key == .data$record_key[1], NA, email),
+      address = ifelse(record_key == .data$record_key[1], NA, address))
 
   test_clean <- suppressMessages(clean(test_missing))
 
@@ -72,9 +72,9 @@ test_that("filter out if email AND city AND zip are missing", {
   test_missing <-
     DF_TEST_TINI_READ |>
     dplyr::mutate(
-      email = ifelse(record_key == "record_1", NA, email),
-      city = ifelse(record_key == "record_1", NA, city),
-      zip = ifelse(record_key == "record_1", NA, zip))
+      email = ifelse(record_key == .data$record_key[1], NA, email),
+      city = ifelse(record_key == .data$record_key[1], NA, city),
+      zip = ifelse(record_key == .data$record_key[1], NA, zip))
 
   test_clean <- suppressMessages(clean(test_missing))
 
@@ -117,17 +117,17 @@ test_that("filter out test records", {
     dplyr::mutate(
       firstname =
         dplyr::case_when(
-          record_key == "record_1" ~ "TEST",
-          record_key == "record_2" ~ "TEST",
-          record_key == "record_3" ~ "INAUDIBLE",
-          record_key == "record_4" ~ "BLANK",
-          record_key == "record_5" ~ "USER",
-          record_key == "record_6" ~ "RESIDENT",
+          record_key == .data$record_key[1] ~ "TEST",
+          record_key == .data$record_key[2] ~ "TEST",
+          record_key == .data$record_key[3] ~ "INAUDIBLE",
+          record_key == .data$record_key[4] ~ "BLANK",
+          record_key == .data$record_key[5] ~ "USER",
+          record_key == .data$record_key[6] ~ "RESIDENT",
           TRUE ~ firstname),
       lastname =
         dplyr::case_when(
-          record_key == "record_1" ~ "TEST",
-          record_key == "record_7" ~ "INAUDIBLE",
+          record_key == .data$record_key[1] ~ "TEST",
+          record_key == .data$record_key[7] ~ "INAUDIBLE",
           TRUE ~ lastname))
 
   suppressMessages(invisible(capture.output(test_clean <- clean(test_data))))
@@ -214,19 +214,25 @@ test_that("change crane permit file state crane bag values to 0", {
     dplyr::mutate(
       dl_state =
         dplyr::case_when(
-          record_key == "record_1" ~ "CO",
-          record_key == "record_2" ~ "KS",
-          record_key == "record_3" ~ "MN",
-          record_key == "record_4" ~ "MT",
-          record_key == "record_5" ~ "ND",
-          record_key == "record_6" ~ "NM",
-          record_key == "record_7" ~ "OK",
-          record_key == "record_8" ~ "TX",
-          record_key == "record_9" ~ "WY",
+          record_key == .data$record_key[1] ~ "CO",
+          record_key == .data$record_key[2] ~ "KS",
+          record_key == .data$record_key[3] ~ "MN",
+          record_key == .data$record_key[4] ~ "MT",
+          record_key == .data$record_key[5] ~ "ND",
+          record_key == .data$record_key[6] ~ "NM",
+          record_key == .data$record_key[7] ~ "OK",
+          record_key == .data$record_key[8] ~ "TX",
+          record_key == .data$record_key[9] ~ "WY",
           TRUE ~ "SD"),
       cranes = "2")
 
-  suppressMessages(invisible(capture.output(cleaned_data <- clean(test_data))))
+  suppressMessages(
+    invisible(
+      capture.output(
+        cleaned_data <- cranePermitBagFix(test_data)
+        )
+      )
+    )
 
   expect_equal(
     nrow(test_data) - 9,
@@ -243,14 +249,20 @@ test_that("change BTPI permit file state BTPI bag values to 0", {
     dplyr::mutate(
       dl_state =
         dplyr::case_when(
-          record_key == "record_1" ~ "CO",
-          record_key == "record_2" ~ "NM",
-          record_key == "record_3" ~ "UT",
-          record_key == "record_4" ~ "CA",
+          record_key == .data$record_key[1] ~ "CO",
+          record_key == .data$record_key[2] ~ "NM",
+          record_key == .data$record_key[3] ~ "UT",
+          record_key == .data$record_key[4] ~ "CA",
           TRUE ~ "AZ"),
       band_tailed_pigeon = "2")
 
-  suppressMessages(invisible(capture.output(cleaned_data <- clean(test_data))))
+  suppressMessages(
+    invisible(
+      capture.output(
+        cleaned_data <- btpiPermitBagFix(test_data)
+        )
+      )
+    )
 
   expect_equal(
     nrow(test_data) - 3,
