@@ -474,19 +474,6 @@ duplicates <-
   dplyr::arrange(dplyr::desc(n_dupes))
 ```
 
-```{r overview_statistics_2season}
-#| echo: false
-#| message: false
-
-# States that have overlapping HIP issue windows are categorized as "2 season"
-# states
-states_twoseason <-
-  migbirdHIP:::REF_DATES |>
-  dplyr::filter(category == "2 season") |>
-  dplyr::select(state) |>
-  dplyr::pull()
-```
-
 ::: panel-tabset
 # Agenda
 
@@ -1383,7 +1370,7 @@ bad_issue_nrow <-
   issue_assignments |>
   dplyr::filter(decision != "nochange") |>
   dplyr::filter(
-    !(dl_state %in% states_twoseason &
+    !(dl_state %in% REF_STATES_2SEASON &
         decision == "copy")) |>
   nrow()
 
