@@ -100,7 +100,7 @@ This function also converts lowercase state abbreviations to uppercase.
 The current hunting season year must be supplied to the `year` parameter to accurately convert dates.
 
 ```{r rename, eval = FALSE}
-fileRename(path = "C:/HIP/raw_data/DL0901", year = 2024)
+fileRename(path = "C:/HIP/raw_data/DL0901", year = 2025)
 ```
 
 ### fileCheck {#filecheck}
@@ -223,7 +223,7 @@ In addition to the changes listed above, the internal `zipCheck()` function retu
 The `issueCheck()` function assesses the validity of the `issue_date` field based on the current hunting season's HIP issuance start and end dates (not season open and close dates) and registration year for every state except Mississippi. A plot is automatically returned for past and future registrations; to skip plotting, specify `plot = F`.
 
 ```{r, issuecheck, eval = F}
-current_data <- issueCheck(clean_data, year = 2024, plot = F)
+current_data <- issueCheck(clean_data, year = 2025, plot = F)
 ```
 
 ```{r, createcurrent, include = F}
@@ -296,7 +296,7 @@ After data are cleaned and checked in the steps above, we run `proof()` to check
 Values that are considered irregular are flagged in a new field called `errors`. For each existing field (`r paste(migbirdHIP:::REF_FIELDS_ALL, collapse = ", ")`), values are compared to standard expected formats. If they do not conform, the field name is pasted as a string in the `errors` column. Each row can have anywhere from zero errors (`NA`) to all field names listed. Multiple errors per registration are hyphen delimited. A typical `errors` value would look like: `"suffix-address-zip"`, `"zip"`, or `"middle-email"`.
 
 ```{r, proof}
-proofed_data <- proof(deduplicated_data, year = 2024)
+proofed_data <- proof(deduplicated_data, year = 2025)
 ```
 
 #### What gets flagged in the `errors` field and why:
@@ -347,7 +347,7 @@ proofed_data <- proof(deduplicated_data, year = 2024)
 Data can be corrected by running the `correct()` function with year of the Harvest Information Program supplied to the `year` parameter.
 
 ```{r correct}
-corrected_data <- correct(proofed_data, year = 2024)
+corrected_data <- correct(proofed_data, year = 2025)
 ```
 
 #### Changes and corrections include:
@@ -383,22 +383,22 @@ duplicatePlot(current_data)
 The `errorPlotFields()` function can be run on all states...
 
 ```{r errorfieldsplotall, fig.cap = "Figure 2. Plot of all location's errors by field name.", fig.width = 6, fig.height = 3.6, dpi = 300, out.width = 500, fig.align = "center"}
-errorPlotFields(proofed_data, loc = "all", year = 2024)
+errorPlotFields(proofed_data, loc = "all", year = 2025)
 ```
 
 ... or it can be limited to just one.
 
 ```{r errorfieldsplotsc, fig.cap = "Figure 3. Plot of Louisiana's errors by field name.", fig.width = 6, fig.height = 3.6, dpi = 300, out.width = 500, fig.align = "center"}
-errorPlotFields(proofed_data, loc = "LA", year = 2024)
+errorPlotFields(proofed_data, loc = "LA", year = 2025)
 ```
 
 It is possible to add any `ggplot2` components to these plots. A plot can be altered with `facet_wrap` using either `dl_cycle` or `dl_date`. The example below demonstrates how this package's functions can interact with `tidyverse` and shows an example of an `errorPlotFields` with `facet_wrap` (using a subset of 4 download cycles).
 
 ```{r errorfieldsfacet, eval = FALSE}
 errorPlotFields(
-  hipdata2024 |>
+  hipdata2025 |>
     filter(str_detect(dl_cycle, "0800|0901|0902|1001")),
-    year = 2024) +
+    year = 2025) +
   theme(
     axis.text.x = element_text(angle = 90, vjust = 0, hjust = 1),
     legend.position = "bottom") +
@@ -418,7 +418,7 @@ errorPlotStates(proofed_data, threshold = 0.05)
 This function should not be used unless you want to visualize an entire season of data. The `errorPlotDL()` function plots proportion of error per download cycle over the course of the hunting season. Location may be specified with the `loc` parameter to see a particular state over time.
 
 ```{r errorPlotDL, eval = FALSE}
-errorPlotDL(hipdata2024, loc = "MI")
+errorPlotDL(hipdata2025, loc = "MI")
 ```
 
 ```{r errorplotdl_example, echo = FALSE, fig.cap = "errorPlot_dl example output", out.width = "70%", fig.align = "center"}
@@ -504,7 +504,7 @@ The `writeReport()` function can be used to automatically generate an R markdown
 writeReport(
   raw_path = "C:/HIP/DL0901/",
   temp_path = "C:/HIP/corrected_data",
-  year = 2024,
+  year = 2025,
   dl = "0901",
   dir = "C:/HIP/dl_reports",
   file = "DL0901_report")
