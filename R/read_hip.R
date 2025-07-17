@@ -448,6 +448,9 @@ readMessages <-
     # Return a message if in-line permit does not have hunt_mig_birds == 2
     inLinePermitDNHMessage(raw_data)
 
+    # Return a message for bad registration years
+    badRegYearMessage(raw_data)
+
   }
 
 #' Return message for records with blank or NA values in firstname, lastname,
@@ -774,5 +777,44 @@ inLinePermitDNHMessage <-
       )
 
       print(inline_pmt_dnh)
+    }
+  }
+
+#' Bad registration_yr message
+#'
+#' The internal \code{badRegYearMessage} function returns a message for
+#' \code{registration_yr} values that are not equal to REF_CURRENT_SEASON or
+#' REF_CURRENT_SEASON + 1.
+#'
+#' @importFrom dplyr filter
+#' @importFrom dplyr count
+#' @importFrom rlang .data
+#'
+#' @inheritParams readMessages
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
+
+badRegYearMessage <-
+  function(raw_data) {
+
+    badyr <-
+      raw_data |>
+      filter(
+        !.data$registration_yr %in%
+          c(REF_CURRENT_SEASON,
+            as.character(as.numeric(REF_CURRENT_SEASON) + 1))) |>
+      count(.data$dl_state, .data$registration_yr)
+
+    if (nrow(badyr) > 0) {
+      message(
+        paste(
+          "Error:", nrow(badyr), "records do not have a valid registration_yr",
+          "value; the registration_yr must be equal to", REF_CURRENT_SEASON,
+          "or", as.numeric(REF_CURRENT_SEASON) + 1, "."
+        )
+      )
+
+      print(badyr)
     }
   }

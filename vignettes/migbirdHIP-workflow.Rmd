@@ -135,6 +135,11 @@ Use `unique = TRUE` to read in a frame without exact duplicates, or `unique = FA
 
 Data are read in an expected format beginning with the `title` field and ending with `email` field. Additional fields are created by `read_hip()`: `dl_state`, `dl_date`, `source_file`, `dl_cycle`, `dl_key`, `record_key`.
 
+#### The `read_hip()` function does NOT read in data:
+
+- From subfolders named `"hold"`, `"permit"`, or `"lifetime"`.
+- Permit and lifetime HIP registrations must be read in and processed in a different workflow than the one outlined in this vignette.
+
 #### The `read_hip()` function returns a message if:
 
 -   There is a `dl_state` not found in the list of 49 continental US states
@@ -149,6 +154,7 @@ Data are read in an expected format beginning with the `title` field and ending 
 -   There is an `NA` in `dl_state`
 -   There is an `NA` in `dl_date`
 -   For presumed solo permit DNHs; if any OR or WA `hunt_mig_birds` does not equal `2` when non-permit bags are `0` and one of `band_tailed_pigeon`, `brant`, and/or `seaduck` is `2`.
+-   Any registration_yr is not equal to `REF_CURRENT_SEASON` or `REF_CURRENT_SEASON + 1`
 
 As an example, we will use the default `read_hip()` settings to read in all of the states from download 0901, using fake HIP data files located in the `extdata/DL0901/` directory of the R package.
 
