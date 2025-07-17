@@ -34,6 +34,10 @@ writeReport <-
     # Fail if incorrect year supplied
     failYear(year)
 
+    if (year != REF_CURRENT_SEASON) {
+      message("! Are you sure you want to run this using year = ", year, "?")
+    }
+
     # Fail if incorrect dl supplied
     stopifnot("Error: `dl` parameter must be string." = is.character(dl))
     stopifnot("Error: Incorrect `dl`; use a 4-char dl cycle, e.g. '0901'." =

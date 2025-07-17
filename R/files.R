@@ -93,6 +93,10 @@ fileRename <-
   function(path, year) {
     failYear(year)
 
+    if (year != REF_CURRENT_SEASON) {
+      message("! Are you sure you want to run this using year = ", year, "?")
+    }
+
     # Add a final "/" if not included already
     if (!str_detect(path, "\\/$")) {
       path <- paste0(path, "/")

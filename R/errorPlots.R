@@ -169,6 +169,10 @@ errorPlotFields <-
     failYear(year)
     failProofed(proofed_data)
 
+    if (year != REF_CURRENT_SEASON) {
+      message("! Are you sure you want to run this using year = ", year, "?")
+    }
+
     assert_that(
       loc %in% c("all", REF_ABBR_49_STATES),
       msg =
