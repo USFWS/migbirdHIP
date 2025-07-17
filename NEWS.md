@@ -2,6 +2,12 @@
 
 ## Major changes & new features
 
+## Minor changes / bug fixes
+
+# migbirdHIP 1.4.0
+
+## Major changes & new features
+
 -   Changed contents of `R/sysdata.rda`
     -   Fewer objects are now stored in `sysdata.rda` (reduced from 14 to 7). This enhances transparency and reduces the number of objects that must be generated outside of the R package itself.
     -   `sysdata.rda` now contains: `REF_ZIP_CODE`, `REF_BAGS`, `REF_DATES`, `REF_STATES_2SEASON`, `REF_STATES_1SEASON`, `REF_EMAIL_TLDS`, and `SF_HEXMAP`
