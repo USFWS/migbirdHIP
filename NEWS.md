@@ -3,11 +3,15 @@
 ## Major changes & new features
 
 -   Changed contents of `R/sysdata.rda`
-    -   Fewer objects are now stored in `sysdata.rda` (reduced from 14 to 4). This enhances transparency and reduces the number of objects that must be generated outside of the R package itself.
-    -   Eight objects were moved to `constants.R`:
-        -   `ref_bagfields`, `abbr_usa`, `abbr_canada`, `pmt_inline`, `pmt_files`, `states_twoseason`, `states_sdbr`, and `states_seaducks` were moved and renamed `REF_FIELDS_BAG`, `REF_ABBR_USA`, `REF_ABBR_CANADA`, `REF_PMT_INLINE`, `REF_PMT_FILES`, `REF_STATES_SD_BR`, and `REF_STATES_SD_ONLY`, respectively.
-    -   Three objects were dropped entirely. `MS_firstday` and `MS_lastday` are no longer needed by `issueCheck()`, and `states_twoseason` is only used by the download report, so the code to generate that vector was moved to the download report template.
-    -   Four internal data objects were renamed: `REF_BAGS` (previously `hip_bags_ref`), `REF_DATES` (previously `licenses_ref`), `REF_ZIP_CODE` (previously `zip_code_ref`), and `SF_HEXMAP` (previously `hexmap`).
+    -   Fewer objects are now stored in `sysdata.rda` (reduced from 14 to 7). This enhances transparency and reduces the number of objects that must be generated outside of the R package itself.
+    -   `sysdata.rda` now contains: `REF_ZIP_CODE`, `REF_BAGS`, `REF_DATES`, `REF_STATES_2SEASON`, `REF_STATES_1SEASON`, `REF_EMAIL_TLDS`, and `SF_HEXMAP`
+    -   Seven objects were moved to `constants.R`:
+        -   `ref_bagfields`, `abbr_usa`, `abbr_canada`, `pmt_inline`, `pmt_files`, `states_sdbr`, and `states_seaducks` were moved and renamed `REF_FIELDS_BAG`, `REF_ABBR_USA`, `REF_ABBR_CANADA`, `REF_PMT_INLINE`, `REF_PMT_FILES`, `REF_STATES_SD_BR`, and `REF_STATES_SD_ONLY`, respectively.
+    -   Two objects were dropped entirely. `MS_firstday` and `MS_lastday` are no longer needed by `issueCheck()`.
+    -   Five internal data objects were renamed:
+        -   `REF_BAGS` (previously `hip_bags_ref`), `REF_DATES` (previously `licenses_ref`), `REF_ZIP_CODE` (previously `zip_code_ref`), `REF_STATES_2SEASON` (previously `states_twoseason`) and `SF_HEXMAP` (previously `hexmap`).
+    -   Two new objects were added: `REF_STATES_1SEASON` and `REF_EMAIL_TLDS`
+    -   `REF_DATES` was changed to no longer include `last_day_migbird_hunting` and `category` fields.
 -   Added test data
     -   Fake HIP test data creation script stored under `data-raw/`
     -   Test data containing fake HIP registrations stored as fixed-width `.txt` files under `inst/extdata/DL0901/`, to be used in testing or simulating `read_hip()`
@@ -31,9 +35,18 @@
     -   New `duplicatePlot()` function added; `duplicateFinder()` (previously named `findDuplicates()`) function no longer outputs a plot.
     -   The `zeroBagsMessage()` internal function is a new feature of `read_hip()` that checks for records with all-zero bag values and returns a message to the console if they are detected.
     -   Added `errorTableSummary()` internal function to be used by `errorTable()`.
-    -   Added internal function `failyear()` to reduce maintenance of assertions across other exported functions.
--   Refactored functions
+    -   Added four internal failure functions to reduce maintenance of assertions across other exported functions: `failYear()`, `failProofed()`, `failState()`, and `failTF()`.
+-   Refactored and edited functions
     -   In an effort to improve the maintainability of the package code, steps were made toward modularity, clarity, and unit testing in some of the larger functions.
+    -   `issueCheck()` and `issueAssign()`
+        -   Edited to evaluate registrations differently:
+            -   `last_day_migbird_hunting` is no longer used.
+            -   Two-season states now use `registration_yr` to assign `decision` as `"overlap"` (new label), and later `"current"` or `"future"`, if the `issue_date` for a registration occurred during the overlap window.
+            -   `registration_yr` is not changed for two-season states, only `"future"` assigned one-season states.
+        -   `issueCheck()` split into 9 new minor internal functions:
+            -   `issuePrint()`
+            -   8 functions for messages: `issueMessages()`, `regYearEditMessage()`, `zeroDateMessage()`, `badDateMessage()`, `timeTravelMessage()`, `futureDateMessage()`, `pastDateMessage()`, and `twoSeasonMessage()`
+        -   `issueAssign()` split to use an internal `issueDecide()` helper function.
     -   `proof()`
         -   Most logic used to identify and flag errors was moved to internal variables in the `constants.R` file, which are used by `proof()` and `test-proof.R`
         -   First name and last name rules were slightly relaxed
@@ -47,7 +60,7 @@
         -   Overall, this refactor reduced deduplication run time by an average of 2 seconds on a frame with 270,000 records.
         -   Records are no longer evaluated for having all-zero bags or periods instead of bag values because these records are now filtered out upstream during `clean()`.
     -   `read_hip()`
-        -   Broken down into 17 new minor internal functions (`listFiles()`, `ignorePermits()`, `ignoreHolds()`, `idBlankFiles()`, `dropBlankFiles()`, `checkFileNameDateFormat()`, `checkFileNameStateAbbr()`, `readMessages()`, `missingPIIMessage()`, `missingEmailsMessage()`, `testRecordMessage()`, `zeroBagsMessage()`, `naBagsMessage()`, `nonDigitBagsMessage()`, `inLinePermitDNHMessage()`, `dlStateNAMessage()`, and `dlDateNAMessage()`).
+        -   Broken down into 19 new minor internal functions (`listFiles()`, `ignorePermits()`, `ignoreHolds()`, `ignoreLifetime()`, `idBlankFiles()`, `dropBlankFiles()`, `checkFileNameDateFormat()`, `checkFileNameStateAbbr()`, `readMessages()`, `missingPIIMessage()`, `missingEmailsMessage()`, `testRecordMessage()`, `zeroBagsMessage()`, `naBagsMessage()`, `nonDigitBagsMessage()`, `inLinePermitDNHMessage()`, `badRegYearMessage()`, `dlStateNAMessage()`, and `dlDateNAMessage()`).
         -   More strict requirements must be met for data to be successfully read (e.g. instead of returning a message that file names are incorrectly formatted, this would stop the process).
     -   `clean()`
         -   Broken down into 8 minor internal functions (2 previously used: `strataFix()` split into `cranePermitBagFix()` and `btpiPermitBagFix()`; and 6 new functions: `namesToUppercase()`, `missingPIIFilter()`, `moveSuffixes()`, `formatZip()`, `zipCheck()`, and `inLinePermitDNHFix()`)
