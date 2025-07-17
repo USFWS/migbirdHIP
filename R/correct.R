@@ -22,6 +22,10 @@ correct <-
     failYear(year)
     failProofed(proofed_data)
 
+    if (year != REF_CURRENT_SEASON) {
+      message("! Are you sure you want to run this using year = ", year, "?")
+    }
+
     corrected_data <-
       proofed_data |>
       # Change NAs in errors col to "none" so that str_detect functions work
