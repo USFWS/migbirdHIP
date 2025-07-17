@@ -1,34 +1,3 @@
-#' Fail if incorrect year supplied
-#'
-#' Internal function that fails if an incorrect year is provided.
-#'
-#' @importFrom assertthat assert_that
-#' @importFrom rlang is_integerish
-#'
-#' @param year The year in which the Harvest Information Program data were
-#'   collected
-#'
-#' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
-
-failYear <-
-  function(year) {
-    assertthat::assert_that(
-      is_integerish(year),
-      year %in% c(
-        as.numeric(REF_CURRENT_SEASON),
-        as.numeric(REF_CURRENT_SEASON) + 1
-      ),
-      msg =
-        paste0(
-          "`year` must be equal to ",
-          REF_CURRENT_SEASON, " or ",
-          as.numeric(REF_CURRENT_SEASON) + 1,
-          "."
-        )
-    )
-  }
-
 #' Fail if non-proofed data frame supplied
 #'
 #' Internal function that fails if a tibble without \code{errors} field
@@ -89,4 +58,32 @@ failTF <-
     assert_that(
       TF %in% c(TRUE, FALSE, T, F),
       msg = "param not TRUE, FALSE, T, or F.")
+  }
+
+#' Fail if incorrect year supplied
+#'
+#' Internal function that fails if an incorrect year is provided.
+#'
+#' @importFrom assertthat assert_that
+#' @importFrom rlang is_integerish
+#'
+#' @param year The year in which the Harvest Information Program data were
+#'   collected
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
+
+failYear <-
+  function(year) {
+    assert_that(
+      is_integerish(year),
+      year >= 2020,
+      year <= REF_CURRENT_SEASON,
+      msg =
+        paste0(
+          "`year` must be a whole number between 2020 and ",
+          REF_CURRENT_SEASON,
+          "."
+        )
+    )
   }
