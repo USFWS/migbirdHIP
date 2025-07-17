@@ -3,19 +3,10 @@
 #' After cleaning the data with \code{\link{clean}}, ensure each record is
 #' assigned the appropriate registration_yr.
 #'
-#' @importFrom dplyr left_join
-#' @importFrom dplyr select
 #' @importFrom dplyr filter
-#' @importFrom dplyr count
-#' @importFrom dplyr rename
-#' @importFrom dplyr arrange
-#' @importFrom dplyr desc
-#' @importFrom dplyr mutate
-#' @importFrom dplyr case_when
-#' @importFrom lubridate ymd
-#' @importFrom lubridate mdy
-#' @importFrom stringr str_detect
+#' @importFrom dplyr select
 #' @importFrom rlang .data
+#' @importFrom assertthat assert_that
 #'
 #' @param clean_data The object created after cleaning data with
 #'   \code{\link{clean}}
@@ -32,89 +23,329 @@ issueCheck <-
     failYear(year)
     failTF(plot)
 
-    # Return message if all values in record_key field are NA (causes problems
-    # with joining later)
-    if (TRUE == unique(is.na(unique(clean_data$record_key)))) {
-      message("Error: All values in record_key are NA.")
+    if (year != REF_CURRENT_SEASON) {
+      message("! Are you sure you want to run this using year = ", year, "?")
     }
 
-    # Determine the destination of each record
-    issue_assignments <-
-      issueAssign(clean_data, year) |>
-      # Edit registration_yr: current year for current records, yr+1 for future
-      mutate(
-        registration_yr =
-          case_when(
-            .data$decision == "future" ~ as.character(year + 1),
-            .data$decision == "current" ~ as.character(year),
-            TRUE ~ .data$registration_yr)
-      )
+    # Stop if all values in record_key field are NA (causes problems with
+    # joining later)
+    assert_that(
+      unique(is.na(clean_data$record_key)) != TRUE,
+      msg = "All values in record_key are NA.")
 
-    # Return message for future registration years being changed to the current
-    # year for registrations with a current issue_date (e.g. current record with
-    # registration_yr = X changed to X-1)
-    eval_yrs <-
+    # Determine the destination of each record
+    issue_assignments <- issueAssign(clean_data, year)
+
+    # Return messages
+    issueMessages(clean_data, issue_assignments)
+
+    # Print results
+    issuePrint(issue_assignments)
+
+    # Plot results
+    if (plot == TRUE) {
+      issuePlot(issue_assignments, year)
+    }
+
+    # Create a frame of current and future data; past data filtered out
+    current_data <-
+      issue_assignments |>
+      # Filter out decision values: invalid, past, bad issue date
+      filter(.data$decision %in% c("current", "future", "MS")) |>
+      select(-"decision")
+
+    return(current_data)
+  }
+
+#' Return messages to console for issueCheck insights
+#'
+#' The internal \code{issueMessages} function is used inside of
+#' \code{\link{issueCheck}} to return messages for bad issue_date values, count
+#' of past registrations, count of future registrations, and 2-season overlap
+#' registrations.
+#'
+#' @param clean_data The product of \code{\link{clean}}
+#' @param issue_assignments An intermediate tibble in \code{\link{issueCheck}}
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
+
+issueMessages <-
+  function(clean_data, issue_assignments) {
+    regYearEditMessage(clean_data, issue_assignments)
+    zeroDateMessage(clean_data)
+    badDateMessage(issue_assignments)
+    timeTravelMessage(issue_assignments)
+    futureDateMessage(issue_assignments)
+    pastDateMessage(issue_assignments)
+    twoSeasonMessage(issue_assignments)
+  }
+
+#' Return message for changed registration_yr values
+#'
+#' The internal \code{regYearEditMessage} function is used inside of
+#' \code{\link{issueMessages}} and \code{\link{issueCheck}} to return a message
+#' for how many \code{registration_yr} values were changed.
+#'
+#' @importFrom dplyr left_join
+#' @importFrom dplyr select
+#' @importFrom dplyr filter
+#' @importFrom dplyr count
+#' @importFrom dplyr rename
+#' @importFrom dplyr arrange
+#' @importFrom dplyr desc
+#' @importFrom rlang .data
+#'
+#' @param clean_data The product of \code{\link{clean}}
+#' @param issue_assignments An intermediate tibble in \code{\link{issueCheck}}
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
+
+regYearEditMessage <-
+  function(clean_data, issue_assignments) {
+
+    edited_years <-
       left_join(
         clean_data |>
-          select(c("record_key", "dl_state", orig_yr = "registration_yr")),
+          select(c("record_key", "dl_state", original_yr = "registration_yr")),
         issue_assignments |>
-          select(c("record_key", eval_yr = "registration_yr")),
+          select(c("record_key", edited_yr = "registration_yr")),
         by = "record_key") |>
-      filter(.data$orig_yr != .data$eval_yr) |>
-      count(.data$dl_state, .data$orig_yr, .data$eval_yr)
+      filter(.data$original_yr != .data$edited_yr) |>
+      count(.data$dl_state, .data$original_yr, .data$edited_yr)
 
-    if (nrow(eval_yrs) >= 1) {
+    if (nrow(edited_years) >= 1) {
       message(
-        paste0(
-          "Current registrations with registration_yr values not equal to ",
-          year, " changed to ", year, "."))
+        paste(
+          "A total of", nrow(edited_years),
+          "registration_yr values were changed.", sep = " "))
       print(
-        eval_yrs |>
-          rename(original = "orig_yr", new = "eval_yr") |>
+        edited_years |>
+          rename(original = "original_yr", new = "edited_yr") |>
           arrange(desc(.data$n))
       )
     }
+  }
 
+#' Return message for 00/00/0000 issue_date value(s)
+#'
+#' The internal \code{zeroDateMessage} function is used inside of
+#' \code{\link{issueMessages}} and \code{\link{issueCheck}} to return a message
+#' if "00/00/0000" values are detected in the \code{issue_date} field.
+#'
+#' @importFrom stringr str_detect
+#' @importFrom dplyr filter
+#' @importFrom rlang .data
+#'
+#' @param clean_data The product of \code{\link{clean}}
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
+
+zeroDateMessage <-
+  function(clean_data) {
     # Return message if issue_date = "00/00/0000" detected
     if (TRUE %in% str_detect(clean_data$issue_date, "00/00/0000")) {
       message(
         paste(
           "Error: issue_date value of 00/00/0000 detected in",
           nrow(filter(clean_data, .data$issue_date == "00/00/0000")),
-          "record(s), which will be dropped."))
+          "record(s), which will be dropped."
+        )
+      )
     }
+  }
+
+#' Return message if bad issue dates detected
+#'
+#' The internal \code{badDateMessage} function is used inside of
+#' \code{\link{issueMessages}} and \code{\link{issueCheck}} to return a message
+#' if invalid \code{issue_date} values are detected.
+#'
+#' @importFrom stringr str_detect
+#'
+#' @param issue_assignments An intermediate tibble in \code{\link{issueCheck}}
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
+
+badDateMessage <-
+  function(issue_assignments) {
     # Return message if "bad issue dates" detected
     if (TRUE %in% str_detect(issue_assignments$decision, "bad issue dates")) {
       message("Error: Bad issue_date value(s) detected.")
     }
+  }
+
+#' Return message if an issue date is after the file was submitted
+#'
+#' The internal \code{timeTravelMessage} function is used inside of
+#' \code{\link{issueMessages}} and \code{\link{issueCheck}} to return a message
+#' if \code{issue_date} values are after the date the file was submitted.
+#'
+#' @importFrom dplyr filter
+#' @importFrom lubridate ymd
+#' @importFrom lubridate mdy
+#' @importFrom dplyr count
+#' @importFrom rlang .data
+#'
+#' @param issue_assignments An intermediate tibble in \code{\link{issueCheck}}
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
+
+timeTravelMessage <-
+  function(issue_assignments) {
+
+    timetravel <-
+      issue_assignments |>
+      filter(mdy(.data$issue_date) > ymd(.data$dl_date))
+
+    # Return message if any issue_date is after the file was submitted
+    if (nrow(timetravel) > 0) {
+      message(
+        "Error: issue_date in the future detected (relative to file name).")
+      print(
+        timetravel |>
+          count(
+            .data$source_file,
+            .data$dl_state,
+            .data$issue_date,
+            .data$registration_yr,
+            .data$dl_date
+          )
+      )
+    }
+  }
+
+#' Return message if future issue_date values are detected
+#'
+#' The internal \code{futureDateMessage} function is used inside of
+#' \code{\link{issueMessages}} and \code{\link{issueCheck}} to return a message
+#' if future \code{issue_date} values are detected.
+#'
+#' @importFrom dplyr filter
+#' @importFrom rlang .data
+#'
+#' @param issue_assignments An intermediate tibble in \code{\link{issueCheck}}
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
+
+futureDateMessage <-
+  function(issue_assignments) {
+
+    futures <-
+      issue_assignments |>
+      filter(.data$decision == "future")
+
     # Return message for how many future records detected
-    if (nrow(filter(issue_assignments, .data$decision == "future")) == 0) {
+    if (nrow(futures) == 0) {
       message("* 0 records need to be postponed for next season.")
     } else {
       message(
         paste(
           "*",
           format.default(
-            nrow(filter(issue_assignments, .data$decision == "future")),
+            nrow(futures),
             big.mark = ","),
           "records detected after their state's last day of hunting.",
           "Their registration year has been changed to registration_yr + 1."),
         sep = " ")
     }
+  }
+
+#' Return message if past issue_date values are detected
+#'
+#' The internal \code{futureDateMessage} function is used inside of
+#' \code{\link{issueMessages}} and \code{\link{issueCheck}} to return a message
+#' if past \code{issue_date} values are detected.
+#'
+#' @importFrom dplyr filter
+#' @importFrom rlang .data
+#'
+#' @param issue_assignments An intermediate tibble in \code{\link{issueCheck}}
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
+
+pastDateMessage <-
+  function(issue_assignments) {
+
+    pasts <-
+      issue_assignments |>
+      filter(.data$decision == "past")
+
     # Return message for how many past records were found
-    if (nrow(issue_assignments |> filter(.data$decision == "past")) == 0) {
+    if (nrow(pasts) == 0) {
       message("* 0 past records detected.")
     } else {
       message(
         paste(
           "*",
           format.default(
-            nrow(issue_assignments |> filter(.data$decision == "past")),
+            nrow(pasts),
             big.mark = ","),
           "past records detected. They have been filtered out.", sep = " "))
     }
+  }
 
-    # Print results
+#' Return message if registrations are detected from two-season overlap windows
+#'
+#' The internal \code{twoSeasonMessage} function is used inside of
+#' \code{\link{issueMessages}} and \code{\link{issueCheck}} to return a message
+#' if registrations are detected from two-season states with \code{issue_date}
+#' value(s) that occur during the overlap window.
+#'
+#' @importFrom dplyr filter
+#' @importFrom rlang .data
+#'
+#' @param issue_assignments An intermediate tibble in \code{\link{issueCheck}}
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
+
+twoSeasonMessage <-
+  function(issue_assignments) {
+
+    overlaps <-
+      issue_assignments |>
+      filter(.data$decision == "overlap")
+
+    # Return message for how many 2-season records detected
+    if (nrow(overlaps) == 0) {
+      message("* 0 records needed to be evaluated using registration_yr.")
+    } else {
+      message(
+        paste(
+          "*",
+          format.default(
+            nrow(overlaps),
+            big.mark = ","),
+          "records detected with issue date during a 2-season overlap window."),
+        sep = " ")
+    }
+  }
+
+#' Print results of issueCheck changes
+#'
+#' The internal \code{issuePrint} function is used inside of
+#' \code{\link{issueCheck}} to print the number of registration types (past,
+#' future, current, etc) per download state and registration year.
+#'
+#' @importFrom dplyr filter
+#' @importFrom dplyr count
+#' @importFrom dplyr arrange
+#' @importFrom rlang .data
+#'
+#' @param issue_assignments An intermediate tibble in \code{\link{issueCheck}}
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
+
+issuePrint <-
+  function(issue_assignments) {
     print(
       suppressMessages(
         issue_assignments |>
@@ -123,51 +354,20 @@ issueCheck <-
           arrange(.data$decision)
       )
     )
-
-    # Plot results
-    if (plot == TRUE) {
-      issuePlot(issue_assignments, year)
-    }
-
-    # Create a frame of current data
-    current_data <-
-      issue_assignments |>
-      # Filter out past data
-      filter(.data$decision != "past") |>
-      select(-"decision")
-
-    # Return message if any issue_date is after the file was submitted
-    if (nrow(filter(current_data,
-                    mdy(.data$issue_date) > ymd(.data$dl_date))) > 0) {
-      message(
-        "Error: issue_date in the future detected (relative to file name).")
-      print(
-        filter(issue_assignments, mdy(.data$issue_date) > ymd(.data$dl_date)) |>
-          count(
-            .data$source_file, .data$dl_state, .data$issue_date,
-            .data$registration_yr, .data$dl_date)
-      )
-    }
-
-    return(current_data)
   }
 
-#' Assign decisions to records on how to process them using issue dates and
-#' license years
+#' Assign registration_yr values using issueDecide
 #'
 #' The internal \code{issueAssign} function is used inside of
-#' \code{\link{issueCheck}} to determine which records in the output from
-#' \code{\link{clean}} are current, past, future, or incorrect.
+#' \code{\link{issueCheck}} to assign a new registration year to each record
+#' depending on the outcome of \code{\link{issueDecide}}.
 #'
+#' @importFrom dplyr filter
 #' @importFrom dplyr left_join
 #' @importFrom dplyr rename
-#' @importFrom dplyr filter
+#' @importFrom dplyr select
 #' @importFrom dplyr mutate
 #' @importFrom dplyr case_when
-#' @importFrom lubridate mdy
-#' @importFrom lubridate interval
-#' @importFrom lubridate %within%
-#' @importFrom dplyr select
 #' @importFrom rlang .data
 #'
 #' @param clean_data The object created after cleaning data with
@@ -182,42 +382,101 @@ issueAssign <-
     failYear(year)
 
     clean_data |>
+      # Filter out bad issue_date values
+      filter(.data$issue_date != "00/00/0000") |>
       # Join in licensing dates
       left_join(
         REF_DATES |>
           rename(dl_state = "state"),
         by = "dl_state") |>
-      # Filter out bad issue_date values
-      filter(.data$issue_date != "00/00/0000") |>
+      # Create decision field
+      issueDecide(year = year) |>
+      # Drop unneeded fields
+      select(-c("hunting_season", "issue_start", "issue_end")) |>
+      # Overwrite registration_yr
       mutate(
-        # Evaluate each record
+        # For 1-season states: use current year for current records; year + 1
+        # for future records
+        registration_yr =
+          case_when(
+            .data$decision == "future" ~ as.character(year + 1),
+            .data$decision == "current" ~ as.character(year),
+            TRUE ~ .data$registration_yr)
+      )
+  }
+
+#' Assign decisions to records using issue date and registration year
+#'
+#' The internal \code{issueDecide} function is used inside of
+#' \code{\link{issueAssign}} and \code{\link{issueCheck}} to create the
+#' \code{decision} field, which assigns records as current, past, future, etc;
+#' no data changes are made other than creating the \code{deicison} field.
+#'
+#' @importFrom dplyr mutate
+#' @importFrom dplyr case_when
+#' @importFrom lubridate mdy
+#' @importFrom lubridate interval
+#' @importFrom lubridate %within%
+#' @importFrom rlang .data
+#'
+#' @param clean_data The object created after cleaning data with
+#'   \code{\link{clean}}
+#' @param year The year of the HIP season (e.g. 2022 for the 2022-2023 season)
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
+
+issueDecide <-
+  function(clean_data, year) {
+    failYear(year)
+
+    clean_data |>
+      mutate(
+        # Create decision field
         decision =
           ifelse(
+            # Don't evaluate MS records
             .data$dl_state != "MS",
             case_when(
-              # If the issue_date falls between issue_start and issue_end for
-              # that state, it's a current record (no change needed)
-              mdy(.data$issue_date) %within%
-                interval(.data$issue_start, .data$last_day_migbird_hunting) ~
-                "current",
-              # Past records are issued before the issue_start date; these will
-              # be filtered out later
+              # Records are past when issue_date is before issue_start
               mdy(.data$issue_date) < .data$issue_start ~ "past",
-              # If the record has an issue_date after the last day of hunting
-              # for that state, it's a future record and the registration_yr
-              # needs to be +1
-              mdy(.data$issue_date) > .data$last_day_migbird_hunting ~ "future",
+              # For 2-season states with overlapping start/end dates, records
+              # are either current or future depending on the registration year
+              # value
+              dl_state %in% REF_STATES_2SEASON &
+                mdy(.data$issue_date) %within%
+                interval(.data$issue_start + 365, .data$issue_end) ~
+                "overlap",
+              # Records are current when the issue_date falls between
+              # issue_start and issue_end
+              mdy(.data$issue_date) %within%
+                interval(.data$issue_start, .data$issue_end) ~
+                "current",
+              # Records are invalid when they fall outside of the issue window
+              # (after issue end date but before next season's start date)
+              !mdy(.data$issue_date) %within%
+                interval(.data$issue_start, .data$issue_end) &
+                !mdy(.data$issue_date) %within%
+                  interval(.data$issue_start + 365, .data$issue_end + 365) &
+                mdy(.data$issue_date) %within%
+                  interval(.data$issue_end, .data$issue_end + 365) ~
+                  "invalid",
+              # Future records are issued after the last day of hunting and
+              # after the projected issue start date for next season (the
+              # registration_yr may need to be changed to +1)
+              mdy(.data$issue_date) > .data$issue_end &
+                mdy(.data$issue_date) %within%
+                  interval(.data$issue_start + 365, .data$issue_end + 365) ~
+                  "future",
               TRUE ~ "bad issue dates"),
             "MS")
-      ) |>
-      select(-c("hunting_season", "issue_start", "issue_end",
-                "last_day_migbird_hunting", "category"))
+      )
   }
 
 #' Plot issue date errors
 #'
-#' The internal \code{issuePlot} function plots the output of
-#' \code{\link{issueAssign}}.
+#' The internal \code{issuePlot} function plots good and bad \code{issue_date}
+#' values.
 #'
 #' @importFrom dplyr filter
 #' @importFrom dplyr select
@@ -241,14 +500,14 @@ issueAssign <-
 #' @importFrom ggplot2 theme_classic
 #' @importFrom rlang .data
 #'
-#' @param issue_assigned_data The object created by \code{\link{issueAssign}}
+#' @param issue_assignments An intermediate tibble in \code{\link{issueCheck}}
 #' @param year The year of the HIP season (e.g. 2022 for the 2022-2023 season)
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}
 
 issuePlot <-
-  function(issue_assigned_data, year) {
+  function(issue_assignments, year) {
     failYear(year)
 
     rectangles <-
@@ -267,7 +526,7 @@ issuePlot <-
         ymax = Inf)
 
     badplot_data <-
-      issue_assigned_data |>
+      issue_assignments |>
       filter(.data$decision != "current" & .data$dl_state != "MS") |>
       select(
         c("dl_state", "source_file", "issue_date", "registration_yr",

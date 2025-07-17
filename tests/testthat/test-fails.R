@@ -37,5 +37,5 @@ test_that("failYear works", {
   expect_error(failYear(2019))
   expect_error(failYear(2024.5))
   expect_error(failYear(2030))
-  expect_no_error(failYear(REF_CURRENT_SEASON))
+  expect_no_error(failYear(as.numeric(REF_CURRENT_SEASON)))
 })

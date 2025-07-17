@@ -137,8 +137,8 @@ Data are read in an expected format beginning with the `title` field and ending 
 
 #### The `read_hip()` function does NOT read in data:
 
-- From subfolders named `"hold"`, `"permit"`, or `"lifetime"`.
-- Permit and lifetime HIP registrations must be read in and processed in a different workflow than the one outlined in this vignette.
+-   From subfolders named `"hold"`, `"permit"`, or `"lifetime"`.
+-   Permit and lifetime HIP registrations must be read in and processed in a different workflow than the one outlined in this vignette.
 
 #### The `read_hip()` function returns a message if:
 
@@ -220,7 +220,7 @@ In addition to the changes listed above, the internal `zipCheck()` function retu
 
 ### issueCheck {#issuecheck}
 
-The `issueCheck()` function assesses the validity of the `issue_date` field based on the current hunting season's HIP issuance start and end dates (not season open and close dates) for every state except Mississippi. A plot is automatically returned for past and future registrations; to skip plotting, specify `plot = F`.
+The `issueCheck()` function assesses the validity of the `issue_date` field based on the current hunting season's HIP issuance start and end dates (not season open and close dates) and registration year for every state except Mississippi. A plot is automatically returned for past and future registrations; to skip plotting, specify `plot = F`.
 
 ```{r, issuecheck, eval = F}
 current_data <- issueCheck(clean_data, year = 2024, plot = F)
@@ -232,11 +232,13 @@ current_data <- clean_data
 
 #### Criteria evaluated and changes made:
 
-- **Current record:** a record's `issue_date` falls between the start and end dates of HIP issuance for its state; if not already, change `registration_yr` to current season.
-- **Past record:** a record's `issue_date` is before the start date of HIP issuance for its state; these records are filtered out.
-- **Future record:** a record has an `issue_date` after the last day of hunting for its state; the `registration_yr` is changed to `registration_yr + 1`.
-- **Bad `issue_date`:** a record's `issue_date` cannot be evaluated, likely because it's formatted incorrectly or equals `"00/00/0000"`; these records are filtered out.
-- Return message if any record's `issue_date` is after the file was submitted.
+-   **Past registration:** a registration's `issue_date` is before the start date of HIP issuance for its state; these registrations are filtered out.
+-   **Overlap registration:** registrations from 2-season states with an `issue_date` between the start of next season's issue start and this season's issue end fall into the `"overlap"` category; these registrations are assigned `"current"` if `registration_yr` is equal to `REF_SEASON_CURRENT` or `"future"` if `registration_yr` is `REF_SEASON_CURRENT + 1`.
+-   **Current registration:** a registration's `issue_date` falls between the start and end dates of HIP issuance for its state; `registration_yr` is overwritten with `REF_SEASON_CURRENT`.
+-   **Future registration:** a registration has an `issue_date` after the last day of issuance for its state for this season AND the `issue_date` falls between the projected issue start and end dates for next season; the `registration_yr` is changed to `REF_SEASON_CURRENT + 1`.
+-   **Invalid registration:** a registration's `issue_date` does not fall in the issue window for this season or next season; the date falls in the gap between issue windows.
+-   **Bad `issue_date`:** a registration's `issue_date` cannot be evaluated, likely because it's formatted incorrectly or is illogical; these registrations are filtered out.
+-   Return message if any registration's `issue_date` is after the file was submitted.
 
 ### duplicateFinder {#duplicatefinder}
 
@@ -365,7 +367,6 @@ corrected_data <- correct(proofed_data, year = 2024)
         -   Missing in `navymil, mailmil, armymil; add multiple periods if missing to usnavymil, usafmil, usarmymil, usacearmymil`
 
 -   `errors` is updated by re-running `proof()` inside of `correct()`
-
 
 ## Part B: Data Visualization and Tabulation {#part-b-data-visualization-and-tabulation}
 

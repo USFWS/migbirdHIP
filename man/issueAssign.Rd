@@ -2,8 +2,7 @@
 % Please edit documentation in R/issuance.R
 \name{issueAssign}
 \alias{issueAssign}
-\title{Assign decisions to records on how to process them using issue dates and
-license years}
+\title{Assign registration_yr values using issueDecide}
 \usage{
 issueAssign(clean_data, year)
 }
@@ -15,8 +14,8 @@ issueAssign(clean_data, year)
 }
 \description{
 The internal \code{issueAssign} function is used inside of
-\code{\link{issueCheck}} to determine which records in the output from
-\code{\link{clean}} are current, past, future, or incorrect.
+\code{\link{issueCheck}} to assign a new registration year to each record
+depending on the outcome of \code{\link{issueDecide}}.
 }
 \references{
 \url{https://github.com/USFWS/migbirdHIP}
