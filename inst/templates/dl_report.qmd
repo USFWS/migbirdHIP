@@ -1452,11 +1452,11 @@ if (nrow(dplyr::filter(issue_assignments, decision == "future")) > 0) {
         dplyr::arrange(dplyr::desc(n)) |>
         dplyr::left_join(
           migbirdHIP:::REF_DATES |>
-            dplyr::select(dl_state = state, last_day_migbird_hunting),
+            dplyr::select(dl_state = state, issue_end),
           by = "dl_state") |>
         dplyr::select(
           State = dl_state,
-          `Last day migbird hunting` = last_day_migbird_hunting,
+          `Last day of issuance` = issue_end,
           `Number of records` = n)
       )
     )
