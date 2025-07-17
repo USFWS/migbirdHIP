@@ -15,12 +15,15 @@ failYear <-
   function(year) {
     assertthat::assert_that(
       is_integerish(year),
-      year >= 2020,
-      year <= REF_CURRENT_SEASON,
+      year %in% c(
+        as.numeric(REF_CURRENT_SEASON),
+        as.numeric(REF_CURRENT_SEASON) + 1
+      ),
       msg =
         paste0(
-          "`year` must be a whole number between 2020 and ",
-          REF_CURRENT_SEASON,
+          "`year` must be equal to ",
+          REF_CURRENT_SEASON, " or ",
+          as.numeric(REF_CURRENT_SEASON) + 1,
           "."
         )
     )
