@@ -15,7 +15,7 @@ test_that("failState works", {
   expect_error(failState(2019))
   expect_error(failState(2024.5))
 
-  for(i in seq_along(REF_ABBR_49_STATES)) {
+  for (i in seq_along(REF_ABBR_49_STATES)) {
     expect_no_error(failState(REF_ABBR_49_STATES[i]))
   }
 })
