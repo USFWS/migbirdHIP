@@ -385,14 +385,14 @@ test_that("issueAssign evaluates 1-season states correctly", {
       dl_state = st) |>
     dplyr::select(-"yearmonthday")
 
+  assigned_count <-
+    issueAssign(oneseason_data, as.numeric(REF_CURRENT_SEASON)) |>
+    dplyr::count(decision)
+
   expect_equal(
     assigned_count$n[assigned_count$decision == "past"],
     as.integer(days_btwn_starts)
   )
-
-  assigned_count <-
-    issueAssign(oneseason_data, as.numeric(REF_CURRENT_SEASON)) |>
-    dplyr::count(decision)
 
   expect_equal(
     assigned_count$n[assigned_count$decision == "future"],
