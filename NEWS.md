@@ -12,6 +12,7 @@
 -   `invalidDateMessage()`: created and added to `issueMessages()`
 -   `huntMigBirdsMessage()`: created and added to `readMessages()`
 -   `issuePlot()`: improved plot appearance for clarity of interpretation
+-   `duplicateFix()`: bug fix, stopped returning `duplicate_id` field in the output tibble
 
 # migbirdHIP 1.4.0
 
