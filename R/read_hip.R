@@ -809,7 +809,7 @@ badRegYearMessage <-
     if (nrow(badyr) > 0) {
       message(
         paste0(
-          "Error: ", nrow(badyr), " records do not have a valid ",
+          "Error: ", nrow(badyr), " state(s) did not submit a valid ",
           "registration_yr value; the registration_yr must be equal to ",
           REF_CURRENT_SEASON, " or ", as.numeric(REF_CURRENT_SEASON) + 1, "."
         )
