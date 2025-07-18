@@ -179,10 +179,10 @@ duplicateFix <-
           select(-"duplicate_id") |>
           filter(.data$record_type == "PMT"),
         # In-line permit states HIP records
-        hip_deduplicated |>
-          select(-"duplicate_id")
+        hip_deduplicated
         ) |>
-      distinct()
+      distinct() |>
+      select("title":"record_type")
 
     return(resolved_duplicates)
   }
