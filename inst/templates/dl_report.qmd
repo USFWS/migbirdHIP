@@ -284,7 +284,7 @@ bad_issue <-
         as.numeric(migbirdHIP:::REF_CURRENT_SEASON) - 1, "|",
         migbirdHIP:::REF_CURRENT_SEASON, "|",
         as.numeric(migbirdHIP:::REF_CURRENT_SEASON) + 1, ")"))
-    )|>
+    ) |>
   dplyr::group_by(source_file, dl_state, file_total, issue_date) |>
   dplyr::count() |>
   dplyr::ungroup() |>
@@ -1003,7 +1003,7 @@ if (!is.null(rffield)) {
         `Error count`,
         `Correct count`,
         Proportion = proportion)
-    ) |> 
+    ) |>
     kableExtra::kable_styling(full_width = F) |>
     kableExtra::row_spec(
       seq_len(nrow(rffield)), extra_css = "padding: 3px;")
