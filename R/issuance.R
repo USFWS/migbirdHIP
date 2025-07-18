@@ -314,7 +314,7 @@ invalidDateMessage <-
       filter(.data$decision == "invalid")
 
     # Return message for how many past records were found
-    if (nrow(pasts) == 0) {
+    if (nrow(invalids) == 0) {
       message("* 0 invalid records detected.")
     } else {
       message(
@@ -564,107 +564,107 @@ issuePlot <-
     if (nrow(badplot_data > 0)) {
       current <-
         REF_DATES |>
-        filter(state %in% badplot_data$dl_state) |>
+        filter(.data$state %in% badplot_data$dl_state) |>
         mutate(category = "current") |>
         rename(dl_state = "state")
 
       past <-
         current |>
         mutate(
-          issue_start = issue_start - 365,
-          issue_end = issue_end - 365,
+          issue_start = .data$issue_start - 365,
+          issue_end = .data$issue_end - 365,
           category = "past")
 
       future <-
         current |>
         mutate(
-          issue_start = issue_start + 365,
-          issue_end = issue_end + 365,
+          issue_start = .data$issue_start + 365,
+          issue_end = .data$issue_end + 365,
           category = "future")
 
       badplot <-
         ggplot() +
         geom_vline(xintercept =
-                     ymd(paste0(yr - 2, "-09-01")), linetype = "dashed") +
+                     ymd(paste0(year - 2, "-09-01")), linetype = "dashed") +
         geom_vline(xintercept =
-                     ymd(paste0(yr - 2, "-10-01")), linetype = "dotted") +
+                     ymd(paste0(year - 2, "-10-01")), linetype = "dotted") +
         geom_vline(xintercept =
-                     ymd(paste0(yr - 2, "-11-01")), linetype = "dotted") +
+                     ymd(paste0(year - 2, "-11-01")), linetype = "dotted") +
         geom_vline(xintercept =
-                     ymd(paste0(yr - 2, "-12-01")), linetype = "dotted") +
+                     ymd(paste0(year - 2, "-12-01")), linetype = "dotted") +
         geom_vline(xintercept =
-                     ymd(paste0(yr - 1, "-01-01")), linetype = "dotted") +
+                     ymd(paste0(year - 1, "-01-01")), linetype = "dotted") +
         geom_vline(xintercept =
-                     ymd(paste0(yr - 1, "-02-01")), linetype = "dotted") +
+                     ymd(paste0(year - 1, "-02-01")), linetype = "dotted") +
         geom_vline(xintercept =
-                     ymd(paste0(yr - 1, "-03-01")), linetype = "dashed") +
+                     ymd(paste0(year - 1, "-03-01")), linetype = "dashed") +
         geom_vline(xintercept =
-                     ymd(paste0(yr - 1, "-09-01")), linetype = "dashed") +
+                     ymd(paste0(year - 1, "-09-01")), linetype = "dashed") +
         geom_vline(xintercept =
-                     ymd(paste0(yr - 1, "-10-01")), linetype = "dotted") +
+                     ymd(paste0(year - 1, "-10-01")), linetype = "dotted") +
         geom_vline(xintercept =
-                     ymd(paste0(yr - 1, "-11-01")), linetype = "dotted") +
+                     ymd(paste0(year - 1, "-11-01")), linetype = "dotted") +
         geom_vline(xintercept =
-                     ymd(paste0(yr - 1, "-12-01")), linetype = "dotted") +
+                     ymd(paste0(year - 1, "-12-01")), linetype = "dotted") +
         geom_vline(xintercept =
-                     ymd(paste0(yr, "-01-01")), linetype = "dotted") +
+                     ymd(paste0(year, "-01-01")), linetype = "dotted") +
         geom_vline(xintercept =
-                     ymd(paste0(yr, "-02-01")), linetype = "dotted") +
+                     ymd(paste0(year, "-02-01")), linetype = "dotted") +
         geom_vline(xintercept =
-                     ymd(paste0(yr, "-03-01")), linetype = "dashed") +
+                     ymd(paste0(year, "-03-01")), linetype = "dashed") +
         geom_vline(xintercept =
-                     ymd(paste0(yr, "-09-01")), linetype = "dashed") +
+                     ymd(paste0(year, "-09-01")), linetype = "dashed") +
         geom_vline(xintercept =
-                     ymd(paste0(yr, "-10-01")), linetype = "dotted") +
+                     ymd(paste0(year, "-10-01")), linetype = "dotted") +
         geom_vline(xintercept =
-                     ymd(paste0(yr, "-11-01")), linetype = "dotted") +
+                     ymd(paste0(year, "-11-01")), linetype = "dotted") +
         geom_vline(xintercept =
-                     ymd(paste0(yr, "-12-01")), linetype = "dotted") +
+                     ymd(paste0(year, "-12-01")), linetype = "dotted") +
         geom_vline(xintercept =
-                     ymd(paste0(yr + 1, "-01-01")), linetype = "dotted") +
+                     ymd(paste0(year + 1, "-01-01")), linetype = "dotted") +
         geom_vline(xintercept =
-                     ymd(paste0(yr + 1, "-02-01")), linetype = "dotted") +
+                     ymd(paste0(year + 1, "-02-01")), linetype = "dotted") +
         geom_vline(xintercept =
-                     ymd(paste0(yr + 1, "-03-01")), linetype = "dashed") +
+                     ymd(paste0(year + 1, "-03-01")), linetype = "dashed") +
         geom_vline(xintercept =
-                     ymd(paste0(yr + 1, "-09-01")), linetype = "dashed") +
+                     ymd(paste0(year + 1, "-09-01")), linetype = "dashed") +
         geom_vline(xintercept =
-                     ymd(paste0(yr + 1, "-10-01")), linetype = "dotted") +
+                     ymd(paste0(year + 1, "-10-01")), linetype = "dotted") +
         geom_vline(xintercept =
-                     ymd(paste0(yr + 1, "-11-01")), linetype = "dotted") +
+                     ymd(paste0(year + 1, "-11-01")), linetype = "dotted") +
         geom_vline(xintercept =
-                     ymd(paste0(yr + 1, "-12-01")), linetype = "dotted") +
+                     ymd(paste0(year + 1, "-12-01")), linetype = "dotted") +
         geom_vline(xintercept =
-                     ymd(paste0(yr + 2, "-01-01")), linetype = "dotted") +
+                     ymd(paste0(year + 2, "-01-01")), linetype = "dotted") +
         geom_vline(xintercept =
-                     ymd(paste0(yr + 2, "-02-01")), linetype = "dotted") +
+                     ymd(paste0(year + 2, "-02-01")), linetype = "dotted") +
         geom_vline(xintercept =
-                     ymd(paste0(yr + 2, "-03-01")), linetype = "dashed") +
+                     ymd(paste0(year + 2, "-03-01")), linetype = "dashed") +
         # Past issue window
         geom_segment(
           data = past,
           aes(
-            x = issue_start, xend = issue_end,
-            y = reorder(dl_state, desc(issue_start)),
-            color = category),
+            x = .data$issue_start, xend = .data$issue_end,
+            y = reorder(.data$dl_state, desc(.data$issue_start)),
+            color = .data$category),
           size = 3,
           alpha = 0.4) +
         # Future issue window
         geom_segment(
           data = future,
           aes(
-            x = issue_start, xend = issue_end,
-            y = reorder(dl_state, desc(issue_start)),
-            color = category),
+            x = .data$issue_start, xend = .data$issue_end,
+            y = reorder(.data$dl_state, desc(.data$issue_start)),
+            color = .data$category),
           size = 3,
           alpha = 0.4) +
         # Current issue window
         geom_segment(
           data = current,
           aes(
-            x = issue_start, xend = issue_end,
-            y = reorder(dl_state, desc(issue_start)),
-            color = category),
+            x = .data$issue_start, xend = .data$issue_end,
+            y = reorder(.data$dl_state, desc(.data$issue_start)),
+            color = .data$category),
           size = 3,
           alpha = 0.4) +
         # Titles
@@ -687,25 +687,25 @@ issuePlot <-
         geom_boxplot(
           data = badplot_data,
           aes(x = mdy(.data$issue_date), y = .data$dl_state,
-              color = registration_yr),
+              color = .data$registration_yr),
           fill = "#FFFFFF", width = 0, size = 3, position = "identity") +
         # Bad issue date colors
         scale_color_manual(
           name = "Registration year",
           values = c("#0072B2", "#D55E00")) +
         scale_x_date(
-          breaks = c(as.Date(paste(yr-1, "09-01", sep = "-")),
-                     as.Date(paste(yr-1, "11-01", sep = "-")),
-                     as.Date(paste(yr, "01-01", sep = "-")),
-                     as.Date(paste(yr, "03-01", sep = "-")),
-                     as.Date(paste(yr, "09-01", sep = "-")),
-                     as.Date(paste(yr, "11-01", sep = "-")),
-                     as.Date(paste(yr+1, "01-01", sep = "-")),
-                     as.Date(paste(yr+1, "03-01", sep = "-")),
-                     as.Date(paste(yr+1, "09-01", sep = "-")),
-                     as.Date(paste(yr+1, "11-01", sep = "-")),
-                     as.Date(paste(yr+2, "01-01", sep = "-")),
-                     as.Date(paste(yr+2, "03-01", sep = "-"))),
+          breaks = c(as.Date(paste(year - 1, "09-01", sep = "-")),
+                     as.Date(paste(year - 1, "11-01", sep = "-")),
+                     as.Date(paste(year, "01-01", sep = "-")),
+                     as.Date(paste(year, "03-01", sep = "-")),
+                     as.Date(paste(year, "09-01", sep = "-")),
+                     as.Date(paste(year, "11-01", sep = "-")),
+                     as.Date(paste(year + 1, "01-01", sep = "-")),
+                     as.Date(paste(year + 1, "03-01", sep = "-")),
+                     as.Date(paste(year + 1, "09-01", sep = "-")),
+                     as.Date(paste(year + 1, "11-01", sep = "-")),
+                     as.Date(paste(year + 2, "01-01", sep = "-")),
+                     as.Date(paste(year + 2, "03-01", sep = "-"))),
           date_labels = c("%b %Y", "%b", "%b", "%b %Y",
                           "%b %Y", "%b", "%b", "%b %Y",
                           "%b %Y", "%b", "%b", "%b %Y")) +
@@ -718,8 +718,8 @@ issuePlot <-
           panel.grid.major.y =
             element_line(color = "#666666", linetype = "dotted")) +
         coord_cartesian(
-          xlim =  c(as.Date(paste(yr-1, "08-20", sep = "-")),
-                    as.Date(paste(yr+2, "04-05", sep = "-"))))
+          xlim =  c(as.Date(paste(year - 1, "08-20", sep = "-")),
+                    as.Date(paste(year + 2, "04-05", sep = "-"))))
 
       print(badplot)
 
