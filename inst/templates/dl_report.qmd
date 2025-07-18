@@ -74,7 +74,7 @@ dl_data <-
   dplyr::mutate(dl_cycle = params$dl)
 ```
 
-```{r data_processing}
+```{r data_processing1}
 #| include: false
 
 # Record check
@@ -89,6 +89,10 @@ record_check <-
       c("firstname", "lastname", "state", "birth_date"), ~is.na(.x)) |
       dplyr::if_all(c("address", "email"), ~is.na(.x)) |
       dplyr::if_all(c("city", "zip", "email"), ~is.na(.x)))
+```
+
+```{r data_processing2}
+#| include: false
 
 # Standardize birth date format
 fixed_dates_data <-
@@ -110,19 +114,39 @@ fixed_dates_data <-
   dplyr::select(-c("birth_date", "birth_date2")) |>
   dplyr::rename(birth_date = birth_date3) |>
   dplyr::relocate(birth_date, .before = "issue_date")
+```
+
+```{r data_processing3}
+#| include: false
 
 cleaned_data <- catch_messages(migbirdHIP::clean(fixed_dates_data))
 
 fixed_dates_data <- NULL
+```
+
+```{r data_processing4}
+#| include: false
 
 current_data <-
   catch_messages(migbirdHIP::issueCheck(cleaned_data, params$year))
+```
+
+```{r data_processing5}
+#| include: false
 
 fixed_data <- catch_messages(migbirdHIP::duplicateFix(current_data))
+```
+
+```{r data_processing6}
+#| include: false
 
 proofed_data <- migbirdHIP::proof(fixed_data, year = params$year)
 
 fixed_data <- NULL
+```
+
+```{r data_processing7}
+#| include: false
 
 # Read in the completed download data (for better/more accurate figures and
 # tables)
