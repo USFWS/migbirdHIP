@@ -5,7 +5,7 @@
 \alias{DF_TEST_TINI_CORRECTED}
 \title{Tiny fake HIP data, partially processed by correct()}
 \format{
-An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 3 rows and 33 columns.
+An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 3 rows and 32 columns.
 }
 \usage{
 DF_TEST_TINI_CORRECTED
