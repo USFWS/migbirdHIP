@@ -33,7 +33,7 @@ test_that("filter out any record with all-NA or all-0 bag values", {
         filter(record_key == .data$record_key[3]) |>
         mutate(across(contains(REF_FIELDS_BAG), \(x) NA)))
 
-  suppressMessages(test_clean <- clean(test_data))
+  suppressMessages(invisible(capture.output(test_clean <- clean(test_data))))
 
   expect_equal(nrow(DF_TEST_TINI_READ) - 2, nrow(test_clean))
 })
@@ -63,7 +63,7 @@ test_that("filter out if email AND address are missing", {
       email = ifelse(record_key == .data$record_key[1], NA, email),
       address = ifelse(record_key == .data$record_key[1], NA, address))
 
-  test_clean <- suppressMessages(clean(test_missing))
+  suppressMessages(invisible(capture.output(test_clean <- clean(test_missing))))
 
   expect_equal(nrow(test_missing) - 1, nrow(test_clean))
 })
@@ -76,7 +76,7 @@ test_that("filter out if email AND city AND zip are missing", {
       city = ifelse(record_key == .data$record_key[1], NA, city),
       zip = ifelse(record_key == .data$record_key[1], NA, zip))
 
-  test_clean <- suppressMessages(clean(test_missing))
+  suppressMessages(invisible(capture.output(test_clean <- clean(test_missing))))
 
   expect_equal(nrow(test_missing) - 1, nrow(test_clean))
 })
@@ -96,11 +96,14 @@ test_that("lastname converted to uppercase", {
 })
 
 test_that("suffix converted to uppercase", {
-  suppressMessages(
-    test_clean <-
-      DF_TEST_TINI_READ |>
-      dplyr::mutate(suffix = "ii") |>
-      clean())
+  suppressMessages(invisible(
+    capture.output(
+      test_clean <-
+        DF_TEST_TINI_READ |>
+        dplyr::mutate(suffix = "ii") |>
+        clean()
+    )
+  ))
 
   expect_true(
     unique(stringr::str_detect(test_clean$suffix, "^[^a-z]+$"))
