@@ -19,6 +19,7 @@
 #' @importFrom stringr str_detect
 #' @importFrom stringr str_extract
 #' @importFrom stringr str_remove
+#' @importFrom lubridate make_difftime
 #' @importFrom rlang .data
 #' @importFrom assertthat assert_that
 #'
@@ -36,6 +37,8 @@
 
 read_hip <-
   function(path, unique = TRUE, state = NA, season = FALSE) {
+    starttime <- Sys.time()
+
     failTF(unique)
     failTF(season)
 
@@ -165,6 +168,20 @@ read_hip <-
 
     # Return messages to console for important issues
     readMessages(raw_data)
+
+    endtime <- Sys.time()
+    message(
+      paste(
+        "Time to read in", length(unique(raw_data$source_file)), "files:",
+        paste(
+          as.character(
+            round(make_difftime(endtime - starttime, units = "minute"), 2)),
+          "min /",
+          as.character(
+            round(make_difftime(endtime - starttime, units = "second"), 2)),
+          "sec"
+          ))
+    )
 
     return(raw_data)
   }
