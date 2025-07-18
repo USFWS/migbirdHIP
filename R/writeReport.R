@@ -30,6 +30,12 @@ writeReport <-
     try(
       if (length(find.package("DT", quiet = T)) == 0)
         stop("Install package DT to render this report.", call. = F))
+    try(
+      if (length(find.package("sf", quiet = T)) == 0)
+        stop("Install package sf to render this report.", call. = F))
+    try(
+      if (length(find.package("stringi", quiet = T)) == 0)
+        stop("Install package stringi to render this report.", call. = F))
 
     # Fail if incorrect year supplied
     failYear(year)
