@@ -5,6 +5,7 @@
 -   `read_hip()`: add message that reports how long it took to read in `N` number of files
 -   `writeReport()`: add more dependency checks
 -   `badRegYearMessage()`: summarize by source file because it is more informative
+-   `invalidDateMessage()`: created and added to `issueMessages()`
 
 # migbirdHIP 1.4.0
 

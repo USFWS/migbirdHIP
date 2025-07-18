@@ -78,6 +78,7 @@ issueMessages <-
     timeTravelMessage(issue_assignments)
     futureDateMessage(issue_assignments)
     pastDateMessage(issue_assignments)
+    invalidDateMessage(issue_assignments)
     twoSeasonMessage(issue_assignments)
   }
 
@@ -288,6 +289,41 @@ pastDateMessage <-
             nrow(pasts),
             big.mark = ","),
           "past records detected. They have been filtered out.", sep = " "))
+    }
+  }
+
+#' Return message if invalid issue_date values are detected
+#'
+#' The internal \code{invalidDateMessage} function is used inside of
+#' \code{\link{issueMessages}} and \code{\link{issueCheck}} to return a message
+#' if invalid \code{issue_date} values are detected.
+#'
+#' @importFrom dplyr filter
+#' @importFrom rlang .data
+#'
+#' @param issue_assignments An intermediate tibble in \code{\link{issueCheck}}
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
+
+invalidDateMessage <-
+  function(issue_assignments) {
+
+    invalids <-
+      issue_assignments |>
+      filter(.data$decision == "invalid")
+
+    # Return message for how many past records were found
+    if (nrow(pasts) == 0) {
+      message("* 0 invalid records detected.")
+    } else {
+      message(
+        paste(
+          "*",
+          format.default(
+            nrow(invalids),
+            big.mark = ","),
+          "invalid records detected. They have been filtered out.", sep = " "))
     }
   }
 
