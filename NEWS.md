@@ -10,6 +10,7 @@
 -   `writeReport()`: add more dependency checks
 -   `badRegYearMessage()`: summarize by source file because it is more informative
 -   `invalidDateMessage()`: created and added to `issueMessages()`
+-   `huntMigBirdsMessage()`: created and added to `readMessages()`
 -   `issuePlot()`: improved plot appearance for clarity of interpretation
 
 # migbirdHIP 1.4.0

@@ -456,6 +456,9 @@ readMessages <-
     # 1-digit number
     nonDigitBagsMessage(raw_data)
 
+    # Return a message if any record does not have 2 for hunt_mig_birds
+    huntMigBirdsMessage(raw_data)
+
     # Return a message if there is an NA in dl_state
     dlStateNAMessage(raw_data)
 
@@ -699,6 +702,39 @@ nonDigitBagsMessage <-
     }
   }
 
+#' Return message if records with bad values for hunt_mig_birds are detected
+#'
+#' The internal \code{huntMigBirdsMessage} function is used inside of
+#' \code{\link{readMessages}}
+#'
+#' @importFrom dplyr filter
+#' @importFrom dplyr count
+#' @importFrom rlang .data
+#'
+#' @inheritParams readMessages
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
+
+huntMigBirdsMessage <-
+  function(raw_data) {
+
+    # Return a message if records contain a hunt_mig_birds value that isn't 2
+    bad_hunty <-
+      raw_data |>
+      filter(hunt_mig_birds != 2)
+
+    if (nrow(bad_hunty) > 0) {
+      message(
+        paste(
+          "Error: One or more records detected with a value other than 2",
+          "for hunt_mig_birds."
+        )
+      )
+      print(bad_hunty |>
+              count(.data$source_file, .data$hunt_mig_birds))
+    }
+  }
 #' Return message if there is an NA in dl_state
 #'
 #' The internal \code{dlStateNAMessage} function is used inside of
