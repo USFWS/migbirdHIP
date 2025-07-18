@@ -12,8 +12,7 @@ issuePlot(issue_assignments, year)
 \item{year}{The year of the HIP season (e.g. 2022 for the 2022-2023 season)}
 }
 \description{
-The internal \code{issuePlot} function plots good and bad \code{issue_date}
-values.
+The internal \code{issuePlot} function plots bad \code{issue_date} values.
 }
 \references{
 \url{https://github.com/USFWS/migbirdHIP}

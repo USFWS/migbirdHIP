@@ -511,29 +511,32 @@ issueDecide <-
 
 #' Plot issue date errors
 #'
-#' The internal \code{issuePlot} function plots good and bad \code{issue_date}
-#' values.
+#' The internal \code{issuePlot} function plots bad \code{issue_date} values.
 #'
 #' @importFrom dplyr filter
+#' @importFrom dplyr mutate
 #' @importFrom dplyr select
 #' @importFrom dplyr left_join
 #' @importFrom dplyr rename
 #' @importFrom dplyr distinct
 #' @importFrom lubridate mdy
+#' @importFrom lubridate ymd
 #' @importFrom dplyr tibble
 #' @importFrom ggplot2 aes
 #' @importFrom ggplot2 labs
 #' @importFrom ggplot2 ggplot
-#' @importFrom ggplot2 geom_rect
+#' @importFrom ggplot2 geom_vline
+#' @importFrom ggplot2 geom_segment
 #' @importFrom ggplot2 geom_boxplot
-#' @importFrom ggplot2 geom_point
-#' @importFrom ggplot2 scale_fill_manual
-#' @importFrom ggplot2 scale_shape_manual
+#' @importFrom ggplot2 scale_color_manual
+#' @importFrom ggplot2 scale_x_date
 #' @importFrom ggplot2 element_rect
 #' @importFrom ggplot2 element_line
-#' @importFrom ggplot2 scale_x_date
+#' @importFrom ggplot2 element_text
+#' @importFrom ggplot2 coord_cartesian
 #' @importFrom ggplot2 theme
 #' @importFrom ggplot2 theme_classic
+#' @importFrom ggnewscale new_scale_color
 #' @importFrom rlang .data
 #'
 #' @param issue_assignments An intermediate tibble in \code{\link{issueCheck}}
@@ -545,21 +548,6 @@ issueDecide <-
 issuePlot <-
   function(issue_assignments, year) {
     failYear(year)
-
-    rectangles <-
-      tibble(
-        season = c(paste(year - 1, year, sep = "-"),
-                   paste(year, year + 1, sep = "-"),
-                   paste(year + 1, year + 2, sep = "-")),
-        values = c("#F0E442", "#56B4E9", "#0072B2"),
-        xmin = c(as.Date(paste(year - 1, "09-01", sep = "-")),
-                 as.Date(paste(year, "09-01", sep = "-")),
-                 as.Date(paste(year + 1, "09-01", sep = "-"))),
-        xmax = c(as.Date(paste(year, "03-11", sep = "-")),
-                 as.Date(paste(year + 1, "03-11", sep = "-")),
-                 as.Date(paste(year + 2, "03-11", sep = "-"))),
-        ymin = -Inf,
-        ymax = Inf)
 
     badplot_data <-
       issue_assignments |>
@@ -574,52 +562,167 @@ issuePlot <-
       distinct()
 
     if (nrow(badplot_data > 0)) {
+      current <-
+        REF_DATES |>
+        filter(state %in% badplot_data$dl_state) |>
+        mutate(category = "current") |>
+        rename(dl_state = "state")
+
+      past <-
+        current |>
+        mutate(
+          issue_start = issue_start - 365,
+          issue_end = issue_end - 365,
+          category = "past")
+
+      future <-
+        current |>
+        mutate(
+          issue_start = issue_start + 365,
+          issue_end = issue_end + 365,
+          category = "future")
+
       badplot <-
-        badplot_data |>
         ggplot() +
-        geom_rect(
-          data = rectangles,
+        geom_vline(xintercept =
+                     ymd(paste0(yr - 2, "-09-01")), linetype = "dashed") +
+        geom_vline(xintercept =
+                     ymd(paste0(yr - 2, "-10-01")), linetype = "dotted") +
+        geom_vline(xintercept =
+                     ymd(paste0(yr - 2, "-11-01")), linetype = "dotted") +
+        geom_vline(xintercept =
+                     ymd(paste0(yr - 2, "-12-01")), linetype = "dotted") +
+        geom_vline(xintercept =
+                     ymd(paste0(yr - 1, "-01-01")), linetype = "dotted") +
+        geom_vline(xintercept =
+                     ymd(paste0(yr - 1, "-02-01")), linetype = "dotted") +
+        geom_vline(xintercept =
+                     ymd(paste0(yr - 1, "-03-01")), linetype = "dashed") +
+        geom_vline(xintercept =
+                     ymd(paste0(yr - 1, "-09-01")), linetype = "dashed") +
+        geom_vline(xintercept =
+                     ymd(paste0(yr - 1, "-10-01")), linetype = "dotted") +
+        geom_vline(xintercept =
+                     ymd(paste0(yr - 1, "-11-01")), linetype = "dotted") +
+        geom_vline(xintercept =
+                     ymd(paste0(yr - 1, "-12-01")), linetype = "dotted") +
+        geom_vline(xintercept =
+                     ymd(paste0(yr, "-01-01")), linetype = "dotted") +
+        geom_vline(xintercept =
+                     ymd(paste0(yr, "-02-01")), linetype = "dotted") +
+        geom_vline(xintercept =
+                     ymd(paste0(yr, "-03-01")), linetype = "dashed") +
+        geom_vline(xintercept =
+                     ymd(paste0(yr, "-09-01")), linetype = "dashed") +
+        geom_vline(xintercept =
+                     ymd(paste0(yr, "-10-01")), linetype = "dotted") +
+        geom_vline(xintercept =
+                     ymd(paste0(yr, "-11-01")), linetype = "dotted") +
+        geom_vline(xintercept =
+                     ymd(paste0(yr, "-12-01")), linetype = "dotted") +
+        geom_vline(xintercept =
+                     ymd(paste0(yr + 1, "-01-01")), linetype = "dotted") +
+        geom_vline(xintercept =
+                     ymd(paste0(yr + 1, "-02-01")), linetype = "dotted") +
+        geom_vline(xintercept =
+                     ymd(paste0(yr + 1, "-03-01")), linetype = "dashed") +
+        geom_vline(xintercept =
+                     ymd(paste0(yr + 1, "-09-01")), linetype = "dashed") +
+        geom_vline(xintercept =
+                     ymd(paste0(yr + 1, "-10-01")), linetype = "dotted") +
+        geom_vline(xintercept =
+                     ymd(paste0(yr + 1, "-11-01")), linetype = "dotted") +
+        geom_vline(xintercept =
+                     ymd(paste0(yr + 1, "-12-01")), linetype = "dotted") +
+        geom_vline(xintercept =
+                     ymd(paste0(yr + 2, "-01-01")), linetype = "dotted") +
+        geom_vline(xintercept =
+                     ymd(paste0(yr + 2, "-02-01")), linetype = "dotted") +
+        geom_vline(xintercept =
+                     ymd(paste0(yr + 2, "-03-01")), linetype = "dashed") +
+        # Past issue window
+        geom_segment(
+          data = past,
           aes(
-            xmin = .data$xmin,
-            xmax = .data$xmax,
-            ymin = .data$ymin,
-            ymax = .data$ymax,
-            fill = .data$season
-          ),
-          alpha = 0.3, inherit.aes = F) +
+            x = issue_start, xend = issue_end,
+            y = reorder(dl_state, desc(issue_start)),
+            color = category),
+          size = 3,
+          alpha = 0.4) +
+        # Future issue window
+        geom_segment(
+          data = future,
+          aes(
+            x = issue_start, xend = issue_end,
+            y = reorder(dl_state, desc(issue_start)),
+            color = category),
+          size = 3,
+          alpha = 0.4) +
+        # Current issue window
+        geom_segment(
+          data = current,
+          aes(
+            x = issue_start, xend = issue_end,
+            y = reorder(dl_state, desc(issue_start)),
+            color = category),
+          size = 3,
+          alpha = 0.4) +
+        # Titles
+        labs(
+          x = "Date",
+          y = "State",
+          title = "Non-current registrations",
+          subtitle =
+            paste(
+              "For registrations during the overlap period from states with",
+              "issue window overlap,\nregistration year must be used to",
+              "determine if a registration is current or future.")) +
+        # Issue window colors
+        scale_color_manual(
+          name = "Issue window",
+          values = c("#E69F00", "#009E73", "#666666"),
+          labels = c("current", "future",  "past")) +
+        new_scale_color() +
+        # Plot bad issue dates (non-current, non-MS, past, future, bad, invalid)
         geom_boxplot(
-          aes(
-            x = mdy(.data$issue_date),
-            y = .data$dl_state,
-            color = .data$registration_yr
-          ),
+          data = badplot_data,
+          aes(x = mdy(.data$issue_date), y = .data$dl_state,
+              color = registration_yr),
           fill = "#FFFFFF", width = 0, size = 3, position = "identity") +
-        geom_point(
-          aes(x = .data$issue_start, y = .data$dl_state,
-              shape = "Issue start")) +
-        geom_point(
-          aes(x = .data$issue_end, y = .data$dl_state,
-              shape = "Issue end")) +
-        labs(x = "Date", y = "State",
-             title = "Non-current registrations",
-             color = "Registration year") +
-        scale_fill_manual("Seasons",
-                          labels = c(paste(year - 1, year, sep = "-"),
-                                     paste(year, year + 1, sep = "-"),
-                                     paste(year + 1, year + 2, sep = "-")),
-                          values = c("#F0E442", "#56B4E9", "#0072B2")) +
-        scale_shape_manual(name = "", values = c(4, 1, 2)) +
-        scale_x_date(breaks = c(rectangles$xmin[1], rectangles$xmax[1],
-                                rectangles$xmin[2], rectangles$xmax[2],
-                                rectangles$xmin[3], rectangles$xmax[3])) +
+        # Bad issue date colors
+        scale_color_manual(
+          name = "Registration year",
+          values = c("#0072B2", "#D55E00")) +
+        scale_x_date(
+          breaks = c(as.Date(paste(yr-1, "09-01", sep = "-")),
+                     as.Date(paste(yr-1, "11-01", sep = "-")),
+                     as.Date(paste(yr, "01-01", sep = "-")),
+                     as.Date(paste(yr, "03-01", sep = "-")),
+                     as.Date(paste(yr, "09-01", sep = "-")),
+                     as.Date(paste(yr, "11-01", sep = "-")),
+                     as.Date(paste(yr+1, "01-01", sep = "-")),
+                     as.Date(paste(yr+1, "03-01", sep = "-")),
+                     as.Date(paste(yr+1, "09-01", sep = "-")),
+                     as.Date(paste(yr+1, "11-01", sep = "-")),
+                     as.Date(paste(yr+2, "01-01", sep = "-")),
+                     as.Date(paste(yr+2, "03-01", sep = "-"))),
+          date_labels = c("%b %Y", "%b", "%b", "%b %Y",
+                          "%b %Y", "%b", "%b", "%b %Y",
+                          "%b %Y", "%b", "%b", "%b %Y")) +
         theme_classic() +
-        theme(axis.text = element_text(size = 11),
-              axis.title = element_text(size = 14),
-              panel.background = element_rect(color = "white"),
-              panel.grid.major.y =
-                element_line(color = "#666666", linetype = "dotted"))
+        theme(
+          axis.text = element_text(size = 11),
+          axis.text.x = element_text(angle = 60, vjust = 1, hjust = 1),
+          axis.title = element_text(size = 14),
+          panel.background = element_rect(color = "white"),
+          panel.grid.major.y =
+            element_line(color = "#666666", linetype = "dotted")) +
+        coord_cartesian(
+          xlim =  c(as.Date(paste(yr-1, "08-20", sep = "-")),
+                    as.Date(paste(yr+2, "04-05", sep = "-"))))
 
       print(badplot)
+
     } else {
       message("* No bad data to plot.")
     }

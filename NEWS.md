@@ -1,11 +1,16 @@
 # migbirdHIP (dev version)
 
+## Major changes & new features
+
+-   Import `{ggnewscale}` for use of `ggnewscale::new_scale_color()` in `issue_plot()`
+
 ## Minor changes / bug fixes
 
 -   `read_hip()`: add message that reports how long it took to read in `N` number of files
 -   `writeReport()`: add more dependency checks
 -   `badRegYearMessage()`: summarize by source file because it is more informative
 -   `invalidDateMessage()`: created and added to `issueMessages()`
+-   `issuePlot()`: improved plot appearance for clarity of interpretation
 
 # migbirdHIP 1.4.0
 
