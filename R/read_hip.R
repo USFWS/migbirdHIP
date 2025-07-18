@@ -722,7 +722,7 @@ huntMigBirdsMessage <-
     # Return a message if records contain a hunt_mig_birds value that isn't 2
     bad_hunty <-
       raw_data |>
-      filter(hunt_mig_birds != 2)
+      filter(.data$hunt_mig_birds != 2)
 
     if (nrow(bad_hunty) > 0) {
       message(
