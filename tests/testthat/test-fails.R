@@ -1,7 +1,7 @@
 test_that("failProofed works", {
   expect_error(failProofed(DF_TEST_MINI))
 
-  test_failproofed <- DF_TEST_MINI |> dplyr::mutate(errors = NA)
+  test_failproofed <- DF_TEST_MINI |> mutate(errors = NA)
   expect_no_error(failProofed(test_failproofed))
 })
 

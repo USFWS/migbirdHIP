@@ -8,7 +8,7 @@ test_that("filter out any record if any bag value is not a 1-digit number", {
   suppressMessages(
     test_clean <-
       DF_TEST_TINI_READ |>
-      dplyr::mutate(
+      mutate(
         ducks_bag =
           case_when(
             record_key == .data$record_key[1] ~ "*",
@@ -45,7 +45,7 @@ test_that("filter out if firstname, lastname, state, or DOB missing", {
   test_missing <-
     DF_TEST_MINI |>
     dplyr::slice_head(n = 10) |>
-    dplyr::mutate(
+    mutate(
       firstname = ifelse(record_key == .data$record_key[1], NA, firstname),
       lastname = ifelse(record_key == .data$record_key[2], NA, lastname),
       state = ifelse(record_key == .data$record_key[3], NA, state),
@@ -59,7 +59,7 @@ test_that("filter out if firstname, lastname, state, or DOB missing", {
 test_that("filter out if email AND address are missing", {
   test_missing <-
     DF_TEST_TINI_READ |>
-    dplyr::mutate(
+    mutate(
       email = ifelse(record_key == .data$record_key[1], NA, email),
       address = ifelse(record_key == .data$record_key[1], NA, address))
 
@@ -71,7 +71,7 @@ test_that("filter out if email AND address are missing", {
 test_that("filter out if email AND city AND zip are missing", {
   test_missing <-
     DF_TEST_TINI_READ |>
-    dplyr::mutate(
+    mutate(
       email = ifelse(record_key == .data$record_key[1], NA, email),
       city = ifelse(record_key == .data$record_key[1], NA, city),
       zip = ifelse(record_key == .data$record_key[1], NA, zip))
@@ -85,13 +85,13 @@ test_that("filter out if email AND city AND zip are missing", {
 
 test_that("firstname converted to uppercase", {
   expect_true(
-    unique(stringr::str_detect(DF_TEST_TINI_CLEANED$firstname, "^[^a-z]+$"))
+    unique(str_detect(DF_TEST_TINI_CLEANED$firstname, "^[^a-z]+$"))
   )
 })
 
 test_that("lastname converted to uppercase", {
   expect_true(
-    unique(stringr::str_detect(DF_TEST_TINI_CLEANED$lastname, "^[^a-z]+$"))
+    unique(str_detect(DF_TEST_TINI_CLEANED$lastname, "^[^a-z]+$"))
   )
 })
 
@@ -100,13 +100,13 @@ test_that("suffix converted to uppercase", {
     capture.output(
       test_clean <-
         DF_TEST_TINI_READ |>
-        dplyr::mutate(suffix = "ii") |>
+        mutate(suffix = "ii") |>
         clean()
     )
   ))
 
   expect_true(
-    unique(stringr::str_detect(test_clean$suffix, "^[^a-z]+$"))
+    unique(str_detect(test_clean$suffix, "^[^a-z]+$"))
   )
 })
 
@@ -117,9 +117,9 @@ test_that("filter out test records", {
   test_data <-
     DF_TEST_MINI |>
     dplyr::slice_head(n = 10) |>
-    dplyr::mutate(
+    mutate(
       firstname =
-        dplyr::case_when(
+        case_when(
           record_key == .data$record_key[1] ~ "TEST",
           record_key == .data$record_key[2] ~ "TEST",
           record_key == .data$record_key[3] ~ "INAUDIBLE",
@@ -128,7 +128,7 @@ test_that("filter out test records", {
           record_key == .data$record_key[6] ~ "RESIDENT",
           TRUE ~ firstname),
       lastname =
-        dplyr::case_when(
+        case_when(
           record_key == .data$record_key[1] ~ "TEST",
           record_key == .data$record_key[7] ~ "INAUDIBLE",
           TRUE ~ lastname))
@@ -176,12 +176,12 @@ test_that("change in-line permit record hunt_mig_birds value to 2", {
 
   inline_pmt_test <-
     DF_TEST_MINI |>
-    dplyr::slice_sample(n = 3) |>
-    dplyr::mutate(
+    slice_sample(n = 3) |>
+    mutate(
       across(matches("bag|crane|coot|rail"), \(x) "0"),
-      band_tailed_pigeon = ifelse(dplyr::row_number() == 1, "2", "0"),
-      brant = ifelse(dplyr::row_number() == 2, "2", "0"),
-      seaducks = ifelse(dplyr::row_number() == 3, "2", "0"))
+      band_tailed_pigeon = ifelse(row_number() == 1, "2", "0"),
+      brant = ifelse(row_number() == 2, "2", "0"),
+      seaducks = ifelse(row_number() == 3, "2", "0"))
 
   test_data <-
     bind_rows(
@@ -214,9 +214,9 @@ test_that("change crane permit file state crane bag values to 0", {
   test_data <-
     DF_TEST_MINI |>
     dplyr::slice_head(n = 12) |>
-    dplyr::mutate(
+    mutate(
       dl_state =
-        dplyr::case_when(
+        case_when(
           record_key == .data$record_key[1] ~ "CO",
           record_key == .data$record_key[2] ~ "KS",
           record_key == .data$record_key[3] ~ "MN",
@@ -249,9 +249,9 @@ test_that("change BTPI permit file state BTPI bag values to 0", {
     DF_TEST_MINI |>
     dplyr::slice_head(n = 10) |>
     missingPIIFilter() |>
-    dplyr::mutate(
+    mutate(
       dl_state =
-        dplyr::case_when(
+        case_when(
           record_key == .data$record_key[1] ~ "CO",
           record_key == .data$record_key[2] ~ "NM",
           record_key == .data$record_key[3] ~ "UT",

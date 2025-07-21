@@ -2,7 +2,7 @@ test_that("issueAssign sets decision as MS for MS registrations", {
 
   MS_df <-
     DF_TEST_TINI_CLEANED |>
-    dplyr::mutate(
+    mutate(
       dl_state = "MS",
       issue_date = paste0("10/01/", REF_CURRENT_SEASON))
 
@@ -20,7 +20,7 @@ test_that("issueCheck keeps MS registrations", {
 
   MS_df <-
     DF_TEST_TINI_CLEANED |>
-    dplyr::mutate(
+    mutate(
       dl_state = "MS",
       issue_date = paste0("10/01/", REF_CURRENT_SEASON))
 
@@ -38,7 +38,7 @@ test_that("issueAssign sets decision as current for current 1-season regs", {
 
   current_df <-
     DF_TEST_TINI_CLEANED |>
-    dplyr::mutate(
+    mutate(
       dl_state = "CA",
       issue_date = paste0("10/01/", REF_CURRENT_SEASON))
 
@@ -56,7 +56,7 @@ test_that("issueCheck keeps current registrations, 1-season", {
 
   current_df <-
     DF_TEST_TINI_CLEANED |>
-    dplyr::mutate(
+    mutate(
       dl_state = "CA",
       issue_date = paste0("10/01/", REF_CURRENT_SEASON))
 
@@ -73,7 +73,7 @@ test_that("issueAssign sets decision as future for future 1-season regs", {
 
   future_df <-
     DF_TEST_TINI_CLEANED |>
-    dplyr::mutate(
+    mutate(
       dl_state = "CA",
       issue_date = paste0("04/30/", as.numeric(REF_CURRENT_SEASON) + 1))
 
@@ -90,7 +90,7 @@ test_that("issueCheck keeps future registrations, 1-season", {
 
   future_df <-
     DF_TEST_TINI_CLEANED |>
-    dplyr::mutate(
+    mutate(
       dl_state = "CA",
       issue_date = paste0("04/30/", as.numeric(REF_CURRENT_SEASON) + 1))
 
@@ -107,7 +107,7 @@ test_that("issueAssign sets decision as invalid for invalid 1-season regs", {
 
   invalid_df <-
     DF_TEST_TINI_CLEANED |>
-    dplyr::mutate(
+    mutate(
       dl_state = "CA",
       issue_date = paste0("03/30/", as.numeric(REF_CURRENT_SEASON) + 1))
 
@@ -124,7 +124,7 @@ test_that("issueCheck drops invalid registrations, 1-season", {
 
   invalid_df <-
     DF_TEST_TINI_CLEANED |>
-    dplyr::mutate(
+    mutate(
       dl_state = "CA",
       issue_date = paste0("03/30/", as.numeric(REF_CURRENT_SEASON) + 1))
 
@@ -141,7 +141,7 @@ test_that("issueAssign sets decision as past for past 1-season regs", {
 
   past_df <-
     DF_TEST_TINI_CLEANED |>
-    dplyr::mutate(
+    mutate(
       dl_state = "DE",
       issue_date = "01/01/2022")
 
@@ -158,7 +158,7 @@ test_that("issueCheck drops past registrations, 1-season", {
 
   past_df <-
     DF_TEST_TINI_CLEANED |>
-    dplyr::mutate(
+    mutate(
       dl_state = "DE",
       issue_date = "01/01/2022")
 
@@ -176,7 +176,7 @@ test_that("issueAssign sets decision as bad, for too far in future, 1-season", {
   # Too far in future
   bid_df <-
     DF_TEST_TINI_CLEANED |>
-    dplyr::mutate(
+    mutate(
       dl_state = "DE",
       issue_date = paste0("12/01/", as.numeric(REF_CURRENT_SEASON) + 2))
 
@@ -194,7 +194,7 @@ test_that("issueCheck drops bad issue date registrations, 1-season", {
   # Too far in future
   bid_df <-
     DF_TEST_TINI_CLEANED |>
-    dplyr::mutate(
+    mutate(
       dl_state = "DE",
       issue_date = paste0("12/01/", as.numeric(REF_CURRENT_SEASON) + 2))
 
@@ -212,7 +212,7 @@ test_that("issueAssign drops issue_date of 00/00/0000", {
   bad_date <-
     DF_TEST_TINI_CLEANED |>
     dplyr::slice_head(n = 1) |>
-    dplyr::mutate(
+    mutate(
       dl_state = "DE",
       issue_date = "00/00/0000")
 
@@ -230,9 +230,9 @@ test_that("issueAssign evaluates correctly when registration_yr is current", {
   bad_date <-
     DF_TEST_MINI |>
     dplyr::slice_head(n = 5) |>
-    dplyr::select(
+    select(
       c("record_key", "issue_date", "registration_yr", "dl_state")) |>
-    dplyr::mutate(
+    mutate(
       dl_state =
         ifelse(record_key == "record_1", "MS", "CA"),
       issue_date =
@@ -264,9 +264,9 @@ test_that("issueAssign changes future registration_yr correctly", {
   bad_date <-
     DF_TEST_MINI |>
     dplyr::slice_head(n = 5) |>
-    dplyr::select(
+    select(
       c("record_key", "issue_date", "registration_yr", "dl_state")) |>
-    dplyr::mutate(
+    mutate(
       dl_state =
         ifelse(record_key == "record_1", "MS", "CA"),
       issue_date =
@@ -302,19 +302,19 @@ test_that("issueAssign evaluates 2-season states correctly", {
   issue_window_begin <- REF_DATES$issue_start[REF_DATES$state == st]
   issue_window_end <- REF_DATES$issue_end[REF_DATES$state == st]
 
-  days_btwn_starts <- issue_window_begin - lubridate::mdy(test_start)
+  days_btwn_starts <- issue_window_begin - mdy(test_start)
   days_overlap <- issue_window_end - (issue_window_begin + 365) + 1
   days_in_window <- (issue_window_begin + 365) - issue_window_begin
-  days_bad <- lubridate::mdy(test_end) - (issue_window_end + 365)
+  days_bad <- mdy(test_end) - (issue_window_end + 365)
   days_btwn_ends <-
     (issue_window_end + 365) - (issue_window_begin + 365) - days_overlap + 1
 
   twoseason_data <-
-    dplyr::tibble(
+    tibble(
       yearmonthday =
         as.character(
           as.Date(
-            lubridate::mdy(test_start):lubridate::mdy(test_end))),
+            mdy(test_start):mdy(test_end))),
       issue_date =
         paste(
           stringr::str_sub(yearmonthday, 6, 7),
@@ -323,11 +323,11 @@ test_that("issueAssign evaluates 2-season states correctly", {
           sep = "/"),
       registration_yr = REF_CURRENT_SEASON,
       dl_state = st) |>
-    dplyr::select(-"yearmonthday")
+    select(-"yearmonthday")
 
   assigned_count <-
     issueAssign(twoseason_data, as.numeric(REF_CURRENT_SEASON)) |>
-    dplyr::count(decision)
+    count(decision)
 
   expect_equal(
     assigned_count$n[assigned_count$decision == "past"],
@@ -364,17 +364,17 @@ test_that("issueAssign evaluates 1-season states correctly", {
   issue_window_begin <- REF_DATES$issue_start[REF_DATES$state == st]
   issue_window_end <- REF_DATES$issue_end[REF_DATES$state == st]
 
-  days_btwn_starts <- issue_window_begin - lubridate::mdy(test_start)
+  days_btwn_starts <- issue_window_begin - mdy(test_start)
   days_btwn_ends <- (issue_window_end + 365) - (issue_window_begin + 365) + 1
   days_in_window <- (issue_window_begin + 365) - issue_window_begin
-  days_bad <- lubridate::mdy(test_end) - (issue_window_end + 365)
+  days_bad <- mdy(test_end) - (issue_window_end + 365)
 
   oneseason_data <-
-    dplyr::tibble(
+    tibble(
       yearmonthday =
         as.character(
           as.Date(
-            lubridate::mdy(test_start):lubridate::mdy(test_end))),
+            mdy(test_start):mdy(test_end))),
       issue_date =
         paste(
           stringr::str_sub(yearmonthday, 6, 7),
@@ -383,11 +383,11 @@ test_that("issueAssign evaluates 1-season states correctly", {
           sep = "/"),
       registration_yr = REF_CURRENT_SEASON,
       dl_state = st) |>
-    dplyr::select(-"yearmonthday")
+    select(-"yearmonthday")
 
   assigned_count <-
     issueAssign(oneseason_data, as.numeric(REF_CURRENT_SEASON)) |>
-    dplyr::count(decision)
+    count(decision)
 
   expect_equal(
     assigned_count$n[assigned_count$decision == "past"],
