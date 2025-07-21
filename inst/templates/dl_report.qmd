@@ -229,9 +229,9 @@ n_dropped <-
     year = params$year
   ) |>
   dplyr::mutate(
-    n = 
+    n =
       ifelse(.data$n > 999, format.default(.data$n, big.mark = ","), .data$n),
-    decision = 
+    decision =
       paste("    +", .data$n, .data$decision)) |>
   dplyr::select(-"n")
 
