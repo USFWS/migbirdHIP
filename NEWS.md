@@ -3,6 +3,7 @@
 ## Major changes & new features
 
 -   Import `{ggnewscale}` for use of `ggnewscale::new_scale_color()` in `issue_plot()`
+-   Created internal `nDropped()` function (with helpers `nDroppedClean()` and `nDroppedCurrent()`) to summarize the number of dropped HIP registrations at each step of pre-processing; added unit testing for the functions.
 
 ## Minor changes / bug fixes
 
@@ -13,6 +14,7 @@
 -   `huntMigBirdsMessage()`: created and added to `readMessages()`
 -   `issuePlot()`: improved plot appearance for clarity of interpretation
 -   `duplicateFix()`: bug fix, stopped returning `duplicate_id` field in the output tibble
+-   Add `nDropped()` summary to the Agenda tab of the `dl_report.qmd` template.
 
 # migbirdHIP 1.4.0
 
@@ -274,3 +276,4 @@
 # migbirdHarvestData 1.0.0
 
 -   First fully functional version
+

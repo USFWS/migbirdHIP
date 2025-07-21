@@ -142,7 +142,6 @@ fixed_data <- catch_messages(migbirdHIP::duplicateFix(current_data))
 
 proofed_data <- migbirdHIP::proof(fixed_data, year = params$year)
 
-fixed_data <- NULL
 ```
 
 ```{r data_processing7}
@@ -214,6 +213,26 @@ split_bit <- split(bit, bit$message)
 
 bit <- NULL
 
+```
+
+```{r overview_statistics_droppedrecords}
+#| echo: false
+#| message: false
+
+# Dropped counts
+n_dropped <-
+  migbirdHIP:::nDropped(
+    raw_data = dl_data,
+    clean_data = cleaned_data,
+    current_data = current_data,
+    deduplicated_data = fixed_data,
+    year = params$year
+  ) |>
+  dplyr::mutate(
+    decision = paste("* Dropped", .data$n, .data$decision)) |>
+  dplyr::select(-"n")
+
+fixed_data <- NULL
 ```
 
 ```{r overview_statistics_canada}
@@ -581,6 +600,11 @@ bullets <-
     purrr::map(
       seq_len(nrow(important_statistics)),
       ~dplyr::slice(important_statistics, .x) |> dplyr::pull())
+    ,
+    # Dropped record summaries
+    purrr::map(
+      seq_len(nrow(n_dropped)),
+      ~dplyr::slice(n_dropped, .x) |> dplyr::pull())
     ,
     # Canada summary
     if (canada_records > 0) {
