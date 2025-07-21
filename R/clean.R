@@ -369,8 +369,8 @@ cranePermitBagFix <-
 
       message(
         paste(
-          "A total of", nrow(bad_cr_2s), "2s converted to 0s for permit file",
-          "states:")
+          "A total of", format.default(sum(bad_cr_2s$n), big.mark = ","),
+          "2s converted to 0s for permit file states:")
       )
       print(bad_cr_2s |> mutate(spp = "cranes"))
       return(corrected_pmt_bags)
@@ -431,8 +431,8 @@ btpiPermitBagFix <-
 
       message(
         paste(
-          "A total of", nrow(bad_bt_2s), "2s converted to 0s for permit file",
-          "states:")
+          "A total of", format.default(sum(bad_bt_2s$n), big.mark = ","),
+          "2s converted to 0s for permit file states:")
       )
       print(bad_bt_2s |> mutate(spp = short_btpi))
       return(corrected_pmt_bags)
