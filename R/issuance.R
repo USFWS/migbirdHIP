@@ -119,8 +119,9 @@ regYearEditMessage <-
     if (nrow(edited_years) >= 1) {
       message(
         paste(
-          "A total of", nrow(edited_years),
-          "registration_yr values were changed.", sep = " "))
+          "A total of", nrow(edited_years), "registration_yr values were",
+          "changed.")
+      )
       print(
         edited_years |>
           rename(original = "original_yr", new = "edited_yr") |>
@@ -152,7 +153,7 @@ zeroDateMessage <-
         paste(
           "Error: issue_date value of 00/00/0000 detected in",
           nrow(filter(clean_data, .data$issue_date == "00/00/0000")),
-          "record(s), which will be dropped."
+          "records; these records will be filtered out."
         )
       )
     }

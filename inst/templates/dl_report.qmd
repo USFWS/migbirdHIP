@@ -327,14 +327,26 @@ important_statistics <-
     message_log |>
     unlist() |>
     dplyr::as_tibble() |>
+    # Exclude some messages from the bulleted list
     dplyr::filter(
       !stringr::str_detect(
         value,
         paste0(
-          "Current registrations with|are blank|ID fields|provided state|",
-          "write-out|past records|0 future|issue_date in the|Mississippi|",
-          "100% of emails|00/00/0000|2s converted|0 records need to be ",
-          "postponed|single digit|non-MS records")
+          "Time to read in|",
+          "combinations of PII|", # missingPIIMessage
+          "100% of emails|", # missingEmailsMessage
+          "Are you sure|", # message for using non-current year
+          "00/00/0000|", # zeroDateMessage
+          "0 records need to be postponed|", # futureDateMessage
+          "0 invalid|", # invalidDateMessage
+          "past records|", # pastDateMessage
+          "evaluated using registration_yr|", # twoSeasonMessage
+          "2-season overlap window|", # twoSeasonMessage
+          "issue_date in the future|", # timeTravelMessage
+          "2s converted|", # btpiPermitBagFix and cranePermitBagFix
+          "are blank|", # dropBlankFiles
+          "provided state|" # zipCheck
+          )
       )
     ) |>
     dplyr::mutate(

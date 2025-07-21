@@ -512,9 +512,8 @@ missingPIIMessage <-
     if (nrow(raw_nas) > 0) {
       message(
         paste(
-          "Error: NA values detected in one or more ID fields",
-          "(firstname, lastname, state, birth date) for >10% of a file",
-          "and/or >100 records."
+          "Error:", nrow(raw_nas), "registrations are missing critical",
+          "combinations of PII (making up >10% of a file and/or >100 records)."
         )
       )
 
@@ -547,7 +546,9 @@ missingEmailsMessage <-
       filter(.data$n_emails == 1)
 
     if (nrow(missing) > 0) {
-      message("Error: One or more files are missing 100% of emails.")
+      message(
+        paste("Error:", nrow(missing), "files are missing 100% of emails.")
+      )
 
       print(missing |> select(.data$source_file))
     }
@@ -580,9 +581,8 @@ testRecordMessage <-
     if (nrow(bad_test_records) > 0) {
       message(
         paste(
-          "Error: One or more records contain 'TEST' in first name and last",
-          "name fields."
-        )
+          "Error:", nrow(bad_test_records), "test records detected; these",
+          "records will be filtered out.")
       )
 
       print(
@@ -618,9 +618,8 @@ zeroBagsMessage <-
     if (nrow(zero_bags) > 0) {
       message(
         paste(
-          "Error: One or more records has a '0' in every bag field; these",
-          "records will be filtered out in clean()."
-        )
+          "Error:", nrow(zero_bags), "records have a '0' in every bag field;",
+          "these records will be filtered out.")
       )
 
       print(zero_bags |> select(c("source_file", "record_key")))
@@ -652,7 +651,11 @@ naBagsMessage <-
       filter(if_all(all_of(REF_FIELDS_BAG), \(x) is.na(x)))
 
     if (nrow(NA_bags) > 0) {
-      message("Error: One or more records has an NA in every bag field.")
+      message(
+        paste(
+          "Error:", nrow(NA_bags), "records have an NA in every bag field;",
+          "these records will be filtered out.")
+      )
 
       print(NA_bags |> select(c("source_file", "record_key")))
     }
@@ -690,9 +693,8 @@ nonDigitBagsMessage <-
     if (nrow(nondigit_bags) > 0) {
       message(
         paste(
-          "Error: One or more records detected with a value other than a",
-          "single digit; these records will be filtered out in clean()."
-        )
+          "Error:", nrow(nondigit_bags), "records detected with a value other",
+          "than a single digit; these records will be filtered out.")
       )
       print(
         nondigit_bags |>
@@ -727,9 +729,8 @@ huntMigBirdsMessage <-
     if (nrow(bad_hunty) > 0) {
       message(
         paste(
-          "Error: One or more records detected with a value other than 2",
-          "for hunt_mig_birds."
-        )
+          "Error:", nrow(bad_hunty), "records detected with a value other than",
+          "2 for hunt_mig_birds.")
       )
       print(bad_hunty |>
               count(.data$source_file, .data$hunt_mig_birds))
@@ -752,9 +753,15 @@ huntMigBirdsMessage <-
 dlStateNAMessage <-
   function(raw_data) {
 
+    NA_dlState <-
+      raw_data |>
+      filter(is.na(.data$dl_state))
+
     # Return a message if there is an NA in dl_state
-    if (TRUE %in% is.na(raw_data$dl_state)) {
-      message("Error: One or more more NA values detected in dl_state.")
+    if (nrow(NA_dlState) > 0) {
+      message(
+        paste(
+          "Error:", nrow(NA_dlState), "NA values detected in dl_state."))
 
       print(raw_data |>
               distinct(.data$dl_state, .data$source_file) |>
@@ -780,9 +787,15 @@ dlStateNAMessage <-
 dlDateNAMessage <-
   function(raw_data) {
 
+    NA_dlDate <-
+      raw_data |>
+      filter(is.na(.data$dl_date))
+
     # Return a message if there is an NA in dl_date
-    if (TRUE %in% is.na(raw_data$dl_date)) {
-      message("Error: One or more more NA values detected in dl_date.")
+    if (nrow(NA_dlDate) > 0) {
+      message(
+        paste(
+          "Error:", nrow(NA_dlDate), "NA values detected in dl_date"))
 
       print(raw_data |>
               select(.data$dl_date, .data$source_file) |>
@@ -824,8 +837,8 @@ inLinePermitDNHMessage <-
       message(
         paste(
           "Error:", sum(inline_pmt_dnh$n), "in-line permit records",
-          "from OR and/or WA do not contain hunt_mig_birds == 2; they will be",
-          "edited in clean()."
+          "from OR and/or WA do not contain 2 for hunt_mig_birds; they will be",
+          "edited."
         )
       )
 
@@ -862,7 +875,7 @@ badRegYearMessage <-
     if (nrow(badyr) > 0) {
       message(
         paste0(
-          "Error: ", nrow(badyr), " file(s) did not submit a valid ",
+          "Error: ", nrow(badyr), " files did not submit a valid ",
           "registration_yr value; the registration_yr must be equal to ",
           REF_CURRENT_SEASON, " or ", as.numeric(REF_CURRENT_SEASON) + 1, "."
         )

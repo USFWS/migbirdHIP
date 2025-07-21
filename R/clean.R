@@ -313,8 +313,10 @@ zipCheck <-
     # Error check: are any zip codes wrong?
     if (nrow(zipcheck) > 0) {
       message(
-        paste0("Warning: Zip codes detected that do not correspond to provided",
-               " state of residence for >10% of a file and/or >100 records."))
+        paste(
+          "Warning: Zip codes detected that do not correspond to provided",
+          "state of residence for >10% of a file and/or >100 records.")
+      )
 
       print(zipcheck)
     }
@@ -365,7 +367,11 @@ cranePermitBagFix <-
               .data$cranes)
         )
 
-      message("2s converted to 0s for permit file states:")
+      message(
+        paste(
+          "A total of", nrow(bad_cr_2s), "2s converted to 0s for permit file",
+          "states:")
+      )
       print(bad_cr_2s |> mutate(spp = "cranes"))
       return(corrected_pmt_bags)
 
@@ -423,7 +429,11 @@ btpiPermitBagFix <-
               .data$band_tailed_pigeon)
         )
 
-      message("2s converted to 0s for permit file states:")
+      message(
+        paste(
+          "A total of", nrow(bad_bt_2s), "2s converted to 0s for permit file",
+          "states:")
+      )
       print(bad_bt_2s |> mutate(spp = short_btpi))
       return(corrected_pmt_bags)
 
