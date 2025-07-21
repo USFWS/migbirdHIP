@@ -693,7 +693,7 @@ issuePlot <-
         # Bad issue date colors
         scale_color_manual(
           name = "Registration year",
-          values = c("#0072B2", "#D55E00")) +
+          values = c("#0072B2", "#D55E00", "#F0E442" "#CC79A7", "#000000")) +
         scale_x_date(
           breaks = c(as.Date(paste(year - 1, "09-01", sep = "-")),
                      as.Date(paste(year - 1, "11-01", sep = "-")),
