@@ -4,7 +4,7 @@
 \alias{nDroppedClean}
 \title{Summary table of how many registrations were dropped by clean}
 \usage{
-nDroppedClean(raw_data, clean_data)
+nDroppedClean(raw_data, clean_data, by_state = FALSE)
 }
 \arguments{
 \item{raw_data}{The object created after reading in data with
@@ -12,6 +12,9 @@ nDroppedClean(raw_data, clean_data)
 
 \item{clean_data}{The object created after cleaning data with
 \code{\link{clean}}}
+
+\item{by_state}{TRUE summarizes the number of dropped records by state; FALSE
+(default) does not summarize}
 }
 \description{
 Internal function that helps \code{\link{nDropped}} by summarizing the number

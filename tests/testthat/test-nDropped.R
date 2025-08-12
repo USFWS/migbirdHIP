@@ -21,6 +21,31 @@ test_that("nDropped works", {
   expect_true(nrow(n_dropped) > 0)
 })
 
+test_that("nDropped works by state", {
+  raw_data <- DF_TEST_MINI
+
+  suppressMessages(invisible(capture.output(
+    cleaned_data <- clean(DF_TEST_MINI)
+  )))
+  suppressMessages(invisible(capture.output(
+    current_data <- issueCheck(cleaned_data, as.numeric(REF_CURRENT_SEASON))
+  )))
+  deduped_data <- duplicateFix(current_data)
+
+  n_dropped <-
+    nDropped(
+      raw_data,
+      cleaned_data,
+      current_data,
+      deduped_data,
+      as.numeric(REF_CURRENT_SEASON),
+      by_state = TRUE
+    )
+
+  expect_true(nrow(n_dropped) > 0)
+  expect_true(!is.null(n_dropped$dl_state))
+})
+
 test_that("nDroppedClean works", {
   raw_data <- DF_TEST_MINI
   suppressMessages(invisible(capture.output(
@@ -34,6 +59,23 @@ test_that("nDroppedClean works", {
     )
 
   expect_true(nrow(n_dropped) > 0)
+})
+
+test_that("nDroppedClean works by state", {
+  raw_data <- DF_TEST_MINI
+  suppressMessages(invisible(capture.output(
+    cleaned_data <- clean(DF_TEST_MINI)
+  )))
+
+  n_dropped <-
+    nDroppedClean(
+      raw_data,
+      cleaned_data,
+      by_state = TRUE
+    )
+
+  expect_true(nrow(n_dropped) > 0)
+  expect_true(!is.null(n_dropped$dl_state))
 })
 
 test_that("nDroppedCurrent works", {

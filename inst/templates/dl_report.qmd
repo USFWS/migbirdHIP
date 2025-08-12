@@ -226,7 +226,8 @@ n_dropped <-
     clean_data = cleaned_data,
     current_data = current_data,
     deduplicated_data = fixed_data,
-    year = params$year
+    year = params$year,
+    by_state = FALSE
   ) |>
   dplyr::mutate(
     n =

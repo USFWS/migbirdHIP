@@ -17,16 +17,31 @@
 #' @param deduplicated_data The object created after deduplicating data with
 #'   \code{\link{duplicateFix}}
 #' @param year The year of the HIP season (e.g. 2022 for the 2022-2023 season)
+#' @param by_state TRUE summarizes the number of dropped records by state; FALSE
+#'   (default) does not summarize
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}
 
 nDropped <-
-  function(raw_data, clean_data, current_data, deduplicated_data, year) {
+  function(raw_data,
+           clean_data,
+           current_data,
+           deduplicated_data,
+           year,
+           by_state = FALSE) {
     failYear(year)
+    failTF(by_state)
 
     # Dropped by clean
-    n_dropped_clean <- nDroppedClean(raw_data, clean_data)
+    n_dropped_clean <- nDroppedClean(raw_data, clean_data, by_state)
+
+    if (by_state == TRUE) {
+      raw_data <- raw_data |> group_by(.data$dl_state)
+      clean_data <- clean_data |> group_by(.data$dl_state)
+      current_data <- current_data |> group_by(.data$dl_state)
+      deduplicated_data <- deduplicated_data |> group_by(.data$dl_state)
+    }
 
     # Dropped by issueCheck
     n_dropped_current <- nDroppedCurrent(clean_data, current_data, year)
@@ -67,12 +82,16 @@ nDropped <-
 #'   \code{\link{read_hip}}
 #' @param clean_data The object created after cleaning data with
 #'   \code{\link{clean}}
+#' @param by_state TRUE summarizes the number of dropped records by state; FALSE
+#'   (default) does not summarize
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}
 
 nDroppedClean <-
-  function(raw_data, clean_data) {
+  function(raw_data, clean_data, by_state = FALSE) {
+    failTF(by_state)
+
     ndropped_clean_total <- nrow(raw_data) - nrow(clean_data)
 
     ndropped_clean_NA_0 <-
@@ -118,12 +137,28 @@ nDroppedClean <-
       left_join(ndropped_clean_test, by = "record_key") |>
       left_join(ndropped_clean_PII, by = "record_key")
 
-    # Summarize the number of records dropped per decision
-    ndropped_clean_decision_counts <-
-      ndropped_clean_decisions |>
-      unite("r1":"r4", col = "decision", sep = " & ", na.rm = T) |>
-      mutate(decision = str_remove_all(.data$decision, "(?<=\\&) records")) |>
-      count(.data$decision)
+    if (by_state == FALSE) {
+      # Summarize the number of records dropped per decision
+      ndropped_clean_decision_counts <-
+        ndropped_clean_decisions |>
+        unite("r1":"r4", col = "decision", sep = " & ", na.rm = T) |>
+        mutate(decision = str_remove_all(.data$decision, "(?<=\\&) records")) |>
+        count(.data$decision)
+    } else {
+      # Summarize the number of records dropped per decision and state
+      ndropped_clean_decision_counts <-
+        ndropped_clean_decisions |>
+        unite(
+          c("r1", "r2", "r3", "r4"),
+          col = "decision",
+          sep = " & ",
+          na.rm = T
+        ) |>
+        mutate(decision = str_remove_all(.data$decision, "(?<=\\&) records")) |>
+        left_join(raw_data |>
+                    select(c("record_key", "dl_state")), by = "record_key") |>
+        count(.data$dl_state, .data$decision)
+    }
 
     # Check to see if the number of registrations dropped using the logical
     # expressions in clean() equals the difference in rows between raw_data and

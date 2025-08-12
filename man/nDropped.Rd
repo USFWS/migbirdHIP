@@ -4,7 +4,14 @@
 \alias{nDropped}
 \title{Summary table of how many registrations were dropped}
 \usage{
-nDropped(raw_data, clean_data, current_data, deduplicated_data, year)
+nDropped(
+  raw_data,
+  clean_data,
+  current_data,
+  deduplicated_data,
+  year,
+  by_state = FALSE
+)
 }
 \arguments{
 \item{raw_data}{The object created after reading in data with
@@ -20,6 +27,9 @@ nDropped(raw_data, clean_data, current_data, deduplicated_data, year)
 \code{\link{duplicateFix}}}
 
 \item{year}{The year of the HIP season (e.g. 2022 for the 2022-2023 season)}
+
+\item{by_state}{TRUE summarizes the number of dropped records by state; FALSE
+(default) does not summarize}
 }
 \description{
 Internal function that summarizes the number of dropped registrations.
