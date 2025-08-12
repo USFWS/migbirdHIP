@@ -2,19 +2,32 @@
 
 ## Major changes & new features
 
--   Import `{ggnewscale}` for use of `ggnewscale::new_scale_color()` in `issue_plot()`
--   Created internal `nDropped()` function (with helpers `nDroppedClean()` and `nDroppedCurrent()`) to summarize the number of dropped HIP registrations at each step of pre-processing; added unit testing for the functions.
+-   Import `{ggnewscale}` for use of `ggnewscale::new_scale_color()` in `issue_plot()`.
+-   New internal `nDropped()` function (with helpers `nDroppedClean()` and `nDroppedCurrent()`) to summarize the number of dropped HIP registrations (by state or not) at each step of pre-processing.
+-   Eliminated issue template.
 
 ## Minor changes / bug fixes
 
--   `read_hip()`: add message that reports how long it took to read in `N` number of files
--   `writeReport()`: add more dependency checks
--   `badRegYearMessage()`: summarize by source file because it is more informative
--   `invalidDateMessage()`: created and added to `issueMessages()`
--   `huntMigBirdsMessage()`: created and added to `readMessages()`
--   `issuePlot()`: improved plot appearance for clarity of interpretation
--   `duplicateFix()`: bug fix, stopped returning `duplicate_id` field in the output tibble
--   Add `nDropped()` summary to the Agenda tab of the `dl_report.qmd` template.
+-   Functions
+    -   `read_hip()`: add message that reports how long it took to read in `N` number of files
+    -   `writeReport()`: add more dependency checks
+    -   `badRegYearMessage()`: summarize by source file because it is more informative
+    -   `invalidDateMessage()`: created and added to `issueMessages()`
+    -   `huntMigBirdsMessage()`: created and added to `readMessages()`
+    -   `duplicateFix()`: bug fix, stopped returning `duplicate_id` field in the output tibble
+    -   `issuePlot()`
+        -   Improved plot appearance for clarity of interpretation
+        -   Added more colors to the registration year palette to avoid an error of insufficient values in case of outliers
+    -   Refined message text for `zipCheck()`, `cranePermitBagFix()`, `btpiPermitBagFix()`, `regYearEditMessage()`, `zeroDateMessage()`, `missingPIIMessage()`, `missingEmailsMessage()`, `testRecordMessage()`, `zeroBagsMessage()`, `naBagsMessage()`, `nonDigitBagsMessage()`, `huntMigBirdsMessage()`, `dlStateNAMessage()`, `dlDateNAMessage()`, `inLinePermitDNHMessage()`, and `badRegYearMessage()`
+-   Changes to `dl_report.qmd` template
+    -   Add `nDropped()` summary to the Agenda tab
+    -   Refined excluded messages in `important_statistics`
+    -   Split data processing into smaller chunks to waste less time debugging
+-   Unit tests
+    -   Suppress verbose messages in `test-clean.R`
+    -   Add `test-nDropped.R`
+-   Linted all files
+-   Updated `WORDLIST`
 
 # migbirdHIP 1.4.0
 
