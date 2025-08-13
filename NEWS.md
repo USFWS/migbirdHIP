@@ -2,12 +2,22 @@
 
 ## Major changes & new features
 
+## Minor changes / bug fixes
+
+# migbirdHIP 1.4.1
+
+## Major changes & new features
+
 -   Import `{ggnewscale}` for use of `ggnewscale::new_scale_color()` in `issue_plot()`.
 -   New internal `nDropped()` function (with helpers `nDroppedClean()` and `nDroppedCurrent()`) to summarize the number of dropped HIP registrations (by state or not) at each step of pre-processing.
 -   Eliminated issue template.
 
 ## Minor changes / bug fixes
 
+-   Updated `DESCRIPTION` with updated `Imports` and `Suggests` package versions.
+-   Updated `sysdata.rda`
+    -   `REF_DATES` updated using 2025-2026 issue window dates.
+    -   `REF_ZIP_CODE` and `REF_BAGS` remain the same, using 2024-2025 zip codes and bag/strata conversions.
 -   Functions
     -   `read_hip()`: add message that reports how long it took to read in `N` number of files
     -   `writeReport()`: add more dependency checks
