@@ -4,6 +4,17 @@
 
 ## Minor changes / bug fixes
 
+# migbirdHIP 1.4.2
+
+## Minor changes / bug fixes
+
+-   `NA` emails are not errors!
+    -   Updated `proofBadEmails()` to allow `NA` values in `email` field.
+    -   Updated `proofBadEmails()` function description so that the criteria for good emails is clear on the help page.
+    -   Updated `test-proof.R` unit testing.
+    -   Edited `create_fake_HIP_data.R` and overwrote internal test data stored in `/inst/extdata/DL0901/`, `/tests/testthat/data/DL0902/`, and `DF_TEST` objects by introducing `NA` values to `email` field.
+-   Edited `zzz.R` to return a startup error message in case the package version in the `DESCRIPTION` was modified before appending `REF_RELEASES` in `variables.R`.
+
 # migbirdHIP 1.4.1
 
 ## Major changes & new features
