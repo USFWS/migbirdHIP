@@ -225,14 +225,10 @@ proofBadEmails <-
              # Popular domain doesn't have matching top level domain
              str_detect(.data$email, "(?<=\\@)gmail(?!\\.com$)") |
              str_detect(
-               .data$email, "(?<=\\@)yahoo\\.(?!(com|co\\.uk|fr|es|ca|de)$)") |
-             str_detect(
-               .data$email, "(?<=\\@)hotmail\\.(?!(com|co\\.uk|fr|es|ca|de)$)"
-               ) |
+               .data$email, "(?<=\\@)(yahoo|hotmail|live|outlook)\\.gov$") |
              str_detect(
                .data$email,
-               "(?<=\\@)(icloud|aol|outlook|msn|live|ymail|me|mac)\\.(?!com$)"
-               ) |
+               "(?<=\\@)(icloud|aol|msn|ymail|me|mac)\\.(?!com$)") |
              str_detect(
                .data$email,
                paste0(
