@@ -560,7 +560,8 @@ test_that("good email addresses pass proofing", {
         "mrs.fantastic@centurytel.net",
         "Thing@roadrunner.com",
         "FlameOn@juno.com",
-        "ShangChi@fakefoo.com"
+        "ShangChi@fakefoo.com",
+        NA
       ))
 
   good_emails_filtered <-

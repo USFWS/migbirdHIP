@@ -12,7 +12,8 @@ proofBadEmails(keyed_data)
 \description{
 The internal \code{proofBadEmails} function is used inside of
 \code{\link{proof}} to find poorly formatted or intentionally obfuscative
-email addresses.
+email addresses. Email addresses that match \code{REGEX_EMAIL} or are
+\code{NA} are considered good emails.
 }
 \references{
 \url{https://github.com/USFWS/migbirdHIP}

@@ -158,7 +158,8 @@ proof <-
 #'
 #' The internal \code{proofBadEmails} function is used inside of
 #' \code{\link{proof}} to find poorly formatted or intentionally obfuscative
-#' email addresses.
+#' email addresses. Email addresses that match \code{REGEX_EMAIL} or are
+#' \code{NA} are considered good emails.
 #'
 #' @importFrom dplyr mutate
 #' @importFrom dplyr filter
@@ -182,77 +183,82 @@ proofBadEmails <-
         tld =
           paste0(".", str_extract(.data$email, "(?<=\\.)[a-zA-Z0-9\\-]+$"))) |>
       filter(
-        !str_detect(.data$email, REGEX_EMAIL) |
-          # Obfuscative emails
-          str_detect(.data$email, REGEX_EMAIL_OBFUSCATIVE_LOCALPART) |
-          str_detect(.data$email, REGEX_EMAIL_OBFUSCATIVE_DOMAIN) |
-          str_detect(.data$email, REGEX_EMAIL_REPEATED_CHAR) |
-          str_detect(.data$email, REGEX_EMAIL_OBFUSCATIVE_TPWD) |
-          str_detect(.data$email, REGEX_EMAIL_OBFUSCATIVE_WALMART) |
-          .data$email %in% REF_EMAIL_OBFUSCATIVE_ADDRESS |
-          # Longer than 100 characters (max length of a valid address is 254 but
-          # this would be very rare; we only accept 100)
-          str_length(.data$email) > 100 |
-          # Domain typo
-          str_detect(
-            .data$email,
-            paste0(
-              "(?<=\\@)(gmaill|gmai|gamil|gmial|gmal|gmil|gail|gmali|gmall|gla",
-              "il|gmaim|gamil|gimal|gmai|gmaii|gnail)\\.com$")) |
-          str_detect(
-            .data$email,
-            paste0(
-              "(?<=\\@)(yahooo+|ahoo|yhoo|yaho|yahoh|yahohh|yyahoo|ayahoo)\\.c",
-              "om$")) |
-          str_detect(.data$email, "(?<=\\@)(attt+|at|aatt)\\.net$") |
-          str_detect(.data$email, "(?<=\\@)(iclould|icoud|icould)\\.com$") |
-          str_detect(.data$email, "(?<=\\@)(hatmail)\\.com$") |
-          str_detect(
-            .data$email,
-            paste0(
-              "(?<=\\@)(sbcgobal|sbcglobel|sbcgloble|sbcgolbal|sbcglobe|sbcglo",
-              "bl|sbcgloabl|sbcgloabal|sbcgloal|sbcgobel|sbcglbal|sbcglob|sbcg",
-              "oble|sbclobal|sbc\\.gobal|sbcglabal|sbcglibal|sbcgllobal|sbcglo",
-              "ba|sbcglobale|sbcglobol|sbcglobsl|spcglobal)\\.net$")) |
-          str_detect(
-            .data$email,
-            paste0(
-              "(?<=\\@)(concast|commcast|comacast|cmcast|compcast|conmcast|c0m",
-              "cast|comcst|comacst)\\.net$")) |
-          # Popular domain doesn't have matching top level domain
-          str_detect(.data$email, "(?<=\\@)gmail(?!\\.com$)") |
-          str_detect(
-            .data$email, "(?<=\\@)yahoo\\.(?!(com|co\\.uk|fr|es|ca|de)$)") |
-          str_detect(
-            .data$email, "(?<=\\@)hotmail\\.(?!(com|co\\.uk|fr|es|ca|de)$)") |
-          str_detect(
-            .data$email,
-            "(?<=\\@)(icloud|aol|outlook|msn|live|ymail|me|mac)\\.(?!com$)") |
-          str_detect(
-            .data$email,
-            paste0(
-              "(?<=\\@)(att|cox|comcast|sbcglobal|bellsouth|verizon|earthlink|",
-              "charter)\\.(?!net$)")) |
-          str_detect(
-            .data$email, "(?<=\\@)proton\\.(?!(me|mail\\.com|mail\\.ch)$)") |
-          str_detect(.data$email, "(?<=\\@)protonmail\\.(?!(com|ch)$)") |
-          str_detect(.data$email, "(?<=\\@)pm\\.(?!me$)") |
-          # Bad top level domain
-          str_detect(.data$email, "(?<=\\.)com(\\.com)+$") |
-          !.data$tld %in% REF_EMAIL_TLDS |
-          # Missing top level domain endings
-          str_detect(
-            .data$email,
-            paste0(
-              "(?<=\\@)(gmail|yahoo|hotmail|aol|icloud|comcast|outlook|sbcglob",
-              "al|att|msn|live|bellsouth|charter|ymail|me|verizon|cox|earthlin",
-              "k|protonmail|pm|duck|ducks|mail)$")) |
-          # Missing top level domain periods
-          str_detect(
-            .data$email,
-            paste0(
-              "(?<!\\.)(com|net|edu|gov|org|navymil|usnavymil|usafmil|mailmil|",
-              "armymil|usarmymil|usacearmymil)$"))
+        !is.na(.data$email) &
+          (!str_detect(.data$email, REGEX_EMAIL) |
+             # Obfuscative emails
+             str_detect(.data$email, REGEX_EMAIL_OBFUSCATIVE_LOCALPART) |
+             str_detect(.data$email, REGEX_EMAIL_OBFUSCATIVE_DOMAIN) |
+             str_detect(.data$email, REGEX_EMAIL_REPEATED_CHAR) |
+             str_detect(.data$email, REGEX_EMAIL_OBFUSCATIVE_TPWD) |
+             str_detect(.data$email, REGEX_EMAIL_OBFUSCATIVE_WALMART) |
+             .data$email %in% REF_EMAIL_OBFUSCATIVE_ADDRESS |
+             # Longer than 100 characters (max length of a valid address is 254
+             # but this would be very rare; we only accept 100)
+             str_length(.data$email) > 100 |
+             # Domain typo
+             str_detect(
+               .data$email,
+               paste0(
+                 "(?<=\\@)(gmaill|gmai|gamil|gmial|gmal|gmil|gail|gmali|gmall|",
+                 "glail|gmaim|gamil|gimal|gmai|gmaii|gnail)\\.com$")) |
+             str_detect(
+               .data$email,
+               paste0(
+                 "(?<=\\@)(yahooo+|ahoo|yhoo|yaho|yahoh|yahohh|yyahoo|ayahoo)",
+                 "\\.com$")) |
+             str_detect(.data$email, "(?<=\\@)(attt+|at|aatt)\\.net$") |
+             str_detect(.data$email, "(?<=\\@)(iclould|icoud|icould)\\.com$") |
+             str_detect(.data$email, "(?<=\\@)(hatmail)\\.com$") |
+             str_detect(
+               .data$email,
+               paste0(
+                 "(?<=\\@)(sbcgobal|sbcglobel|sbcgloble|sbcgolbal|sbcglobe|sbc",
+                 "globl|sbcgloabl|sbcgloabal|sbcgloal|sbcgobel|sbcglbal|sbcglo",
+                 "b|sbcgoble|sbclobal|sbc\\.gobal|sbcglabal|sbcglibal|sbcgllob",
+                 "al|sbcgloba|sbcglobale|sbcglobol|sbcglobsl|spcglobal)\\.net$")
+               ) |
+             str_detect(
+               .data$email,
+               paste0(
+                 "(?<=\\@)(concast|commcast|comacast|cmcast|compcast|conmcast|",
+                 "c0mcast|comcst|comacst)\\.net$")) |
+             # Popular domain doesn't have matching top level domain
+             str_detect(.data$email, "(?<=\\@)gmail(?!\\.com$)") |
+             str_detect(
+               .data$email, "(?<=\\@)yahoo\\.(?!(com|co\\.uk|fr|es|ca|de)$)") |
+             str_detect(
+               .data$email, "(?<=\\@)hotmail\\.(?!(com|co\\.uk|fr|es|ca|de)$)"
+               ) |
+             str_detect(
+               .data$email,
+               "(?<=\\@)(icloud|aol|outlook|msn|live|ymail|me|mac)\\.(?!com$)"
+               ) |
+             str_detect(
+               .data$email,
+               paste0(
+                 "(?<=\\@)(att|cox|comcast|sbcglobal|bellsouth|verizon|earthli",
+                 "nk|charter)\\.(?!net$)")) |
+             str_detect(
+               .data$email, "(?<=\\@)proton\\.(?!(me|mail\\.com|mail\\.ch)$)") |
+             str_detect(.data$email, "(?<=\\@)protonmail\\.(?!(com|ch)$)") |
+             str_detect(.data$email, "(?<=\\@)pm\\.(?!me$)") |
+             # Bad top level domain
+             str_detect(.data$email, "(?<=\\.)com(\\.com)+$") |
+             !.data$tld %in% REF_EMAIL_TLDS |
+             # Missing top level domain endings
+             str_detect(
+               .data$email,
+               paste0(
+                 "(?<=\\@)(gmail|yahoo|hotmail|aol|icloud|comcast|outlook|sbcg",
+                 "lobal|att|msn|live|bellsouth|charter|ymail|me|verizon|cox|ea",
+                 "rthlink|protonmail|pm|duck|ducks|mail)$")) |
+             # Missing top level domain periods
+             str_detect(
+               .data$email,
+               paste0(
+                 "(?<!\\.)(com|net|edu|gov|org|navymil|usnavymil|usafmil|mailm",
+                 "il|armymil|usarmymil|usacearmymil)$"))
+          )
       ) |>
       select(-"tld")
   }
