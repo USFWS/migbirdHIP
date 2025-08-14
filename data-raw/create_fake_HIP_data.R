@@ -241,6 +241,7 @@ zip_errors$zip_state_bad <- sample(hunters$row_key, size = 0.1*nrow(hunters))
 email_errors <- list()
 email_errors$bademails <- sample(hunters$row_key, size = 30)
 email_errors$fakeemails <- sample(hunters$row_key, size = 30)
+email_errors$naemails <- sample(hunters$row_key, size = nrow(hunters)/3)
 
 # HuntY
 hunty_errors <- list()
@@ -352,6 +353,8 @@ messy_hunters <-
           sample(bad_emails, dplyr::n(), replace = T),
         row_key %in% email_errors$fakeemails ~
           sample(fake_emails, dplyr::n(), replace = T),
+        row_key %in% email_errors$naemails ~
+          NA_character_,
         TRUE ~ email
       )
   ) |>
