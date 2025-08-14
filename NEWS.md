@@ -4,6 +4,14 @@
 
 ## Minor changes / bug fixes
 
+# migbirdHIP 1.4.3
+
+## Minor changes / bug fixes
+
+-   Edited `proofBadEmails()` to allow all variations of ccTLDs to be accepted for `yahoo`, `hotmail`, `outlook`, and `live` email domains.
+    -   The previously strict filter only accepted `.com`, `.co.uk`, `.fr`, `.es`, `.ca`, and .`de` for `yahoo` and `hotmail` email addresses. In addition, only `.com` was accepted for `live` and `outlook` email addresses.
+    -   Now, `live` European ccTLDs and `yahoo` emails with Indian and Australian ccTLDs, to name a few examples, will pass without being flagged as errors.
+
 # migbirdHIP 1.4.2
 
 ## Minor changes / bug fixes
