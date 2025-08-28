@@ -4,6 +4,12 @@
 
 ## Minor changes / bug fixes
 
+# migbirdHIP 1.4.4
+
+## Minor changes / bug fixes
+
+-   Updated `REF_BAGS` `stateBagValue` to `5` for `CO` `dove_bag` (previously `4`)
+
 # migbirdHIP 1.4.3
 
 ## Minor changes / bug fixes
