@@ -4,6 +4,12 @@
 
 ## Minor changes / bug fixes
 
+# migbirdHIP 1.4.5
+
+## Minor changes / bug fixes
+
+-   Edited `nDroppedClean()` function to capture records if they contain an `NA` value in any one bag field, in addition to existing rule that captures records if all bag fields are `NA`. 
+
 # migbirdHIP 1.4.4
 
 ## Minor changes / bug fixes

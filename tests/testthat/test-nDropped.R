@@ -47,9 +47,14 @@ test_that("nDropped works by state", {
 })
 
 test_that("nDroppedClean works", {
-  raw_data <- DF_TEST_MINI
+  raw_data <-
+    DF_TEST_MINI |>
+    # Set partial NA bag
+    dplyr::mutate(
+      ducks_bag = ifelse(record_key == "record_1", NA, ducks_bag))
+
   suppressMessages(invisible(capture.output(
-    cleaned_data <- clean(DF_TEST_MINI)
+    cleaned_data <- clean(raw_data)
   )))
 
   n_dropped <-

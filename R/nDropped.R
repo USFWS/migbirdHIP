@@ -71,6 +71,8 @@ nDropped <-
 #' @importFrom dplyr filter
 #' @importFrom dplyr select
 #' @importFrom dplyr mutate
+#' @importFrom dplyr if_any
+#' @importFrom dplyr any_of
 #' @importFrom dplyr tibble
 #' @importFrom dplyr left_join
 #' @importFrom tidyr unite
@@ -100,17 +102,23 @@ nDroppedClean <-
       select("record_key") |>
       mutate(r1 = "records with all-NA or all-0 bag values")
 
+    ndropped_clean_NA <-
+      raw_data |>
+      filter(if_any(any_of(REF_FIELDS_BAG), is.na)) |>
+      select("record_key") |>
+      mutate(r2 = "records with some NA bag values")
+
     ndropped_clean_nondigit <-
       raw_data |>
       filter(!!LOGIC_NONDIGIT_BAGS) |>
       select("record_key") |>
-      mutate(r2 = "records where any bag value is non-digit")
+      mutate(r3 = "records where any bag value is non-digit")
 
     ndropped_clean_test <-
       raw_data |>
       filter(!!LOGIC_TEST_RECORD) |>
       select("record_key") |>
-      mutate(r3 = "test records")
+      mutate(r4 = "test records")
 
     ndropped_clean_PII <-
       raw_data |>
@@ -119,7 +127,7 @@ nDroppedClean <-
           !!LOGIC_MISSING_ADDRESSES |
           !!LOGIC_MISSING_CITY_ZIP_EMAIL) |>
       select("record_key") |>
-      mutate(r4 = "records missing critical PII")
+      mutate(r5 = "records missing critical PII")
 
     # Create a tibble of reasons for being dropped by joining the above tibbles
     # using record_key, since some registrations qualify for more than one
@@ -129,10 +137,12 @@ nDroppedClean <-
         record_key =
           unique(
             c(ndropped_clean_NA_0$record_key,
+              ndropped_clean_NA$record_key,
               ndropped_clean_nondigit$record_key,
               ndropped_clean_test$record_key,
               ndropped_clean_PII$record_key))) |>
       left_join(ndropped_clean_NA_0, by = "record_key") |>
+      left_join(ndropped_clean_NA, by = "record_key") |>
       left_join(ndropped_clean_nondigit, by = "record_key") |>
       left_join(ndropped_clean_test, by = "record_key") |>
       left_join(ndropped_clean_PII, by = "record_key")
@@ -141,7 +151,7 @@ nDroppedClean <-
       # Summarize the number of records dropped per decision
       ndropped_clean_decision_counts <-
         ndropped_clean_decisions |>
-        unite("r1":"r4", col = "decision", sep = " & ", na.rm = T) |>
+        unite("r1":"r5", col = "decision", sep = " & ", na.rm = T) |>
         mutate(decision = str_remove_all(.data$decision, "(?<=\\&) records")) |>
         count(.data$decision)
     } else {
@@ -149,7 +159,7 @@ nDroppedClean <-
       ndropped_clean_decision_counts <-
         ndropped_clean_decisions |>
         unite(
-          c("r1", "r2", "r3", "r4"),
+          c("r1", "r2", "r3", "r4", "r5"),
           col = "decision",
           sep = " & ",
           na.rm = T
