@@ -45,7 +45,7 @@ appropriate version number.
 devtools::install_github("USFWS/migbirdHIP@v1.2.8", build_vignettes = T)
 ```
 
-- [v1.4.5](https://github.com/USFWS/migbirdHIP/releases/tag/v1.4.5) -
+- [v1.4.6](https://github.com/USFWS/migbirdHIP/releases/tag/v1.4.6) -
   2025-2026
 - [v1.3.0](https://github.com/USFWS/migbirdHIP/releases/tag/v1.3.0) -
   2024-2025

@@ -4,6 +4,12 @@
 
 ## Minor changes / bug fixes
 
+# migbirdHIP 1.4.6
+
+## Minor changes / bug fixes
+
+-   Updated `REF_DATES$issue_start` for `FL` to be `2025-04-01`
+
 # migbirdHIP 1.4.5
 
 ## Minor changes / bug fixes
