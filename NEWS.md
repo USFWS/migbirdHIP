@@ -4,6 +4,12 @@
 
 ## Minor changes / bug fixes
 
+# migbirdHIP 1.4.7
+
+## Minor changes / bug fixes
+
+-   Add `stateBagValue` of `3` and `5` to `REF_BAGS` for `IA` `woodcock_bag` 
+
 # migbirdHIP 1.4.6
 
 ## Minor changes / bug fixes
