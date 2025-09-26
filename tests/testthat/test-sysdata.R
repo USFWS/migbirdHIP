@@ -7,8 +7,8 @@ test_that("REF_DATES contains issue_start that precede issue_end", {
   expect_equal(nrow(filter(REF_DATES, issue_start > issue_end)), 0)
 })
 
-test_that("REF_DATES contains 48 states", {
-  expect_equal(length(REF_DATES$state), 48)
+test_that("REF_DATES contains 49 states", {
+  expect_equal(length(REF_DATES$state), 49)
 })
 
 test_that("SF_HEXMAP contains 49 states", {

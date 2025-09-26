@@ -1,21 +1,3 @@
-test_that("issueAssign sets decision as MS for MS registrations", {
-
-  MS_df <-
-    DF_TEST_TINI_CLEANED |>
-    mutate(
-      dl_state = "MS",
-      issue_date = paste0("10/01/", REF_CURRENT_SEASON))
-
-  suppressMessages(
-    invisible(
-      capture.output(
-        current <- issueAssign(MS_df, as.numeric(REF_CURRENT_SEASON))
-      )))
-
-  expect_equal(current$decision, c("MS", "MS", "MS"))
-
-})
-
 test_that("issueCheck keeps MS registrations", {
 
   MS_df <-
@@ -234,7 +216,7 @@ test_that("issueAssign evaluates correctly when registration_yr is current", {
       c("record_key", "issue_date", "registration_yr", "dl_state")) |>
     mutate(
       dl_state =
-        ifelse(record_key == "record_1", "MS", "CA"),
+        ifelse(record_key == "record_1", "MA", "CA"),
       issue_date =
         case_when(
           record_key %in% c("record_1", "record_4") ~
@@ -248,7 +230,7 @@ test_that("issueAssign evaluates correctly when registration_yr is current", {
           TRUE ~ NA_character_)
     )
 
-  answers <- c("MS", "past", "bad issue dates", "current", "future")
+  answers <- c("current", "past", "bad issue dates", "current", "future")
 
   suppressMessages(
     invisible(
