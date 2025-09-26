@@ -19,6 +19,7 @@
 #' @importFrom stringr str_replace
 #' @importFrom purrr walk
 #' @importFrom purrr map
+#' @importFrom purrr list_rbind
 #' @importFrom data.table fwrite
 #' @importFrom rlang .data
 #'
@@ -116,6 +117,42 @@ write_hip <-
               !!sym(paste0(REF_STRATA_NAMES[x], "_0s")) := "FWSstratum")
         }
       )
+
+    # Check to make sure the in-line permit states did not somehow wind up in
+    # the zero_translations list
+    crane_states <- REF_PMT_FILES$dl_state[REF_PMT_FILES$spp == "cranes"]
+    btpi_states <-
+      REF_PMT_FILES$dl_state[REF_PMT_FILES$spp == "band_tailed_pigeon"]
+
+    cranes_in_zero_translations <-
+      map(
+        1:length(crane_states),
+        \(x) {
+          zero_translations[[which(REF_FIELDS_BAG == "cranes")]] |>
+            filter(crane_states[x] %in% dl_state)
+          }
+      ) |>
+      list_rbind()
+
+    stopifnot(
+      "Error: Crane permit file state(s) included in zero translations." =
+        nrow(cranes_in_zero_translations) == 0
+    )
+
+    btpi_in_zero_translations <-
+      map(
+        1:length(btpi_states),
+        \(x) {
+          zero_translations[[which(REF_FIELDS_BAG == "band_tailed_pigeon")]] |>
+            filter(btpi_states[x] %in% dl_state)
+          }
+      ) |>
+      list_rbind()
+
+    stopifnot(
+      "Error: BTPI permit file state(s) included in zero translations." =
+        nrow(btpi_in_zero_translations) == 0
+    )
 
     # If a season doesn't exist, make sure the translation is 0 (not NA)
     for (i in seq_along(REF_FIELDS_BAG)) {
