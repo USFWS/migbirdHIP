@@ -11,8 +11,6 @@
 #' @importFrom dplyr filter
 #' @importFrom dplyr distinct
 #' @importFrom dplyr pull
-#' @importFrom dplyr group_by
-#' @importFrom dplyr ungroup
 #' @importFrom dplyr count
 #' @importFrom rlang sym
 #' @importFrom rlang :=
@@ -109,15 +107,13 @@ write_hip <-
         \(x) {
           REF_BAGS |>
             select(-"stateBagValue") |>
-            group_by(.data$state, .data$spp) |>
-            filter(n() == 1) |>
-            ungroup() |>
+            filter(n() == 1, .by = c("state", "spp")) |>
             filter(.data$spp == REF_FIELDS_BAG[x]) |>
             mutate(!!sym(REF_STRATA_NAMES[x]) := NA) |>
             select(-"spp") |>
             rename(
-              dl_state = .data$state,
-              !!sym(paste0(REF_STRATA_NAMES[x], "_0s")) := .data$FWSstratum)
+              dl_state = "state",
+              !!sym(paste0(REF_STRATA_NAMES[x], "_0s")) := "FWSstratum")
         }
       )
 
