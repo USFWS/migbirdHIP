@@ -220,7 +220,7 @@ In addition to the changes listed above, the internal `zipCheck()` function retu
 
 ### issueCheck {#issuecheck}
 
-The `issueCheck()` function assesses the validity of the `issue_date` field based on the current hunting season's HIP issuance start and end dates (not season open and close dates) and registration year for every state except Mississippi. A plot is automatically returned for past and future registrations; to skip plotting, specify `plot = F`.
+The `issueCheck()` function assesses the validity of the `issue_date` field based on the current hunting season's HIP issuance start and end dates (not season open and close dates). A plot is automatically returned for past and future registrations; to skip plotting, specify `plot = F`.
 
 ```{r, issuecheck, eval = F}
 current_data <- issueCheck(clean_data, year = 2025, plot = F)
