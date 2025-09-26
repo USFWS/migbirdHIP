@@ -112,13 +112,13 @@ failBTPI <-
 
     # Warn if BT permit file contains any 0s for DV
     if (0 %in% unique(corrected_data$dove_bag)) {
-      message("Warning: BTPI permit file contains dove_bag == 0.")
+      message("Warning: BTPI permit file contains records with 0 for dove_bag.")
     }
 
     # Fail if BT permit file does not contain non-0 values for DV
     stopifnot(
       "Error: BTPI permit files must have values other than 0 in dove_bag." =
-        length(unique(corrected_data$dove_bag)) > 1)
+        length(unique(cd$dove_bag[cd$dove_bag != 0])) >= 1)
 
     # Fail if any bag field other than BT or DV is not 0
     stopifnot(
