@@ -42,7 +42,7 @@ test_that("failYear works", {
 
 test_that("failBTPI works", {
   good_btpi <-
-    tibble::tibble(
+    dplyr::tibble(
       record_type = c("HIP", "HIP", "HIP"),
       ducks_bag = c(0, 0, 0),
       geese_bag = c(0, 0, 0),
@@ -55,8 +55,8 @@ test_that("failBTPI works", {
       brant = c(0, 0, 0),
       seaducks = c(0, 0, 0))
 
-  expect_error(failBTPI(tibble::tibble(record_type = c("PMT", "PMT", "PMT"))))
-  expect_error(failBTPI(tibble::tibble(record_type = c("HIP", "PMT", "PMT"))))
+  expect_error(failBTPI(dplyr::tibble(record_type = c("PMT", "PMT", "PMT"))))
+  expect_error(failBTPI(dplyr::tibble(record_type = c("HIP", "PMT", "PMT"))))
   suppressMessages(expect_error(failBTPI(good_btpi |> mutate(dove_bag = 0))))
   suppressMessages(expect_message(failBTPI(good_btpi |> mutate(
     dove_bag = ifelse(dove_bag == 2, 0, dove_bag)
@@ -77,7 +77,7 @@ test_that("failBTPI works", {
 
 test_that("failCR works", {
   good_cr <-
-    tibble::tibble(
+    dplyr::tibble(
       record_type = c("PMT", "PMT", "PMT"),
       ducks_bag = c(0, 0, 0),
       geese_bag = c(0, 0, 0),
@@ -90,8 +90,8 @@ test_that("failCR works", {
       brant = c(0, 0, 0),
       seaducks = c(0, 0, 0))
 
-  expect_error(failCR(tibble::tibble(record_type = c("HIP", "HIP", "HIP"))))
-  expect_error(failCR(tibble::tibble(record_type = c("HIP", "PMT", "PMT"))))
+  expect_error(failCR(dplyr::tibble(record_type = c("HIP", "HIP", "HIP"))))
+  expect_error(failCR(dplyr::tibble(record_type = c("HIP", "PMT", "PMT"))))
   expect_error(failCR(good_cr |> mutate(cranes = 0)))
   expect_error(failCR(good_cr |> mutate(cranes = 1)))
   expect_error(failCR(good_cr |> mutate(cranes = 3)))
