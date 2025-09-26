@@ -9,6 +9,7 @@
 ## Major changes & new features
 
 -  Evaluate Mississippi issue dates
+    - Add MS to `REF_DATES`
     - No longer assign `"MS"` as decision in `issueCheck()`
     - No longer exclude `"MS"` from `nDropped()` or `dl_report.qmd`
 -  Added 3 new internal functions:
