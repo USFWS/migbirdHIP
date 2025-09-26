@@ -468,6 +468,9 @@ readMessages <-
     # Return a message if in-line permit does not have hunt_mig_birds == 2
     inLinePermitDNHMessage(raw_data)
 
+    # Return a message if permit file state/species bag values are not 0
+    permitFileBagsMessage(raw_data)
+
     # Return a message for bad registration years
     badRegYearMessage(raw_data)
 
@@ -843,6 +846,48 @@ inLinePermitDNHMessage <-
       )
 
       print(inline_pmt_dnh)
+    }
+  }
+
+#' Permit file non-zero bag values message
+#'
+#' The internal \code{permitFileBagsMessage} function returns a message for
+#' records from permit file state/species combinations with non-zero bag values.
+#'
+#' @importFrom dplyr filter
+#' @importFrom dplyr count
+#' @importFrom rlang .data
+#'
+#' @inheritParams readMessages
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
+
+permitFileBagsMessage <-
+  function(raw_data) {
+
+    non_zero <-
+      map(
+        1:nrow(REF_PMT_FILES),
+        \(x) {
+          raw_data |>
+            filter(dl_state == REF_PMT_FILES$dl_state[x] &
+                     !!sym(REF_PMT_FILES$spp[x]) != "0") |>
+            count(source_file, !!sym(REF_PMT_FILES$spp[x])) |>
+            rename(strata = !!sym(REF_PMT_FILES$spp[x])) |>
+            mutate(spp = REF_PMT_FILES$spp[x], .before = "strata")
+          }
+      ) |>
+      list_rbind()
+
+    if (nrow(non_zero) > 0) {
+      message(
+        paste(
+          "Error:", sum(non_zero$n), "records with non-zero bag values for",
+          "permit species from permit file states; they will be edited.")
+      )
+
+      print(non_zero)
     }
   }
 

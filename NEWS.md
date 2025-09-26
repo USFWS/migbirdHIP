@@ -8,9 +8,14 @@
 
 ## Major changes & new features
 
--  Added 2 new internal functions:
-    - Moved checks from `write_hip()` to `failBTPI()` and `failCR()` to reduce maintenance of repeated assertions.
-    - Added warning to `failBTPI()` to return message to console if any BTPI permit records contain `0` for `dove_bag`.
+-  Added 3 new internal functions:
+    - `permitFileBagsMessage()`
+        - Used by `readMessages()`.
+        - Checks for non-zero bag values from permit file state/species combinations and returns a message to the console if they are detected.
+    - `failBTPI()` and `failCR()`
+        - Used by `write_hip()`.
+        - Moved checks from `write_hip()` to `failBTPI()` and `failCR()` to reduce maintenance of repeated assertions.
+        - Added warning to `failBTPI()` to return message to console if any BTPI permit records contain `0` for `dove_bag`.
 
 ## Minor changes / bug fixes
 
