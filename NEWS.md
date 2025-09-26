@@ -4,6 +4,16 @@
 
 ## Minor changes / bug fixes
 
+# migbirdHIP 1.4.8
+
+## Minor changes / bug fixes
+
+-   `REF_BAGS` changes
+    - Bug fixes: add lines for missing, existing, and expected bag values 
+        - `UT` `band_tailed_pigeon` bag `2` -> stratum `2`
+        - `MN` `cranes` bag `2` -> stratum `2`
+    - Update: add line for `FL` `geese_bag` bag `0` -> stratum `0`
+
 # migbirdHIP 1.4.7
 
 ## Minor changes / bug fixes
