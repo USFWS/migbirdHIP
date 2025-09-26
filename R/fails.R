@@ -118,7 +118,8 @@ failBTPI <-
     # Fail if BT permit file does not contain non-0 values for DV
     stopifnot(
       "Error: BTPI permit files must have values other than 0 in dove_bag." =
-        length(unique(cd$dove_bag[cd$dove_bag != 0])) >= 1)
+        length(
+          unique(corrected_data$dove_bag[corrected_data$dove_bag != 0])) >= 1)
 
     # Fail if any bag field other than BT or DV is not 0
     stopifnot(

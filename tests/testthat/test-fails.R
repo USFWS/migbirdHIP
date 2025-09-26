@@ -58,7 +58,7 @@ test_that("failBTPI works", {
   expect_error(failBTPI(tibble::tibble(record_type = c("PMT", "PMT", "PMT"))))
   expect_error(failBTPI(tibble::tibble(record_type = c("HIP", "PMT", "PMT"))))
   suppressMessages(expect_error(failBTPI(good_btpi |> mutate(dove_bag = 0))))
-  suppressMessages(expect_error(failBTPI(good_btpi |> mutate(
+  suppressMessages(expect_message(failBTPI(good_btpi |> mutate(
     dove_bag = ifelse(dove_bag == 2, 0, dove_bag)
   ))))
   expect_error(failBTPI(good_btpi |> mutate(band_tailed_pigeon = 0)))
