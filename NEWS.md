@@ -8,6 +8,9 @@
 
 ## Major changes & new features
 
+-  Evaluate Mississippi issue dates
+    - No longer assign `"MS"` as decision in `issueCheck()`
+    - No longer exclude `"MS"` from `nDropped()` or `dl_report.qmd`
 -  Added 3 new internal functions:
     - `permitFileBagsMessage()`
         - Used by `readMessages()`.
@@ -19,6 +22,9 @@
 
 ## Minor changes / bug fixes
 
+-   `write_hip()`
+    - Minor changes to match modern tidyverse syntax
+    - Add check to ensure `REF_PMT_FILES` states are not in `zero_translations`
 -   `REF_BAGS` changes:
     - Bug fixes
         - Add lines for missing, existing, and expected bag values 

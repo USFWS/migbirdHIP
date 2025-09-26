@@ -1449,7 +1449,7 @@ if (bad_issue_nrow > 0) {
 
   bad_issue_table <-
     issue_assignments |>
-    dplyr::filter(decision != "current" & dl_state != "MS") |>
+    dplyr::filter(decision != "current") |>
     dplyr::select(dl_state, source_file, issue_date, registration_yr) |>
     dplyr::left_join(
       migbirdHIP:::REF_DATES |>

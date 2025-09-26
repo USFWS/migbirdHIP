@@ -51,7 +51,7 @@ issueCheck <-
     current_data <-
       issue_assignments |>
       # Filter out decision values: invalid, past, bad issue date
-      filter(.data$decision %in% c("current", "future", "MS")) |>
+      filter(.data$decision %in% c("current", "future")) |>
       select(-"decision")
 
     return(current_data)
@@ -386,7 +386,7 @@ issuePrint <-
     print(
       suppressMessages(
         issue_assignments |>
-          filter(!.data$decision %in% c("MS", "current")) |>
+          filter(!.data$decision == "current") |>
           count(.data$dl_state, .data$registration_yr, .data$decision) |>
           arrange(.data$decision)
       )
@@ -471,42 +471,38 @@ issueDecide <-
       mutate(
         # Create decision field
         decision =
-          ifelse(
-            # Don't evaluate MS records
-            .data$dl_state != "MS",
-            case_when(
-              # Records are past when issue_date is before issue_start
-              mdy(.data$issue_date) < .data$issue_start ~ "past",
-              # For 2-season states with overlapping start/end dates, records
-              # are either current or future depending on the registration year
-              # value
-              dl_state %in% REF_STATES_2SEASON &
-                mdy(.data$issue_date) %within%
-                interval(.data$issue_start + 365, .data$issue_end) ~
-                "overlap",
-              # Records are current when the issue_date falls between
-              # issue_start and issue_end
+          case_when(
+            # Records are past when issue_date is before issue_start
+            mdy(.data$issue_date) < .data$issue_start ~ "past",
+            # For 2-season states with overlapping start/end dates, records
+            # are either current or future depending on the registration year
+            # value
+            dl_state %in% REF_STATES_2SEASON &
               mdy(.data$issue_date) %within%
-                interval(.data$issue_start, .data$issue_end) ~
-                "current",
-              # Records are invalid when they fall outside of the issue window
-              # (after issue end date but before next season's start date)
+              interval(.data$issue_start + 365, .data$issue_end) ~
+              "overlap",
+            # Records are current when the issue_date falls between
+            # issue_start and issue_end
+            mdy(.data$issue_date) %within%
+              interval(.data$issue_start, .data$issue_end) ~
+              "current",
+            # Records are invalid when they fall outside of the issue window
+            # (after issue end date but before next season's start date)
+            !mdy(.data$issue_date) %within%
+              interval(.data$issue_start, .data$issue_end) &
               !mdy(.data$issue_date) %within%
-                interval(.data$issue_start, .data$issue_end) &
-                !mdy(.data$issue_date) %within%
-                  interval(.data$issue_start + 365, .data$issue_end + 365) &
-                mdy(.data$issue_date) %within%
-                  interval(.data$issue_end, .data$issue_end + 365) ~
-                  "invalid",
-              # Future records are issued after the last day of hunting and
-              # after the projected issue start date for next season (the
-              # registration_yr may need to be changed to +1)
-              mdy(.data$issue_date) > .data$issue_end &
-                mdy(.data$issue_date) %within%
-                  interval(.data$issue_start + 365, .data$issue_end + 365) ~
-                  "future",
-              TRUE ~ "bad issue dates"),
-            "MS")
+                interval(.data$issue_start + 365, .data$issue_end + 365) &
+              mdy(.data$issue_date) %within%
+                interval(.data$issue_end, .data$issue_end + 365) ~
+                "invalid",
+            # Future records are issued after the last day of hunting and
+            # after the projected issue start date for next season (the
+            # registration_yr may need to be changed to +1)
+            mdy(.data$issue_date) > .data$issue_end &
+              mdy(.data$issue_date) %within%
+                interval(.data$issue_start + 365, .data$issue_end + 365) ~
+                "future",
+            TRUE ~ "bad issue dates")
       )
   }
 

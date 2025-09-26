@@ -220,7 +220,7 @@ nDroppedCurrent <-
     ndropped_current_decisions <-
       issueAssign(clean_data, year) |>
       count(.data$decision) |>
-      filter(!.data$decision %in% c("current", "MS", "future")) |>
+      filter(!.data$decision %in% c("current", "future")) |>
       mutate(
         decision =
           case_when(
