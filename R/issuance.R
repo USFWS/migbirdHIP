@@ -548,7 +548,7 @@ issuePlot <-
 
     badplot_data <-
       issue_assignments |>
-      filter(.data$decision != "current" & .data$dl_state != "MS") |>
+      filter(.data$decision != "current") |>
       select(
         c("dl_state", "source_file", "issue_date", "registration_yr",
           "decision")) |>
@@ -680,7 +680,7 @@ issuePlot <-
           values = c("#E69F00", "#009E73", "#666666"),
           labels = c("current", "future",  "past")) +
         new_scale_color() +
-        # Plot bad issue dates (non-current, non-MS, past, future, bad, invalid)
+        # Plot bad issue dates (non-current, past, future, bad, invalid)
         geom_boxplot(
           data = badplot_data,
           aes(x = mdy(.data$issue_date), y = .data$dl_state,
