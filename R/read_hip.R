@@ -854,8 +854,12 @@ inLinePermitDNHMessage <-
 #' The internal \code{permitFileBagsMessage} function returns a message for
 #' records from permit file state/species combinations with non-zero bag values.
 #'
+#' @importFrom purrr map
 #' @importFrom dplyr filter
 #' @importFrom dplyr count
+#' @importFrom dplyr rename
+#' @importFrom dplyr mutate
+#' @importFrom purrr list_rbind
 #' @importFrom rlang .data
 #'
 #' @inheritParams readMessages
@@ -871,9 +875,9 @@ permitFileBagsMessage <-
         1:nrow(REF_PMT_FILES),
         \(x) {
           raw_data |>
-            filter(dl_state == REF_PMT_FILES$dl_state[x] &
+            filter(.data$dl_state == REF_PMT_FILES$dl_state[x] &
                      !!sym(REF_PMT_FILES$spp[x]) != "0") |>
-            count(source_file, !!sym(REF_PMT_FILES$spp[x])) |>
+            count(.data$source_file, !!sym(REF_PMT_FILES$spp[x])) |>
             rename(strata = !!sym(REF_PMT_FILES$spp[x])) |>
             mutate(spp = REF_PMT_FILES$spp[x], .before = "strata")
           }
