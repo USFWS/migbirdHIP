@@ -6,13 +6,21 @@
 
 # migbirdHIP 1.4.8
 
+## Major changes & new features
+
+-  Added 2 new internal functions:
+    - Moved checks from `write_hip()` to `failBTPI()` and `failCR()` to reduce maintenance of repeated assertions.
+    - Added warning to `failBTPI()` to return message to console if any BTPI permit records contain `0` for `dove_bag`.
+
 ## Minor changes / bug fixes
 
--   `REF_BAGS` changes
-    - Bug fixes: add lines for missing, existing, and expected bag values 
-        - `UT` `band_tailed_pigeon` bag `2` -> stratum `2`
-        - `MN` `cranes` bag `2` -> stratum `2`
-    - Update: add line for `FL` `geese_bag` bag `0` -> stratum `0`
+-   `REF_BAGS` changes:
+    - Bug fixes
+        - Add lines for missing, existing, and expected bag values 
+            - `UT` `band_tailed_pigeon` bag `2` -> stratum `2`
+            - `MN` `cranes` bag `2` -> stratum `2`
+    - Update
+        - Add line for `FL` `geese_bag` bag `0` -> stratum `0`
 
 # migbirdHIP 1.4.7
 

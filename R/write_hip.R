@@ -69,87 +69,11 @@ write_hip <-
     }
 
     if (type == "BT") {
-      # Fail if BT permit file does not contain record_type = HIP
-      stopifnot(
-        "Error: BTPI permit files must contain record_type = HIP." =
-          unique(corrected_data$record_type) == "HIP")
-
-      # Fail if BT permit file does not contain 2 for BT
-      stopifnot(
-        "Error: BTPI permit files must contain band_tailed_pigeon = 2." =
-          unique(corrected_data$band_tailed_pigeon) == "2")
-
-      # Fail if BT permit file does not contain non-0 values for DV
-      stopifnot(
-        "Error: BTPI permit files must have values other than 0 in dove_bag." =
-          length(unique(corrected_data$dove_bag)) > 1)
-
-      # Fail if any bag field other than BT or DV is not 0
-      stopifnot(
-        "Error: Ducks bag must be 0 in BTPI permit files." =
-          unique(corrected_data$ducks_bag) == 0)
-      stopifnot(
-        "Error: Geese bag must be 0 in BTPI permit files." =
-          unique(corrected_data$geese_bag) == 0)
-      stopifnot(
-        "Error: Woodcock bag must be 0 in BTPI permit files." =
-          unique(corrected_data$woodcock_bag) == 0)
-      stopifnot(
-        "Error: Coots_snipe bag must be 0 in BTPI permit files." =
-          unique(corrected_data$coots_snipe) == 0)
-      stopifnot(
-        "Error: Rails_gallinules bag must be 0 in BTPI permit files." =
-          unique(corrected_data$rails_gallinules) == 0)
-      stopifnot(
-        "Error: Cranes bag must be 0 in BTPI permit files." =
-          unique(corrected_data$cranes) == 0)
-      stopifnot(
-        "Error: Brant bag must be 0 in BTPI permit files." =
-          unique(corrected_data$brant) == 0)
-      stopifnot(
-        "Error: Sea ducks bag must be 0 in BTPI permit files." =
-          unique(corrected_data$seaducks) == 0)
+      failBTPI(corrected_data)
     }
 
     if (type == "CR") {
-      # Fail if CR permit file does not contain record_type = PMT
-      stopifnot(
-        "Error: CR permit files must contain record_type = PMT." =
-          unique(corrected_data$record_type) == "PMT")
-
-      # Fail if CR permit file does not contain 2 for CR
-      stopifnot(
-        "Error: CR permit files must contain cranes = 2." =
-          unique(corrected_data$cranes) == "2")
-
-      # Fail if any bag field other than CR is not 0
-      stopifnot(
-        "Error: Ducks bag must be 0 in CR permit files." =
-          unique(corrected_data$ducks_bag) == 0)
-      stopifnot(
-        "Error: Geese bag must be 0 in CR permit files." =
-          unique(corrected_data$geese_bag) == 0)
-      stopifnot(
-        "Error: Dove bag must be 0 in CR permit files." =
-          unique(corrected_data$dove_bag) == 0)
-      stopifnot(
-        "Error: Woodcock bag must be 0 in CR permit files." =
-          unique(corrected_data$woodcock_bag) == 0)
-      stopifnot(
-        "Error: Coots_snipe bag must be 0 in CR permit files." =
-          unique(corrected_data$coots_snipe) == 0)
-      stopifnot(
-        "Error: Rails_gallinules bag must be 0 in CR permit files." =
-          unique(corrected_data$rails_gallinules) == 0)
-      stopifnot(
-        "Error: Band tailed pigeon bag must be 0 in CR permit files." =
-          unique(corrected_data$band_tailed_pigeon) == 0)
-      stopifnot(
-        "Error: Brant bag must be 0 in CR permit files." =
-          unique(corrected_data$brant) == 0)
-      stopifnot(
-        "Error: Sea ducks bag must be 0 in CR permit files." =
-          unique(corrected_data$seaducks) == 0)
+      failCR(corrected_data)
     }
 
     # Generate a list of translated bags for each species/species group
@@ -249,6 +173,15 @@ write_hip <-
             .data$source_file)) |>
       # Remove the last "/" (couldn't pipe a dot above)
       mutate(source_file = str_remove(.data$source_file, "\\/"))
+
+    # Reiterate checks, this time on final_table
+    if (type == "BT") {
+      failBTPI(corrected_data)
+    }
+
+    if (type == "CR") {
+      failCR(corrected_data)
+    }
 
     if (split == TRUE) {
       # Split data and write each input file to its own output file
