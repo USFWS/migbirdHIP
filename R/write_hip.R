@@ -129,7 +129,7 @@ write_hip <-
         1:length(crane_states),
         \(x) {
           zero_translations[[which(REF_FIELDS_BAG == "cranes")]] |>
-            filter(crane_states[x] %in% dl_state)
+            filter(crane_states[x] %in% .data$dl_state)
           }
       ) |>
       list_rbind()
@@ -144,7 +144,7 @@ write_hip <-
         1:length(btpi_states),
         \(x) {
           zero_translations[[which(REF_FIELDS_BAG == "band_tailed_pigeon")]] |>
-            filter(btpi_states[x] %in% dl_state)
+            filter(btpi_states[x] %in% .data$dl_state)
           }
       ) |>
       list_rbind()
