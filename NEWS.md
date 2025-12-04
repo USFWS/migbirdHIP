@@ -4,6 +4,12 @@
 
 ## Minor changes / bug fixes
 
+# migbirdHIP 1.4.9
+
+## Minor changes / bug fixes
+
+- `issueDecide()` was returning `"overlap"` as a result in the `decision` field, and the `"overlap"` records were being dropped. This should not happen; `"overlap"` records should be assigned `"future"` or `"current"` and only `"past"` records are to be dropped.
+
 # migbirdHIP 1.4.8
 
 ## Major changes & new features

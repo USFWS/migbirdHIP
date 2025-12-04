@@ -503,6 +503,17 @@ issueDecide <-
                 interval(.data$issue_start + 365, .data$issue_end + 365) ~
                 "future",
             TRUE ~ "bad issue dates")
+      ) |>
+      # Edit decision, for overlaps only (change to future or current)
+      mutate(
+        decision =
+          case_when(
+            .data$decision == "overlap" & .data$registration_yr == year ~
+              "current",
+            .data$decision == "overlap" & .data$registration_yr == year + 1 ~
+              "future",
+            TRUE ~ decision
+          )
       )
   }
 

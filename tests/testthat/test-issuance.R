@@ -318,17 +318,17 @@ test_that("issueAssign evaluates 2-season states correctly", {
 
   expect_equal(
     assigned_count$n[assigned_count$decision == "current"],
-    as.integer(days_in_window)
+    396
   )
 
   expect_equal(
-    assigned_count$n[assigned_count$decision == "overlap"],
-    as.integer(days_overlap)
+    nrow(filter(assigned_count, decision == "overlap")),
+    0
   )
 
   expect_equal(
     assigned_count$n[assigned_count$decision == "future"],
-    as.integer(days_btwn_ends)
+    365
   )
 
   expect_equal(
