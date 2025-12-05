@@ -8,7 +8,8 @@
 
 ## Minor changes / bug fixes
 
-- Replaced ID start date with `12/1/2024`
+- Replaced ID start date with `12/1/2024`.
+- Fixed time to read in files message returned by `read_hip()`.
 
 # migbirdHIP 1.4.9
 

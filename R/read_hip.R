@@ -19,7 +19,7 @@
 #' @importFrom stringr str_detect
 #' @importFrom stringr str_extract
 #' @importFrom stringr str_remove
-#' @importFrom lubridate make_difftime
+#' @importFrom lubridate time_length
 #' @importFrom rlang .data
 #' @importFrom assertthat assert_that
 #'
@@ -170,18 +170,26 @@ read_hip <-
     readMessages(raw_data)
 
     endtime <- Sys.time()
-    message(
-      paste(
-        "Time to read in", length(unique(raw_data$source_file)), "files:",
+
+    readtime <- time_length(endtime - starttime, unit = "second")
+
+    if(readtime > 60) {
+      message(
         paste(
+          "Time to read in", length(unique(raw_data$source_file)), "files:",
           as.character(
-            round(make_difftime(endtime - starttime, units = "minute"), 2)),
-          "min /",
+            round(time_length(endtime - starttime, unit = "minute"), 1)),
+          "min")
+      )
+    } else {
+      message(
+        paste(
+          "Time to read in", length(unique(raw_data$source_file)), "files:",
           as.character(
-            round(make_difftime(endtime - starttime, units = "second"), 2)),
-          "sec"
-          ))
-    )
+            round(readtime, 0)),
+          "sec")
+      )
+    }
 
     return(raw_data)
   }
