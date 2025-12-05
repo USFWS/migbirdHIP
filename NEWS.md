@@ -4,6 +4,12 @@
 
 ## Minor changes / bug fixes
 
+# migbirdHIP 1.4.10
+
+## Minor changes / bug fixes
+
+- Replaced ID start date with `12/1/2024`
+
 # migbirdHIP 1.4.9
 
 ## Minor changes / bug fixes
