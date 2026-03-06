@@ -555,13 +555,11 @@ duplicateFinder <-
 #' @importFrom dplyr case_when
 #' @importFrom stringr str_detect
 #' @importFrom dplyr group_by
-#' @importFrom dplyr n
 #' @importFrom ggplot2 ggplot
 #' @importFrom ggplot2 aes
 #' @importFrom stats reorder
 #' @importFrom ggplot2 geom_bar
 #' @importFrom ggplot2 geom_text
-#' @importFrom ggplot2 after_stat
 #' @importFrom ggplot2 labs
 #' @importFrom ggplot2 scale_y_continuous
 #' @importFrom ggplot2 expansion
@@ -616,15 +614,19 @@ duplicatePlot <-
             TRUE ~ .data$duplicate_field)
       ) |>
       # Make a new col to reorder the bars
-      mutate(total_count = n(), .by = "duplicate_field") |>
-      ggplot(aes(x = reorder(.data$duplicate_field, -.data$total_count))) +
-      geom_bar(stat = "count") +
+      mutate(total_count = sum(n), .by = "duplicate_field") |>
+      ggplot(
+        aes(
+          x = reorder(.data$duplicate_field, -.data$total_count),
+          y = .data$total_count)) +
+      geom_bar(stat = "identity") +
       geom_text(
         aes(
-          x = .data$duplicate_field,
-          label = after_stat(.data$count),
+          x = reorder(.data$duplicate_field, -.data$total_count),
+          y = .data$total_count,
+          label = .data$total_count,
           angle = 90),
-        stat = "count",
+        stat = "identity",
         vjust = 0.2,
         hjust = -0.2) +
       labs(

@@ -4,6 +4,13 @@
 
 ## Minor changes / bug fixes
 
+# migbirdHIP 1.4.11
+
+## Minor changes / bug fixes
+
+- Updated `REF_BAGS` for ID `dove_bag` and MA `woodcock_bag`, changing `5` to `4`
+- Bug fix for `duplicatePlot()` to show correct bar labels and y position
+
 # migbirdHIP 1.4.10
 
 ## Minor changes / bug fixes
