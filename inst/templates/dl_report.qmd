@@ -1015,7 +1015,7 @@ rfstate <-
 if (!is.null(rfstate)) {
   cat(
     paste(
-      "Values in the table below are reported at the field level (14 fields ",
+      "Values in the table below are reported at the field level (14 fields",
       "per record).")
   )
   kableExtra::kbl(
@@ -1216,7 +1216,7 @@ if (length(excluded) > 0) {
     cat(
       paste(
         "✔️ All download states that submitted files are included in the final",
-        " data!")
+        "data!")
     )
 }
 

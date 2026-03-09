@@ -4,6 +4,12 @@
 
 ## Minor changes / bug fixes
 
+# migbirdHIP 1.4.12
+
+## Minor changes / bug fixes
+
+- Removed double spaces in the download report template.
+
 # migbirdHIP 1.4.11
 
 ## Minor changes / bug fixes
