@@ -8,63 +8,65 @@
 
 ## Minor changes / bug fixes
 
-- Removed double spaces in the download report template.
+-   Download report template
+    -   Removed double spaces.
+    -   Moved missing email figure legend to the bottom; gives more space for x-axis state abbreviations.
 
 # migbirdHIP 1.4.11
 
 ## Minor changes / bug fixes
 
-- Updated `REF_BAGS` for ID `dove_bag` and MA `woodcock_bag`, changing `5` to `4`
-- Bug fix for `duplicatePlot()` to show correct bar labels and y position
+-   Updated `REF_BAGS` for ID `dove_bag` and MA `woodcock_bag`, changing `5` to `4`
+-   Bug fix for `duplicatePlot()` to show correct bar labels and y position
 
 # migbirdHIP 1.4.10
 
 ## Minor changes / bug fixes
 
-- Replaced ID start date with `12/1/2024`.
-- Fixed time to read in files message returned by `read_hip()`.
+-   Replaced ID start date with `12/1/2024`.
+-   Fixed time to read in files message returned by `read_hip()`.
 
 # migbirdHIP 1.4.9
 
 ## Minor changes / bug fixes
 
-- `issueDecide()` was returning `"overlap"` as a result in the `decision` field, and the `"overlap"` records were being dropped. This should not happen; `"overlap"` records should be assigned `"future"` or `"current"` and only `"past"` records are to be dropped.
+-   `issueDecide()` was returning `"overlap"` as a result in the `decision` field, and the `"overlap"` records were being dropped. This should not happen; `"overlap"` records should be assigned `"future"` or `"current"` and only `"past"` records are to be dropped.
 
 # migbirdHIP 1.4.8
 
 ## Major changes & new features
 
--  Evaluate Mississippi issue dates
-    - Add MS to `REF_DATES`
-    - No longer assign `"MS"` as decision in `issueCheck()`
-    - No longer exclude `"MS"` from `nDropped()` or `dl_report.qmd`
--  Added 3 new internal functions:
-    - `permitFileBagsMessage()`
-        - Used by `readMessages()`.
-        - Checks for non-zero bag values from permit file state/species combinations and returns a message to the console if they are detected.
-    - `failBTPI()` and `failCR()`
-        - Used by `write_hip()`.
-        - Moved checks from `write_hip()` to `failBTPI()` and `failCR()` to reduce maintenance of repeated assertions.
-        - Added warning to `failBTPI()` to return message to console if any BTPI permit records contain `0` for `dove_bag`.
+-   Evaluate Mississippi issue dates
+    -   Add MS to `REF_DATES`
+    -   No longer assign `"MS"` as decision in `issueCheck()`
+    -   No longer exclude `"MS"` from `nDropped()` or `dl_report.qmd`
+-   Added 3 new internal functions:
+    -   `permitFileBagsMessage()`
+        -   Used by `readMessages()`.
+        -   Checks for non-zero bag values from permit file state/species combinations and returns a message to the console if they are detected.
+    -   `failBTPI()` and `failCR()`
+        -   Used by `write_hip()`.
+        -   Moved checks from `write_hip()` to `failBTPI()` and `failCR()` to reduce maintenance of repeated assertions.
+        -   Added warning to `failBTPI()` to return message to console if any BTPI permit records contain `0` for `dove_bag`.
 
 ## Minor changes / bug fixes
 
 -   `write_hip()`
-    - Minor changes to match modern tidyverse syntax
-    - Add check to ensure `REF_PMT_FILES` states are not in `zero_translations`
+    -   Minor changes to match modern tidyverse syntax
+    -   Add check to ensure `REF_PMT_FILES` states are not in `zero_translations`
 -   `REF_BAGS` changes:
-    - Bug fixes
-        - Add lines for missing, existing, and expected bag values 
-            - `UT` `band_tailed_pigeon` bag `2` -> stratum `2`
-            - `MN` `cranes` bag `2` -> stratum `2`
-    - Update
-        - Add line for `FL` `geese_bag` bag `0` -> stratum `0`
+    -   Bug fixes
+        -   Add lines for missing, existing, and expected bag values
+            -   `UT` `band_tailed_pigeon` bag `2` -\> stratum `2`
+            -   `MN` `cranes` bag `2` -\> stratum `2`
+    -   Update
+        -   Add line for `FL` `geese_bag` bag `0` -\> stratum `0`
 
 # migbirdHIP 1.4.7
 
 ## Minor changes / bug fixes
 
--   Add `stateBagValue` of `3` and `5` to `REF_BAGS` for `IA` `woodcock_bag` 
+-   Add `stateBagValue` of `3` and `5` to `REF_BAGS` for `IA` `woodcock_bag`
 
 # migbirdHIP 1.4.6
 
@@ -76,7 +78,7 @@
 
 ## Minor changes / bug fixes
 
--   Edited `nDroppedClean()` function to capture records if they contain an `NA` value in any one bag field, in addition to existing rule that captures records if all bag fields are `NA`. 
+-   Edited `nDroppedClean()` function to capture records if they contain an `NA` value in any one bag field, in addition to existing rule that captures records if all bag fields are `NA`.
 
 # migbirdHIP 1.4.4
 

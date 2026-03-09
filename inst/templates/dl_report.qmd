@@ -1343,6 +1343,7 @@ emails_missing |>
     expand = ggplot2::expansion(mult = c(-0, 0.3))) +
   ggplot2::theme_classic() +
   ggplot2::theme(
+    legend.position = "bottom",
     axis.text.x =
       ggplot2::element_text(angle = 45, vjust = 1, hjust = 1)) +
   ggplot2::scale_fill_manual(
