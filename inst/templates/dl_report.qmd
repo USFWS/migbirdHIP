@@ -1409,7 +1409,7 @@ if (!is.null(bagcheck_tbl)) {
         dom = "Bfrtip",
         buttons = c("csv", "excel", "pdf"),
         columnDefs = 
-          list(list(className = 'dt-body-right', targets = 5)))
+          list(list(className = 'dt-right', targets = 5)))
     )
 } else {
   cat("✔️ No bag abnormalities detected.")
@@ -1492,7 +1492,7 @@ if (bad_issue_nrow > 0) {
     options = 
       list(
         columnDefs = 
-          list(list(className = 'dt-body-right', targets = 4)))
+          list(list(className = 'dt-right', targets = 4)))
   )
 }
 
@@ -1528,7 +1528,7 @@ if (nrow(dplyr::filter(issue_assignments, decision == "future")) > 0) {
     options = 
       list(
         columnDefs = 
-          list(list(className = 'dt-body-right', targets = 3)))
+          list(list(className = 'dt-right', targets = 3)))
     )
 } else {
   cat("✔️ No future records detected.")
@@ -1650,7 +1650,12 @@ barlabels <-
   dplyr::group_by(errors) |>
   dplyr::mutate(
     count_errors = sum(count_errors),
-    proportion = sum(proportion)) |>
+    proportion = sum(proportion),
+    count_errors_label = 
+      ifelse(
+        count_errors > 0,
+        format.default(count_errors, big.mark = ",", trim = T),
+        0)) |>
   dplyr::ungroup()
 
 # Plot
@@ -1673,12 +1678,7 @@ x_order |>
   ggplot2::geom_text(
     ggplot2::aes(x = errors,
                  y = cumulative_prop,
-                 label = 
-                   format.default(
-                     count_errors, 
-                     big.mark = ",", 
-                     na.encode = F, 
-                     trim = T),
+                 label = count_errors_label,
                  angle = 90),
     vjust = 0.2, hjust = -0.2) +
   ggplot2::labs(
@@ -1750,7 +1750,7 @@ DT::datatable(
   options = 
     list(
       columnDefs = 
-        list(list(className = 'dt-body-right', targets = 2)))
+        list(list(className = 'dt-right', targets = 2)))
   )
 ```
 
@@ -1790,7 +1790,7 @@ DT::datatable(
   options = 
     list(
       columnDefs = 
-        list(list(className = 'dt-body-right', targets = 2)))
+        list(list(className = 'dt-right', targets = 2)))
   )
 ```
 
@@ -1830,7 +1830,7 @@ DT::datatable(
   options = 
     list(
       columnDefs = 
-        list(list(className = 'dt-body-right', targets = 2)))
+        list(list(className = 'dt-right', targets = 2)))
   )
 ```
 :::
@@ -1917,7 +1917,7 @@ DT::datatable(
   options = 
     list(
       columnDefs = 
-        list(list(className = 'dt-body-right', targets = 3)))
+        list(list(className = 'dt-right', targets = 3)))
   )
 ```
 
@@ -1929,7 +1929,7 @@ DT::datatable(
 DT::datatable(
   migbirdHIP::errorTable(final_data, loc = "all") |>
     dplyr::arrange(dplyr::desc(error_count)) |>
-    dplyr::mutate(error_count = format.default(error_count, big.mark = ","), justify = "right") |> 
+    dplyr::mutate(error_count = format.default(error_count, big.mark = ",")) |> 
     dplyr::rename(
       State = dl_state,
       Error = error,
@@ -1937,7 +1937,7 @@ DT::datatable(
   options = 
     list(
       columnDefs = 
-        list(list(className = 'dt-body-right', targets = 3)))
+        list(list(className = 'dt-right', targets = 3)))
   )
 
 final_data <- NULL
