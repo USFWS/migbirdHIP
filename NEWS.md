@@ -8,6 +8,7 @@
 
 ## Minor changes / bug fixes
 
+-   Updated `REF_BAGS` for FL `geese_bag` to only include `0`
 -   Download report template
     -   Removed double spaces.
     -   Moved missing email figure legend to the bottom; gives more space for x-axis state abbreviations.
@@ -18,6 +19,8 @@
         -   Bar labels for plot of errors by field for both before and after correction
         -   Causes of errors for top 3 fields table for `count` field
         -   Causes of errors by state for `count` field
+- `errorPlotStates()` and `errorPlotFields()`
+    -   Use `format.default()` for bar labels to add commas to big numbers, which fixes the Errors by Field Before Correction plot and the Errors by State before and after correction plots in the download report.
 
 # migbirdHIP 1.4.11
 
