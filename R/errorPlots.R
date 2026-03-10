@@ -196,7 +196,10 @@ errorPlotFields <-
         aes(x = reorder(.data$errors, .data$proportion), y = .data$proportion),
         stat = "identity") +
       geom_text(
-        aes(x = .data$errors, y = .data$proportion, label = .data$count_errors,
+        aes(x = .data$errors,
+            y = .data$proportion,
+            label =
+              format.default(.data$count_errors, big.mark = ",", trim = T),
             angle = 90),
         vjust = 0.2, hjust = -0.2) +
       labs(
@@ -274,7 +277,8 @@ errorPlotStates <-
           aes(
             y = .data$proportion,
             x = reorder(.data$dl_state, .data$proportion),
-            label = .data$count_errors,
+            label =
+              format.default(.data$count_errors, big.mark = ",", trim = T),
             angle = 90),
           vjust = 0.2, hjust = -0.2) +
         labs(
