@@ -8,6 +8,7 @@
 
 ## Minor changes / bug fixes
 
+-   Fixed `fileRename()` bug that returned a message if dir contained subfolder.
 -   Updated `REF_BAGS` for FL `geese_bag` to only include `0`
 -   Download report template
     -   Removed double spaces.

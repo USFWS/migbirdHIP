@@ -177,10 +177,13 @@ fileRename <-
       print(
         bind_cols(old = names_lower, new = names_upper))
     }
-    if (FALSE %in% str_detect(list.files(path), "^[A-Z]{2}[0-9]{8}\\.")) {
+    if (FALSE %in%
+        str_detect(
+          list.files(path)[list.files(path) != "permit"],
+          "^[A-Z]{2}[0-9]{8}\\.")) {
       message("Error: Unresolved issue(s) with file name(s) in directory.")
       print(
-        list.files(path) |>
+        list.files(path)[list.files(path) != "permit"] |>
           as_tibble() |>
           filter(!str_detect(.data$value, "^[A-Z]{2}[0-9]{8}\\.")))
     }
