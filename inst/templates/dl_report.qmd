@@ -1391,7 +1391,8 @@ if (!is.null(bagcheck_tbl)) {
   DT::datatable(
     bagcheck_tbl |>
       dplyr::mutate(
-        nprop = as.numeric(stringr::str_extract(proportion, "[0-9]{1,3}"))) |>
+        nprop = as.numeric(stringr::str_extract(proportion, "[0-9]{1,3}")),
+        n = format.default(n, big.mark = ",")) |>
       dplyr::arrange(dplyr::desc(nprop)) |>
       dplyr::select(-nprop) |>
       dplyr::rename(
@@ -1472,7 +1473,8 @@ if (bad_issue_nrow > 0) {
     dplyr::mutate(
       `Issue window` =
         paste(stamp_format(issue_start),
-              stamp_format(issue_end), sep = " to ")) |>
+              stamp_format(issue_end), sep = " to "),
+      n = format.default(n, big.mark = ",")) |>
     dplyr::select(-c("issue_start", "issue_end")) |>
     dplyr::relocate(`Error window`, .after = `Issue window`) |>
     dplyr::relocate(n, .after = registration_yr)
@@ -1511,6 +1513,7 @@ if (nrow(dplyr::filter(issue_assignments, decision == "future")) > 0) {
           migbirdHIP:::REF_DATES |>
             dplyr::select(dl_state = state, issue_end),
           by = "dl_state") |>
+        dplyr::mutate(n = format.default(n, big.mark = ",")) |> 
         dplyr::select(
           State = dl_state,
           `Last day of issuance` = issue_end,
@@ -1660,7 +1663,7 @@ x_order |>
   ggplot2::geom_text(
     ggplot2::aes(x = errors,
                  y = cumulative_prop,
-                 label = count_errors,
+                 label = format.default(count_errors, big.mark = ","),
                  angle = 90),
     vjust = 0.2, hjust = -0.2) +
   ggplot2::labs(
@@ -1712,7 +1715,8 @@ if (et$error[1] != "birth_date") {
     dplyr::group_by(value) |>
     dplyr::summarize(count = dplyr::n()) |>
     dplyr::ungroup() |>
-    dplyr::arrange(dplyr::desc(count))
+    dplyr::arrange(dplyr::desc(count)) |> 
+    dplyr::mutate(count = format.default(count, big.mark = ","))
   } else {
   err1 <-
     migbirdHIP::pullErrors(
@@ -1722,7 +1726,8 @@ if (et$error[1] != "birth_date") {
     dplyr::group_by(value) |>
     dplyr::summarize(count = dplyr::n()) |>
     dplyr::ungroup() |>
-    dplyr::arrange(dplyr::desc(count))
+    dplyr::arrange(dplyr::desc(count)) |> 
+    dplyr::mutate(count = format.default(count, big.mark = ","))
 }
 
 DT::datatable(err1)
@@ -1744,7 +1749,8 @@ if (et$error[2] != "birth_date") {
     dplyr::group_by(value) |>
     dplyr::summarize(count = dplyr::n()) |>
     dplyr::ungroup() |>
-    dplyr::arrange(dplyr::desc(count))
+    dplyr::arrange(dplyr::desc(count)) |> 
+    dplyr::mutate(count = format.default(count, big.mark = ","))
   } else {
   err2 <-
     migbirdHIP::pullErrors(
@@ -1754,7 +1760,8 @@ if (et$error[2] != "birth_date") {
     dplyr::group_by(value) |>
     dplyr::summarize(count = dplyr::n()) |>
     dplyr::ungroup() |>
-    dplyr::arrange(dplyr::desc(count))
+    dplyr::arrange(dplyr::desc(count)) |> 
+    dplyr::mutate(count = format.default(count, big.mark = ","))
 }
 
 DT::datatable(err2)
@@ -1776,7 +1783,8 @@ if (et$error[3] != "birth_date") {
     dplyr::group_by(value) |>
     dplyr::summarize(count = dplyr::n()) |>
     dplyr::ungroup() |>
-    dplyr::arrange(dplyr::desc(count))
+    dplyr::arrange(dplyr::desc(count)) |> 
+    dplyr::mutate(count = format.default(count, big.mark = ","))
   } else {
   err3 <-
     migbirdHIP::pullErrors(
@@ -1786,7 +1794,8 @@ if (et$error[3] != "birth_date") {
     dplyr::group_by(value) |>
     dplyr::summarize(count = dplyr::n()) |>
     dplyr::ungroup() |>
-    dplyr::arrange(dplyr::desc(count))
+    dplyr::arrange(dplyr::desc(count)) |> 
+    dplyr::mutate(count = format.default(count, big.mark = ","))
 }
 
 DT::datatable(err3)
@@ -1866,7 +1875,8 @@ migbirdHIP::errorPlotStates(final_data, threshold = 0)
 
 DT::datatable(
   migbirdHIP::errorTable(proofed_data, loc = "all") |>
-    dplyr::arrange(dplyr::desc(error_count)) |>
+    dplyr::arrange(dplyr::desc(error_count))  |> 
+    dplyr::mutate(error_count = format.default(error_count, big.mark = ",")) |> 
     dplyr::rename(
       State = dl_state,
       Error = error,
@@ -1882,6 +1892,7 @@ DT::datatable(
 DT::datatable(
   migbirdHIP::errorTable(final_data, loc = "all") |>
     dplyr::arrange(dplyr::desc(error_count)) |>
+    dplyr::mutate(error_count = format.default(error_count, big.mark = ",")) |> 
     dplyr::rename(
       State = dl_state,
       Error = error,

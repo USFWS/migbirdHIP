@@ -11,6 +11,13 @@
 -   Download report template
     -   Removed double spaces.
     -   Moved missing email figure legend to the bottom; gives more space for x-axis state abbreviations.
+    -   Comma formatting for long numbers
+        -   Bag check table for `Count` field
+        -   Non-current records table for `Count outside window` field
+        -   Future records table for `Number of records`
+        -   Bar labels for plot of errors by field for both before and after correction
+        -   Causes of errors for top 3 fields table for `count` field
+        -   Causes of errors by state for `count` field
 
 # migbirdHIP 1.4.11
 
