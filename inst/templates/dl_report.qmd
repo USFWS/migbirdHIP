@@ -1407,7 +1407,9 @@ if (!is.null(bagcheck_tbl)) {
     options =
       list(
         dom = "Bfrtip",
-        buttons = c("csv", "excel", "pdf"))
+        buttons = c("csv", "excel", "pdf"),
+        columnDefs = 
+          list(list(className = 'dt-body-right', targets = 5)))
     )
 } else {
   cat("✔️ No bag abnormalities detected.")
@@ -1486,7 +1488,11 @@ if (bad_issue_nrow > 0) {
         File = source_file,
         Year = registration_yr,
         `Count outside window` = n
-      )
+      ), 
+    options = 
+      list(
+        columnDefs = 
+          list(list(className = 'dt-body-right', targets = 4)))
   )
 }
 
@@ -1518,7 +1524,11 @@ if (nrow(dplyr::filter(issue_assignments, decision == "future")) > 0) {
           State = dl_state,
           `Last day of issuance` = issue_end,
           `Number of records` = n)
-      )
+      ), 
+    options = 
+      list(
+        columnDefs = 
+          list(list(className = 'dt-body-right', targets = 3)))
     )
 } else {
   cat("✔️ No future records detected.")
@@ -1663,7 +1673,12 @@ x_order |>
   ggplot2::geom_text(
     ggplot2::aes(x = errors,
                  y = cumulative_prop,
-                 label = format.default(count_errors, big.mark = ","),
+                 label = 
+                   format.default(
+                     count_errors, 
+                     big.mark = ",", 
+                     na.encode = F, 
+                     trim = T),
                  angle = 90),
     vjust = 0.2, hjust = -0.2) +
   ggplot2::labs(
@@ -1730,7 +1745,13 @@ if (et$error[1] != "birth_date") {
     dplyr::mutate(count = format.default(count, big.mark = ","))
 }
 
-DT::datatable(err1)
+DT::datatable(
+  err1, 
+  options = 
+    list(
+      columnDefs = 
+        list(list(className = 'dt-body-right', targets = 2)))
+  )
 ```
 
 ### Errors in `r et$error[2]`
@@ -1764,7 +1785,13 @@ if (et$error[2] != "birth_date") {
     dplyr::mutate(count = format.default(count, big.mark = ","))
 }
 
-DT::datatable(err2)
+DT::datatable(
+  err2, 
+  options = 
+    list(
+      columnDefs = 
+        list(list(className = 'dt-body-right', targets = 2)))
+  )
 ```
 
 ### Errors in `r et$error[3]`
@@ -1798,7 +1825,13 @@ if (et$error[3] != "birth_date") {
     dplyr::mutate(count = format.default(count, big.mark = ","))
 }
 
-DT::datatable(err3)
+DT::datatable(
+  err3, 
+  options = 
+    list(
+      columnDefs = 
+        list(list(className = 'dt-body-right', targets = 2)))
+  )
 ```
 :::
 
@@ -1876,11 +1909,15 @@ migbirdHIP::errorPlotStates(final_data, threshold = 0)
 DT::datatable(
   migbirdHIP::errorTable(proofed_data, loc = "all") |>
     dplyr::arrange(dplyr::desc(error_count))  |> 
-    dplyr::mutate(error_count = format.default(error_count, big.mark = ",")) |> 
+    dplyr::mutate(error_count = format.default(error_count, big.mark = ",", justify = "right")) |> 
     dplyr::rename(
       State = dl_state,
       Error = error,
-      Count = error_count)
+      Count = error_count), 
+  options = 
+    list(
+      columnDefs = 
+        list(list(className = 'dt-body-right', targets = 3)))
   )
 ```
 
@@ -1892,11 +1929,15 @@ DT::datatable(
 DT::datatable(
   migbirdHIP::errorTable(final_data, loc = "all") |>
     dplyr::arrange(dplyr::desc(error_count)) |>
-    dplyr::mutate(error_count = format.default(error_count, big.mark = ",")) |> 
+    dplyr::mutate(error_count = format.default(error_count, big.mark = ","), justify = "right") |> 
     dplyr::rename(
       State = dl_state,
       Error = error,
-      Count = error_count)
+      Count = error_count), 
+  options = 
+    list(
+      columnDefs = 
+        list(list(className = 'dt-body-right', targets = 3)))
   )
 
 final_data <- NULL
