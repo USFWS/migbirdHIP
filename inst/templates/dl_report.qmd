@@ -1644,19 +1644,19 @@ table_2 <-
 # Labels for bar plot (birth_date color stack doesn't cooperate with
 # positioning 2 labels, so we only label that field once at the top of
 # the bar)
-barlabels <-
-  table_2 |>
-  dplyr::select(-total) |>
-  dplyr::group_by(errors) |>
-  dplyr::mutate(
-    count_errors = sum(count_errors),
-    proportion = sum(proportion),
-    count_errors_label = 
-      ifelse(
-        count_errors > 0,
-        format.default(count_errors, big.mark = ",", trim = T),
-        0)) |>
-  dplyr::ungroup()
+# barlabels <-
+#   table_2 |>
+#   dplyr::select(-total) |>
+#   dplyr::group_by(errors) |>
+#   dplyr::mutate(
+#     count_errors = sum(count_errors),
+#     proportion = sum(proportion),
+#     count_errors_label = 
+#       ifelse(
+#         count_errors > 0,
+#         format.default(count_errors, big.mark = ",", trim = T),
+#         0)) |>
+#   dplyr::ungroup()
 
 # Plot
 x_order |>
@@ -1667,7 +1667,12 @@ x_order |>
   dplyr::group_by(errors) |>
   dplyr::mutate(
     count_errors = sum(count_errors),
-    cumulative_prop = sum(proportion)) |>
+    cumulative_prop = sum(proportion),
+    count_errors_label =
+      ifelse(
+        count_errors > 0,
+        format.default(count_errors, big.mark = ",", trim = T),
+        0)) |>
   dplyr::ungroup() |>
   ggplot2::ggplot() +
   ggplot2::geom_bar(
@@ -1694,7 +1699,7 @@ x_order |>
 x_order <- NULL
 table_1 <- NULL
 table_2 <- NULL
-barlabels <- NULL
+#barlabels <- NULL
 
 ```
 
