@@ -553,6 +553,7 @@ duplicateFinder <-
 #'
 #' @importFrom dplyr mutate
 #' @importFrom dplyr case_when
+#' @importFrom dplyr reframe
 #' @importFrom stringr str_detect
 #' @importFrom dplyr group_by
 #' @importFrom ggplot2 ggplot
@@ -614,7 +615,7 @@ duplicatePlot <-
             TRUE ~ .data$duplicate_field)
       ) |>
       # Make a new col to reorder the bars
-      mutate(total_count = sum(n), .by = "duplicate_field") |>
+      reframe(total_count = sum(n), .by = "duplicate_field") |>
       ggplot(
         aes(
           x = reorder(.data$duplicate_field, -.data$total_count),

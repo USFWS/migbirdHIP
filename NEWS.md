@@ -4,6 +4,8 @@
 
 ## Minor changes / bug fixes
 
+- Fix `duplicatePlot()` bar order
+
 # migbirdHIP 1.4.12
 
 ## Minor changes / bug fixes
