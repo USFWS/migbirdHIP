@@ -17,7 +17,7 @@ Imports:
     ggnewscale (>= 0.5.2),
     ggplot2 (>= 3.5.2),
     lubridate (>= 1.9.5),
-    purrr (>= 1.1.0),
+    purrr (>= 1.2.1),
     quarto (>= 1.5.0),
     readr (>= 2.1.5),
     rlang (>= 1.1.6),
