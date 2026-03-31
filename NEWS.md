@@ -2,20 +2,25 @@
 
 ## Major changes & new features
 
+-   DESCRIPTION
+    -   Added `{dtplyr}` to Imports
+-   Functions
+    -   Deduplication functions (`duplicateID()`, `duplicateNewest()`, `duplicateAllOnesGroupSize()`, `duplicateSample()`, and `duplicateRecordType()`) now utilize `{dtplyr}` for sizable speed improvements (see [#45](https://github.com/USFWS/migbirdHIP/issues/45))
+
 ## Minor changes / bug fixes
 
-- Change `issuePlot()` legend to say "Registration year provided" to be clear that the value has not been changed/edited yet.
-- DESCRIPTION
-    - Require R version `>= 4.5.0`
-    - Imports
-        - Update `lubridate` to `>=1.9.5`
-        - Update `purrr` to `>= 1.2.1`
-        - Update `data.table` to `>= 1.18.2`
-        - Update `stringr` to `>= 1.6.0`
-        - Update `readr` to `>= 2.2.0`
-        - Update `dplyr` to `>= 1.2.0`
-        - Update `rlang` to `>= 1.1.7`
-        - Update `ggplot2` to `>= 4.0.2`
+-   Change `issuePlot()` legend to say "Registration year provided" to be clear that the value has not been changed/edited yet.
+-   DESCRIPTION
+    -   Require R version `>= 4.5.0`
+    -   Imports
+        -   Update `lubridate` to `>=1.9.5`
+        -   Update `purrr` to `>= 1.2.1`
+        -   Update `data.table` to `>= 1.18.2`
+        -   Update `stringr` to `>= 1.6.0`
+        -   Update `readr` to `>= 2.2.0`
+        -   Update `dplyr` to `>= 1.2.0`
+        -   Update `rlang` to `>= 1.1.7`
+        -   Update `ggplot2` to `>= 4.0.2`
 
 # migbirdHIP 1.4.13
 
@@ -23,7 +28,7 @@ Final definitive version for the 2025-2026 season.
 
 ## Minor changes / bug fixes
 
-- Fix `duplicatePlot()` bar order
+-   Fix `duplicatePlot()` bar order
 
 # migbirdHIP 1.4.12
 
@@ -41,7 +46,7 @@ Final definitive version for the 2025-2026 season.
         -   Bar labels for plot of errors by field for both before and after correction
         -   Causes of errors for top 3 fields table for `count` field
         -   Causes of errors by state for `count` field
-- `errorPlotStates()` and `errorPlotFields()`
+-   `errorPlotStates()` and `errorPlotFields()`
     -   Use `format.default()` for bar labels to add commas to big numbers, which fixes the Errors by Field Before Correction plot and the Errors by State before and after correction plots in the download report.
 
 # migbirdHIP 1.4.11

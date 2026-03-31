@@ -76,8 +76,8 @@ duplicateFix <-
             # When there isn't a 1 value in any of the checking columns, it's a
             # duplicate still and we will need to randomly choose which record
             # in the group to keep later
-            !(1 %in% .data$all_ones_group_size) &
-              !(1 %in% .data$sd_or_br_has_2_group_size) ~
+            !("1" %in% .data$all_ones_group_size) &
+              !("1" %in% .data$sd_or_br_has_2_group_size) ~
               "duplicate",
             TRUE ~ NA_character_),
         .by = "duplicate_id") |>
@@ -192,6 +192,8 @@ duplicateFix <-
 #' Return a tibble of duplicates with a duplicate ID column identifying each
 #' group of records.
 #'
+#' @importFrom dtplyr lazy_dt
+#' @importFrom dplyr as_tibble
 #' @importFrom dplyr group_by
 #' @importFrom rlang syms
 #' @importFrom dplyr filter
@@ -207,13 +209,16 @@ duplicateFix <-
 
 duplicateID <-
   function(current_data) {
-    current_data |>
+    current_data2 <- lazy_dt(current_data)
+
+    current_data2 |>
       # Group by REF_FIELDS_HUNTER_ID to determine each unique hunter
       group_by(!!!syms(REF_FIELDS_HUNTER_ID)) |>
       # Identify duplicates, aka records in groups of n() > 1
       filter(n() > 1) |>
       mutate(duplicate_id = paste0("duplicate_", cur_group_id())) |>
-      ungroup()
+      ungroup() |>
+      as_tibble()
   }
 
 #' Find the most recent records out of a group of duplicates
@@ -222,6 +227,8 @@ duplicateID <-
 #' \code{\link{duplicateFix}} to filter groups of duplicates to the most recent
 #' records out of each group.
 #'
+#' @importFrom dtplyr lazy_dt
+#' @importFrom dplyr as_tibble
 #' @importFrom dplyr mutate
 #' @importFrom lubridate mdy
 #' @importFrom dplyr filter
@@ -236,7 +243,9 @@ duplicateID <-
 duplicateNewest <-
   function(duplicates) {
     if (nrow(duplicates) > 0) {
-      duplicates |>
+      duplicates2 <- lazy_dt(duplicates)
+
+      duplicates2 |>
         # Identify records with most recent issue date
         mutate(
           x_issue_date =
@@ -251,7 +260,8 @@ duplicateNewest <-
         ) |>
         # Keep the record(s) from each group that were the most recent
         filter(!is.na(.data$x_issue_date)) |>
-        select(-"x_issue_date")
+        select(-"x_issue_date") |>
+        as_tibble()
     } else {
       duplicates
     }
@@ -275,6 +285,7 @@ duplicateNewest <-
 
 duplicateAllOnes <-
   function(duplicates) {
+
     duplicates |>
       # Flag records with 1 in every bag field
       mutate(
@@ -290,6 +301,8 @@ duplicateAllOnes <-
 #' The internal \code{duplicateAllOnesGroupSize} function is used inside of
 #' \code{\link{duplicateFix}}.
 #'
+#' @importFrom dtplyr lazy_dt
+#' @importFrom dplyr as_tibble
 #' @importFrom dplyr mutate
 #' @importFrom dplyr n
 #' @importFrom rlang .data
@@ -301,17 +314,22 @@ duplicateAllOnes <-
 
 duplicateAllOnesGroupSize <-
   function(duplicates) {
+    duplicates2 <- lazy_dt(duplicates)
+
     # If record doesn't have 1s in every bag field, put the group size (number
     # of records in the set of duplicates that are not all-1s); if record DOES
     # have 1s in every bag field, put "all_1s"
-    duplicates |>
+    duplicates2 |>
       mutate(
         all_ones_group_size =
           ifelse(
+            # If record doesn't have 1s in every bag field, put the group size
             .data$all_ones == "not_all_1s",
             as.character(n()),
+            # If record DOES have 1s in every bag field, put "all_1s"
             .data$all_ones),
-        .by = c("duplicate_id", "all_ones"))
+        .by = c("duplicate_id", "all_ones")) |>
+      as_tibble()
   }
 
 #' Decide which duplicate records should be kept or dropped
@@ -319,6 +337,7 @@ duplicateAllOnesGroupSize <-
 #' The internal \code{duplicateDecide} function is used inside of
 #' \code{\link{duplicateFix}} to deduplicate intermediate tibbles.
 #'
+#' @importFrom dplyr as_tibble
 #' @importFrom dplyr mutate
 #' @importFrom dplyr case_when
 #' @importFrom dplyr n
@@ -359,7 +378,8 @@ duplicateDecide <-
             "drop",
             .data$decision),
         .by = "duplicate_id") |>
-      filter(.data$decision != "drop")
+      filter(.data$decision != "drop") |>
+      as_tibble()
   }
 
 #' De-duplicate by randomly sampling intermediate tibbles
@@ -368,6 +388,8 @@ duplicateDecide <-
 #' \code{\link{duplicateFix}} to deduplicate intermediate tibbles that have been
 #' evaluated using other criteria already.
 #'
+#' @importFrom dtplyr lazy_dt
+#' @importFrom dplyr as_tibble
 #' @importFrom dplyr bind_rows
 #' @importFrom dplyr filter
 #' @importFrom dplyr group_by
@@ -383,16 +405,21 @@ duplicateDecide <-
 
 duplicateSample <-
   function(dupes) {
+    dupes2 <- lazy_dt(dupes)
+
     bind_rows(
       # Handle "duplicate"s; randomly keep one per group using slice_sample()
-      dupes |>
+      dupes2 |>
         filter(.data$decision == "duplicate") |>
         group_by(.data$duplicate_id) |>
         slice_sample(n = 1) |>
-        ungroup(),
+        ungroup() |>
+        as_tibble(),
       # Row bind in the "keepers" (should already be 1 per hunter)
-      dupes |>
-        filter(str_detect(.data$decision, "keeper")))
+      dupes2 |>
+        filter(str_detect(.data$decision, "keeper")) |>
+        as_tibble()
+    )
   }
 
 #' Set record type
@@ -401,6 +428,8 @@ duplicateSample <-
 #' \code{\link{duplicateFix}} to set record type of registrations based on each
 #' record's bag values.
 #'
+#' @importFrom dtplyr lazy_dt
+#' @importFrom dplyr as_tibble
 #' @importFrom dplyr mutate
 #' @importFrom dplyr across
 #' @importFrom dplyr matches
@@ -413,10 +442,13 @@ duplicateSample <-
 
 duplicateRecordType <-
   function(duplicates) {
+
+    duplicates2 <- lazy_dt(duplicates)
+
     # If a record is from an in-line permit state, the sum of values in
     # non-permit species columns is 0, AND the sum of values in permit species
     # columns is > 0, the record is an in-line permit.
-    duplicates |>
+    duplicates2 |>
       mutate(
         record_type =
           ifelse(
@@ -426,7 +458,8 @@ duplicateRecordType <-
               rowSums(across(matches("band|brant|seaducks"), as.numeric),
                       na.rm = T) > 0,
             "PMT",
-            "HIP"))
+            "HIP")) |>
+      as_tibble()
   }
 
 #' Find causes of duplication
