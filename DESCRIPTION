@@ -15,7 +15,7 @@ Imports:
     data.table (>= 1.18.2),
     dplyr (>= 1.2.0),
     ggnewscale (>= 0.5.2),
-    ggplot2 (>= 3.5.2),
+    ggplot2 (>= 4.0.2),
     lubridate (>= 1.9.5),
     purrr (>= 1.2.1),
     quarto (>= 1.5.0),

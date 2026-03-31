@@ -15,6 +15,7 @@
         - Update `readr` to `>= 2.2.0`
         - Update `dplyr` to `>= 1.2.0`
         - Update `rlang` to `>= 1.1.7`
+        - Update `ggplot2` to `>= 4.0.2`
 
 # migbirdHIP 1.4.13
 
