@@ -4,6 +4,12 @@
 
 ## Minor changes / bug fixes
 
+# migbirdHIP 1.4.13
+
+Final definitive version for the 2025-2026 season.
+
+## Minor changes / bug fixes
+
 - Fix `duplicatePlot()` bar order
 
 # migbirdHIP 1.4.12
