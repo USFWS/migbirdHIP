@@ -9,7 +9,7 @@ Description: Functions designed to process and visualize data submitted to
 License: CC0
 URL: https://www.fws.gov/project/migratory-bird-hunter-survey-diary-survey
 Depends: 
-    R (>= 4.4.0)
+    R (>= 4.5.0)
 Imports: 
     assertthat (>= 0.2.1),
     data.table (>= 1.18.2),

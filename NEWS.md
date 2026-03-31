@@ -4,6 +4,18 @@
 
 ## Minor changes / bug fixes
 
+- Change `issuePlot()` legend to say "Registration year provided" to be clear that the value has not been changed/edited yet.
+- DESCRIPTION
+    - Require R version `>= 4.5.0`
+    - Imports
+        - Update `lubridate` to `>=1.9.5`
+        - Update `purrr` to `>= 1.2.1`
+        - Update `data.table` to `>= 1.18.2`
+        - Update `stringr` to `>= 1.6.0`
+        - Update `readr` to `>= 2.2.0`
+        - Update `dplyr` to `>= 1.2.0`
+        - Update `rlang` to `>= 1.1.7`
+
 # migbirdHIP 1.4.13
 
 Final definitive version for the 2025-2026 season.
