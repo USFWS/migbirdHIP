@@ -342,8 +342,6 @@ bad_issue <-
 #| echo: false
 #| message: false
 
-`%>%` <- tidyr::`%>%`
-
 # Captured messages
 important_statistics <-
   dplyr::bind_rows(
@@ -373,14 +371,13 @@ important_statistics <-
       )
     ) |>
     dplyr::mutate(
-      value =
-        stringr::str_remove(value, "^(Warning: |Error: |\\* )") %>%
-        stringr::str_remove(., "\\\n$") %>%
-        stringr::str_remove(., " They .+ registration_yr.") %>%
-        paste0("* ", .)
+      value = value |>
+        stringr::str_remove("^(Warning: |Error: |\\* )") |>
+        stringr::str_remove("\\\n$") |>
+        stringr::str_remove(" They .+ registration_yr.") |>
+        (\(x) paste0("* ", x))()
       )
   )
-rm(`%>%`)
 ```
 
 ```{r overview_statistics_blankfiles}
@@ -1392,7 +1389,8 @@ if (!is.null(bagcheck_tbl)) {
     bagcheck_tbl |>
       dplyr::mutate(
         nprop = as.numeric(stringr::str_extract(proportion, "[0-9]{1,3}")),
-        n = format.default(n, big.mark = ",")) |>
+        n = format.default(n, big.mark = ",")
+      ) |>
       dplyr::arrange(dplyr::desc(nprop)) |>
       dplyr::select(-nprop) |>
       dplyr::rename(
@@ -1408,9 +1406,12 @@ if (!is.null(bagcheck_tbl)) {
       list(
         dom = "Bfrtip",
         buttons = c("csv", "excel", "pdf"),
-        columnDefs = 
-          list(list(className = 'dt-right', targets = 5)))
-    )
+        columnDefs =
+          list(list(
+            className = "dt-right", targets = 5
+          ))
+      )
+  )
 } else {
   cat("✔️ No bag abnormalities detected.")
 }
@@ -1488,11 +1489,12 @@ if (bad_issue_nrow > 0) {
         File = source_file,
         Year = registration_yr,
         `Count outside window` = n
-      ), 
-    options = 
-      list(
-        columnDefs = 
-          list(list(className = 'dt-right', targets = 4)))
+      ),
+    options =
+      list(columnDefs =
+             list(list(
+               className = "dt-right", targets = 4
+             )))
   )
 }
 
@@ -1518,18 +1520,21 @@ if (nrow(dplyr::filter(issue_assignments, decision == "future")) > 0) {
         dplyr::left_join(
           migbirdHIP:::REF_DATES |>
             dplyr::select(dl_state = state, issue_end),
-          by = "dl_state") |>
-        dplyr::mutate(n = format.default(n, big.mark = ",")) |> 
+          by = "dl_state"
+        ) |>
+        dplyr::mutate(n = format.default(n, big.mark = ",")) |>
         dplyr::select(
           State = dl_state,
           `Last day of issuance` = issue_end,
-          `Number of records` = n)
-      ), 
-    options = 
-      list(
-        columnDefs = 
-          list(list(className = 'dt-right', targets = 3)))
-    )
+          `Number of records` = n
+        )
+    ),
+    options =
+      list(columnDefs =
+             list(list(
+               className = "dt-right", targets = 3
+             )))
+  )
 } else {
   cat("✔️ No future records detected.")
 }
@@ -1641,23 +1646,6 @@ table_2 <-
     total = nrow(final_data),
     proportion = count_errors / nrow(final_data))
 
-# Labels for bar plot (birth_date color stack doesn't cooperate with
-# positioning 2 labels, so we only label that field once at the top of
-# the bar)
-# barlabels <-
-#   table_2 |>
-#   dplyr::select(-total) |>
-#   dplyr::group_by(errors) |>
-#   dplyr::mutate(
-#     count_errors = sum(count_errors),
-#     proportion = sum(proportion),
-#     count_errors_label = 
-#       ifelse(
-#         count_errors > 0,
-#         format.default(count_errors, big.mark = ",", trim = T),
-#         0)) |>
-#   dplyr::ungroup()
-
 # Plot
 x_order |>
   dplyr::left_join(table_2, by = "errors") |>
@@ -1699,7 +1687,6 @@ x_order |>
 x_order <- NULL
 table_1 <- NULL
 table_2 <- NULL
-#barlabels <- NULL
 
 ```
 
@@ -1735,7 +1722,7 @@ if (et$error[1] != "birth_date") {
     dplyr::group_by(value) |>
     dplyr::summarize(count = dplyr::n()) |>
     dplyr::ungroup() |>
-    dplyr::arrange(dplyr::desc(count)) |> 
+    dplyr::arrange(dplyr::desc(count)) |>
     dplyr::mutate(count = format.default(count, big.mark = ","))
   } else {
   err1 <-
@@ -1746,17 +1733,15 @@ if (et$error[1] != "birth_date") {
     dplyr::group_by(value) |>
     dplyr::summarize(count = dplyr::n()) |>
     dplyr::ungroup() |>
-    dplyr::arrange(dplyr::desc(count)) |> 
+    dplyr::arrange(dplyr::desc(count)) |>
     dplyr::mutate(count = format.default(count, big.mark = ","))
 }
 
-DT::datatable(
-  err1, 
-  options = 
-    list(
-      columnDefs = 
-        list(list(className = 'dt-right', targets = 2)))
-  )
+DT::datatable(err1, options =
+                list(columnDefs =
+                       list(list(
+                         className = "dt-right", targets = 2
+                       ))))
 ```
 
 ### Errors in `r et$error[2]`
@@ -1775,7 +1760,7 @@ if (et$error[2] != "birth_date") {
     dplyr::group_by(value) |>
     dplyr::summarize(count = dplyr::n()) |>
     dplyr::ungroup() |>
-    dplyr::arrange(dplyr::desc(count)) |> 
+    dplyr::arrange(dplyr::desc(count)) |>
     dplyr::mutate(count = format.default(count, big.mark = ","))
   } else {
   err2 <-
@@ -1786,17 +1771,15 @@ if (et$error[2] != "birth_date") {
     dplyr::group_by(value) |>
     dplyr::summarize(count = dplyr::n()) |>
     dplyr::ungroup() |>
-    dplyr::arrange(dplyr::desc(count)) |> 
+    dplyr::arrange(dplyr::desc(count)) |>
     dplyr::mutate(count = format.default(count, big.mark = ","))
 }
 
-DT::datatable(
-  err2, 
-  options = 
-    list(
-      columnDefs = 
-        list(list(className = 'dt-right', targets = 2)))
-  )
+DT::datatable(err2, options =
+                list(columnDefs =
+                       list(list(
+                         className = "dt-right", targets = 2
+                       ))))
 ```
 
 ### Errors in `r et$error[3]`
@@ -1815,7 +1798,7 @@ if (et$error[3] != "birth_date") {
     dplyr::group_by(value) |>
     dplyr::summarize(count = dplyr::n()) |>
     dplyr::ungroup() |>
-    dplyr::arrange(dplyr::desc(count)) |> 
+    dplyr::arrange(dplyr::desc(count)) |>
     dplyr::mutate(count = format.default(count, big.mark = ","))
   } else {
   err3 <-
@@ -1826,17 +1809,15 @@ if (et$error[3] != "birth_date") {
     dplyr::group_by(value) |>
     dplyr::summarize(count = dplyr::n()) |>
     dplyr::ungroup() |>
-    dplyr::arrange(dplyr::desc(count)) |> 
+    dplyr::arrange(dplyr::desc(count)) |>
     dplyr::mutate(count = format.default(count, big.mark = ","))
 }
 
-DT::datatable(
-  err3, 
-  options = 
-    list(
-      columnDefs = 
-        list(list(className = 'dt-right', targets = 2)))
-  )
+DT::datatable(err3, options =
+                list(columnDefs =
+                       list(list(
+                         className = "dt-right", targets = 2
+                       ))))
 ```
 :::
 
@@ -1913,17 +1894,21 @@ migbirdHIP::errorPlotStates(final_data, threshold = 0)
 
 DT::datatable(
   migbirdHIP::errorTable(proofed_data, loc = "all") |>
-    dplyr::arrange(dplyr::desc(error_count))  |> 
-    dplyr::mutate(error_count = format.default(error_count, big.mark = ",", justify = "right")) |> 
+    dplyr::arrange(dplyr::desc(error_count))  |>
+    dplyr::mutate(error_count = format.default(
+      error_count, big.mark = ",", justify = "right"
+    )) |>
     dplyr::rename(
       State = dl_state,
       Error = error,
-      Count = error_count), 
-  options = 
-    list(
-      columnDefs = 
-        list(list(className = 'dt-right', targets = 3)))
-  )
+      Count = error_count
+    ),
+  options =
+    list(columnDefs =
+           list(list(
+             className = "dt-right", targets = 3
+           )))
+)
 ```
 
 ### After correction
@@ -1934,16 +1919,16 @@ DT::datatable(
 DT::datatable(
   migbirdHIP::errorTable(final_data, loc = "all") |>
     dplyr::arrange(dplyr::desc(error_count)) |>
-    dplyr::mutate(error_count = format.default(error_count, big.mark = ",")) |> 
+    dplyr::mutate(error_count = format.default(error_count, big.mark = ",")) |>
     dplyr::rename(
       State = dl_state,
       Error = error,
-      Count = error_count), 
-  options = 
-    list(
-      columnDefs = 
-        list(list(className = 'dt-right', targets = 3)))
-  )
+      Count = error_count
+    ),
+  options = list(columnDefs = list(list(
+    className = "dt-right", targets = 3
+  )))
+)
 
 final_data <- NULL
 proofed_data <- NULL
