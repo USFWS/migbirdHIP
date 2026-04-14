@@ -54,12 +54,7 @@ The USFWS has been using HIP registrations since 1999 to select hunters for the 
 The package can be installed from the USFWS GitHub repository using:
 
 ```{r, install, eval = FALSE}
-devtools::install_github(
-  "USFWS/migbirdHIP",
-  quiet = T,
-  upgrade = F,
-  build_vignettes = T
-)
+pak::pak("USFWS/migbirdHIP")
 ```
 
 #### Releases {#releases}
@@ -67,7 +62,7 @@ devtools::install_github(
 To install a past release, use the example below and substitute the appropriate version number. Releases are documented in the [README](https://github.com/USFWS/migbirdHIP/blob/main/README.md#releases).
 
 ```{r, releases, eval = FALSE}
-devtools::install_github("USFWS/migbirdHIP@v1.2.8", build_vignettes = T)
+pak::pak("USFWS/migbirdHIP@v1.2.8")
 ```
 
 ### Load {#load}

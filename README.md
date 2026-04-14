@@ -32,7 +32,7 @@ Tasks that can be accomplished with this package include:
 ## Installation
 
 ``` r
-devtools::install_github("USFWS/migbirdHIP", build_vignettes = T)
+pak::pak("USFWS/migbirdHIP")
 ```
 
 ## Releases
@@ -42,7 +42,7 @@ To install a past release, use the example below and substitute the
 appropriate version number.
 
 ``` r
-devtools::install_github("USFWS/migbirdHIP@v1.2.8", build_vignettes = T)
+pak::pak("USFWS/migbirdHIP@v1.2.8")
 ```
 
 - [v1.4.13](https://github.com/USFWS/migbirdHIP/releases/tag/v1.4.13) -
