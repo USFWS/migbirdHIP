@@ -22,6 +22,8 @@
         -   Update `rlang` to `>= 1.1.7`
         -   Update `ggplot2` to `>= 4.0.2`
 -   Recommend installation in `README` and vignette changed to `pak::pak()` now that `devtools::install_github()` has been deprecated.
+-   Updated package startup message in `zzz.R`
+    -   Version checking is now more robust; messages are more reliable and clear if a package version is out of date.
 
 # migbirdHIP 1.4.13
 
