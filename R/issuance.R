@@ -655,7 +655,7 @@ issuePlot <-
             x = .data$issue_start, xend = .data$issue_end,
             y = reorder(.data$dl_state, desc(.data$issue_start)),
             color = .data$category),
-          size = 3,
+          linewidth = 3,
           alpha = 0.4) +
         # Future issue window
         geom_segment(
@@ -664,7 +664,7 @@ issuePlot <-
             x = .data$issue_start, xend = .data$issue_end,
             y = reorder(.data$dl_state, desc(.data$issue_start)),
             color = .data$category),
-          size = 3,
+          linewidth = 3,
           alpha = 0.4) +
         # Current issue window
         geom_segment(
@@ -673,7 +673,7 @@ issuePlot <-
             x = .data$issue_start, xend = .data$issue_end,
             y = reorder(.data$dl_state, desc(.data$issue_start)),
             color = .data$category),
-          size = 3,
+          linewidth = 3,
           alpha = 0.4) +
         # Titles
         labs(
@@ -694,9 +694,13 @@ issuePlot <-
         # Plot bad issue dates (non-current, past, future, bad, invalid)
         geom_boxplot(
           data = badplot_data,
-          aes(x = mdy(.data$issue_date), y = .data$dl_state,
+          aes(x = mdy(.data$issue_date),
+              y = .data$dl_state,
               color = .data$registration_yr),
-          fill = "#FFFFFF", width = 0, size = 3, position = "identity") +
+          fill = "#FFFFFF",
+          width = 0,
+          size = 3,
+          position = "identity") +
         # Bad issue date colors
         scale_color_manual(
           name = "Registration year\nprovided",
