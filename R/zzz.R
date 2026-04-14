@@ -1,13 +1,8 @@
 #' @importFrom utils packageVersion
 
-.onAttach <- function(libname, pkgname = "migbirdHIP", test = NA) {
+.onAttach <- function(libname, pkgname = "migbirdHIP") {
 
-  if (is.na(test)) {
-    local_version <- packageVersion(pkgname)
-  } else {
-    local_version <- test
-  }
-
+  local_version <- packageVersion(pkgname)
   season <- names(REF_RELEASES[REF_RELEASES == local_version])
 
   try({
