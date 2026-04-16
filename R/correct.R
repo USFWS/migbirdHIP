@@ -21,10 +21,7 @@ correct <-
   function(proofed_data, year) {
     failYear(year)
     failProofed(proofed_data)
-
-    if (year != REF_CURRENT_SEASON) {
-      message("! Are you sure you want to run this using year = ", year, "?")
-    }
+    questionYear(year)
 
     corrected_data <-
       proofed_data |>

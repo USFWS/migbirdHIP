@@ -31,10 +31,7 @@
 proof <-
   function(deduplicated_data, year) {
     failYear(year)
-
-    if (year != REF_CURRENT_SEASON) {
-      message("! Are you sure you want to run this using year = ", year, "?")
-    }
+    questionYear(year)
 
     # Create a record key so that the errors can be joined in later (there may
     # be more than 1 error per record, so using the record_key field will not
@@ -45,10 +42,6 @@ proof <-
 
     markup <-
       bind_rows(
-        # Test record (redundant, should be filtered out in clean)
-        keyed_data |>
-          filter(!!LOGIC_TEST_RECORD) |>
-          mutate(error = "test_record"),
         # Title
         keyed_data |>
           filter(!.data$title %in% REF_TITLES) |>

@@ -417,6 +417,7 @@ issuePrint <-
 issueAssign <-
   function(clean_data, year) {
     failYear(year)
+    questionYear(year)
 
     clean_data |>
       # Filter out bad issue_date values
