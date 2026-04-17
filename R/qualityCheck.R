@@ -20,8 +20,10 @@ qualityCheck <-
 #'
 #' The internal \code{qualityMessages} function is used inside of
 #' \code{\link{qualityCheck}} to return messages for missing PII, missing email
-#' addresses, all-zero bag records, non-numeric bag values, NAs in dl_state, and
-#' NAs in dl_date.
+#' addresses, all-zero bag records, non-numeric bag values, NAs in dl_state, NAs
+#' in dl_date, bad title assignments, high proportions of non-resident hunters
+#' in a file, inter-state duplicates, low range of issue dates in a file, and
+#' low range of birth dates in a file.
 #'
 #' @param raw_data The product of \code{\link{read_hip}}
 #'
@@ -69,21 +71,22 @@ qualityMessages <-
     # Return a message for bad registration years
     badRegYearMessage(raw_data)
 
-    # -------
-
     # Return a message for bad title assignments
-    badTitlesMessage()
+    badTitleMessage(raw_data)
 
-    # Return a message if more than half the registrations of a file have an
+    # Return a message if a large proportion of registrations in a file have an
     # address in another state
-    stateMismatchMessage()
+    nonResidentMessage(raw_data)
+
+    # Return a message if duplicates are found across states
+    interStateDuplicatesMessage(raw_data)
 
     # Return a message if only one unique issue_date is provided in a file
-    repeatedIssueDateMessage()
+    singleIssueDateMessage(raw_data)
 
     # Return a message if the birth_date values in a file do not have a range
     # greater than 1 year
-    birthDateMessage()
+    badBirthDatesMessage(raw_data)
 
   }
 
@@ -543,4 +546,177 @@ badRegYearMessage <-
 
       print(badyr)
     }
+  }
+
+#' Bad title message
+#'
+#' The internal \code{badTitleMessage} function returns a message for
+#' \code{title} values that are not assigned to the correct registrations.
+#'
+#' @importFrom dplyr select
+#' @importFrom dplyr mutate
+#' @importFrom stringr str_to_upper
+#' @importFrom dplyr filter
+#' @importFrom dplyr count
+#' @importFrom dplyr arrange
+#' @importFrom dplyr desc
+#' @importFrom rlang .data
+#'
+#' @inheritParams qualityMessages
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
+
+badTitleMessage <-
+  function(raw_data) {
+
+    bad_title_records <-
+      raw_data |>
+      select("title", "firstname", "source_file") |>
+      # Convert first name to upper case
+      mutate(firstname = str_to_upper(.data$firstname)) |>
+      # Identify bad title values
+      filter(!!LOGIC_BAD_TITLE_ASSIGNMENT)
+
+    if (nrow(bad_title_records) > 0) {
+      message(paste("Error: Bad title assignments detected."))
+
+      print(bad_title_records |>
+              count(.data$source_file, .data$title) |>
+              arrange(desc(.data$n)))
+    }
+  }
+
+#' High non-resident hunter proportion message
+#'
+#' The internal \code{nonResidentMessage} function returns a message for files
+#' with 10% or more of \code{state} values that do not match \code{dl_state}.
+#'
+#' @importFrom dplyr mutate
+#' @importFrom dplyr n
+#' @importFrom dplyr distinct
+#' @importFrom dplyr arrange
+#' @importFrom dplyr desc
+#' @importFrom dplyr filter
+#' @importFrom dplyr summarize
+#' @importFrom stringr str_count
+#' @importFrom stringr str_replace
+#' @importFrom dplyr select
+#' @importFrom rlang .data
+#'
+#' @inheritParams qualityMessages
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
+
+nonResidentMessage <-
+  function(raw_data) {
+
+    # States with 10% or more nonresident registrations
+    nonresidents <-
+      raw_data |>
+      mutate(state_total = n(), .by = "dl_state") |>
+      mutate(
+        nonresident_total = n(),
+        nonresident_total_prop = .data$nonresident_total/.data$state_total,
+        .by = c("source_file", "dl_state", "state")) |>
+      distinct(
+        .data$source_file, .data$state, .data$dl_state, .data$nonresident_total,
+        .data$state_total, .data$nonresident_total_prop) |>
+      arrange(desc(.data$nonresident_total)) |>
+      filter(dl_state != .data$state) |>
+      summarize(
+        nonresident_total_sum = sum(.data$nonresident_total),
+        state_total = unique(.data$state_total),
+        nonresident_prop_overall =
+          .data$nonresident_total_sum/.data$state_total,
+        contributing =
+          paste0(state, " (", round(.data$nonresident_total_prop, 3)*100, "%)",
+                 collapse = ", "),
+        .by = "source_file"
+      ) |>
+      # Only return states with 10% or more non-resident registrations
+      filter(.data$nonresident_prop_overall >= 0.1)
+
+    if (nrow(nonresidents) > 0) {
+      message(paste("Error: High non-resident proportions."))
+
+      nonresidents |>
+        mutate(
+          nonresident_prop =
+            paste0(round(.data$nonresident_prop_overall, 3) * 100, "%"),
+          contributing =
+            ifelse(
+              # Condition: If there are 3 or more commas
+              str_count(.data$contributing, ",") >= 3,
+              str_replace(
+                .data$contributing, "^((?:[^,]*,){2}[^,]*),.*", "\\1"),
+              .data$contributing
+            )
+        ) |>
+        arrange(desc(.data$nonresident_prop_overall)) |>
+        select(
+          "source_file",
+          nonresident_n = "nonresident_total_sum",
+          "nonresident_prop",
+          "contributing") |>
+        print()
+    }
+
+  }
+
+#' Inter-state duplicates message
+#'
+#' The internal \code{interStateDuplicatesMessage} function returns a message
+#' for duplicates found among files submitted from different states.
+#'
+#' @inheritParams qualityMessages
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
+
+interStateDuplicatesMessage <-
+  function(raw_data) {
+
+    # # Inter-state duplicate summary
+    # raw_data |>
+    #   group_by(firstname, lastname, state, birth_date) |>
+    #   filter(n() > 1) |>
+    #   mutate(dup_id = cur_group_id()) |>
+    #   ungroup() |>
+    #   summarize(
+    #     dlst = paste0(dl_state, collapse = ", "),
+    #     .by = "dup_id") |>
+    #   count(dlst) |>
+    #   arrange(desc(n))
+  }
+
+#' Single issue date message
+#'
+#' The internal \code{singleIssueDateMessage} function returns a message for
+#' files that contain only one unique \code{issue_date} value.
+#'
+#' @inheritParams qualityMessages
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
+
+singleIssueDateMessage <-
+  function(raw_data) {
+
+  }
+
+#' Bad birth dates message
+#'
+#' The internal \code{badBirthDatesMessage} function returns a message for
+#' \code{birth_date} values that do not have a range greater than 365 days.
+#'
+#' @inheritParams qualityMessages
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
+
+badBirthDatesMessage <-
+  function(raw_data) {
+
   }

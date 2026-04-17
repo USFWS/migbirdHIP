@@ -163,6 +163,23 @@ LOGIC_MISSING_ADDRESSES <-
 LOGIC_MISSING_CITY_ZIP_EMAIL <-
   expr(if_all(c("city", "zip", "email"), \(x) is.na(x)))
 
+# Define instances of the title value being incorrectly assigned
+LOGIC_BAD_TITLE_ASSIGNMENT <-
+  expr(
+    # Masculine
+    (title == "2" & firstname == "JOHN") |
+      (title == "2" & firstname == "JAMES") |
+      (title == "2" & firstname == "WILLIAM") |
+      (title == "2" & firstname == "DAVID") |
+      (title == "2" & firstname == "MICHAEL") |
+      # Feminine
+      (title == "1" & firstname == "JESSICA") |
+      (title == "1" & firstname == "JENNIFER") |
+      (title == "1" & firstname == "ELIZABETH") |
+      (title == "1" & firstname == "SARA") |
+      (title == "1" & firstname == "SARAH")
+    )
+
 # Regular expression that selects non-permit species bag fields
 REGEX_NON_PMT_SPECIES <- "bag|coots|rails"
 

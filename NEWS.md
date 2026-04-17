@@ -4,8 +4,24 @@
 
 -   DESCRIPTION
     -   Added `{dtplyr}` to Imports
+-   `constants.R`
+    -   `LOGIC_BAD_TITLE_ASSIGNMENT` to be used by `badTitleMessage()` internal function.
 -   Functions
     -   Deduplication functions (`duplicateID()`, `duplicateNewest()`, `duplicateAllOnesGroupSize()`, `duplicateSample()`, and `duplicateRecordType()`) now utilize `{dtplyr}` for sizable speed improvements (see [#45](https://github.com/USFWS/migbirdHIP/issues/45))
+    -   `qualityCheck()`
+        -   New intermediate function to be used after `read_hip()` and before `clean()`
+        -   `qualityMessages()`
+            -   Function previously named `readMessages()`
+            -   Moved from `read_hip.R` to `qualityCheck.R`
+        -   `badTitleMessage()` checks for incorrectly assigned title values for common firstnames
+        -   `nonResidentMessage()` returns a message for files with 10% or more of `state` values that do not match `dl_state`.
+        -   `interStateDuplicatesMessage()`
+        -   `singleIssueDateMessage()`
+        -   `badBirthDatesMessage()`
+    -   `readTimeMessage()`
+        -   Moved the `read_hip()` code chunk pertaining to read time duration to its own internal function
+    -   `questionYear()`
+        -   New function that questions if the user intends to supply a year value different than the current season year; replaces a duplicated code chunk in `proof()` and `correct()`, and added to `issueCheck()`
 
 ## Minor changes / bug fixes
 
