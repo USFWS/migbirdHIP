@@ -5,23 +5,54 @@
 -   DESCRIPTION
     -   Added `{dtplyr}` to Imports
 -   `constants.R`
-    -   `LOGIC_BAD_TITLE_ASSIGNMENT` to be used by `badTitleMessage()` internal function.
+    -   `LOGIC_BAD_TITLE_ASSIGNMENT` added
 -   Functions
-    -   Deduplication functions (`duplicateID()`, `duplicateNewest()`, `duplicateAllOnesGroupSize()`, `duplicateSample()`, and `duplicateRecordType()`) now utilize `{dtplyr}` for sizable speed improvements (see [#45](https://github.com/USFWS/migbirdHIP/issues/45))
-    -   `qualityCheck()`
-        -   New intermediate function to be used after `read_hip()` and before `clean()`
+    -   Deduplication functions now use `{dtplyr}` for sizable speed improvements (see [#45](https://github.com/USFWS/migbirdHIP/issues/45))
+    -   Data proofing helper functions in `proof.R`
+        -   New helper functions help split `proof()` into smaller parts. They filter to bad values, and some are reused by `qualityMessages()` helper functions.
+            -   `getBadTitle()` - also checks title assignments (new) in addition to value expectations
+            -   `getBadFirstName()`
+            -   `getBadMiddle()`
+            -   `getBadLastName()`
+            -   `getBadSuffix()`
+            -   `getBadAddress()`
+            -   `getBadCity()`
+            -   `getBadState()`
+            -   `getBadZIP()`
+            -   `getBadBirthDate()`
+            -   `getBadHuntMigBirds()`
+            -   `getBadRegistrationYear()`
+    -   Data quality checking functions in `quality.R`
         -   `qualityMessages()`
-            -   Function previously named `readMessages()`
-            -   Moved from `read_hip.R` to `qualityCheck.R`
-        -   `badTitleMessage()` checks for incorrectly assigned title values for common firstnames
-        -   `nonResidentMessage()` returns a message for files with 10% or more of `state` values that do not match `dl_state`.
-        -   `interStateDuplicatesMessage()`
-        -   `singleIssueDateMessage()`
-        -   `badBirthDatesMessage()`
+            -   Refactored from function previously named `readMessages()`. This function is intenteded to be used after `read_hip()` and before `clean()`.
+            -   Uses new, existing, and refactored helper functions:
+                -   `qTitle()` - NEW
+                -   `qFirstName()` - NEW
+                -   `qMiddle()` - NEW
+                -   `qLastName()` - NEW
+                -   `qSuffix()` - NEW
+                -   `qAddress()`- NEW
+                -   `qCity()` - NEW
+                -   `qState()` - NEW
+                -   `qZIP()` - NEW
+                -   `qBirthDate()` - NEW
+                -   `qHuntMigBirds()` - previously `huntMigBirdsMessage()`
+                -   `qBags()` - umbrella for existing `zeroBagsMessage()`, `naBagsMessage()` and `nonDigitBagsMessage()`
+                -   `qDLstate()` - previously `dlStateNAMessage()`
+                -   `qDLdate()` - previously `dlDateNAMessage()`
+                -   `qRegistrationYear()` - previously `badRegYearMessage()`
+                -   `nonResidentMessage()` - NEW - returns a message for files with 10% or more of `state` values that do not match `dl_state`.
+                -   `interStateDuplicatesMessage()` - NEW - returns a message if inter-state duplicates are detected.
+                -   `missingPIIMessage()` - existing
+                -   `missingEmailsMessage()` - existing
+                -   `testRecordMessage()` - existing
+                -   `inLinePermitDNHMessage()` - existing
+                -   `permitFileBagsMessage()` - existing
+            -   Note: All issue checking functions and messages remain in `issuance.R` under `issueMessages()`
     -   `readTimeMessage()`
-        -   Moved the `read_hip()` code chunk pertaining to read time duration to its own internal function
+        -   Moved the `read_hip()` code chunk pertaining to read time duration to its own internal function.
     -   `questionYear()`
-        -   New function that questions if the user intends to supply a year value different than the current season year; replaces a duplicated code chunk in `proof()` and `correct()`, and added to `issueCheck()`
+        -   New function that questions if the user intends to supply a year value different than the current season year; replaces a duplicated code chunk in `proof()` and `correct()`, and added to `issueCheck()`.
 
 ## Minor changes / bug fixes
 
