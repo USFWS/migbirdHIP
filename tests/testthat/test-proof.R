@@ -437,6 +437,45 @@ test_that("bad states fail proofing", {
 
 # zip code ----------------------------------------------------------------
 
+test_that("good zip code values pass proofing", {
+  good_zips <-
+    tibble(
+      zip = c("20708",
+              "10036",
+              "22046",
+              "20001",
+              "33043",
+              "99950",
+              "92101",
+              "96701",
+              "60601",
+              "75201",
+              "20260-0001")
+    )
+
+  good_zips_filtered <- getBadZIP(good_zips)
+
+  expect_equal(nrow(good_zips_filtered), 0)
+})
+
+test_that("bad zip code values fail proofing", {
+  bad_zips <-
+    tibble(
+      zip =
+        c("*",
+          "3",
+          "21",
+          "123",
+          "4567",
+          "99999",
+          "M5H 2N2",
+          "ABCDE")
+    )
+
+  bad_zips_filtered <- getBadZIP(bad_zips)
+
+  expect_equal(bad_zips, bad_zips_filtered)
+})
 
 # birth_date --------------------------------------------------------------
 
@@ -485,7 +524,6 @@ test_that("bad birth date values fail proofing", {
 
   expect_equal(bad_birthdates, bad_birthdates_filtered)
 })
-
 
 # hunt_mig_birds ----------------------------------------------------------
 
