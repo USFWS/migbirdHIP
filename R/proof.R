@@ -7,14 +7,13 @@
 #' @importFrom dplyr mutate
 #' @importFrom dplyr row_number
 #' @importFrom dplyr bind_rows
-#' @importFrom dplyr filter
 #' @importFrom dplyr select
 #' @importFrom dplyr as_tibble
 #' @importFrom dplyr distinct
 #' @importFrom dplyr case_when
 #' @importFrom dplyr full_join
+#' @importFrom dplyr left_join
 #' @importFrom stringr str_detect
-#' @importFrom stringr str_extract
 #' @importFrom stringr str_remove_all
 #' @importFrom rlang .data
 #'
@@ -43,63 +42,31 @@ proof <-
     markup <-
       bind_rows(
         # Title
-        keyed_data |>
-          filter(!.data$title %in% REF_TITLES) |>
-          mutate(error = "title"),
+        getBadTitle(keyed_data) |> mutate(error = "title"),
         # First name
-        keyed_data |>
-          filter(!str_detect(.data$firstname, REGEX_FIRSTNAME)) |>
-          mutate(error = "firstname"),
+        getBadFirstName(keyed_data) |> mutate(error = "firstname"),
         # Middle initial
-        keyed_data |>
-          filter(!.data$middle %in% c(LETTERS, NA)) |>
-          mutate(error = "middle"),
+        getBadMiddle(keyed_data) |> mutate(error = "middle"),
         # Last name
-        keyed_data |>
-          filter(!str_detect(.data$lastname, REGEX_LASTNAME)) |>
-          mutate(error = "lastname"),
+        getBadLastName(keyed_data) |> mutate(error = "lastname"),
         # Suffix
-        keyed_data |>
-          filter(!.data$suffix %in% c(REF_SUFFIXES, NA)) |>
-          mutate(error = "suffix"),
+        getBadSuffix(keyed_data) |> mutate(error = "suffix"),
         # Address
-        keyed_data |>
-          filter(str_detect(.data$address, REGEX_BAD_ADDRESS)) |>
-          mutate(error = "address"),
+        getBadAddress(keyed_data) |> mutate(error = "address"),
         # City
-        keyed_data |>
-          filter(!str_detect(.data$city, REGEX_CITY)) |>
-          mutate(error = "city"),
+        getBadCity(keyed_data) |> mutate(error = "city"),
         # State
-        keyed_data |>
-          filter(!.data$state %in% REF_USA_CANADA) |>
-          mutate(error = "state"),
-        # Zip code should be in the reference table
-        keyed_data |>
-          filter(
-            !str_extract(.data$zip, "^[0-9]{5}") %in% REF_ZIP_CODE$zipcode) |>
-          mutate(error = "zip"),
-        # Birth date should only ever be between 100 and 0 years ago
-        keyed_data |>
-          filter(
-            as.numeric(
-              str_extract(.data$birth_date, "(?<=\\/)[0-9]{4}")) < year - 100 |
-              as.numeric(
-                str_extract(
-                  .data$birth_date, "(?<=\\/)[0-9]{4}")) > year - 0) |>
-          mutate(error = "birth_date"),
+        getBadState(keyed_data) |> mutate(error = "state"),
+        # Zip code
+        getBadZIP(keyed_data) |> mutate(error = "zip"),
+        # Birth date
+        getBadBirthDate(keyed_data, year) |> mutate(error = "birth_date"),
         # hunt_mig_birds
-        keyed_data |>
-          filter(!.data$hunt_mig_birds %in% REF_HUNT_MIG_BIRDS) |>
-          mutate(error = "hunt_mig_birds"),
-        # registration_yr should = survey year
-        keyed_data |>
-          filter(.data$registration_yr != year) |>
-          mutate(error = "registration_yr"),
+        getBadHuntMigBirds(keyed_data) |> mutate(error = "hunt_mig_birds"),
+        # Registration year
+        getBadRegYear(keyed_data, year) |> mutate(error = "registration_yr"),
         # Email
-        keyed_data |>
-          proofBadEmails() |>
-          mutate(error = "email")
+        proofBadEmails(keyed_data) |> mutate(error = "email")
       ) |>
       select(c("temp_key", "error"))
 
@@ -134,8 +101,7 @@ proof <-
       mutate(
         errors =
           case_when(
-            .data$state != .data$zipState & is.na(.data$errors) ~
-              "zip",
+            .data$state != .data$zipState & is.na(.data$errors) ~ "zip",
             .data$state != .data$zipState & !is.na(.data$errors) &
               !str_detect(.data$errors, "zip") ~
               paste0(.data$errors, "-zip"),
@@ -250,4 +216,255 @@ proofBadEmails <-
           )
       ) |>
       select(-"tld")
+  }
+
+#' Get bad title values
+#'
+#' The internal \code{getBadTitle} function is used inside of
+#' \code{\link{proof}} and \code{\link{qualityMessages}} to filter to
+#' \code{title} values that are not expected. Used by \code{\link{qTitle}}.
+#'
+#' @importFrom dplyr filter
+#'
+#' @param data Harvest Information Program registration data
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
+
+getBadTitle <-
+  function(data) {
+    data |>
+      # Convert first name to upper case
+      mutate(firstname = str_to_upper(.data$firstname)) |>
+      # Identify bad title values or bad title assignments
+      filter(!.data$title %in% REF_TITLES | !!LOGIC_BAD_TITLE_ASSIGNMENT)
+  }
+
+#' Get bad first name values
+#'
+#' The internal \code{getBadFirstName} function is used inside of
+#' \code{\link{proof}} and \code{\link{qualityMessages}} to filter to
+#' \code{firstname} values that are not expected. Used by
+#' \code{\link{qFirstName}}.
+#'
+#' @importFrom dplyr filter
+#' @importFrom stringr str_detect
+#'
+#' @param data Harvest Information Program registration data
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
+
+getBadFirstName <-
+  function(data) {
+    data |>
+      filter(!str_detect(.data$firstname, REGEX_FIRSTNAME))
+  }
+
+#' Get bad middle initial values
+#'
+#' The internal \code{getBadMiddle} function is used inside of
+#' \code{\link{proof}} and \code{\link{qualityMessages}} to filter to
+#' \code{middle} values that are not expected.  Used by \code{\link{qMiddle}}.
+#'
+#' @importFrom dplyr filter
+#'
+#' @param data Harvest Information Program registration data
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
+
+getBadMiddle <-
+  function(data) {
+    data |>
+      filter(!.data$middle %in% c(LETTERS, NA))
+  }
+
+#' Get bad last name values
+#'
+#' The internal \code{getBadLastName} function is used inside of
+#' \code{\link{proof}} and \code{\link{qualityMessages}} to filter to
+#' \code{lastname} values that are not expected. Used by
+#' \code{\link{qLastName}}.
+#'
+#' @importFrom dplyr filter
+#' @importFrom stringr str_detect
+#'
+#' @param data Harvest Information Program registration data
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
+
+getBadLastName <-
+  function(data) {
+    data |>
+      filter(!str_detect(.data$lastname, REGEX_LASTNAME))
+  }
+
+#' Get bad suffix values
+#'
+#' The internal \code{getBadSuffix} function is used inside of
+#' \code{\link{proof}} and \code{\link{qualityMessages}} to filter to
+#' \code{suffix} values that are not expected. Used by \code{\link{qSuffix}}.
+#'
+#' @importFrom dplyr filter
+#'
+#' @param data Harvest Information Program registration data
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
+
+getBadSuffix <-
+  function(data) {
+    data |>
+      filter(!.data$suffix %in% c(REF_SUFFIXES, NA))
+  }
+
+#' Get bad address values
+#'
+#' The internal \code{getBadAddress} function is used inside of
+#' \code{\link{proof}} and \code{\link{qualityMessages}} to filter to
+#' \code{address} values that are not expected. Used by \code{\link{qAddress}}.
+#'
+#' @importFrom dplyr filter
+#' @importFrom stringr str_detect
+#'
+#' @param data Harvest Information Program registration data
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
+
+getBadAddress <-
+  function(data) {
+    data |>
+      filter(str_detect(.data$address, REGEX_BAD_ADDRESS))
+  }
+
+#' Get bad city values
+#'
+#' The internal \code{getBadCity} function is used inside of
+#' \code{\link{proof}} and \code{\link{qualityMessages}} to filter to
+#' \code{city} values that are not expected. Used by \code{\link{qCity}}.
+#'
+#' @importFrom dplyr filter
+#' @importFrom stringr str_detect
+#'
+#' @param data Harvest Information Program registration data
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
+
+getBadCity <-
+  function(data) {
+    data |>
+      filter(!str_detect(.data$city, REGEX_CITY))
+  }
+
+#' Get bad state values
+#'
+#' The internal \code{getBadState} function is used inside of
+#' \code{\link{proof}} and \code{\link{qualityMessages}} to filter to
+#' \code{state} values that are not expected. Used by \code{\link{qState}}.
+#'
+#' @importFrom dplyr filter
+#'
+#' @param data Harvest Information Program registration data
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
+
+getBadState <-
+  function(data) {
+    data |>
+      filter(!.data$state %in% REF_USA_CANADA)
+  }
+
+#' Get bad zip code values
+#'
+#' The internal \code{getBadZIP} function is used inside of
+#' \code{\link{proof}} and \code{\link{qualityMessages}} to filter to
+#' \code{zip} values that are not expected. Used by \code{\link{qZIP}}.
+#'
+#' @importFrom dplyr filter
+#' @importFrom stringr str_extract
+#'
+#' @param data Harvest Information Program registration data
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
+
+getBadZIP <-
+  function(data) {
+    data |>
+      filter(
+        !str_extract(.data$zip, "^[0-9]{5}") %in% REF_ZIP_CODE$zipcode)
+  }
+
+#' Get bad birth date values
+#'
+#' The internal \code{getBadBirthDate} function is used inside of
+#' \code{\link{proof}} and \code{\link{qualityMessages}} to filter to
+#' \code{birth_date} values that are not expected. We expect birth year to be
+#' between 0 and 100 years ago. Used by \code{\link{qBirthDate}}.
+#'
+#' @importFrom dplyr filter
+#' @importFrom stringr str_extract
+#'
+#' @param data Harvest Information Program registration data
+#' @param year The year in which the Harvest Information Program data were
+#'   collected
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
+
+getBadBirthDate <-
+  function(data, year) {
+    data |>
+      filter(
+        as.numeric(
+          str_extract(.data$birth_date, "(?<=\\/)[0-9]{4}")) < year - 100 |
+          as.numeric(
+            str_extract(
+              .data$birth_date, "(?<=\\/)[0-9]{4}")) > year - 0)
+  }
+
+#' Get bad hunt mig birds values
+#'
+#' The internal \code{getBadHuntMigBirds} function is used inside of
+#' \code{\link{proof}} and \code{\link{qualityMessages}} to filter to
+#' \code{hunt_mig_birds} values that are not expected.
+#'
+#' @importFrom dplyr filter
+#'
+#' @param data Harvest Information Program registration data
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
+
+getBadHuntMigBirds <-
+  function(data) {
+    data |>
+      filter(!.data$hunt_mig_birds %in% REF_HUNT_MIG_BIRDS)
+  }
+
+#' Get bad registration year values
+#'
+#' The internal \code{getBadRegistrationYear} function is used inside of
+#' \code{\link{proof}} and \code{\link{qualityMessages}} to filter to
+#' \code{registration_yr} values that are not expected. We expect the
+#' registration_yr to equal the current hunting season.
+#'
+#' @importFrom dplyr filter
+#'
+#' @param data Harvest Information Program registration data
+#' @param year The year in which the Harvest Information Program data were
+#'   collected
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
+
+getBadRegYear <-
+  function(data, year) {
+    data |>
+      filter(.data$registration_yr != year)
   }
