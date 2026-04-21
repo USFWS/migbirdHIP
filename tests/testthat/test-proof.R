@@ -444,7 +444,7 @@ test_that("good birth date values pass proofing", {
   good_birthdates <-
     tibble(
       birth_date =
-        c("01/01/1919",
+        c("01/01/1935",
           "02/29/1988",
           "04/05/1967",
           "10/10/2010",
@@ -473,7 +473,11 @@ test_that("bad birth date values fail proofing", {
           "5/4",
           "10/31",
           "8/16",
-          "12/5")
+          "12/5",
+          # Future date
+          "08/08/2099",
+          # Non-existant date
+          "02/29/1983")
       )
 
   bad_birthdates_filtered <-
