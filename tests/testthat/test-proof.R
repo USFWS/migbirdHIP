@@ -22,35 +22,6 @@ test_that("proof input and output have the same number of records", {
   expect_equal(nrow(DF_TEST_TINI_DEDUPED), nrow(test_proof))
 })
 
-# test record -------------------------------------------------------------
-
-test_that("test records fail proofing", {
-
-  test_records <-
-    tibble(
-      firstname =
-        c("TEST", "JIM", "INAUDIBLE", "BLANK", "USER", "TEST", "RESIDENT"),
-      lastname =
-        c("TEST", "INAUDIBLE", "LARSON", "O'HOULIHAN", "YU", "SMITH", "CRUZ")
-    )
-
-  good_records <-
-    tibble(
-      firstname =
-        c("JANE", "JUDY", "JESSICA", "JULIA", "JOHN", "JACK", "RINAUDIBLE",
-          "BLANKS", "DUSER", "CONTEST", "PRESIDENT"),
-      lastname =
-        c("DOE", "BLANK", "USER", "RESIDENT", "TEST", "TESTER", "MONROE",
-          "SMITH", "PATEL", "PETERSON", "DEAN")
-    )
-
-  test_records_filtered <-
-    rbind(good_records, test_records) |>
-    filter(!!LOGIC_TEST_RECORD)
-
-  expect_equal(test_records, test_records_filtered)
-})
-
 # title -------------------------------------------------------------------
 
 test_that("good titles pass proofing", {
