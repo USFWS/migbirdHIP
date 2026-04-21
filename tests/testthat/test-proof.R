@@ -440,6 +440,48 @@ test_that("bad states fail proofing", {
 
 # birth_date --------------------------------------------------------------
 
+test_that("good birth date values pass proofing", {
+  good_birthdates <-
+    tibble(
+      birth_date =
+        c("01/01/1919",
+          "02/29/1988",
+          "04/05/1967",
+          "10/10/2010",
+          "11/30/1999",
+          "12/31/2020")
+    )
+
+  good_birthdates_filtered <-
+    getBadBirthDate(good_birthdates, REF_CURRENT_SEASON)
+
+  expect_equal(nrow(good_birthdates_filtered), 0)
+})
+
+test_that("bad birth date values fail proofing", {
+  bad_birthdates <-
+    tibble(
+      birth_date =
+        c("3",
+          "*",
+          "AA/AA/AAAA",
+          "11/11/92",
+          "2/2/2022",
+          "1/30/2001",
+          "12/1/1963",
+          "1970",
+          "5/4",
+          "10/31",
+          "8/16",
+          "12/5")
+      )
+
+  bad_birthdates_filtered <-
+    getBadBirthDate(bad_birthdates, REF_CURRENT_SEASON)
+
+  expect_equal(bad_birthdates, bad_birthdates_filtered)
+})
+
 
 # hunt_mig_birds ----------------------------------------------------------
 
