@@ -25,15 +25,35 @@ test_that("proof input and output have the same number of records", {
 # title -------------------------------------------------------------------
 
 test_that("good titles pass proofing", {
-  good_titles <- tibble(title = c(NA, "1", "2", "0"))
-  good_titles_filtered <- filter(good_titles, !title %in% REF_TITLES)
+  good_titles <-
+    DF_TEST_TINI_DEDUPED |>
+    mutate(
+      title =
+        case_when(
+          row_number() == 1 ~ "1",
+          row_number() == 2 ~ "1",
+          row_number() == 3 ~ "2",
+          TRUE ~ NA_character_),
+      firstname =
+        case_when(
+          row_number() == 1 ~ "JOHN",
+          row_number() == 2 ~ "ALEXANDER",
+          row_number() == 3 ~ "JESSICA",
+          TRUE ~ NA_character_),
+    )
+
+  good_titles_filtered <- getBadTitle(good_titles)
 
   expect_equal(nrow(good_titles_filtered), 0)
 })
 
 test_that("bad titles fail proofing", {
-  bad_titles <- tibble(title = c("*", "%", "#", "!", "3", "10", "Z", "TH"))
-  bad_titles_filtered <- filter(bad_titles, !title %in% REF_TITLES)
+  bad_titles <-
+    DF_TEST_MINI |>
+    slice_sample(n = 8) |>
+    mutate(title = c("*", "%", "#", "!", "3", "10", "Z", "TH"))
+
+  bad_titles_filtered <- getBadTitle(bad_titles)
 
   expect_equal(nrow(bad_titles), nrow(bad_titles_filtered))
 })
@@ -43,7 +63,7 @@ test_that("bad titles fail proofing", {
 test_that("good first names pass proofing", {
   good_first_names <-
     tibble(
-      first_names =
+      firstname =
         c("JO",
           "ABE",
           "DORT",
@@ -64,8 +84,7 @@ test_that("good first names pass proofing", {
           "JOHN PAUL GEORGE")
     )
 
-  good_first_names_filtered <-
-    filter(good_first_names, !str_detect(first_names, REGEX_FIRSTNAME))
+  good_first_names_filtered <- getBadFirstName(good_first_names)
 
   expect_equal(nrow(good_first_names_filtered), 0)
 })
@@ -73,7 +92,7 @@ test_that("good first names pass proofing", {
 test_that("bad first names fail proofing", {
   bad_first_names <-
     tibble(
-      first_names =
+      firstname =
         c("C",
           "BOB-",
           "-BOB",
@@ -137,8 +156,7 @@ test_that("bad first names fail proofing", {
           "")
     )
 
-  bad_first_names_filtered <-
-    filter(bad_first_names, !str_detect(first_names, REGEX_FIRSTNAME))
+  bad_first_names_filtered <- getBadFirstName(bad_first_names)
 
   expect_equal(nrow(bad_first_names), nrow(bad_first_names_filtered))
 })
@@ -148,9 +166,7 @@ test_that("bad first names fail proofing", {
 test_that("good middle initials pass proofing", {
   good_middles <- tibble(middle = c(LETTERS, NA))
 
-  good_middles_filtered <-
-    good_middles |>
-    filter(!middle %in% c(LETTERS, NA))
+  good_middles_filtered <- getBadMiddle(good_middles)
 
   expect_equal(nrow(good_middles_filtered), 0)
 })
@@ -158,9 +174,7 @@ test_that("good middle initials pass proofing", {
 test_that("bad middle initials fail proofing", {
   bad_middles <- tibble(middle = c("*", "%", "#", "!", "3", "10", "TH"))
 
-  bad_middles_filtered <-
-    bad_middles |>
-    filter(!middle %in% LETTERS)
+  bad_middles_filtered <- getBadMiddle(bad_middles)
 
   expect_equal(nrow(bad_middles), nrow(bad_middles_filtered))
 })
@@ -170,7 +184,7 @@ test_that("bad middle initials fail proofing", {
 test_that("good last names pass proofing", {
   good_last_names <-
     tibble(
-      last_names =
+      lastname =
         c("LI",
           "LEE",
           "KING",
@@ -190,8 +204,7 @@ test_that("good last names pass proofing", {
           "REYES DE LA BARRERA")
     )
 
-  good_last_names_filtered <-
-    filter(good_last_names, !str_detect(last_names, REGEX_LASTNAME))
+  good_last_names_filtered <- getBadLastName(good_last_names)
 
   expect_equal(nrow(good_last_names_filtered), 0)
 })
@@ -199,7 +212,7 @@ test_that("good last names pass proofing", {
 test_that("bad last names fail proofing", {
   bad_last_names <-
     tibble(
-      last_names =
+      lastname =
         c("B",
           "SMITH-",
           "-SMITH",
@@ -273,8 +286,7 @@ test_that("bad last names fail proofing", {
           "")
     )
 
-  bad_last_names_filtered <-
-    filter(bad_last_names, !str_detect(last_names, REGEX_LASTNAME))
+  bad_last_names_filtered <- getBadLastName(bad_last_names)
 
   expect_equal(nrow(bad_last_names), nrow(bad_last_names_filtered))
 })
@@ -330,9 +342,7 @@ test_that("good suffixes pass proofing", {
           "SR"
         ))
 
-  good_suffixes_filtered <-
-    good_suffixes |>
-    filter(!suffix %in% c(REF_SUFFIXES, NA))
+  good_suffixes_filtered <- getBadSuffix(good_suffixes)
 
   expect_equal(nrow(good_suffixes_filtered), 0)
 })
@@ -345,7 +355,7 @@ test_that("bad suffixes fail proofing", {
           as.character(1:20), "s", "t", "h", "n", "d", "S", "T", "H", "N", "D",
           "ST", "ND", "RD", "TH", "iiii", "IIII", "VV", "VVV"))
 
-  bad_suffixes_filtered <- filter(bad_suffixes, !suffix %in% REF_SUFFIXES)
+  bad_suffixes_filtered <- getBadSuffix(bad_suffixes)
 
   expect_equal(nrow(bad_suffixes), nrow(bad_suffixes_filtered))
 })
@@ -363,7 +373,7 @@ test_that("bad addresses fail proofing", {
 
   bad_addresses_filtered <-
     rbind(good_addresses, bad_addresses) |>
-    filter(str_detect(address, REGEX_BAD_ADDRESS))
+    getBadAddress()
 
   expect_equal(bad_addresses, bad_addresses_filtered)
 })
@@ -391,7 +401,7 @@ test_that("bad city names fail proofing", {
 
   bad_city_names_filtered <-
     rbind(good_city_names, bad_city_names) |>
-    filter(!str_detect(city, REGEX_CITY))
+    getBadCity()
 
   expect_equal(bad_city_names, bad_city_names_filtered)
 })
@@ -410,9 +420,7 @@ test_that("good states pass proofing", {
           "VI", "UM", "MH", "FM", "PW", "AA", "AE", "AP", "AB", "BC", "MB",
           "NB", "NL", "NS", "NT", "NU", "ON", "PE", "PQ", "QC", "SK", "YT"))
 
-  good_states_filtered <-
-    good_states |>
-    filter(!state %in% REF_USA_CANADA)
+  good_states_filtered <- getBadState(good_states)
 
   expect_equal(nrow(good_states_filtered), 0)
 })
@@ -422,9 +430,7 @@ test_that("bad states fail proofing", {
     tibble(
       state = c("la", "De", "MX", "CN", "00", "ZZ", " ", "  ", "_", "!!", "*"))
 
-  bad_states_filtered <-
-    bad_states |>
-    filter(!state %in% REF_USA_CANADA)
+  bad_states_filtered <- getBadState(bad_states)
 
   expect_equal(nrow(bad_states), nrow(bad_states_filtered))
 })
@@ -440,9 +446,7 @@ test_that("bad states fail proofing", {
 test_that("good hunt_mig_birds values pass proofing", {
   good_hunt_mig_birds <- tibble(hunt_mig_birds = c("1", "2", "2", "2", "1"))
 
-  good_hunt_mig_birds_filtered <-
-    good_hunt_mig_birds |>
-    filter(!hunt_mig_birds %in% REF_HUNT_MIG_BIRDS)
+  good_hunt_mig_birds_filtered <- getBadHuntMigBirds(good_hunt_mig_birds)
 
   expect_equal(nrow(good_hunt_mig_birds_filtered), 0)
 })
@@ -450,15 +454,29 @@ test_that("good hunt_mig_birds values pass proofing", {
 test_that("bad hunt_mig_birds values fail proofing", {
   bad_hunt_mig_birds <- tibble(hunt_mig_birds = c("3", "*", "A", "11", "22"))
 
-  bad_hunt_mig_birds_filtered <-
-    bad_hunt_mig_birds |>
-    filter(!hunt_mig_birds %in% REF_HUNT_MIG_BIRDS)
+  bad_hunt_mig_birds_filtered <- getBadHuntMigBirds(bad_hunt_mig_birds)
 
   expect_equal(bad_hunt_mig_birds, bad_hunt_mig_birds_filtered)
 })
 
 # registration_yr ---------------------------------------------------------
 
+test_that("good registration_yr passes proofing", {
+  good_reg_yr <- tibble(registration_yr = rep(REF_CURRENT_SEASON, 10))
+
+  good_reg_yr_filtered <- getBadRegYear(good_reg_yr, REF_CURRENT_SEASON)
+
+  expect_equal(nrow(good_reg_yr_filtered), 0)
+})
+
+test_that("bad registration_yr fail proofing", {
+  bad_reg_yr <-
+    tibble(registration_yr = c("2020", "2021", "2022", "2023", "2024"))
+
+  bad_reg_yr_filtered <- getBadRegYear(bad_reg_yr, "2025")
+
+  expect_equal(nrow(bad_reg_yr_filtered), nrow(bad_reg_yr))
+})
 
 # email -------------------------------------------------------------------
 
