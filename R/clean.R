@@ -120,7 +120,7 @@ missingPIIFilter <-
 #' excluding XVIII since the database limit is 4 characters.
 #'
 #' @importFrom dplyr mutate
-#' @importFrom dplyr replace_when
+#' @importFrom dplyr case_when
 #' @importFrom stringr str_detect
 #' @importFrom stringr str_extract
 #' @importFrom stringr str_remove_all
@@ -144,14 +144,14 @@ moveSuffixes <-
         # Catches values from 1-20 in Roman numerals and numeric, excluding
         # XVIII since the db limit is 4 characters
         suffix =
-          replace_when(
-            .data$suffix,
+          case_when(
             # Lastname
             str_detect(.data$lastname, REGEX_SUFFIX_SEARCH) ~
               str_extract(.data$lastname, REGEX_SUFFIX_SEARCH),
             # Firstname
             str_detect(.data$firstname, REGEX_SUFFIX_SEARCH) ~
-              str_extract(.data$firstname, REGEX_SUFFIX_SEARCH)
+              str_extract(.data$firstname, REGEX_SUFFIX_SEARCH),
+            .default = .data$suffix
             ),
         # Delete periods and commas from suffixes
         suffix = str_remove_all(.data$suffix, "\\.|\\,"),
