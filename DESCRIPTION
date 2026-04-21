@@ -35,7 +35,7 @@ Suggests:
     sf (>= 1.1-0),
     spelling (>= 2.3.1),
     stringi (>= 1.8.7),
-    testthat (>= 3.2.3)
+    testthat (>= 3.3.2)
 VignetteBuilder: 
     knitr
 Config/testthat/edition: 3
