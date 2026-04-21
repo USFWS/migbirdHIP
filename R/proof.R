@@ -408,7 +408,9 @@ getBadZIP <-
 #' between 0 and 100 years ago. Used by \code{\link{qBirthDate}}.
 #'
 #' @importFrom dplyr filter
-#' @importFrom stringr str_extract
+#' @importFrom stringr str_detect
+#' @importFrom lubridate mdy
+#' @importFrom lubridate today
 #'
 #' @param data Harvest Information Program registration data
 #' @param year The year in which the Harvest Information Program data were
@@ -419,13 +421,16 @@ getBadZIP <-
 
 getBadBirthDate <-
   function(data, year) {
+
+    today <- today()
+
     data |>
       filter(
-        as.numeric(
-          str_extract(.data$birth_date, "(?<=\\/)[0-9]{4}")) < year - 100 |
-          as.numeric(
-            str_extract(
-              .data$birth_date, "(?<=\\/)[0-9]{4}")) > year - 0)
+        # Bad date format or violating year constraints
+        !str_detect(.data$birth_date, REGEX_BIRTHDATE) |
+          # Date is after today's date
+          mdy(.data$birth_date, quiet = TRUE) > today
+        )
   }
 
 #' Get bad hunt mig birds values
