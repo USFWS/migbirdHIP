@@ -13,6 +13,8 @@
 
 qualityCheck <-
   function(raw_data, year) {
+    failYear(year)
+    questionYear(year)
 
     # Return messages
     qualityMessages(raw_data, year)
@@ -39,6 +41,8 @@ qualityCheck <-
 
 qualityMessages <-
   function(raw_data, year) {
+    failYear(year)
+    questionYear(year)
 
     raw2 <- raw_data |> mutate(file_size = n(), .by = "source_file")
 
@@ -748,6 +752,8 @@ qZIP <-
 
 qBirthDate <-
   function(raw_data, year) {
+    failYear(year)
+    questionYear(year)
 
     q <-
       getBadBirthDate(raw_data, year) |>
