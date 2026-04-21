@@ -56,6 +56,7 @@
 
 ## Minor changes / bug fixes
 
+-   Following `{dplyr}` `1.2.0` release notes, update `case_when()` with `recode_values()` and `replace_when()` as appropriate.
 -   Testing
     -   Add test for `registration_yr` field, `birth_date` field, and `zip` field in `test-proof.R`
     -   Update `test-proof.R` to use `getBad` family of functions

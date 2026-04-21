@@ -200,7 +200,7 @@ nDroppedClean <-
 #' @importFrom dplyr count
 #' @importFrom dplyr filter
 #' @importFrom dplyr mutate
-#' @importFrom dplyr case_when
+#' @importFrom dplyr recode_values
 #' @importFrom rlang .data
 #'
 #' @param clean_data The object created after cleaning data with
@@ -223,10 +223,11 @@ nDroppedCurrent <-
       filter(!.data$decision %in% c("current", "future")) |>
       mutate(
         decision =
-          case_when(
-            .data$decision == "past" ~ "past records",
-            .data$decision == "invalid" ~ "invalid records",
-            TRUE ~ .data$decision
+          .data$decision |>
+            recode_values(
+              "past" ~ "past records",
+              "invalid" ~ "invalid records",
+              default = .data$decision
           ))
 
     # Check to see if the sum of records dropped based on
