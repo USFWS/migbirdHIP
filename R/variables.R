@@ -3,13 +3,6 @@
 # Current hunting season (the year when the season opens)
 REF_CURRENT_SEASON <- "2025"
 
-# Regular expression for a birth date in the MM/DD/YYYY format, allowing months from
-# 01-12, days from 01-31, and years from 1926 to 2027
-REGEX_BIRTHDATE <-
-  paste0(
-    "^(0[1-9]|1[0-2])\\/(0[1-9]|[12][0-9]|3[01])\\/(19[1-9][0-9]|20[0-1][0-9]|",
-    "202[0-7])$")
-
 # migbirdHIP package versions and their intended HIP season
 REF_RELEASES <-
   c("dev" = "1.2.0",

@@ -218,6 +218,9 @@ REGEX_CITY <-
     "(?=.*[A-Za-z]{3,}.*)[A-Za-z]\\-?\\s?\\'?[A-Za-z\\-?\\s?\\'?\\.?]*[A-Za-z]",
     "+$")
 
+# Regular expression for correctly formatted date value
+REGEX_DATE_FORMAT <- "^[0-9]{2}\\/[0-9]{2}\\/[0-9]{4}$"
+
 # Regular expression for the expected email format. Local part may contain Latin
 # lower and uppercase letters, numbers, underscores, dots, hyphens, and/or plus
 # signs; must contain an @; domain may contain Latin lower and uppercase
