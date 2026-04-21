@@ -407,10 +407,12 @@ getBadZIP <-
 #' \code{birth_date} values that are not expected. We expect birth year to be
 #' between 0 and 100 years ago. Used by \code{\link{qBirthDate}}.
 #'
+#' @importFrom lubridate today
+#' @importFrom lubridate mdy
+#' @importFrom dplyr mutate
 #' @importFrom dplyr filter
 #' @importFrom stringr str_detect
-#' @importFrom lubridate mdy
-#' @importFrom lubridate today
+#' @importFrom dplyr select
 #'
 #' @param data Harvest Information Program registration data
 #' @param year The year in which the Harvest Information Program data were
@@ -424,13 +426,22 @@ getBadBirthDate <-
 
     today <- today()
 
+    oldest_date_allowed <-
+      mdy(paste0("09/01/", as.numeric(REF_CURRENT_SEASON) - 100))
+
     data |>
+      mutate(bday = mdy(.data$birth_date, quiet = TRUE)) |>
       filter(
-        # Bad date format or violating year constraints
-        !str_detect(.data$birth_date, REGEX_BIRTHDATE) |
+        # Correct format
+        !str_detect(.data$birth_date, REGEX_DATE_FORMAT) |
+        # Birth date too old
+        .data$bday < oldest_date_allowed |
           # Date is after today's date
-          mdy(.data$birth_date, quiet = TRUE) > today
-        )
+          .data$bday > today |
+          # Date does not exist
+          is.na(.data$bday)
+        ) |>
+      select(-"bday")
   }
 
 #' Get bad hunt mig birds values
