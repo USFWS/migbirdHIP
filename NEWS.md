@@ -56,6 +56,9 @@
 
 ## Minor changes / bug fixes
 
+-   Testing
+    -   Add test for `registration_yr` field, `birth_date` field, and `zip` field in `test-proof.R`
+    -   Update `test-proof.R` to use `getBad` family of functions
 -   Change `issuePlot()` legend to say "Registration year provided" to be clear that the value has not been changed/edited yet.
 -   DESCRIPTION
     -   Require R version `>= 4.5.0`
@@ -68,6 +71,10 @@
         -   Update `dplyr` to `>= 1.2.0`
         -   Update `rlang` to `>= 1.1.7`
         -   Update `ggplot2` to `>= 4.0.2`
+    -   Suggests
+        -   Update `rmarkdown` to `>= 2.30`
+        -   Update `sf` to `>= 1.1-0`
+-   `proof()` no longer filters out test records, since this step is completed upstream in `clean()`.
 -   Recommend installation in `README` and vignette changed to `pak::pak()` now that `devtools::install_github()` has been deprecated.
 -   Updated package startup message in `zzz.R`
     -   Version checking is now more robust; messages are more reliable and clear if a package version is out of date.
