@@ -7,8 +7,8 @@
 questionYear(year)
 }
 \arguments{
-\item{proofed_data}{The object created after error flagging data with
-\code{\link{proof}}}
+\item{year}{The year in which the Harvest Information Program data were
+collected}
 }
 \description{
 Internal function that questions if the year supplied is intended to be

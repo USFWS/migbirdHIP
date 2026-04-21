@@ -3,8 +3,8 @@
 #' Internal function that questions if the year supplied is intended to be
 #' different than the current season year by returning a message to the console.
 #'
-#' @param proofed_data The object created after error flagging data with
-#'   \code{\link{proof}}
+#' @param year The year in which the Harvest Information Program data were
+#'   collected
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}
