@@ -325,7 +325,7 @@ nonResidentMessage <-
       mutate(state_total = n(), .by = "dl_state") |>
       mutate(
         nonresident_total = n(),
-        nonresident_total_prop = .data$nonresident_total/.data$state_total,
+        nonresident_total_prop = .data$nonresident_total / .data$state_total,
         .by = c("source_file", "dl_state", "state")) |>
       distinct(
         .data$source_file, .data$state, .data$dl_state, .data$nonresident_total,
@@ -336,10 +336,12 @@ nonResidentMessage <-
         nonresident_total_sum = sum(.data$nonresident_total),
         state_total = unique(.data$state_total),
         nonresident_prop_overall =
-          .data$nonresident_total_sum/.data$state_total,
+          .data$nonresident_total_sum / .data$state_total,
         contributing =
           paste0(
-            .data$state, " (", round(.data$nonresident_total_prop, 3)*100, "%)",
+            .data$state,
+            " (",
+            round(.data$nonresident_total_prop, 3) * 100, "%)",
             collapse = ", "),
         .by = "source_file"
       ) |>
@@ -451,9 +453,13 @@ interStateDuplicatesMessage <-
         st1 = str_extract(.data$dl_states, "^[A-Z]{2}"),
         st2 = str_extract(.data$dl_states, "(?<=[A-Z]{2}\\s\\&\\s)[A-Z]{2}"),
         prop_1 =
-          round(.data$n/dlst_big_n$dlst_size[dlst_big_n$dl_state == .data$st1], 3),
+          round(
+            .data$n / dlst_big_n$dlst_size[dlst_big_n$dl_state == .data$st1],
+            3),
         prop_2 =
-          round(.data$n/dlst_big_n$dlst_size[dlst_big_n$dl_state == .data$st2], 3),
+          round(
+            .data$n / dlst_big_n$dlst_size[dlst_big_n$dl_state == .data$st2],
+            3),
         .by = "dl_states"
       ) |>
       select(-c("st1", "st2")) |>
@@ -491,7 +497,7 @@ qSummary <-
 
     bad_data |>
       summarize(n_bad = n(), .by = c("source_file", "file_size")) |>
-      mutate(prop_bad = round(.data$n_bad/.data$file_size, 3)) |>
+      mutate(prop_bad = round(.data$n_bad / .data$file_size, 3)) |>
       arrange(desc(.data$prop_bad)) |>
       filter(.data$prop_bad > 0.01 | .data$n_bad > 100)
   }

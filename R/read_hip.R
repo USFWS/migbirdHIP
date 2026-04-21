@@ -427,7 +427,7 @@ readTimeMessage <-
   function(raw_data, starttime, endtime) {
     readtime <- time_length(endtime - starttime, unit = "second")
 
-    if(readtime > 60) {
+    if (readtime > 60) {
       message(
         paste(
           "Time to read in", length(unique(raw_data$source_file)), "files:",
