@@ -4,13 +4,15 @@
 \alias{readTimeMessage}
 \title{Read time message}
 \usage{
-readTimeMessage(raw_data, readtime)
+readTimeMessage(raw_data, starttime, endtime)
 }
 \arguments{
 \item{raw_data}{The object created after reading in data with
 \code{\link{read_hip}}}
 
-\item{readtime}{The difference between end time and start time}
+\item{starttime}{Start time}
+
+\item{endtime}{End time}
 }
 \description{
 The internal \code{readTimeMessage} function returns a message to the console

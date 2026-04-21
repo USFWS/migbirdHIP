@@ -167,8 +167,7 @@ read_hip <-
 
     # Return message informing run time
     endtime <- Sys.time()
-    readtime <- time_length(endtime - starttime, unit = "second")
-    readTimeMessage(raw_data, readtime)
+    readTimeMessage(raw_data, starttime, endtime)
 
     return(raw_data)
   }
@@ -418,13 +417,16 @@ checkFileNameStateAbbr <-
 #'
 #' @param raw_data The object created after reading in data with
 #'   \code{\link{read_hip}}
-#' @param readtime The difference between end time and start time
+#' @param starttime Start time
+#' @param endtime End time
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}
 
 readTimeMessage <-
-  function(raw_data, readtime) {
+  function(raw_data, starttime, endtime) {
+    readtime <- time_length(endtime - starttime, unit = "second")
+
     if(readtime > 60) {
       message(
         paste(
