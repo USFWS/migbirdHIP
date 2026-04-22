@@ -44,6 +44,9 @@ test_that("filter out if firstname, lastname, state, or DOB missing", {
 
   test_missing <-
     DF_TEST_MINI |>
+    dplyr::filter(
+      !dplyr::if_any(
+        c("firstname", "lastname", "birth_date", "state"), is.na)) |>
     dplyr::slice_head(n = 10) |>
     mutate(
       firstname = ifelse(record_key == .data$record_key[1], NA, firstname),
@@ -116,6 +119,9 @@ test_that("filter out test records", {
 
   test_data <-
     DF_TEST_MINI |>
+    dplyr::filter(
+      !dplyr::if_any(
+        c("firstname", "lastname", "birth_date", "state"), is.na)) |>
     dplyr::slice_head(n = 10) |>
     mutate(
       firstname =
