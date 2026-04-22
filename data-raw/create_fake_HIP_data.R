@@ -14,7 +14,7 @@ dtp <- charlatan::DateTimeProvider$new()
 fake_woman <-
   function(ap, pp, ip, dtp) {
     dplyr::tibble(
-      title = 2,
+      title = "2",
       firstname = pp$first_name_female(),
       middle = stringr::str_to_upper(pp$random_letter()),
       lastname = pp$last_name_female(),
@@ -34,7 +34,7 @@ fake_woman <-
 fake_man <-
   function(ap, pp, ip, dtp) {
     dplyr::tibble(
-      title = 1,
+      title = "1",
       firstname = pp$first_name_male(),
       middle = stringr::str_to_upper(pp$random_letter()),
       lastname = pp$last_name_male(),
@@ -54,7 +54,7 @@ fake_man <-
 fake_military <-
   function(ap, pp, ip, dtp) {
     dplyr::tibble(
-      title = 0,
+      title = "0",
       firstname = pp$first_name(),
       middle = stringr::str_to_upper(pp$random_letter()),
       lastname = pp$last_name(),
