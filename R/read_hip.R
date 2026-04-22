@@ -154,7 +154,9 @@ read_hip <-
       # Add a download key
       mutate(
         dl_key =
-          paste0("dl_", cur_group_id()), .by = c("dl_date", "dl_state"))
+          paste0("dl_", cur_group_id()), .by = c("dl_date", "dl_state")) |>
+      # Filter out blank lines or lines that start with "Result"
+      dropBlankLines()
 
     # Remove exact duplicates
     if (unique == TRUE) {
@@ -323,6 +325,41 @@ dropBlankFiles <-
     return(filelist_without_blanks)
   }
 
+#' Drop blank lines
+#'
+#' The internal \code{dropBlankLines} function is used inside of
+#' \code{\link{read_hip}} to filter out any rows with \code{NA} in every field
+#' or a blank line beginning with \code{Result}.
+#'
+#' @importFrom dplyr filter_out
+#' @importFrom dplyr when_any
+#' @importFrom dplyr if_all
+#' @importFrom dplyr everything
+#' @importFrom dplyr when_all
+#' @importFrom rlang .data
+#'
+#' @param raw_data Intermediate raw data tibble
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
+
+dropBlankLines <-
+  function(raw_data) {
+
+    raw_data |>
+      filter_out(
+        when_any(
+          if_all(everything(), \(x) is.na(x)),
+          when_all(
+            .data$title == "R",
+            .data$firstname == "esult",
+            if_all(-c("title", "firstname"), \(x) is.na(x))
+            )
+          )
+      )
+
+  }
+
 #' Check HIP file name date formatting
 #'
 #' The internal \code{checkFileNameDateFormat} function is used inside of
@@ -415,8 +452,7 @@ checkFileNameStateAbbr <-
 #'
 #' @importFrom lubridate time_length
 #'
-#' @param raw_data The object created after reading in data with
-#'   \code{\link{read_hip}}
+#' @param raw_data Intermediate raw data tibble
 #' @param starttime Start time
 #' @param endtime End time
 #'

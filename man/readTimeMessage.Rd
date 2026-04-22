@@ -7,8 +7,7 @@
 readTimeMessage(raw_data, starttime, endtime)
 }
 \arguments{
-\item{raw_data}{The object created after reading in data with
-\code{\link{read_hip}}}
+\item{raw_data}{Intermediate raw data tibble}
 
 \item{starttime}{Start time}
 
