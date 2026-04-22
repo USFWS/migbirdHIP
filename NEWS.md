@@ -49,13 +49,17 @@
                 -   `inLinePermitDNHMessage()` - existing
                 -   `permitFileBagsMessage()` - existing
             -   Note: All issue checking functions and messages remain in `issuance.R` under `issueMessages()`
-    -   `readTimeMessage()`
-        -   Moved the `read_hip()` code chunk pertaining to read time duration to its own internal function.
+    -   `read_hip()`
+        -   Reduce the column naming step to one line
+        -   New helper functions:
+            -   `dropBlankLines()` - delete blank lines or lines that contain only `"Result"` (see [#27](https://github.com/USFWS/migbirdHIP/issues/27))
+            -   `readTimeMessage()` - moved the `read_hip()` code chunk pertaining to read time duration to its own internal function.
     -   `questionYear()`
         -   New function that questions if the user intends to supply a year value different than the current season year; replaces a duplicated code chunk in `proof()` and `correct()`, and added to `issueCheck()`.
 
 ## Minor changes / bug fixes
 
+-   Updated internal package test data to create character `title` values rather than numeric.
 -   Following `{dplyr}` `1.2.0` release notes, update `case_when()` with `recode_values()` and `replace_when()` as appropriate.
 -   Testing
     -   Add test for `registration_yr` field, `birth_date` field, and `zip` field in `test-proof.R`

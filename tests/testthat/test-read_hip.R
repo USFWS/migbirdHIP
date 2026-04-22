@@ -75,7 +75,7 @@ test_that("idBlankFiles works", {
 
 # dropBlankFiles ----------------------------------------------------------
 
-test_that("idBlankFiles works", {
+test_that("dropBlankFiles works", {
 
   files_listed <-
     listFiles(
@@ -91,6 +91,20 @@ test_that("idBlankFiles works", {
       )))
 
   expect_true(nrow(blanks) == 0)
+})
+
+# dropBlankLines ----------------------------------------------------------
+
+test_that("dropBlankLines works", {
+
+  test_raw_data <-
+    bind_rows(
+      tibble(title = NA, firstname = NA),
+      tibble(title = "R", firstname = "esult"),
+      DF_TEST_MINI |> slice_sample(n = 10)
+    )
+
+  expect_true(nrow(dropBlankLines(test_raw_data)) == (nrow(test_raw_data) - 2))
 })
 
 # checkFileNameDateFormat -------------------------------------------------
