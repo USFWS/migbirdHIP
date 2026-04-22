@@ -24,7 +24,7 @@
             -   `getBadRegistrationYear()`
     -   Data quality checking functions in `quality.R`
         -   `qualityMessages()`
-            -   Refactored from function previously named `readMessages()`. This function is intenteded to be used after `read_hip()` and before `clean()`.
+            -   Refactored from function previously named `readMessages()`. This function is intended to be used after `read_hip()` and before `clean()`.
             -   Uses new, existing, and refactored helper functions:
                 -   `qTitle()` - NEW
                 -   `qFirstName()` - NEW
