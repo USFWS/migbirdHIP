@@ -106,3 +106,23 @@ test_that("failCR works", {
   expect_error(failCR(good_cr |> mutate(seaducks = 2)))
   expect_no_error(failCR(good_cr))
 })
+
+test_that("failDLstate fails for NA values in dl_state field", {
+  expect_error(failDLstate(tibble(dl_state = c("AK", "AR", "AZ", NA, "CA"))))
+})
+
+test_that("failDLstate doesn't fail for good dl_state values", {
+  expect_no_error(failDLstate(tibble(dl_state = c("AK", "AR", "AZ", "CA"))))
+})
+
+test_that("failDLdate fails for NA values in dl_date field", {
+  expect_error(
+    failDLdate(tibble(dl_date = c("20250101", NA, "20250901")))
+    )
+})
+
+test_that("failDLdate doesn't fail for good dl_date values", {
+  expect_no_error(
+    failDLdate(tibble(dl_date = c("20250101", "20250201", "20250901")))
+  )
+})

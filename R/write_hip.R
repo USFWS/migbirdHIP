@@ -39,6 +39,8 @@
 write_hip <-
   function(corrected_data, path, type, split = TRUE) {
     failProofed(corrected_data)
+    failDLstate(corrected_data)
+    failDLdate(corrected_data)
     failTF(split)
 
     # Add a final "/" if not included already

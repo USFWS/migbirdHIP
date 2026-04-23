@@ -8,6 +8,10 @@
     -   `LOGIC_BAD_TITLE_ASSIGNMENT` added
 -   Functions
     -   Deduplication functions now use `{dtplyr}` for sizable speed improvements (see [#45](https://github.com/USFWS/migbirdHIP/issues/45))
+    -   Failure functions
+        -   Since `read_hip()` already checks the file names that source `dl_state` and `dl_date`, it seems redundant to use `dlStateNAMessage()` and `dlDateNAMessage()`. Instead of moving them to `quality.R` with the rest of the quality check helpers, they were moved to `fails.R` and help inside of `write_hip()`, since the most critical use of these fields is in the data export step.
+            -   `failDLstate()` - refactored `dlStateNAMessage()`
+            -   `failDLdate()` - refactored `dlDateNAMessage()`
     -   Data proofing helper functions in `proof.R`
         -   New helper functions help split `proof()` into smaller parts. They filter to bad values, and some are reused by `qualityMessages()` helper functions.
             -   `getBadTitle()` - also checks title assignments (new) in addition to value expectations
@@ -38,8 +42,6 @@
                 -   `qBirthDate()` - NEW
                 -   `qHuntMigBirds()` - previously `huntMigBirdsMessage()`
                 -   `qBags()` - umbrella for existing `zeroBagsMessage()`, `naBagsMessage()` and `nonDigitBagsMessage()`
-                -   `qDLstate()` - previously `dlStateNAMessage()`
-                -   `qDLdate()` - previously `dlDateNAMessage()`
                 -   `qRegistrationYear()` - previously `badRegYearMessage()`
                 -   `nonResidentMessage()` - NEW - returns a message for files with 10% or more of `state` values that do not match `dl_state`.
                 -   `interStateDuplicatesMessage()` - NEW - returns a message if inter-state duplicates are detected.

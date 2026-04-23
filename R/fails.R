@@ -41,6 +41,48 @@ failState <-
     )
   }
 
+#' Fail if there is an NA in dl_state
+#'
+#' The internal \code{qDLstate} function is used inside of
+#' \code{\link{write_hip}}.
+#'
+#' @importFrom assertthat assert_that
+#' @importFrom assertthat noNA
+#'
+#' @param corrected_data The object created after correcting data with
+#'   \code{\link{correct}}
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
+
+failDLstate <-
+  function(corrected_data) {
+    assert_that(
+      noNA(corrected_data$dl_state),
+      msg = "NA values detected in dl_state.")
+  }
+
+#' Fail if there is an NA in dl_date
+#'
+#' The internal \code{qDLdate} function is used inside of
+#' \code{\link{write_hip}}.
+#'
+#' @importFrom assertthat assert_that
+#' @importFrom assertthat noNA
+#'
+#' @param corrected_data The object created after correcting data with
+#'   \code{\link{correct}}
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
+
+failDLdate <-
+  function(corrected_data) {
+    assert_that(
+      noNA(corrected_data$dl_date),
+      msg = "NA values detected in dl_date.")
+  }
+
 #' Fail if TRUE or FALSE is not supplied
 #'
 #' Internal function that fails if something other than TRUE or FALSE is
