@@ -12,7 +12,7 @@ testRecordMessage(raw_data)
 }
 \description{
 The internal \code{testRecordMessage} function is used inside of
-\code{\link{qualityMessages}}
+\code{\link{qualityMessages}}.
 }
 \references{
 \url{https://github.com/USFWS/migbirdHIP}

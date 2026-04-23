@@ -13,7 +13,7 @@ missingEmailsMessage(raw_data)
 }
 \description{
 The internal \code{missingEmailsMessage} function is used inside of
-\code{\link{qualityMessages}}
+\code{\link{qualityMessages}}.
 }
 \references{
 \url{https://github.com/USFWS/migbirdHIP}

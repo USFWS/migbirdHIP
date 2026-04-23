@@ -1,33 +1,10 @@
-#' Run checks for common or catastrophic data quality issues
-#'
-#' The \code{qualityCheck} function reports data quality issues to the user.
-#'
-#' @param raw_data The product of \code{\link{read_hip}}
-#' @param year The year in which the Harvest Information Program data were
-#'   collected
-#'
-#' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
-#'
-#' @export
-
-qualityCheck <-
-  function(raw_data, year) {
-    failYear(year)
-    questionYear(year)
-
-    # Return messages
-    qualityMessages(raw_data, year)
-  }
-
 #' Return messages to console for common or catastrophic data quality issues
 #'
-#' The internal \code{qualityMessages} function is used inside of
-#' \code{\link{qualityCheck}} to return messages for missing PII, missing email
-#' addresses, all-zero bag records, non-numeric bag values, NAs in dl_state, NAs
-#' in dl_date, bad title assignments, high proportions of non-resident hunters
-#' in a file, inter-state duplicates, low range of issue dates in a file, and
-#' low range of birth dates in a file.
+#' The \code{qualityMessages} function is used to return messages for
+#' missing PII, missing email addresses, all-zero bag records, non-numeric bag
+#' values, NAs in dl_state, NAs in dl_date, bad title assignments, high
+#' proportions of non-resident hunters in a file, inter-state duplicates, low
+#' range of issue dates in a file, and low range of birth dates in a file.
 #'
 #' @importFrom dplyr n
 #' @importFrom dplyr mutate
@@ -38,6 +15,8 @@ qualityCheck <-
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @export
 
 qualityMessages <-
   function(raw_data, year) {
@@ -59,8 +38,6 @@ qualityMessages <-
     qBirthDate(raw2, year)
     qHuntMigBirds(raw_data)
     qRegistrationYear(raw_data)
-    qDLstate(raw_data)
-    qDLdate(raw_data)
 
     # Check bag value quality:
     # Uses helpers zeroBagsMesage(), naBagsMessage(), and nonDigitBagsMessage()
@@ -95,7 +72,7 @@ qualityMessages <-
 #' state, or birth date
 #'
 #' The internal \code{missingPIIMessage} function is used inside of
-#' \code{\link{qualityMessages}}
+#' \code{\link{qualityMessages}}.
 #'
 #' @importFrom dplyr group_by
 #' @importFrom dplyr mutate
@@ -143,7 +120,7 @@ missingPIIMessage <-
 #' with more than 10 registrations
 #'
 #' The internal \code{missingEmailsMessage} function is used inside of
-#' \code{\link{qualityMessages}}
+#' \code{\link{qualityMessages}}.
 #'
 #' @importFrom dplyr summarize
 #' @importFrom dplyr n
@@ -181,7 +158,7 @@ missingEmailsMessage <-
 #' Return message if test record is found
 #'
 #' The internal \code{testRecordMessage} function is used inside of
-#' \code{\link{qualityMessages}}
+#' \code{\link{qualityMessages}}.
 #'
 #' @importFrom dplyr filter
 #' @importFrom dplyr select
