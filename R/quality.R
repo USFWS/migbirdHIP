@@ -139,12 +139,14 @@ missingPIIMessage <-
     }
   }
 
-#' Return message if all emails are missing from a file
+#' Return message if all emails are missing or are exactly the same in a file
+#' with more than 10 registrations
 #'
 #' The internal \code{missingEmailsMessage} function is used inside of
 #' \code{\link{qualityMessages}}
 #'
 #' @importFrom dplyr summarize
+#' @importFrom dplyr n
 #' @importFrom dplyr filter
 #' @importFrom dplyr select
 #' @importFrom rlang .data
@@ -157,18 +159,22 @@ missingPIIMessage <-
 missingEmailsMessage <-
   function(raw_data) {
 
-    # Return a message if all emails are missing from a file
+    # Return a message if all emails are missing, or exactly the same, from a
+    # file with more than 10 registrations
     missing <-
       raw_data |>
-      summarize(n_emails = length(unique(.data$email)), .by = "source_file") |>
-      filter(.data$n_emails == 1)
+      summarize(
+        file_size = n(),
+        n_emails = length(unique(.data$email)),
+        .by = "source_file") |>
+      filter(.data$file_size > 10 & .data$n_emails == 1)
 
     if (nrow(missing) > 0) {
       message(
         paste("Error:", nrow(missing), "files are missing 100% of emails.")
       )
 
-      print(missing |> select(.data$source_file))
+      print(missing |> select("source_file"))
     }
   }
 

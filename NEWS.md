@@ -46,7 +46,7 @@
                 -   `nonResidentMessage()` - NEW - returns a message for files with 10% or more of `state` values that do not match `dl_state`.
                 -   `interStateDuplicatesMessage()` - NEW - returns a message if inter-state duplicates are detected.
                 -   `missingPIIMessage()` - existing
-                -   `missingEmailsMessage()` - existing
+                -   `missingEmailsMessage()` - existing, edited to evaluate only files with more than 10 registrations to avoid small files returning false positives.
                 -   `testRecordMessage()` - existing
                 -   `inLinePermitDNHMessage()` - existing
                 -   `permitFileBagsMessage()` - existing

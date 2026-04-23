@@ -2,7 +2,8 @@
 % Please edit documentation in R/quality.R
 \name{missingEmailsMessage}
 \alias{missingEmailsMessage}
-\title{Return message if all emails are missing from a file}
+\title{Return message if all emails are missing or are exactly the same in a file
+with more than 10 registrations}
 \usage{
 missingEmailsMessage(raw_data)
 }
