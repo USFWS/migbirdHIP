@@ -317,7 +317,7 @@ test_that("suffixes moved from firstname to suffix", {
   test_data <-
     tibble(
       firstname = paste("JOHN", c(REF_SUFFIXES, "JR.", "SR."), sep = " "),
-      suffix = NA,
+      suffix = NA_character_,
       lastname = "SMITH")
 
   suffixes_moved <- moveSuffixes(test_data)
@@ -341,7 +341,7 @@ test_that("suffixes moved from lastname to suffix", {
   test_data <-
     tibble(
       firstname = "JOHN",
-      suffix = NA,
+      suffix = NA_character_,
       lastname = paste("SMITH", c(REF_SUFFIXES, "JR.", "SR."), sep = " "))
 
   suffixes_moved <- moveSuffixes(test_data)
