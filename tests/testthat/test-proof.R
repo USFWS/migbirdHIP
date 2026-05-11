@@ -29,17 +29,17 @@ test_that("good titles pass proofing", {
     DF_TEST_TINI_DEDUPED |>
     mutate(
       title =
-        case_when(
+        replace_when(
+          .data$title,
           row_number() == 1 ~ "1",
           row_number() == 2 ~ "1",
-          row_number() == 3 ~ "2",
-          TRUE ~ NA_character_),
+          row_number() == 3 ~ "2"),
       firstname =
-        case_when(
+        replace_when(
+          .data$firstname,
           row_number() == 1 ~ "JOHN",
           row_number() == 2 ~ "ALEXANDER",
-          row_number() == 3 ~ "JESSICA",
-          TRUE ~ NA_character_),
+          row_number() == 3 ~ "JESSICA"),
     )
 
   good_titles_filtered <- getBadTitle(good_titles)

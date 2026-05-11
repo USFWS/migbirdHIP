@@ -218,7 +218,8 @@ test_that("issueAssign evaluates correctly when registration_yr is current", {
       dl_state =
         ifelse(record_key == "record_1", "MA", "CA"),
       issue_date =
-        case_when(
+        replace_when(
+          .data$issue_date,
           record_key %in% c("record_1", "record_4") ~
             paste0("09/09/", REF_CURRENT_SEASON),
           record_key == "record_2" ~
@@ -226,8 +227,7 @@ test_that("issueAssign evaluates correctly when registration_yr is current", {
           record_key == "record_3" ~
             paste0("01/01/", as.numeric(REF_CURRENT_SEASON) + 5),
           record_key == "record_5" ~
-            paste0("05/01/", as.numeric(REF_CURRENT_SEASON) + 1),
-          TRUE ~ NA_character_)
+            paste0("05/01/", as.numeric(REF_CURRENT_SEASON) + 1))
     )
 
   answers <- c("current", "past", "bad issue dates", "current", "future")
@@ -252,7 +252,8 @@ test_that("issueAssign changes future registration_yr correctly", {
       dl_state =
         ifelse(record_key == "record_1", "MS", "CA"),
       issue_date =
-        case_when(
+        replace_when(
+          .data$issue_date,
           record_key %in% c("record_1", "record_4") ~
             paste0("09/09/", REF_CURRENT_SEASON),
           record_key == "record_2" ~
@@ -260,8 +261,7 @@ test_that("issueAssign changes future registration_yr correctly", {
           record_key == "record_3" ~
             paste0("01/01/", as.numeric(REF_CURRENT_SEASON) + 5),
           record_key == "record_5" ~
-            paste0("05/01/", as.numeric(REF_CURRENT_SEASON) + 1),
-          TRUE ~ NA_character_)
+            paste0("05/01/", as.numeric(REF_CURRENT_SEASON) + 1))
     )
 
   answers <- c(rep("2025", 4), "2026")

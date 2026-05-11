@@ -10,7 +10,7 @@
 #' @importFrom dplyr select
 #' @importFrom dplyr as_tibble
 #' @importFrom dplyr distinct
-#' @importFrom dplyr case_when
+#' @importFrom dplyr replace_when
 #' @importFrom dplyr full_join
 #' @importFrom dplyr left_join
 #' @importFrom stringr str_detect
@@ -100,12 +100,13 @@ proof <-
       # Add an error if the state doesn't match zipState
       mutate(
         errors =
-          case_when(
+          replace_when(
+            .data$errors,
             .data$state != .data$zipState & is.na(.data$errors) ~ "zip",
             .data$state != .data$zipState & !is.na(.data$errors) &
               !str_detect(.data$errors, "zip") ~
-              paste0(.data$errors, "-zip"),
-            TRUE ~ .data$errors)
+              paste0(.data$errors, "-zip")
+          )
       ) |>
       select(-"zipState")
 

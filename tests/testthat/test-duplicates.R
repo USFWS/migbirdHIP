@@ -176,17 +176,17 @@ test_that("HIP duplicates resolved in SD and BR state, DE", {
     mutate(
       dl_state = "DE",
       brant =
-        case_when(
+        replace_when(
+          .data$brant,
           record_key == "record_1" ~ "2",
           record_key == "record_2" ~ "0",
-          record_key == "record_3" ~ "2",
-          TRUE ~ "0"),
+          record_key == "record_3" ~ "2"),
       seaducks =
-        case_when(
+        replace_when(
+          .data$seaducks,
           record_key == "record_1" ~ "0",
           record_key == "record_2" ~ "2",
-          record_key == "record_3" ~ "2",
-          TRUE ~ "0"))
+          record_key == "record_3" ~ "2"))
 
   duplicated_data <-
     bind_rows(

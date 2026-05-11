@@ -5,17 +5,22 @@
 # bag filters -------------------------------------------------------------
 
 test_that("filter out any record if any bag value is not a 1-digit number", {
-  suppressMessages(
-    test_clean <-
-      DF_TEST_TINI_READ |>
-      mutate(
-        ducks_bag =
-          case_when(
-            record_key == .data$record_key[1] ~ "*",
-            record_key == .data$record_key[2] ~ "A",
-            record_key == .data$record_key[3] ~ "1",
-            TRUE ~ ducks_bag)) |>
-      clean())
+  suppressMessages(invisible(
+    capture.output(
+      test_clean <-
+        DF_TEST_TINI_READ |>
+        mutate(
+          ducks_bag =
+            case_when(
+              record_key == .data$record_key[1] ~ "*",
+              record_key == .data$record_key[2] ~ "A",
+              record_key == .data$record_key[3] ~ "1",
+              TRUE ~ ducks_bag
+            )
+        ) |>
+        clean()
+    )
+  ))
 
   expect_equal(nrow(DF_TEST_TINI_READ) - 2, nrow(test_clean))
 })

@@ -134,7 +134,7 @@ correctMiddleInitial <-
 #' \code{\link{correct}} to ...
 #'
 #' @importFrom dplyr mutate
-#' @importFrom dplyr case_when
+#' @importFrom dplyr replace_when
 #' @importFrom stringr str_detect
 #' @importFrom stringr str_replace
 #' @importFrom rlang .data
@@ -153,7 +153,8 @@ correctEmail <-
       mutate(
         # Add in missing top level domain endings
         email =
-          case_when(
+          replace_when(
+            .data$email,
             str_detect(.data$email, "\\@gmail$") ~
               str_replace(.data$email, "\\@gmail$", "\\@gmail\\.com"),
             str_detect(.data$email, "\\@yahoo$") ~
@@ -199,12 +200,12 @@ correctEmail <-
             str_detect(.data$email, "\\@duck$") ~
               str_replace(.data$email, "\\@duck$", "\\@duck\\.com"),
             str_detect(.data$email, "\\@ducks$") ~
-              str_replace(.data$email, "\\@ducks$", "\\@ducks\\.org"),
-            TRUE ~ .data$email
+              str_replace(.data$email, "\\@ducks$", "\\@ducks\\.org")
           ),
         # Add period(s) to top level domains if missing
         email =
-          case_when(
+          replace_when(
+            .data$email,
             str_detect(.data$email, "(?<!\\.)com$") ~
               str_replace(.data$email, "com$", "\\.com"),
             str_detect(.data$email, "(?<!\\.)net$") ~
@@ -229,8 +230,7 @@ correctEmail <-
               str_replace(.data$email, "usarmymil$", "us\\.army\\.mil"),
             str_detect(.data$email, "\\@usacearmymil$") ~
               str_replace(
-                .data$email, "usacearmymil$", "us\\.ace\\.army\\.mil"),
-            TRUE ~ .data$email
+                .data$email, "usacearmymil$", "us\\.ace\\.army\\.mil")
           )
       )
   }

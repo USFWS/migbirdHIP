@@ -90,7 +90,7 @@ randomBag <-
       dplyr::filter(state == REF_ABBR_49_STATES[n] & spp == bag_field) |>
       dplyr::pull(stateBagValue)
 
-    sample(bags, 225, replace = T) |> as.character()
+    sample(bags, 225, replace = TRUE) |> as.character()
   }
 
 createBagValue <-
@@ -268,7 +268,7 @@ international$canada <- sample(hunters$row_key, size = 10)
 # introduce errors --------------------------------------------------------
 
 # Make the data messy by using the randomly selected fake hunters above for
-# intentional error introduction. Use case_when so that a change is not added
+# intentional error introduction. Use replace_when so that a change is not added
 # more than once per field
 
 messy_hunters <-
@@ -292,7 +292,8 @@ messy_hunters <-
     title =
       ifelse(row_key %in% title_errors$NAs, NA, title),
     firstname =
-      dplyr::case_when(
+      dplyr::replace_when(
+        .data$firstname,
         row_key %in% firstname_errors$test ~ "TEST",
         row_key %in% firstname_errors$NAs ~ NA_character_,
         row_key %in% firstname_errors$initial ~
@@ -310,13 +311,13 @@ messy_hunters <-
         row_key %in% firstname_errors$comma ~
           paste(lastname, firstname, sep = ","),
         row_key %in% firstname_errors$number ~
-          paste0(firstname, sample(c(3, 6, 7, 8), dplyr::n(), replace = T)),
-        TRUE ~ firstname
+          paste0(firstname, sample(c(3, 6, 7, 8), dplyr::n(), replace = TRUE))
       ),
     middle =
       ifelse(row_key %in% middle_errors$NAs, NA, middle),
     lastname =
-      dplyr::case_when(
+      dplyr::replace_when(
+        .data$lastname,
         row_key %in% firstname_errors$test ~ "TEST",
         row_key %in% lastname_errors$NAs ~ NA_character_,
         row_key %in% lastname_errors$hyphen[lastname_errors$hyphen !=
@@ -328,34 +329,33 @@ messy_hunters <-
         row_key %in% lastname_errors$period ~
           paste0(lastname, "."),
         row_key %in% lastname_errors$initial ~
-          stringr::str_sub(lastname, 1, 1),
-        TRUE ~ lastname
+          stringr::str_sub(lastname, 1, 1)
       ),
     address =
       ifelse(
         row_key %in% address_errors$pobox,
-        sample(po_box, dplyr::n(), replace = T),
+        sample(po_box, dplyr::n(), replace = TRUE),
         address),
     state =
       dplyr::case_when(
         row_key %in% international$canada ~
-          sample(REF_ABBR_CANADA, dplyr::n(), replace = T),
+          sample(REF_ABBR_CANADA, dplyr::n(), replace = TRUE),
         row_key %in% zip_errors$zip_state_bad ~ state,
-        TRUE ~ actual_state),
+        .default ~ actual_state),
     zip =
       ifelse(
         row_key %in% international$canada,
-        sample(canada_zips, dplyr::n(), replace = T),
+        sample(canada_zips, dplyr::n(), replace = TRUE),
         zip),
     email =
-      dplyr::case_when(
+      dplyr::replace_when(
+        .data$email,
         row_key %in% email_errors$bademails ~
-          sample(bad_emails, dplyr::n(), replace = T),
+          sample(bad_emails, dplyr::n(), replace = TRUE),
         row_key %in% email_errors$fakeemails ~
-          sample(fake_emails, dplyr::n(), replace = T),
+          sample(fake_emails, dplyr::n(), replace = TRUE),
         row_key %in% email_errors$naemails ~
-          NA_character_,
-        TRUE ~ email
+          NA_character_
       )
   ) |>
   dplyr::select(-c("zip_key", "actual_state")) |>
@@ -407,49 +407,49 @@ fake_hip <-
         !!bagLogic1 ~ "0",
         !!bagLogic2 ~ "0",
         row_key %in% bag_errors$duck ~ "9",
-        TRUE ~ createBagValue("ducks_bag")
+        .default ~ createBagValue("ducks_bag")
       ),
     geese_bag =
       dplyr::case_when(
         !!bagLogic1 ~ "0",
         !!bagLogic2 ~ "0",
         row_key %in% bag_errors$goose ~ "9",
-        TRUE ~ createBagValue("geese_bag")
+        .default ~ createBagValue("geese_bag")
       ),
     dove_bag =
       dplyr::case_when(
         !!bagLogic1 ~ "0",
         !!bagLogic2 ~ "0",
         row_key %in% bag_errors$dove ~ "9",
-        TRUE ~ createBagValue("dove_bag")
+        .default ~ createBagValue("dove_bag")
       ),
     woodcock_bag =
       dplyr::case_when(
         !!bagLogic1 ~ "0",
         !!bagLogic2 ~ "0",
         row_key %in% bag_errors$woodcock ~ "9",
-        TRUE ~ createBagValue("woodcock_bag")
+        .default ~ createBagValue("woodcock_bag")
       ),
     coots_snipe =
       dplyr::case_when(
         !!bagLogic1 ~ "0",
         !!bagLogic2 ~ "0",
         row_key %in% bag_errors$cs ~ "9",
-        TRUE ~ createBagValue("coots_snipe")
+        .default ~ createBagValue("coots_snipe")
       ),
     rails_gallinules =
       dplyr::case_when(
         !!bagLogic1 ~ "0",
         !!bagLogic2 ~ "0",
         row_key %in% bag_errors$rg ~ "9",
-        TRUE ~ createBagValue("rails_gallinules")
+        .default ~ createBagValue("rails_gallinules")
       ),
     cranes =
       dplyr::case_when(
         !!bagLogic1 ~ "0",
         !!bagLogic2 ~ "0",
         row_key %in% bag_errors$crane ~ "9",
-        TRUE ~ createBagValue("cranes")
+        .default ~ createBagValue("cranes")
       ),
     band_tailed_pigeon =
       dplyr::case_when(
@@ -461,7 +461,7 @@ fake_hip <-
           !stringr::str_detect(firstname, "S|s") &
           stringr::str_detect(row_key, "8$") ~ "0",
         row_key %in% bag_errors$btpi ~ "9",
-        TRUE ~ createBagValue("band_tailed_pigeon")
+        .default ~ createBagValue("band_tailed_pigeon")
       ),
     brant =
       dplyr::case_when(
@@ -473,7 +473,7 @@ fake_hip <-
           !stringr::str_detect(lastname, "S|s") &
           stringr::str_detect(row_key, "8$") ~ "0",
         row_key %in% bag_errors$brant ~ "9",
-        TRUE ~ createBagValue("brant")
+        .default ~ createBagValue("brant")
       ),
     seaducks =
       dplyr::case_when(
@@ -485,7 +485,7 @@ fake_hip <-
           !stringr::str_detect(address, "S|s") &
           stringr::str_detect(row_key, "8$") ~ "0",
         row_key %in% bag_errors$seaduck ~ "9",
-        TRUE ~ createBagValue("seaducks")
+        .default ~ createBagValue("seaducks")
       ),
     registration_yr = REF_CURRENT_SEASON
   ) |>

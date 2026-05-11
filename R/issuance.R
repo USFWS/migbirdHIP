@@ -404,7 +404,7 @@ issuePrint <-
 #' @importFrom dplyr rename
 #' @importFrom dplyr select
 #' @importFrom dplyr mutate
-#' @importFrom dplyr case_when
+#' @importFrom dplyr replace_when
 #' @importFrom rlang .data
 #'
 #' @param clean_data The object created after cleaning data with
@@ -436,10 +436,11 @@ issueAssign <-
         # For 1-season states: use current year for current records; year + 1
         # for future records
         registration_yr =
-          case_when(
+          replace_when(
+            .data$registration_yr,
             .data$decision == "future" ~ as.character(year + 1),
-            .data$decision == "current" ~ as.character(year),
-            TRUE ~ .data$registration_yr)
+            .data$decision == "current" ~ as.character(year)
+          )
       )
   }
 
@@ -452,6 +453,7 @@ issueAssign <-
 #'
 #' @importFrom dplyr mutate
 #' @importFrom dplyr case_when
+#' @importFrom dplyr replace_when
 #' @importFrom lubridate mdy
 #' @importFrom lubridate interval
 #' @importFrom lubridate %within%
@@ -508,12 +510,12 @@ issueDecide <-
       # Edit decision, for overlaps only (change to future or current)
       mutate(
         decision =
-          case_when(
+          replace_when(
+            .data$decision,
             .data$decision == "overlap" & .data$registration_yr == year ~
               "current",
             .data$decision == "overlap" & .data$registration_yr == year + 1 ~
-              "future",
-            TRUE ~ decision
+              "future"
           )
       )
   }

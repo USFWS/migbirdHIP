@@ -52,7 +52,7 @@ duplicateFix <-
               .data$seaducks == "2" ~ "has_2",
             .data$dl_state %in% REF_STATES_SD_ONLY &
               .data$seaducks == "2" ~ "has_2",
-            TRUE ~ "no_2")) |>
+            .default ~ "no_2")) |>
       duplicateAllOnesGroupSize() |>
       # If record has 2 in brant, seaduck, or both, put the group size (number
       # of records in the set of duplicates that have hunted brant and/or
@@ -79,7 +79,7 @@ duplicateFix <-
             !("1" %in% .data$all_ones_group_size) &
               !("1" %in% .data$sd_or_br_has_2_group_size) ~
               "duplicate",
-            TRUE ~ NA_character_),
+            .default ~ NA_character_),
         .by = "duplicate_id") |>
       # If NA records have another qualifying record in their group, drop them
       mutate(
@@ -366,7 +366,7 @@ duplicateDecide <-
             # duplicate still and we will need to randomly choose which record
             # in the group to keep later
             !(1 %in% .data$all_ones_group_size) ~ "duplicate",
-            TRUE ~ NA_character_),
+            .default ~ NA_character_),
         .by = "duplicate_id") |>
       # If NA records have another qualifying record in their group, drop them
       mutate(
@@ -585,7 +585,7 @@ duplicateFinder <-
 #' Plot which fields are duplicates of individual hunters.
 #'
 #' @importFrom dplyr mutate
-#' @importFrom dplyr case_when
+#' @importFrom dplyr replace_when
 #' @importFrom dplyr reframe
 #' @importFrom stringr str_detect
 #' @importFrom dplyr group_by
@@ -623,7 +623,8 @@ duplicatePlot <-
       # duplicate; regex to define one field is "[a-z|a-z\\_a-z]{1,}"
       mutate(
         duplicate_field =
-          case_when(
+          replace_when(
+            .data$duplicate_field,
             # 5 or more fields
             str_detect(
               .data$duplicate_field,
@@ -644,8 +645,8 @@ duplicatePlot <-
             str_detect(
               .data$duplicate_field,
               paste(rep("[a-z|a-z\\_a-z]{1,}", 2), collapse = "\\-")) ~
-              "2+ fields",
-            TRUE ~ .data$duplicate_field)
+              "2+ fields"
+          )
       ) |>
       # Make a new col to reorder the bars
       reframe(total_count = sum(n), .by = "duplicate_field") |>
