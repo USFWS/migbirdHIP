@@ -57,3 +57,5 @@ po/*~
 rsconnect/
 /doc/
 /Meta/
+.Rproj.user
+.positai

@@ -12,3 +12,5 @@
 ^\.lintr$
 ^doc$
 ^Meta$
+^\.positai$
+^\.claude$
