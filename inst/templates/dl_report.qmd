@@ -199,8 +199,7 @@ bit <-
         decision == "future" ~
           paste0(
             "issue date after end of issue window (future records to be ",
-            "sampled next season)"),
-        TRUE ~ NA_character_
+            "sampled next season)")
       )
   ) |>
   dplyr::filter(!is.na(type)) |>
@@ -264,8 +263,7 @@ emails_missing <-
       dplyr::case_when(
         !is.na(email) & !stringr::str_detect(errors, "email") ~ "Good",
         !is.na(email) & stringr::str_detect(errors, "email") ~ "Incorrect",
-        is.na(email) ~ "Missing",
-        TRUE ~ NA_character_))
+        is.na(email) ~ "Missing"))
 
 # >90% email missing/incorrect
 emails_missing_flagged <-

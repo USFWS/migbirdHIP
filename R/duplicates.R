@@ -52,7 +52,7 @@ duplicateFix <-
               .data$seaducks == "2" ~ "has_2",
             .data$dl_state %in% REF_STATES_SD_ONLY &
               .data$seaducks == "2" ~ "has_2",
-            .default ~ "no_2")) |>
+            .default = "no_2")) |>
       duplicateAllOnesGroupSize() |>
       # If record has 2 in brant, seaduck, or both, put the group size (number
       # of records in the set of duplicates that have hunted brant and/or
@@ -79,7 +79,7 @@ duplicateFix <-
             !("1" %in% .data$all_ones_group_size) &
               !("1" %in% .data$sd_or_br_has_2_group_size) ~
               "duplicate",
-            .default ~ NA_character_),
+            .default = NA_character_),
         .by = "duplicate_id") |>
       # If NA records have another qualifying record in their group, drop them
       mutate(
@@ -365,8 +365,7 @@ duplicateDecide <-
             # When there isn't a 1 value in the checking column, it's a
             # duplicate still and we will need to randomly choose which record
             # in the group to keep later
-            !(1 %in% .data$all_ones_group_size) ~ "duplicate",
-            .default ~ NA_character_),
+            !(1 %in% .data$all_ones_group_size) ~ "duplicate"),
         .by = "duplicate_id") |>
       # If NA records have another qualifying record in their group, drop them
       mutate(

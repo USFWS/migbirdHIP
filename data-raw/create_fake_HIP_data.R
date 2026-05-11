@@ -341,7 +341,7 @@ messy_hunters <-
         row_key %in% international$canada ~
           sample(REF_ABBR_CANADA, dplyr::n(), replace = TRUE),
         row_key %in% zip_errors$zip_state_bad ~ state,
-        .default ~ actual_state),
+        .default = actual_state),
     zip =
       ifelse(
         row_key %in% international$canada,
@@ -407,49 +407,49 @@ fake_hip <-
         !!bagLogic1 ~ "0",
         !!bagLogic2 ~ "0",
         row_key %in% bag_errors$duck ~ "9",
-        .default ~ createBagValue("ducks_bag")
+        .default = createBagValue("ducks_bag")
       ),
     geese_bag =
       dplyr::case_when(
         !!bagLogic1 ~ "0",
         !!bagLogic2 ~ "0",
         row_key %in% bag_errors$goose ~ "9",
-        .default ~ createBagValue("geese_bag")
+        .default = createBagValue("geese_bag")
       ),
     dove_bag =
       dplyr::case_when(
         !!bagLogic1 ~ "0",
         !!bagLogic2 ~ "0",
         row_key %in% bag_errors$dove ~ "9",
-        .default ~ createBagValue("dove_bag")
+        .default = createBagValue("dove_bag")
       ),
     woodcock_bag =
       dplyr::case_when(
         !!bagLogic1 ~ "0",
         !!bagLogic2 ~ "0",
         row_key %in% bag_errors$woodcock ~ "9",
-        .default ~ createBagValue("woodcock_bag")
+        .default = createBagValue("woodcock_bag")
       ),
     coots_snipe =
       dplyr::case_when(
         !!bagLogic1 ~ "0",
         !!bagLogic2 ~ "0",
         row_key %in% bag_errors$cs ~ "9",
-        .default ~ createBagValue("coots_snipe")
+        .default = createBagValue("coots_snipe")
       ),
     rails_gallinules =
       dplyr::case_when(
         !!bagLogic1 ~ "0",
         !!bagLogic2 ~ "0",
         row_key %in% bag_errors$rg ~ "9",
-        .default ~ createBagValue("rails_gallinules")
+        .default = createBagValue("rails_gallinules")
       ),
     cranes =
       dplyr::case_when(
         !!bagLogic1 ~ "0",
         !!bagLogic2 ~ "0",
         row_key %in% bag_errors$crane ~ "9",
-        .default ~ createBagValue("cranes")
+        .default = createBagValue("cranes")
       ),
     band_tailed_pigeon =
       dplyr::case_when(
@@ -461,7 +461,7 @@ fake_hip <-
           !stringr::str_detect(firstname, "S|s") &
           stringr::str_detect(row_key, "8$") ~ "0",
         row_key %in% bag_errors$btpi ~ "9",
-        .default ~ createBagValue("band_tailed_pigeon")
+        .default = createBagValue("band_tailed_pigeon")
       ),
     brant =
       dplyr::case_when(
@@ -473,7 +473,7 @@ fake_hip <-
           !stringr::str_detect(lastname, "S|s") &
           stringr::str_detect(row_key, "8$") ~ "0",
         row_key %in% bag_errors$brant ~ "9",
-        .default ~ createBagValue("brant")
+        .default = createBagValue("brant")
       ),
     seaducks =
       dplyr::case_when(
@@ -485,7 +485,7 @@ fake_hip <-
           !stringr::str_detect(address, "S|s") &
           stringr::str_detect(row_key, "8$") ~ "0",
         row_key %in% bag_errors$seaduck ~ "9",
-        .default ~ createBagValue("seaducks")
+        .default = createBagValue("seaducks")
       ),
     registration_yr = REF_CURRENT_SEASON
   ) |>
