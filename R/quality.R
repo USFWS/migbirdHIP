@@ -36,6 +36,7 @@ qualityMessages <-
     qState(raw2)
     qZIP(raw2)
     qBirthDate(raw2, year)
+    qBirthDateRange(raw2)
     qHuntMigBirds(raw_data)
     qRegistrationYear(raw_data)
 
@@ -744,6 +745,47 @@ qBirthDate <-
 
     if (nrow(q) > 0) {
       message("Bad birth date values detected.")
+      print(q)
+    }
+
+  }
+
+#' Birth date range message
+#'
+#' The internal \code{qBirthDateRange} function returns a message for
+#' \code{birth_date} values that do not span a period of time more than 365
+#' days.
+#'
+#' @importFrom dplyr select
+#' @importFrom dplyr mutate
+#' @importFrom lubridate mdy
+#' @importFrom dplyr summarize
+#' @importFrom lubridate time_length
+#' @importFrom dplyr filter
+#' @importFrom rlang .data
+#'
+#' @param raw_data The product of \code{\link{read_hip}}
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#' @references \url{https://github.com/USFWS/migbirdHIP}
+
+qBirthDateRange <-
+  function(raw_data) {
+
+    q <-
+      raw_data |>
+      select("source_file", "birth_date") |>
+      mutate(bday = mdy(.data$birth_date, quiet = TRUE)) |>
+      summarize(
+        min_bday = min(bday),
+        max_bday = max(bday),
+        range_bday = time_length(max(bday) - min(bday), unit = "day"),
+        .by = "source_file"
+      ) |>
+      filter(range_bday < 365)
+
+    if (nrow(q) > 0) {
+      message("Birth date values do not span more than 365 days.")
       print(q)
     }
 

@@ -719,6 +719,39 @@ test_that("qBirthDate does not return a message for good birth dates", {
   expect_no_message(qBirthDate(good_birthdates, as.numeric(REF_CURRENT_SEASON)))
 })
 
+test_that("qBirthDateRange returns a message for bad birth dates", {
+  bad_birthdates <-
+    tibble(
+      birth_date =
+        c("01/01/1999",
+          "01/02/1999",
+          "01/03/1999",
+          "01/04/1999",
+          "01/05/1999"),
+      source_file = "ZZ20250101.txt"
+    )
+
+  suppressMessages(invisible(capture.output(expect_message(
+    qBirthDateRange(bad_birthdates)
+  ))))
+})
+
+test_that("qBirthDateRange does not return a message for good birth dates", {
+  good_birthdates <-
+    tibble(
+      birth_date =
+        c("01/01/1935",
+          "02/29/1988",
+          "04/05/1967",
+          "10/10/2010",
+          "11/30/1999",
+          "12/31/2020"),
+      source_file = "ZZ20250101.txt"
+    )
+
+  expect_no_message(qBirthDateRange(good_birthdates))
+})
+
 test_that("qHuntMigBirds returns a message for bad hunt_mig_birds", {
   bad_hunt_mig_birds <-
     tibble(
