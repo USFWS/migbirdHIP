@@ -56,5 +56,6 @@ po/*~
 # RStudio Connect folder
 rsconnect/
 /Meta/
+/doc/
 .Rproj.user
 .positai
