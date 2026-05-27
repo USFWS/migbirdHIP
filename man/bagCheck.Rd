@@ -14,9 +14,11 @@ bagCheck(deduplicated_data)
 After fixing the data with \code{\link{duplicateFix}}, see if any unexpected
 bag values were submitted.
 }
-\references{
-\url{https://github.com/USFWS/migbirdHIP}
+\seealso{
+Other bag functions: 
+\code{\link{summarizeBadBags}()}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}
 }
+\concept{bag functions}

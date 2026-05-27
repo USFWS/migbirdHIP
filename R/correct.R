@@ -13,7 +13,8 @@
 #'   collected
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family correcting functions
 #'
 #' @export
 
@@ -62,7 +63,8 @@ correct <-
 #'   \code{\link{proof}}
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family correcting functions
 
 correctTitle <-
   function(proofed_data) {
@@ -88,7 +90,8 @@ correctTitle <-
 #'   \code{\link{proof}}
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family correcting functions
 
 correctSuffix <-
   function(proofed_data) {
@@ -114,7 +117,8 @@ correctSuffix <-
 #'   \code{\link{proof}}
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family correcting functions
 
 correctMiddleInitial <-
   function(proofed_data) {
@@ -143,7 +147,8 @@ correctMiddleInitial <-
 #'   \code{\link{proof}}
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family correcting functions
 
 correctEmail <-
   function(proofed_data) {

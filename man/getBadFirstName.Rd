@@ -15,9 +15,23 @@ The internal \code{getBadFirstName} function is used inside of
 \code{firstname} values that are not expected. Used by
 \code{\link{qFirstName}}.
 }
-\references{
-\url{https://github.com/USFWS/migbirdHIP}
+\seealso{
+Other proofing functions: 
+\code{\link{getBadAddress}()},
+\code{\link{getBadBirthDate}()},
+\code{\link{getBadCity}()},
+\code{\link{getBadHuntMigBirds}()},
+\code{\link{getBadLastName}()},
+\code{\link{getBadMiddle}()},
+\code{\link{getBadRegYear}()},
+\code{\link{getBadState}()},
+\code{\link{getBadSuffix}()},
+\code{\link{getBadTitle}()},
+\code{\link{getBadZIP}()},
+\code{\link{proof}()},
+\code{\link{proofBadEmails}()}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}
 }
+\concept{proofing functions}

@@ -14,9 +14,18 @@ clean(raw_data)
 After reading the data with \code{\link{read_hip}}, reformat and clean the
 HIP registrations.
 }
-\references{
-\url{https://github.com/USFWS/migbirdHIP}
+\seealso{
+Other cleaning functions: 
+\code{\link{btpiPermitBagFix}()},
+\code{\link{cranePermitBagFix}()},
+\code{\link{formatZip}()},
+\code{\link{inLinePermitDNHFix}()},
+\code{\link{missingPIIFilter}()},
+\code{\link{moveSuffixes}()},
+\code{\link{namesToUppercase}()},
+\code{\link{zipCheck}()}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}
 }
+\concept{cleaning functions}

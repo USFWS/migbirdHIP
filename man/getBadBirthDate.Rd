@@ -18,9 +18,23 @@ The internal \code{getBadBirthDate} function is used inside of
 \code{birth_date} values that are not expected. We expect birth year to be
 between 0 and 100 years ago. Used by \code{\link{qBirthDate}}.
 }
-\references{
-\url{https://github.com/USFWS/migbirdHIP}
+\seealso{
+Other proofing functions: 
+\code{\link{getBadAddress}()},
+\code{\link{getBadCity}()},
+\code{\link{getBadFirstName}()},
+\code{\link{getBadHuntMigBirds}()},
+\code{\link{getBadLastName}()},
+\code{\link{getBadMiddle}()},
+\code{\link{getBadRegYear}()},
+\code{\link{getBadState}()},
+\code{\link{getBadSuffix}()},
+\code{\link{getBadTitle}()},
+\code{\link{getBadZIP}()},
+\code{\link{proof}()},
+\code{\link{proofBadEmails}()}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}
 }
+\concept{proofing functions}

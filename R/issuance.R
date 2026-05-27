@@ -14,7 +14,8 @@
 #' @param plot Create a plot? Default is FALSE
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family issuance functions
 #'
 #' @export
 
@@ -68,7 +69,8 @@ issueCheck <-
 #' @param issue_assignments An intermediate tibble in \code{\link{issueCheck}}
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family issuance functions
 
 issueMessages <-
   function(clean_data, issue_assignments) {
@@ -101,7 +103,8 @@ issueMessages <-
 #' @param issue_assignments An intermediate tibble in \code{\link{issueCheck}}
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family issuance functions
 
 regYearEditMessage <-
   function(clean_data, issue_assignments) {
@@ -143,7 +146,8 @@ regYearEditMessage <-
 #' @param clean_data The product of \code{\link{clean}}
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family issuance functions
 
 zeroDateMessage <-
   function(clean_data) {
@@ -170,7 +174,8 @@ zeroDateMessage <-
 #' @param issue_assignments An intermediate tibble in \code{\link{issueCheck}}
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family issuance functions
 
 badDateMessage <-
   function(issue_assignments) {
@@ -195,7 +200,8 @@ badDateMessage <-
 #' @param issue_assignments An intermediate tibble in \code{\link{issueCheck}}
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family issuance functions
 
 timeTravelMessage <-
   function(issue_assignments) {
@@ -233,7 +239,8 @@ timeTravelMessage <-
 #' @param issue_assignments An intermediate tibble in \code{\link{issueCheck}}
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family issuance functions
 
 futureDateMessage <-
   function(issue_assignments) {
@@ -270,7 +277,8 @@ futureDateMessage <-
 #' @param issue_assignments An intermediate tibble in \code{\link{issueCheck}}
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family issuance functions
 
 pastDateMessage <-
   function(issue_assignments) {
@@ -305,7 +313,8 @@ pastDateMessage <-
 #' @param issue_assignments An intermediate tibble in \code{\link{issueCheck}}
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family issuance functions
 
 invalidDateMessage <-
   function(issue_assignments) {
@@ -341,7 +350,8 @@ invalidDateMessage <-
 #' @param issue_assignments An intermediate tibble in \code{\link{issueCheck}}
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family issuance functions
 
 twoSeasonMessage <-
   function(issue_assignments) {
@@ -379,7 +389,8 @@ twoSeasonMessage <-
 #' @param issue_assignments An intermediate tibble in \code{\link{issueCheck}}
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family issuance functions
 
 issuePrint <-
   function(issue_assignments) {
@@ -412,7 +423,8 @@ issuePrint <-
 #' @param year The year of the HIP season (e.g. 2022 for the 2022-2023 season)
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family issuance functions
 
 issueAssign <-
   function(clean_data, year) {
@@ -464,7 +476,8 @@ issueAssign <-
 #' @param year The year of the HIP season (e.g. 2022 for the 2022-2023 season)
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family issuance functions
 
 issueDecide <-
   function(clean_data, year) {
@@ -554,7 +567,9 @@ issueDecide <-
 #' @param year The year of the HIP season (e.g. 2022 for the 2022-2023 season)
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family issuance functions
+#' @family plotting functions
 
 issuePlot <-
   function(issue_assignments, year) {

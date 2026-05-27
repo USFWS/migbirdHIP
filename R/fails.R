@@ -53,7 +53,8 @@ failState <-
 #'   \code{\link{correct}}
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family failure functions
 
 failDLstate <-
   function(corrected_data) {
@@ -74,7 +75,8 @@ failDLstate <-
 #'   \code{\link{correct}}
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family failure functions
 
 failDLdate <-
   function(corrected_data) {
@@ -93,7 +95,8 @@ failDLdate <-
 #' @param TF Must be TRUE, FALSE, T, or F
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family failure functions
 
 failTF <-
   function(TF) {
@@ -113,7 +116,8 @@ failTF <-
 #'   collected
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family failure functions
 
 failYear <-
   function(year) {
@@ -138,7 +142,8 @@ failYear <-
 #'   \code{\link{correct}}
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family failure functions
 
 failBTPI <-
   function(corrected_data) {
@@ -198,7 +203,8 @@ failBTPI <-
 #'   \code{\link{correct}}
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family failure functions
 
 failCR <-
   function(corrected_data) {

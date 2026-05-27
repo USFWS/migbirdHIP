@@ -13,9 +13,30 @@ duplicatePlot(current_data)
 \description{
 Plot which fields are duplicates of individual hunters.
 }
-\references{
-\url{https://github.com/USFWS/migbirdHIP}
+\seealso{
+Other deduplication functions: 
+\code{\link{duplicateAllOnes}()},
+\code{\link{duplicateAllOnesGroupSize}()},
+\code{\link{duplicateDecide}()},
+\code{\link{duplicateFields}()},
+\code{\link{duplicateFinder}()},
+\code{\link{duplicateFix}()},
+\code{\link{duplicateID}()},
+\code{\link{duplicateNewest}()},
+\code{\link{duplicateRecordType}()},
+\code{\link{duplicateSample}()}
+
+Other plotting functions: 
+\code{\link{errorLevelErrorsByField}()},
+\code{\link{errorLevelErrorsByState}()},
+\code{\link{errorPlotDL}()},
+\code{\link{errorPlotFields}()},
+\code{\link{errorPlotStates}()},
+\code{\link{issuePlot}()},
+\code{\link{redFlags}()}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}
 }
+\concept{deduplication functions}
+\concept{plotting functions}

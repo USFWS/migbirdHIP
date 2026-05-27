@@ -38,7 +38,8 @@
 #'  }
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family error-finding functions
 #'
 #' @export
 
@@ -121,7 +122,8 @@ errorTable <-
 #'  }
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family error-finding functions
 
 errorTableSummary <-
   function(proofed_data, initial_tbl, loc, field) {
@@ -212,7 +214,8 @@ errorTableSummary <-
 #'   returns unique values.
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family error-finding functions
 #'
 #' @export
 

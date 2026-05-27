@@ -15,9 +15,28 @@ The internal \code{errorLevelErrorsByState} function calculates a summary
 table of the count of errors, count of correct values, and proportion of
 erroneous values by state.
 }
-\references{
-\url{https://github.com/USFWS/migbirdHIP}
+\seealso{
+Other error-finding functions: 
+\code{\link{errorLevelErrorsByField}()},
+\code{\link{errorPlotDL}()},
+\code{\link{errorPlotFields}()},
+\code{\link{errorPlotStates}()},
+\code{\link{errorTable}()},
+\code{\link{errorTableSummary}()},
+\code{\link{pullErrors}()},
+\code{\link{redFlags}()}
+
+Other plotting functions: 
+\code{\link{duplicatePlot}()},
+\code{\link{errorLevelErrorsByField}()},
+\code{\link{errorPlotDL}()},
+\code{\link{errorPlotFields}()},
+\code{\link{errorPlotStates}()},
+\code{\link{issuePlot}()},
+\code{\link{redFlags}()}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}
 }
+\concept{error-finding functions}
+\concept{plotting functions}

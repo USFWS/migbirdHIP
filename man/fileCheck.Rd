@@ -15,9 +15,11 @@ fileCheck(raw_path, processed_path)
 Check if any files in the input folder have already been written to processed
 folder.
 }
-\references{
-\url{https://github.com/USFWS/migbirdHIP}
+\seealso{
+Other file functions: 
+\code{\link{fileRename}()}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}
 }
+\concept{file functions}

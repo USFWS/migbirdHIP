@@ -20,9 +20,12 @@ nDroppedClean(raw_data, clean_data, by_state = FALSE)
 Internal function that helps \code{\link{nDropped}} by summarizing the number
 of dropped registrations by \code{\link{clean}}.
 }
-\references{
-\url{https://github.com/USFWS/migbirdHIP}
+\seealso{
+Other summary functions: 
+\code{\link{nDropped}()},
+\code{\link{nDroppedCurrent}()}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}
 }
+\concept{summary functions}

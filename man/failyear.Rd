@@ -13,9 +13,15 @@ collected}
 \description{
 Internal function that fails if an incorrect year is provided.
 }
-\references{
-\url{https://github.com/USFWS/migbirdHIP}
+\seealso{
+Other failure functions: 
+\code{\link{failBTPI}()},
+\code{\link{failCR}()},
+\code{\link{failDLdate}()},
+\code{\link{failDLstate}()},
+\code{\link{failTF}()}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}
 }
+\concept{failure functions}

@@ -30,7 +30,8 @@
 #'   season's upper-level directory
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family reading functions
 #'
 #' @export
 
@@ -187,7 +188,8 @@ read_hip <-
 #'   season's upper-level directory
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family reading functions
 
 listFiles <-
   function(path, season) {
@@ -217,7 +219,8 @@ listFiles <-
 #' @param filelist The file list tibble created by \code{\link{listFiles}}
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family reading functions
 
 ignorePermits <-
   function(filelist) {
@@ -239,7 +242,8 @@ ignorePermits <-
 #' @param filelist The file list tibble created by \code{\link{listFiles}}
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family reading functions
 
 ignoreHolds <-
   function(filelist) {
@@ -260,7 +264,8 @@ ignoreHolds <-
 #' @param filelist The file list tibble created by \code{\link{listFiles}}
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family reading functions
 
 ignoreLifetime <-
   function(filelist) {
@@ -281,7 +286,8 @@ ignoreLifetime <-
 #' @param filelist The file list tibble created by \code{\link{listFiles}}
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family reading functions
 
 idBlankFiles <-
   function(filelist) {
@@ -306,7 +312,8 @@ idBlankFiles <-
 #' @param filelist The file list tibble created by \code{\link{listFiles}}
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family reading functions
 
 dropBlankFiles <-
   function(filelist) {
@@ -341,7 +348,8 @@ dropBlankFiles <-
 #' @param raw_data Intermediate raw data tibble
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family reading functions
 
 dropBlankLines <-
   function(raw_data) {
@@ -372,7 +380,8 @@ dropBlankLines <-
 #' @param file_list_vector A file list vector
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family reading functions
 
 checkFileNameDateFormat <-
   function(file_list_vector) {
@@ -415,7 +424,8 @@ checkFileNameDateFormat <-
 #' @param file_list_vector A file list vector
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family reading functions
 
 checkFileNameStateAbbr <-
   function(file_list_vector) {
@@ -457,7 +467,8 @@ checkFileNameStateAbbr <-
 #' @param endtime End time
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family reading functions
 
 readTimeMessage <-
   function(raw_data, starttime, endtime) {

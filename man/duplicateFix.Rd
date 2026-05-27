@@ -13,9 +13,20 @@ duplicateFix(current_data)
 \description{
 Resolve duplicate HIP records.
 }
-\references{
-\url{https://github.com/USFWS/migbirdHIP}
+\seealso{
+Other deduplication functions: 
+\code{\link{duplicateAllOnes}()},
+\code{\link{duplicateAllOnesGroupSize}()},
+\code{\link{duplicateDecide}()},
+\code{\link{duplicateFields}()},
+\code{\link{duplicateFinder}()},
+\code{\link{duplicateID}()},
+\code{\link{duplicateNewest}()},
+\code{\link{duplicatePlot}()},
+\code{\link{duplicateRecordType}()},
+\code{\link{duplicateSample}()}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}
 }
+\concept{deduplication functions}

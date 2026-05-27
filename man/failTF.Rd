@@ -13,9 +13,15 @@ failTF(TF)
 Internal function that fails if something other than TRUE or FALSE is
 supplied.
 }
-\references{
-\url{https://github.com/USFWS/migbirdHIP}
+\seealso{
+Other failure functions: 
+\code{\link{failBTPI}()},
+\code{\link{failCR}()},
+\code{\link{failDLdate}()},
+\code{\link{failDLstate}()},
+\code{\link{failYear}()}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}
 }
+\concept{failure functions}

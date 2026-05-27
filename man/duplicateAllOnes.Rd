@@ -14,9 +14,20 @@ The internal \code{duplicateAllOnes} function is used inside of
 \code{\link{duplicateFix}} to evaluate groups of duplicates for records
 containing "1" for every bag value.
 }
-\references{
-\url{https://github.com/USFWS/migbirdHIP}
+\seealso{
+Other deduplication functions: 
+\code{\link{duplicateAllOnesGroupSize}()},
+\code{\link{duplicateDecide}()},
+\code{\link{duplicateFields}()},
+\code{\link{duplicateFinder}()},
+\code{\link{duplicateFix}()},
+\code{\link{duplicateID}()},
+\code{\link{duplicateNewest}()},
+\code{\link{duplicatePlot}()},
+\code{\link{duplicateRecordType}()},
+\code{\link{duplicateSample}()}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}
 }
+\concept{deduplication functions}

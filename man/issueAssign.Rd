@@ -17,9 +17,23 @@ The internal \code{issueAssign} function is used inside of
 \code{\link{issueCheck}} to assign a new registration year to each record
 depending on the outcome of \code{\link{issueDecide}}.
 }
-\references{
-\url{https://github.com/USFWS/migbirdHIP}
+\seealso{
+Other issuance functions: 
+\code{\link{badDateMessage}()},
+\code{\link{futureDateMessage}()},
+\code{\link{invalidDateMessage}()},
+\code{\link{issueCheck}()},
+\code{\link{issueDecide}()},
+\code{\link{issueMessages}()},
+\code{\link{issuePlot}()},
+\code{\link{issuePrint}()},
+\code{\link{pastDateMessage}()},
+\code{\link{regYearEditMessage}()},
+\code{\link{timeTravelMessage}()},
+\code{\link{twoSeasonMessage}()},
+\code{\link{zeroDateMessage}()}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}
 }
+\concept{issuance functions}

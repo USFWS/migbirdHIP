@@ -16,9 +16,23 @@ The internal \code{regYearEditMessage} function is used inside of
 \code{\link{issueMessages}} and \code{\link{issueCheck}} to return a message
 for how many \code{registration_yr} values were changed.
 }
-\references{
-\url{https://github.com/USFWS/migbirdHIP}
+\seealso{
+Other issuance functions: 
+\code{\link{badDateMessage}()},
+\code{\link{futureDateMessage}()},
+\code{\link{invalidDateMessage}()},
+\code{\link{issueAssign}()},
+\code{\link{issueCheck}()},
+\code{\link{issueDecide}()},
+\code{\link{issueMessages}()},
+\code{\link{issuePlot}()},
+\code{\link{issuePrint}()},
+\code{\link{pastDateMessage}()},
+\code{\link{timeTravelMessage}()},
+\code{\link{twoSeasonMessage}()},
+\code{\link{zeroDateMessage}()}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}
 }
+\concept{issuance functions}

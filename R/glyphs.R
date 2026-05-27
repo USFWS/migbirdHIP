@@ -19,7 +19,8 @@
 #' \item `r REF_FIELDS_ALL`}
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family glyph functions
 
 glyphFinder <-
   function(raw_data, field) {
@@ -49,7 +50,8 @@ glyphFinder <-
 #' @inheritParams clean
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family glyph functions
 #'
 #' @export
 

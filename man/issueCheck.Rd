@@ -18,9 +18,23 @@ issueCheck(clean_data, year, plot = FALSE)
 After cleaning the data with \code{\link{clean}}, ensure each record is
 assigned the appropriate registration_yr.
 }
-\references{
-\url{https://github.com/USFWS/migbirdHIP}
+\seealso{
+Other issuance functions: 
+\code{\link{badDateMessage}()},
+\code{\link{futureDateMessage}()},
+\code{\link{invalidDateMessage}()},
+\code{\link{issueAssign}()},
+\code{\link{issueDecide}()},
+\code{\link{issueMessages}()},
+\code{\link{issuePlot}()},
+\code{\link{issuePrint}()},
+\code{\link{pastDateMessage}()},
+\code{\link{regYearEditMessage}()},
+\code{\link{timeTravelMessage}()},
+\code{\link{twoSeasonMessage}()},
+\code{\link{zeroDateMessage}()}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}
 }
+\concept{issuance functions}

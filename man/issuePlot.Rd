@@ -14,9 +14,33 @@ issuePlot(issue_assignments, year)
 \description{
 The internal \code{issuePlot} function plots bad \code{issue_date} values.
 }
-\references{
-\url{https://github.com/USFWS/migbirdHIP}
+\seealso{
+Other issuance functions: 
+\code{\link{badDateMessage}()},
+\code{\link{futureDateMessage}()},
+\code{\link{invalidDateMessage}()},
+\code{\link{issueAssign}()},
+\code{\link{issueCheck}()},
+\code{\link{issueDecide}()},
+\code{\link{issueMessages}()},
+\code{\link{issuePrint}()},
+\code{\link{pastDateMessage}()},
+\code{\link{regYearEditMessage}()},
+\code{\link{timeTravelMessage}()},
+\code{\link{twoSeasonMessage}()},
+\code{\link{zeroDateMessage}()}
+
+Other plotting functions: 
+\code{\link{duplicatePlot}()},
+\code{\link{errorLevelErrorsByField}()},
+\code{\link{errorLevelErrorsByState}()},
+\code{\link{errorPlotDL}()},
+\code{\link{errorPlotFields}()},
+\code{\link{errorPlotStates}()},
+\code{\link{redFlags}()}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}
 }
+\concept{issuance functions}
+\concept{plotting functions}

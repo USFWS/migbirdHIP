@@ -13,9 +13,20 @@ ignoreHolds(filelist)
 The internal \code{ignoreHolds} function is used inside of
 \code{\link{read_hip}} to filter out hold files from the file list.
 }
-\references{
-\url{https://github.com/USFWS/migbirdHIP}
+\seealso{
+Other reading functions: 
+\code{\link{checkFileNameDateFormat}()},
+\code{\link{checkFileNameStateAbbr}()},
+\code{\link{dropBlankFiles}()},
+\code{\link{dropBlankLines}()},
+\code{\link{idBlankFiles}()},
+\code{\link{ignoreLifetime}()},
+\code{\link{ignorePermits}()},
+\code{\link{listFiles}()},
+\code{\link{readTimeMessage}()},
+\code{\link{read_hip}()}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}
 }
+\concept{reading functions}

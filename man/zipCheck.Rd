@@ -14,9 +14,18 @@ zipCheck(raw_data)
 The internal \code{zipCheck} function checks to see if zip codes in hunter
 addresses match the address state.
 }
-\references{
-\url{https://github.com/USFWS/migbirdHIP}
+\seealso{
+Other cleaning functions: 
+\code{\link{btpiPermitBagFix}()},
+\code{\link{clean}()},
+\code{\link{cranePermitBagFix}()},
+\code{\link{formatZip}()},
+\code{\link{inLinePermitDNHFix}()},
+\code{\link{missingPIIFilter}()},
+\code{\link{moveSuffixes}()},
+\code{\link{namesToUppercase}()}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}
 }
+\concept{cleaning functions}

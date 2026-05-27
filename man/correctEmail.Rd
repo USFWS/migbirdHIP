@@ -14,9 +14,14 @@ correctEmail(proofed_data)
 The internal \code{correctEmail} function is used inside of
 \code{\link{correct}} to ...
 }
-\references{
-\url{https://github.com/USFWS/migbirdHIP}
+\seealso{
+Other correcting functions: 
+\code{\link{correct}()},
+\code{\link{correctMiddleInitial}()},
+\code{\link{correctSuffix}()},
+\code{\link{correctTitle}()}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}
 }
+\concept{correcting functions}

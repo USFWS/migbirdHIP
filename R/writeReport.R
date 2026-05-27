@@ -16,7 +16,8 @@
 #'   or suffix indicating file type, this is done automatically)
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family writing functions
 #'
 #' @export
 

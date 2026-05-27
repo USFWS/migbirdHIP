@@ -21,7 +21,8 @@
 #'   (default) does not summarize
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family summary functions
 
 nDropped <-
   function(raw_data,
@@ -88,7 +89,8 @@ nDropped <-
 #'   (default) does not summarize
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family summary functions
 
 nDroppedClean <-
   function(raw_data, clean_data, by_state = FALSE) {
@@ -210,7 +212,8 @@ nDroppedClean <-
 #' @param year The year of the HIP season (e.g. 2022 for the 2022-2023 season)
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family summary functions
 
 nDroppedCurrent <-
   function(clean_data, current_data, year) {

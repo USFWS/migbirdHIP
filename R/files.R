@@ -17,7 +17,8 @@
 #' @param processed_path Directory of the folder containing processed files
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family file functions
 #'
 #' @export
 
@@ -85,7 +86,8 @@ fileCheck <-
 #'   collected
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family file functions
 #'
 #' @export
 

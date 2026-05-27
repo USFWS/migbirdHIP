@@ -14,9 +14,11 @@ glyphCheck(raw_data)
 Pull and view any non-UTF-8 characters in the raw data. This function
 iterates \code{\link{glyphFinder}} over the entire tibble.
 }
-\references{
-\url{https://github.com/USFWS/migbirdHIP}
+\seealso{
+Other glyph functions: 
+\code{\link{glyphFinder}()}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}
 }
+\concept{glyph functions}

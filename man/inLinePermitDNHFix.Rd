@@ -16,9 +16,18 @@ permit from OR or WA indicating "did not hunt" in the hunt_mig_birds field if
 one or more of the band_tailed_pigeon, brant, or seaducks fields indicate
 hunting.
 }
-\references{
-\url{https://github.com/USFWS/migbirdHIP}
+\seealso{
+Other cleaning functions: 
+\code{\link{btpiPermitBagFix}()},
+\code{\link{clean}()},
+\code{\link{cranePermitBagFix}()},
+\code{\link{formatZip}()},
+\code{\link{missingPIIFilter}()},
+\code{\link{moveSuffixes}()},
+\code{\link{namesToUppercase}()},
+\code{\link{zipCheck}()}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}
 }
+\concept{cleaning functions}

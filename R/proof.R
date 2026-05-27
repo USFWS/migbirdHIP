@@ -23,7 +23,8 @@
 #'   collected
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family proofing functions
 #'
 #' @export
 
@@ -131,7 +132,8 @@ proof <-
 #' @param keyed_data An tibble used internally in \code{\link{proof}}
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family proofing functions
 
 proofBadEmails <-
   function(keyed_data) {
@@ -230,7 +232,8 @@ proofBadEmails <-
 #' @param data Harvest Information Program registration data
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family proofing functions
 
 getBadTitle <-
   function(data) {
@@ -254,7 +257,8 @@ getBadTitle <-
 #' @param data Harvest Information Program registration data
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family proofing functions
 
 getBadFirstName <-
   function(data) {
@@ -273,7 +277,8 @@ getBadFirstName <-
 #' @param data Harvest Information Program registration data
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family proofing functions
 
 getBadMiddle <-
   function(data) {
@@ -294,7 +299,8 @@ getBadMiddle <-
 #' @param data Harvest Information Program registration data
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family proofing functions
 
 getBadLastName <-
   function(data) {
@@ -313,7 +319,8 @@ getBadLastName <-
 #' @param data Harvest Information Program registration data
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family proofing functions
 
 getBadSuffix <-
   function(data) {
@@ -333,7 +340,8 @@ getBadSuffix <-
 #' @param data Harvest Information Program registration data
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family proofing functions
 
 getBadAddress <-
   function(data) {
@@ -353,7 +361,8 @@ getBadAddress <-
 #' @param data Harvest Information Program registration data
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family proofing functions
 
 getBadCity <-
   function(data) {
@@ -372,7 +381,8 @@ getBadCity <-
 #' @param data Harvest Information Program registration data
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family proofing functions
 
 getBadState <-
   function(data) {
@@ -392,7 +402,8 @@ getBadState <-
 #' @param data Harvest Information Program registration data
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family proofing functions
 
 getBadZIP <-
   function(data) {
@@ -420,7 +431,8 @@ getBadZIP <-
 #'   collected
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family proofing functions
 
 getBadBirthDate <-
   function(data, year) {
@@ -456,7 +468,8 @@ getBadBirthDate <-
 #' @param data Harvest Information Program registration data
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family proofing functions
 
 getBadHuntMigBirds <-
   function(data) {
@@ -478,7 +491,8 @@ getBadHuntMigBirds <-
 #'   collected
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family proofing functions
 
 getBadRegYear <-
   function(data, year) {

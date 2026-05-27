@@ -14,9 +14,20 @@ The internal \code{duplicateNewest} function is used inside of
 \code{\link{duplicateFix}} to filter groups of duplicates to the most recent
 records out of each group.
 }
-\references{
-\url{https://github.com/USFWS/migbirdHIP}
+\seealso{
+Other deduplication functions: 
+\code{\link{duplicateAllOnes}()},
+\code{\link{duplicateAllOnesGroupSize}()},
+\code{\link{duplicateDecide}()},
+\code{\link{duplicateFields}()},
+\code{\link{duplicateFinder}()},
+\code{\link{duplicateFix}()},
+\code{\link{duplicateID}()},
+\code{\link{duplicatePlot}()},
+\code{\link{duplicateRecordType}()},
+\code{\link{duplicateSample}()}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}
 }
+\concept{deduplication functions}

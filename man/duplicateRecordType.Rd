@@ -14,9 +14,20 @@ The internal \code{duplicateRecordType} function is used inside of
 \code{\link{duplicateFix}} to set record type of registrations based on each
 record's bag values.
 }
-\references{
-\url{https://github.com/USFWS/migbirdHIP}
+\seealso{
+Other deduplication functions: 
+\code{\link{duplicateAllOnes}()},
+\code{\link{duplicateAllOnesGroupSize}()},
+\code{\link{duplicateDecide}()},
+\code{\link{duplicateFields}()},
+\code{\link{duplicateFinder}()},
+\code{\link{duplicateFix}()},
+\code{\link{duplicateID}()},
+\code{\link{duplicateNewest}()},
+\code{\link{duplicatePlot}()},
+\code{\link{duplicateSample}()}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}
 }
+\concept{deduplication functions}

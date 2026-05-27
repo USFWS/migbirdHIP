@@ -25,9 +25,28 @@ include:
 Create a bar plot of proportion of error per field. The plot defaults to all
 49 states, but location can be specified.
 }
-\references{
-\url{https://github.com/USFWS/migbirdHIP}
+\seealso{
+Other error-finding functions: 
+\code{\link{errorLevelErrorsByField}()},
+\code{\link{errorLevelErrorsByState}()},
+\code{\link{errorPlotDL}()},
+\code{\link{errorPlotStates}()},
+\code{\link{errorTable}()},
+\code{\link{errorTableSummary}()},
+\code{\link{pullErrors}()},
+\code{\link{redFlags}()}
+
+Other plotting functions: 
+\code{\link{duplicatePlot}()},
+\code{\link{errorLevelErrorsByField}()},
+\code{\link{errorLevelErrorsByState}()},
+\code{\link{errorPlotDL}()},
+\code{\link{errorPlotStates}()},
+\code{\link{issuePlot}()},
+\code{\link{redFlags}()}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}
 }
+\concept{error-finding functions}
+\concept{plotting functions}

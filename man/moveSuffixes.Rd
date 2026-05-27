@@ -16,9 +16,18 @@ last name columns into the suffix column and performs other cleaning steps.
 This function catches values from 1 to 20 in Roman numerals and numeric,
 excluding XVIII since the database limit is 4 characters.
 }
-\references{
-\url{https://github.com/USFWS/migbirdHIP}
+\seealso{
+Other cleaning functions: 
+\code{\link{btpiPermitBagFix}()},
+\code{\link{clean}()},
+\code{\link{cranePermitBagFix}()},
+\code{\link{formatZip}()},
+\code{\link{inLinePermitDNHFix}()},
+\code{\link{missingPIIFilter}()},
+\code{\link{namesToUppercase}()},
+\code{\link{zipCheck}()}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}
 }
+\concept{cleaning functions}

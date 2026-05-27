@@ -13,9 +13,15 @@ failCR(corrected_data)
 \description{
 Internal function that applies to crane permit files.
 }
-\references{
-\url{https://github.com/USFWS/migbirdHIP}
+\seealso{
+Other failure functions: 
+\code{\link{failBTPI}()},
+\code{\link{failDLdate}()},
+\code{\link{failDLstate}()},
+\code{\link{failTF}()},
+\code{\link{failYear}()}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}
 }
+\concept{failure functions}

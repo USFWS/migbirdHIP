@@ -14,9 +14,11 @@ shiftCheck(raw_data)
 Find and print any rows that have a line shift error with number of positions
 shifted.
 }
-\references{
-\url{https://github.com/USFWS/migbirdHIP}
+\seealso{
+Other shifting functions: 
+\code{\link{shiftFinder}()}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}
 }
+\concept{shifting functions}

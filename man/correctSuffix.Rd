@@ -15,9 +15,14 @@ The internal \code{correctSuffix} function is used inside of
 \code{\link{correct}} to change the value(s) in the suffix field to NA if an
 error is detected.
 }
-\references{
-\url{https://github.com/USFWS/migbirdHIP}
+\seealso{
+Other correcting functions: 
+\code{\link{correct}()},
+\code{\link{correctEmail}()},
+\code{\link{correctMiddleInitial}()},
+\code{\link{correctTitle}()}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}
 }
+\concept{correcting functions}

@@ -14,9 +14,18 @@ missingPIIFilter(raw_data)
 The internal \code{missingPIIFilter} function filters out HIP registrations
 that are missing critical pieces of contact information.
 }
-\references{
-\url{https://github.com/USFWS/migbirdHIP}
+\seealso{
+Other cleaning functions: 
+\code{\link{btpiPermitBagFix}()},
+\code{\link{clean}()},
+\code{\link{cranePermitBagFix}()},
+\code{\link{formatZip}()},
+\code{\link{inLinePermitDNHFix}()},
+\code{\link{moveSuffixes}()},
+\code{\link{namesToUppercase}()},
+\code{\link{zipCheck}()}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}
 }
+\concept{cleaning functions}

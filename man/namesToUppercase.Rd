@@ -14,9 +14,18 @@ namesToUppercase(raw_data)
 The internal \code{namesToUppercase} function converts name elements to
 uppercase for easier string cleaning.
 }
-\references{
-\url{https://github.com/USFWS/migbirdHIP}
+\seealso{
+Other cleaning functions: 
+\code{\link{btpiPermitBagFix}()},
+\code{\link{clean}()},
+\code{\link{cranePermitBagFix}()},
+\code{\link{formatZip}()},
+\code{\link{inLinePermitDNHFix}()},
+\code{\link{missingPIIFilter}()},
+\code{\link{moveSuffixes}()},
+\code{\link{zipCheck}()}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}
 }
+\concept{cleaning functions}

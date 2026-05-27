@@ -26,7 +26,8 @@
 #'   \code{\link{duplicateFix}}
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family bag functions
 #'
 #' @export
 
@@ -142,7 +143,8 @@ bagCheck <-
 #' @param x Row number
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family bag functions
 
 summarizeBadBags <-
   function(deduplicated_data, bad_bag_values, x) {

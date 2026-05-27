@@ -34,9 +34,12 @@ nDropped(
 \description{
 Internal function that summarizes the number of dropped registrations.
 }
-\references{
-\url{https://github.com/USFWS/migbirdHIP}
+\seealso{
+Other summary functions: 
+\code{\link{nDroppedClean}()},
+\code{\link{nDroppedCurrent}()}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}
 }
+\concept{summary functions}

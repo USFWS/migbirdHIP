@@ -14,7 +14,8 @@
 #'   collected
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family quality functions
 #'
 #' @export
 
@@ -86,7 +87,8 @@ qualityMessages <-
 #' @inheritParams clean
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family quality functions
 
 missingPIIMessage <-
   function(raw_data) {
@@ -132,7 +134,8 @@ missingPIIMessage <-
 #' @inheritParams clean
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family quality functions
 
 missingEmailsMessage <-
   function(raw_data) {
@@ -167,7 +170,8 @@ missingEmailsMessage <-
 #' @inheritParams clean
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family quality functions
 
 testRecordMessage <-
   function(raw_data) {
@@ -205,7 +209,8 @@ testRecordMessage <-
 #' @inheritParams clean
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family quality functions
 
 inLinePermitDNHMessage <-
   function(raw_data) {
@@ -251,7 +256,8 @@ inLinePermitDNHMessage <-
 #' @inheritParams clean
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family quality functions
 
 permitFileBagsMessage <-
   function(raw_data) {
@@ -302,7 +308,8 @@ permitFileBagsMessage <-
 #' @inheritParams clean
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family quality functions
 
 nonResidentMessage <-
   function(raw_data) {
@@ -395,7 +402,8 @@ nonResidentMessage <-
 #'   the second download state.
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family quality functions
 
 interStateDuplicatesMessage <-
   function(raw_data, n_threshold = 100, p_threshold = 0.05) {
@@ -478,7 +486,8 @@ interStateDuplicatesMessage <-
 #' @param bad_data Must contain file_size field
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family quality functions
 
 qSummary <-
   function(bad_data) {
@@ -499,7 +508,8 @@ qSummary <-
 #' @inheritParams clean
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family quality functions
 
 qTitle <-
   function(raw_data) {
@@ -527,7 +537,8 @@ qTitle <-
 #' @inheritParams clean
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family quality functions
 
 qFirstName <-
   function(raw_data) {
@@ -553,7 +564,8 @@ qFirstName <-
 #' @inheritParams clean
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family quality functions
 
 qMiddle <-
   function(raw_data) {
@@ -580,7 +592,8 @@ qMiddle <-
 #' @inheritParams clean
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family quality functions
 
 qLastName <-
   function(raw_data) {
@@ -609,7 +622,8 @@ qLastName <-
 #' @inheritParams clean
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family quality functions
 
 qSuffix <-
   function(raw_data) {
@@ -635,7 +649,8 @@ qSuffix <-
 #' @inheritParams clean
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family quality functions
 
 qAddress <-
   function(raw_data) {
@@ -659,7 +674,8 @@ qAddress <-
 #' @inheritParams clean
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family quality functions
 
 qCity <-
   function(raw_data) {
@@ -683,7 +699,8 @@ qCity <-
 #' @inheritParams clean
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family quality functions
 
 qState <-
   function(raw_data) {
@@ -707,7 +724,8 @@ qState <-
 #' @inheritParams clean
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family quality functions
 
 qZIP <-
   function(raw_data) {
@@ -732,7 +750,8 @@ qZIP <-
 #' @inheritParams qualityMessages
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family quality functions
 
 qBirthDate <-
   function(raw_data, year) {
@@ -767,7 +786,8 @@ qBirthDate <-
 #' @param raw_data The product of \code{\link{read_hip}}
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family quality functions
 
 qBirthDateRange <-
   function(raw_data) {
@@ -803,7 +823,8 @@ qBirthDateRange <-
 #' @inheritParams clean
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family quality functions
 
 qHuntMigBirds <-
   function(raw_data) {
@@ -833,7 +854,8 @@ qHuntMigBirds <-
 #' @inheritParams clean
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family quality functions
 
 qBags <-
   function(raw_data) {
@@ -863,7 +885,8 @@ qBags <-
 #' @inheritParams clean
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family quality functions
 
 zeroBagsMessage <-
   function(raw_data) {
@@ -898,7 +921,8 @@ zeroBagsMessage <-
 #' @inheritParams clean
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family quality functions
 
 naBagsMessage <-
   function(raw_data) {
@@ -938,7 +962,8 @@ naBagsMessage <-
 #' @inheritParams clean
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family quality functions
 
 nonDigitBagsMessage <-
   function(raw_data) {
@@ -976,7 +1001,8 @@ nonDigitBagsMessage <-
 #' @inheritParams clean
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family quality functions
 
 qRegistrationYear <-
   function(raw_data) {

@@ -17,7 +17,8 @@
 #'   \code{\link{issueCheck}}
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family deduplication functions
 #'
 #' @export
 
@@ -205,7 +206,8 @@ duplicateFix <-
 #' @inheritParams duplicateFix
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family deduplication functions
 
 duplicateID <-
   function(current_data) {
@@ -238,7 +240,8 @@ duplicateID <-
 #' @param duplicates The tibble created by \code{\link{duplicateID}}
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family deduplication functions
 
 duplicateNewest <-
   function(duplicates) {
@@ -281,7 +284,8 @@ duplicateNewest <-
 #' @param duplicates The tibble created by \code{\link{duplicateID}}
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family deduplication functions
 
 duplicateAllOnes <-
   function(duplicates) {
@@ -310,7 +314,8 @@ duplicateAllOnes <-
 #' @param duplicates The tibble created by \code{\link{duplicateID}}
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family deduplication functions
 
 duplicateAllOnesGroupSize <-
   function(duplicates) {
@@ -347,7 +352,8 @@ duplicateAllOnesGroupSize <-
 #' @param dupes The tibble created by \code{\link{duplicateID}}
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family deduplication functions
 
 duplicateDecide <-
   function(dupes) {
@@ -400,7 +406,8 @@ duplicateDecide <-
 #' @param dupes Intermediate tibble created in \code{\link{duplicateFix}}
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family deduplication functions
 
 duplicateSample <-
   function(dupes) {
@@ -437,7 +444,8 @@ duplicateSample <-
 #' @param duplicates The tibble created by \code{\link{duplicateID}}
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family deduplication functions
 
 duplicateRecordType <-
   function(duplicates) {
@@ -478,7 +486,8 @@ duplicateRecordType <-
 #' \item `r REF_FIELDS_ALL`}
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family deduplication functions
 
 duplicateFields <-
   function(duplicates, fields) {
@@ -520,7 +529,8 @@ duplicateFields <-
 #' @inheritParams duplicateFix
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family deduplication functions
 #'
 #' @export
 
@@ -605,7 +615,9 @@ duplicateFinder <-
 #'   \code{\link{issueCheck}}
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family deduplication functions
+#' @family plotting functions
 #'
 #' @export
 

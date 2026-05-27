@@ -14,9 +14,14 @@ correctMiddleInitial(proofed_data)
 The internal \code{correctMiddleInitial} function changes non-alphabetic
 characters in the middle initial column to NA.
 }
-\references{
-\url{https://github.com/USFWS/migbirdHIP}
+\seealso{
+Other correcting functions: 
+\code{\link{correct}()},
+\code{\link{correctEmail}()},
+\code{\link{correctSuffix}()},
+\code{\link{correctTitle}()}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}
 }
+\concept{correcting functions}

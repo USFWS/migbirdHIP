@@ -16,9 +16,28 @@ should be plotted.}
 \description{
 Create a bar plot of errors by state, either by count or proportion.
 }
-\references{
-\url{https://github.com/USFWS/migbirdHIP}
+\seealso{
+Other error-finding functions: 
+\code{\link{errorLevelErrorsByField}()},
+\code{\link{errorLevelErrorsByState}()},
+\code{\link{errorPlotDL}()},
+\code{\link{errorPlotFields}()},
+\code{\link{errorTable}()},
+\code{\link{errorTableSummary}()},
+\code{\link{pullErrors}()},
+\code{\link{redFlags}()}
+
+Other plotting functions: 
+\code{\link{duplicatePlot}()},
+\code{\link{errorLevelErrorsByField}()},
+\code{\link{errorLevelErrorsByState}()},
+\code{\link{errorPlotDL}()},
+\code{\link{errorPlotFields}()},
+\code{\link{issuePlot}()},
+\code{\link{redFlags}()}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}
 }
+\concept{error-finding functions}
+\concept{plotting functions}

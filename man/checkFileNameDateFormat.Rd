@@ -14,9 +14,20 @@ The internal \code{checkFileNameDateFormat} function is used inside of
 \code{\link{read_hip}} to return an error message if any file does not have a
 date formatted as YYYYMMDD.
 }
-\references{
-\url{https://github.com/USFWS/migbirdHIP}
+\seealso{
+Other reading functions: 
+\code{\link{checkFileNameStateAbbr}()},
+\code{\link{dropBlankFiles}()},
+\code{\link{dropBlankLines}()},
+\code{\link{idBlankFiles}()},
+\code{\link{ignoreHolds}()},
+\code{\link{ignoreLifetime}()},
+\code{\link{ignorePermits}()},
+\code{\link{listFiles}()},
+\code{\link{readTimeMessage}()},
+\code{\link{read_hip}()}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}
 }
+\concept{reading functions}

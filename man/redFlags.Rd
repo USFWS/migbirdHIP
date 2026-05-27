@@ -21,9 +21,28 @@ redFlags(proofed_data, type, threshold = 0)
 Create a tibble of error data by state or field. Data are reported using a
 threshold of proportion of error.
 }
-\references{
-\url{https://github.com/USFWS/migbirdHIP}
+\seealso{
+Other error-finding functions: 
+\code{\link{errorLevelErrorsByField}()},
+\code{\link{errorLevelErrorsByState}()},
+\code{\link{errorPlotDL}()},
+\code{\link{errorPlotFields}()},
+\code{\link{errorPlotStates}()},
+\code{\link{errorTable}()},
+\code{\link{errorTableSummary}()},
+\code{\link{pullErrors}()}
+
+Other plotting functions: 
+\code{\link{duplicatePlot}()},
+\code{\link{errorLevelErrorsByField}()},
+\code{\link{errorLevelErrorsByState}()},
+\code{\link{errorPlotDL}()},
+\code{\link{errorPlotFields}()},
+\code{\link{errorPlotStates}()},
+\code{\link{issuePlot}()}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}
 }
+\concept{error-finding functions}
+\concept{plotting functions}

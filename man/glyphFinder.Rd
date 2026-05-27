@@ -19,9 +19,11 @@ the fields from the following list may be supplied:
 The internal \code{glyphFinder} function pulls non-UTF-8 characters in a
 field.
 }
-\references{
-\url{https://github.com/USFWS/migbirdHIP}
+\seealso{
+Other glyph functions: 
+\code{\link{glyphCheck}()}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}
 }
+\concept{glyph functions}

@@ -14,9 +14,20 @@ The internal \code{duplicateSample} function is used inside of
 \code{\link{duplicateFix}} to deduplicate intermediate tibbles that have been
 evaluated using other criteria already.
 }
-\references{
-\url{https://github.com/USFWS/migbirdHIP}
+\seealso{
+Other deduplication functions: 
+\code{\link{duplicateAllOnes}()},
+\code{\link{duplicateAllOnesGroupSize}()},
+\code{\link{duplicateDecide}()},
+\code{\link{duplicateFields}()},
+\code{\link{duplicateFinder}()},
+\code{\link{duplicateFix}()},
+\code{\link{duplicateID}()},
+\code{\link{duplicateNewest}()},
+\code{\link{duplicatePlot}()},
+\code{\link{duplicateRecordType}()}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}
 }
+\concept{deduplication functions}

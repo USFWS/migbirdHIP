@@ -16,7 +16,8 @@
 #' @inheritParams clean
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family shifting functions
 #'
 #' @export
 
@@ -64,7 +65,8 @@ shiftCheck <-
 #' @inheritParams clean
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family shifting functions
 
 shiftFinder <-
   function(raw_data) {

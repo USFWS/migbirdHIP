@@ -14,9 +14,23 @@ The internal \code{zeroDateMessage} function is used inside of
 \code{\link{issueMessages}} and \code{\link{issueCheck}} to return a message
 if "00/00/0000" values are detected in the \code{issue_date} field.
 }
-\references{
-\url{https://github.com/USFWS/migbirdHIP}
+\seealso{
+Other issuance functions: 
+\code{\link{badDateMessage}()},
+\code{\link{futureDateMessage}()},
+\code{\link{invalidDateMessage}()},
+\code{\link{issueAssign}()},
+\code{\link{issueCheck}()},
+\code{\link{issueDecide}()},
+\code{\link{issueMessages}()},
+\code{\link{issuePlot}()},
+\code{\link{issuePrint}()},
+\code{\link{pastDateMessage}()},
+\code{\link{regYearEditMessage}()},
+\code{\link{timeTravelMessage}()},
+\code{\link{twoSeasonMessage}()}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}
 }
+\concept{issuance functions}

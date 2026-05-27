@@ -17,9 +17,23 @@ The internal \code{issueMessages} function is used inside of
 of past registrations, count of future registrations, and 2-season overlap
 registrations.
 }
-\references{
-\url{https://github.com/USFWS/migbirdHIP}
+\seealso{
+Other issuance functions: 
+\code{\link{badDateMessage}()},
+\code{\link{futureDateMessage}()},
+\code{\link{invalidDateMessage}()},
+\code{\link{issueAssign}()},
+\code{\link{issueCheck}()},
+\code{\link{issueDecide}()},
+\code{\link{issuePlot}()},
+\code{\link{issuePrint}()},
+\code{\link{pastDateMessage}()},
+\code{\link{regYearEditMessage}()},
+\code{\link{timeTravelMessage}()},
+\code{\link{twoSeasonMessage}()},
+\code{\link{zeroDateMessage}()}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}
 }
+\concept{issuance functions}

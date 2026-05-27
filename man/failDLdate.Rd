@@ -14,9 +14,15 @@ failDLdate(corrected_data)
 The internal \code{qDLdate} function is used inside of
 \code{\link{write_hip}}.
 }
-\references{
-\url{https://github.com/USFWS/migbirdHIP}
+\seealso{
+Other failure functions: 
+\code{\link{failBTPI}()},
+\code{\link{failCR}()},
+\code{\link{failDLstate}()},
+\code{\link{failTF}()},
+\code{\link{failYear}()}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}
 }
+\concept{failure functions}

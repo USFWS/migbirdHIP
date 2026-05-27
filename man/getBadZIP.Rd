@@ -14,9 +14,23 @@ The internal \code{getBadZIP} function is used inside of
 \code{\link{proof}} and \code{\link{qualityMessages}} to filter to
 \code{zip} values that are not expected. Used by \code{\link{qZIP}}.
 }
-\references{
-\url{https://github.com/USFWS/migbirdHIP}
+\seealso{
+Other proofing functions: 
+\code{\link{getBadAddress}()},
+\code{\link{getBadBirthDate}()},
+\code{\link{getBadCity}()},
+\code{\link{getBadFirstName}()},
+\code{\link{getBadHuntMigBirds}()},
+\code{\link{getBadLastName}()},
+\code{\link{getBadMiddle}()},
+\code{\link{getBadRegYear}()},
+\code{\link{getBadState}()},
+\code{\link{getBadSuffix}()},
+\code{\link{getBadTitle}()},
+\code{\link{proof}()},
+\code{\link{proofBadEmails}()}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}
 }
+\concept{proofing functions}

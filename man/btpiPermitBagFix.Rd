@@ -19,9 +19,18 @@ records. This function changes band_tailed_pigeon "2" values to "0" so that
 they are classified as HIP records until permit files are received later in
 the hunting season.
 }
-\references{
-\url{https://github.com/USFWS/migbirdHIP}
+\seealso{
+Other cleaning functions: 
+\code{\link{clean}()},
+\code{\link{cranePermitBagFix}()},
+\code{\link{formatZip}()},
+\code{\link{inLinePermitDNHFix}()},
+\code{\link{missingPIIFilter}()},
+\code{\link{moveSuffixes}()},
+\code{\link{namesToUppercase}()},
+\code{\link{zipCheck}()}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}
 }
+\concept{cleaning functions}

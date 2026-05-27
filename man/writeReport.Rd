@@ -25,9 +25,11 @@ or suffix indicating file type, this is done automatically)}
 Create documentation with figures and tables that summarizes HIP data at a
 download cycle scale.
 }
-\references{
-\url{https://github.com/USFWS/migbirdHIP}
+\seealso{
+Other writing functions: 
+\code{\link{write_hip}()}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}
 }
+\concept{writing functions}

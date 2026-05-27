@@ -18,9 +18,23 @@ The internal \code{getBadRegistrationYear} function is used inside of
 \code{registration_yr} values that are not expected. We expect the
 registration_yr to equal the current hunting season.
 }
-\references{
-\url{https://github.com/USFWS/migbirdHIP}
+\seealso{
+Other proofing functions: 
+\code{\link{getBadAddress}()},
+\code{\link{getBadBirthDate}()},
+\code{\link{getBadCity}()},
+\code{\link{getBadFirstName}()},
+\code{\link{getBadHuntMigBirds}()},
+\code{\link{getBadLastName}()},
+\code{\link{getBadMiddle}()},
+\code{\link{getBadState}()},
+\code{\link{getBadSuffix}()},
+\code{\link{getBadTitle}()},
+\code{\link{getBadZIP}()},
+\code{\link{proof}()},
+\code{\link{proofBadEmails}()}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}
 }
+\concept{proofing functions}

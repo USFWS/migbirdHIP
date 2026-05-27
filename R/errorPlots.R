@@ -38,7 +38,9 @@
 #'  }
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family error-finding functions
+#' @family plotting functions
 #'
 #' @export
 
@@ -160,7 +162,9 @@ errorPlotDL <-
 #' @param year The year in which the HIP data were collected.
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family error-finding functions
+#' @family plotting functions
 #'
 #' @export
 
@@ -243,7 +247,9 @@ errorPlotFields <-
 #'   should be plotted.
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family error-finding functions
+#' @family plotting functions
 #'
 #' @export
 
@@ -369,7 +375,9 @@ errorPlotStates <-
 #'   \code{\link{proof}} or \code{\link{correct}}
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family error-finding functions
+#' @family plotting functions
 
 errorLevelErrorsByState <-
   function(proofed_data) {
@@ -408,7 +416,9 @@ errorLevelErrorsByState <-
 #'   \code{\link{proof}} or \code{\link{correct}}
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family error-finding functions
+#' @family plotting functions
 
 errorLevelErrorsByField <-
   function(proofed_data) {
@@ -452,7 +462,9 @@ errorLevelErrorsByField <-
 #' @param threshold Value above which errors should be tabulated
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family error-finding functions
+#' @family plotting functions
 
 redFlags <-
   function(proofed_data, type, threshold = 0) {

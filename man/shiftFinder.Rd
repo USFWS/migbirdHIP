@@ -14,9 +14,11 @@ shiftFinder(raw_data)
 The internal \code{shiftFinder} function finds any rows that have a line
 shift error.
 }
-\references{
-\url{https://github.com/USFWS/migbirdHIP}
+\seealso{
+Other shifting functions: 
+\code{\link{shiftCheck}()}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}
 }
+\concept{shifting functions}

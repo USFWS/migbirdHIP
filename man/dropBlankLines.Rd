@@ -14,9 +14,20 @@ The internal \code{dropBlankLines} function is used inside of
 \code{\link{read_hip}} to filter out any rows with \code{NA} in every field
 or a blank line beginning with \code{Result}.
 }
-\references{
-\url{https://github.com/USFWS/migbirdHIP}
+\seealso{
+Other reading functions: 
+\code{\link{checkFileNameDateFormat}()},
+\code{\link{checkFileNameStateAbbr}()},
+\code{\link{dropBlankFiles}()},
+\code{\link{idBlankFiles}()},
+\code{\link{ignoreHolds}()},
+\code{\link{ignoreLifetime}()},
+\code{\link{ignorePermits}()},
+\code{\link{listFiles}()},
+\code{\link{readTimeMessage}()},
+\code{\link{read_hip}()}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}
 }
+\concept{reading functions}

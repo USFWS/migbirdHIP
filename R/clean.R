@@ -9,7 +9,8 @@
 #'   \code{\link{read_hip}}
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family cleaning functions
 #'
 #' @export
 
@@ -71,7 +72,8 @@ clean <-
 #' @inheritParams clean
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family cleaning functions
 
 namesToUppercase <-
   function(raw_data) {
@@ -94,7 +96,8 @@ namesToUppercase <-
 #' @inheritParams clean
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family cleaning functions
 
 missingPIIFilter <-
   function(raw_data) {
@@ -133,7 +136,8 @@ missingPIIFilter <-
 #' @inheritParams clean
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family cleaning functions
 
 moveSuffixes <-
   function(raw_data) {
@@ -187,7 +191,8 @@ moveSuffixes <-
 #' @inheritParams clean
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family cleaning functions
 
 formatZip <-
   function(raw_data) {
@@ -251,7 +256,8 @@ formatZip <-
 #' @inheritParams clean
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family cleaning functions
 
 inLinePermitDNHFix <-
   function(raw_data) {
@@ -288,7 +294,8 @@ inLinePermitDNHFix <-
 #' @inheritParams clean
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family cleaning functions
 
 zipCheck <-
   function(raw_data) {
@@ -341,7 +348,8 @@ zipCheck <-
 #' @inheritParams clean
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family cleaning functions
 
 cranePermitBagFix <-
   function(raw_data) {
@@ -401,7 +409,8 @@ cranePermitBagFix <-
 #' @inheritParams clean
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#' 
+#' @family cleaning functions
 
 btpiPermitBagFix <-
   function(raw_data) {

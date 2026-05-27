@@ -17,9 +17,20 @@ The internal \code{listFiles} function is used inside of
 \code{\link{read_hip}} and creates a tibble of the HIP .txt files to be read
 in from the provided directory.
 }
-\references{
-\url{https://github.com/USFWS/migbirdHIP}
+\seealso{
+Other reading functions: 
+\code{\link{checkFileNameDateFormat}()},
+\code{\link{checkFileNameStateAbbr}()},
+\code{\link{dropBlankFiles}()},
+\code{\link{dropBlankLines}()},
+\code{\link{idBlankFiles}()},
+\code{\link{ignoreHolds}()},
+\code{\link{ignoreLifetime}()},
+\code{\link{ignorePermits}()},
+\code{\link{readTimeMessage}()},
+\code{\link{read_hip}()}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}
 }
+\concept{reading functions}

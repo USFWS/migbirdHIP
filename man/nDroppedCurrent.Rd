@@ -19,9 +19,12 @@ nDroppedCurrent(clean_data, current_data, year)
 Internal function that helps \code{\link{nDropped}} by summarizing the number
 of dropped registrations by \code{\link{issueCheck}}.
 }
-\references{
-\url{https://github.com/USFWS/migbirdHIP}
+\seealso{
+Other summary functions: 
+\code{\link{nDropped}()},
+\code{\link{nDroppedClean}()}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}
 }
+\concept{summary functions}

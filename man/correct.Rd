@@ -18,9 +18,14 @@ After flagging errors in the data with \code{\link{proof}}, attempt
 corrections in all fields. Errors that cannot be programmatically corrected
 will be reported for manual correction.
 }
-\references{
-\url{https://github.com/USFWS/migbirdHIP}
+\seealso{
+Other correcting functions: 
+\code{\link{correctEmail}()},
+\code{\link{correctMiddleInitial}()},
+\code{\link{correctSuffix}()},
+\code{\link{correctTitle}()}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}
 }
+\concept{correcting functions}

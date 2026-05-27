@@ -18,9 +18,11 @@ summarizeBadBags(deduplicated_data, bad_bag_values, x)
 The internal \code{filterOutOregonPermits} function calculates the count and
 proportion of a bad bag value inside of \code{\link{bagCheck}}.
 }
-\references{
-\url{https://github.com/USFWS/migbirdHIP}
+\seealso{
+Other bag functions: 
+\code{\link{bagCheck}()}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}
 }
+\concept{bag functions}

@@ -14,9 +14,28 @@ errorLevelErrorsByField(proofed_data)
 The internal \code{errorLevelErrorsByField} function calculates a summary
 table of the count of errors and proportion of erroneous values by field.
 }
-\references{
-\url{https://github.com/USFWS/migbirdHIP}
+\seealso{
+Other error-finding functions: 
+\code{\link{errorLevelErrorsByState}()},
+\code{\link{errorPlotDL}()},
+\code{\link{errorPlotFields}()},
+\code{\link{errorPlotStates}()},
+\code{\link{errorTable}()},
+\code{\link{errorTableSummary}()},
+\code{\link{pullErrors}()},
+\code{\link{redFlags}()}
+
+Other plotting functions: 
+\code{\link{duplicatePlot}()},
+\code{\link{errorLevelErrorsByState}()},
+\code{\link{errorPlotDL}()},
+\code{\link{errorPlotFields}()},
+\code{\link{errorPlotStates}()},
+\code{\link{issuePlot}()},
+\code{\link{redFlags}()}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}
 }
+\concept{error-finding functions}
+\concept{plotting functions}

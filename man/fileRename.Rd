@@ -17,9 +17,11 @@ This function overwrites HIP filenames. Files in the supplied directory are
 renamed by converting the Julian date to YYYYMMDD format. State abbreviations
 that are in lowercase format are capitalized.
 }
-\references{
-\url{https://github.com/USFWS/migbirdHIP}
+\seealso{
+Other file functions: 
+\code{\link{fileCheck}()}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}
 }
+\concept{file functions}

@@ -14,9 +14,35 @@ qZIP(raw_data)
 The internal \code{qZIP} function returns a message for bad \code{zip}
 values. Uses internal helper \code{\link{getBadZIP}}.
 }
-\references{
-\url{https://github.com/USFWS/migbirdHIP}
+\seealso{
+Other quality functions: 
+\code{\link{inLinePermitDNHMessage}()},
+\code{\link{interStateDuplicatesMessage}()},
+\code{\link{missingEmailsMessage}()},
+\code{\link{missingPIIMessage}()},
+\code{\link{naBagsMessage}()},
+\code{\link{nonDigitBagsMessage}()},
+\code{\link{nonResidentMessage}()},
+\code{\link{permitFileBagsMessage}()},
+\code{\link{qAddress}()},
+\code{\link{qBags}()},
+\code{\link{qBirthDate}()},
+\code{\link{qBirthDateRange}()},
+\code{\link{qCity}()},
+\code{\link{qFirstName}()},
+\code{\link{qHuntMigBirds}()},
+\code{\link{qLastName}()},
+\code{\link{qMiddle}()},
+\code{\link{qRegistrationYear}()},
+\code{\link{qState}()},
+\code{\link{qSuffix}()},
+\code{\link{qSummary}()},
+\code{\link{qTitle}()},
+\code{\link{qualityMessages}()},
+\code{\link{testRecordMessage}()},
+\code{\link{zeroBagsMessage}()}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}
 }
+\concept{quality functions}
