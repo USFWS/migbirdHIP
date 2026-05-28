@@ -717,7 +717,8 @@ issuePlot <-
               color = .data$registration_yr),
           fill = "#FFFFFF",
           width = 0,
-          size = 3,
+          linewidth = 3,
+          outlier.size = 3,
           position = "identity") +
         # Bad issue date colors
         scale_color_manual(
@@ -736,9 +737,7 @@ issuePlot <-
                      as.Date(paste(year + 1, "11-01", sep = "-")),
                      as.Date(paste(year + 2, "01-01", sep = "-")),
                      as.Date(paste(year + 2, "03-01", sep = "-"))),
-          date_labels = c("%b %Y", "%b", "%b", "%b %Y",
-                          "%b %Y", "%b", "%b", "%b %Y",
-                          "%b %Y", "%b", "%b", "%b %Y")) +
+          labels = issuePlotDateLabel()) +
         theme_classic() +
         theme(
           axis.text = element_text(size = 11),
@@ -755,5 +754,40 @@ issuePlot <-
 
     } else {
       message("* No bad data to plot.")
+    }
+  }
+
+#' Label dates for issue date plot
+#'
+#' The internal \code{issuePlotDateLabel} function labels x-axis dates for
+#' \code{\link{issuePlot}}.
+#'
+#' @importFrom lubridate year
+#'
+#' @param x Vector of dates
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#'
+#' @family issuance functions
+#' @family plotting functions
+
+issuePlotDateLabel <-
+  function(x) {
+    function(x) {
+      if (length(x) == 0) return(character(0))
+
+      # Get months and years
+      mths <- format(x, "%b")
+      yrs  <- year(x)
+
+      # Identify where years transition
+      is_new_year <- c(TRUE, yrs[-1] != yrs[-length(yrs)])
+
+      # If new year, add year to month label
+      ifelse(
+        is_new_year,
+        paste(mths, yrs, sep = "\n\n"),
+        mths
+      )
     }
   }

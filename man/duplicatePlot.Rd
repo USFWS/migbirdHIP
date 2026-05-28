@@ -33,6 +33,7 @@ Other plotting functions:
 \code{\link{errorPlotFields}()},
 \code{\link{errorPlotStates}()},
 \code{\link{issuePlot}()},
+\code{\link{issuePlotDateLabel}()},
 \code{\link{redFlags}()}
 }
 \author{

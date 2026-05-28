@@ -59,6 +59,13 @@
       - `readTimeMessage()` - moved the `read_hip()` code chunk pertaining to read time duration to its own internal function.
   - `questionYear()`
     - New function that questions if the user intends to supply a year value different than the current season year; replaces a duplicated code chunk in `proof()` and `correct()`, and added to `issueCheck()`.
+  - `issuePlot()`
+    - Updated to conform to `{ggplot2}` version updates
+      - Replaced `geom_segment()` `size` to `linewidth`
+      - Replaced `geom_boxplot()` `size = 3` with `linewidth = 3` AND `outlier.size = 3`
+      - Created `issuePlotDateLabel()` helper function to:
+        - Avoid error with labeling dates in x-axis (see \#[88](https://github.com/USFWS/migbirdHIP/issues/88))
+        - Avoid using `scales::label_date_short()` which would require adding `{scales}` to Imports
 
 ## Minor changes / bug fixes
 

@@ -24,6 +24,7 @@ Other issuance functions:
 \code{\link{issueDecide}()},
 \code{\link{issueMessages}()},
 \code{\link{issuePlot}()},
+\code{\link{issuePlotDateLabel}()},
 \code{\link{issuePrint}()},
 \code{\link{pastDateMessage}()},
 \code{\link{regYearEditMessage}()},

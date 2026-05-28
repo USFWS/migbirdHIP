@@ -23,6 +23,7 @@ Other issuance functions:
 \code{\link{issueCheck}()},
 \code{\link{issueDecide}()},
 \code{\link{issueMessages}()},
+\code{\link{issuePlotDateLabel}()},
 \code{\link{issuePrint}()},
 \code{\link{pastDateMessage}()},
 \code{\link{regYearEditMessage}()},
@@ -37,6 +38,7 @@ Other plotting functions:
 \code{\link{errorPlotDL}()},
 \code{\link{errorPlotFields}()},
 \code{\link{errorPlotStates}()},
+\code{\link{issuePlotDateLabel}()},
 \code{\link{redFlags}()}
 }
 \author{

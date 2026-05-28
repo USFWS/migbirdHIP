@@ -34,6 +34,7 @@ Other plotting functions:
 \code{\link{errorPlotDL}()},
 \code{\link{errorPlotFields}()},
 \code{\link{issuePlot}()},
+\code{\link{issuePlotDateLabel}()},
 \code{\link{redFlags}()}
 }
 \author{

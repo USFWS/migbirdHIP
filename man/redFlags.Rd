@@ -39,7 +39,8 @@ Other plotting functions:
 \code{\link{errorPlotDL}()},
 \code{\link{errorPlotFields}()},
 \code{\link{errorPlotStates}()},
-\code{\link{issuePlot}()}
+\code{\link{issuePlot}()},
+\code{\link{issuePlotDateLabel}()}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}

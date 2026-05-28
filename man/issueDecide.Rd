@@ -27,6 +27,7 @@ Other issuance functions:
 \code{\link{issueCheck}()},
 \code{\link{issueMessages}()},
 \code{\link{issuePlot}()},
+\code{\link{issuePlotDateLabel}()},
 \code{\link{issuePrint}()},
 \code{\link{pastDateMessage}()},
 \code{\link{regYearEditMessage}()},
