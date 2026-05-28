@@ -247,3 +247,33 @@ failCR <-
       "Error: Sea ducks bag must be 0 in CR permit files." =
         unique(corrected_data$seaducks) == 0)
   }
+
+#' Fail if field widths are exceeded by any value
+#'
+#' Internal function that fails inside of \code{\link{write_hip}} if any value
+#' exceeds designated field widths.
+#'
+#' @importFrom assertthat assert_that
+#' @importFrom dplyr select
+#' @importFrom purrr map_int
+#'
+#' @param corrected_data The object created after correcting data with
+#'   \code{\link{correct}}
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#'
+#' @family failure functions
+#' @family writing functions
+
+failWidths <-
+  function(corrected_data) {
+    q <-
+      corrected_data |>
+      select("title":"email") |>
+      map_int(\(x) max(nchar(as.character(x)), na.rm = TRUE))
+
+    assert_that(
+      FALSE == TRUE %in% c(q > REF_FWF_WIDTHS),
+      msg = "A value's length has exceeded the fixed-width field limits."
+    )
+  }

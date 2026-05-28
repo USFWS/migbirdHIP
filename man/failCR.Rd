@@ -19,6 +19,7 @@ Other failure functions:
 \code{\link{failDLdate}()},
 \code{\link{failDLstate}()},
 \code{\link{failTF}()},
+\code{\link{failWidths}()},
 \code{\link{failYear}()}
 }
 \author{

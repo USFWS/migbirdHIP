@@ -27,6 +27,7 @@ download cycle scale.
 }
 \seealso{
 Other writing functions: 
+\code{\link{failWidths}()},
 \code{\link{write_hip}()}
 }
 \author{

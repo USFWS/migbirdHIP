@@ -9,6 +9,11 @@
 
 # Define variables to evaluate data consistently across functions
 
+# Vector of field lengths
+REF_FWF_WIDTHS <-
+  c(1, 15, 1, 20, 3, 60, 20, 2, 10, 10, 10, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4,
+    NA)
+
 # Vector of state abbreviations (NOT INCLUDING Oregon or Washington) that have a
 # hunting season for both sea ducks AND brant
 REF_STATES_SD_BR <-

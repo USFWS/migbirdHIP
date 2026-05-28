@@ -20,6 +20,7 @@ Other failure functions:
 \code{\link{failCR}()},
 \code{\link{failDLdate}()},
 \code{\link{failTF}()},
+\code{\link{failWidths}()},
 \code{\link{failYear}()}
 }
 \author{

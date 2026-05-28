@@ -12,6 +12,7 @@
     - Since `read_hip()` already checks the file names that source `dl_state` and `dl_date`, it seems redundant to use `dlStateNAMessage()` and `dlDateNAMessage()`. Instead of moving them to `quality.R` with the rest of the quality check helpers, they were moved to `fails.R` and help inside of `write_hip()`, since the most critical use of these fields is in the data export step.
       - `failDLstate()` - refactored `dlStateNAMessage()`
       - `failDLdate()` - refactored `dlDateNAMessage()`
+    - `failWidths()` - NEW (see \#[72](https://github.com/USFWS/migbirdHIP/issues/72))
   - Data proofing helper functions in `proof.R`
     - New helper functions help split `proof()` into smaller parts. They filter to bad values, and some are reused by `qualityMessages()` helper functions.
       - `getBadTitle()` - also checks title assignments (new) in addition to value expectations
@@ -510,4 +511,3 @@ Final definitive version for the 2025-2026 season.
 # migbirdHarvestData 1.0.0
 
 - First fully functional version
-

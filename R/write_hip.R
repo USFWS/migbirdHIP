@@ -42,6 +42,7 @@ write_hip <-
     failProofed(corrected_data)
     failDLstate(corrected_data)
     failDLdate(corrected_data)
+    failWidths(corrected_data)
     failTF(split)
 
     # Add a final "/" if not included already

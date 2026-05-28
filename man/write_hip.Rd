@@ -25,6 +25,7 @@ write the data to csv.
 }
 \seealso{
 Other writing functions: 
+\code{\link{failWidths}()},
 \code{\link{writeReport}()}
 }
 \author{

@@ -104,8 +104,7 @@ read_hip <-
           # Compile each state's file into one table
           read_fwf(
             file_list_vector[i],
-            fwf_widths(c(1, 15, 1, 20, 3, 60, 20, 2, 10, 10, 10,
-                         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4, NA)),
+            fwf_widths(REF_FWF_WIDTHS),
             col_types = "cccccccccccccccccccccccc",
             na = c("N/A", "")) |>
             mutate(

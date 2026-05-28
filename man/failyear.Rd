@@ -19,7 +19,8 @@ Other failure functions:
 \code{\link{failCR}()},
 \code{\link{failDLdate}()},
 \code{\link{failDLstate}()},
-\code{\link{failTF}()}
+\code{\link{failTF}()},
+\code{\link{failWidths}()}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}
