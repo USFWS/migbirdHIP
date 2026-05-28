@@ -797,12 +797,13 @@ qBirthDateRange <-
       select("source_file", "birth_date") |>
       mutate(bday = mdy(.data$birth_date, quiet = TRUE)) |>
       summarize(
-        min_bday = min(bday),
-        max_bday = max(bday),
-        range_bday = time_length(max(bday) - min(bday), unit = "day"),
+        min_bday = min(.data$bday),
+        max_bday = max(.data$bday),
+        range_bday =
+          time_length(max(.data$bday) - min(.data$bday), unit = "day"),
         .by = "source_file"
       ) |>
-      filter(range_bday < 365)
+      filter(.data$range_bday < 365)
 
     if (nrow(q) > 0) {
       message("Birth date values do not span more than 365 days.")
