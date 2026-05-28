@@ -1,7 +1,7 @@
 #' Check issue dates and license years
 #'
 #' After cleaning the data with \code{\link{clean}}, ensure each record is
-#' assigned the appropriate registration_yr.
+#' assigned the appropriate \code{registration_yr}.
 #'
 #' @importFrom dplyr filter
 #' @importFrom dplyr select
