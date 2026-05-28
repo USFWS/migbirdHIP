@@ -1,8 +1,8 @@
 #' Proof data and flag errors
 #'
-#' After cleaning the data with \code{\link{clean}}, compare each field to an
-#' expected range of values and flag non-conforming values in a new "errors"
-#' column.
+#' After data are deduplicated with \code{\link{duplicateFix}}, asses each
+#' field's values and flag records with unexpected or erroneous values in a new
+#' \code{errors} field.
 #'
 #' @importFrom dplyr mutate
 #' @importFrom dplyr row_number
