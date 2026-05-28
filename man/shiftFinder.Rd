@@ -15,6 +15,8 @@ The internal \code{shiftFinder} function finds any rows that have a line
 shift error.
 }
 \seealso{
+\code{\link[=glyphFinder]{glyphFinder()}}
+
 Other shifting functions: 
 \code{\link{shiftCheck}()}
 }

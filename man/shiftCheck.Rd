@@ -15,6 +15,8 @@ Find and print any rows that have a line shift error with number of positions
 shifted.
 }
 \seealso{
+\code{\link[=glyphCheck]{glyphCheck()}}
+
 Other shifting functions: 
 \code{\link{shiftFinder}()}
 }

@@ -20,6 +20,7 @@
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #'
+#' @seealso [shiftFinder()]
 #' @family glyph functions
 
 glyphFinder <-
@@ -51,6 +52,7 @@ glyphFinder <-
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #'
+#' @seealso [shiftCheck()]
 #' @family glyph functions
 #'
 #' @export

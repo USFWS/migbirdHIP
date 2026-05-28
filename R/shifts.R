@@ -17,6 +17,7 @@
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #'
+#' @seealso [glyphCheck()]
 #' @family shifting functions
 #'
 #' @export
@@ -66,6 +67,7 @@ shiftCheck <-
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
 #'
+#' @seealso [glyphFinder()]
 #' @family shifting functions
 
 shiftFinder <-

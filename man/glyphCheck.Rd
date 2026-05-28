@@ -15,6 +15,8 @@ Pull and view any non-UTF-8 characters in the raw data. This function
 iterates \code{\link{glyphFinder}} over the entire tibble.
 }
 \seealso{
+\code{\link[=shiftCheck]{shiftCheck()}}
+
 Other glyph functions: 
 \code{\link{glyphFinder}()}
 }

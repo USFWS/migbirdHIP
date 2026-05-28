@@ -20,6 +20,8 @@ The internal \code{glyphFinder} function pulls non-UTF-8 characters in a
 field.
 }
 \seealso{
+\code{\link[=shiftFinder]{shiftFinder()}}
+
 Other glyph functions: 
 \code{\link{glyphCheck}()}
 }
