@@ -31,6 +31,7 @@ Other quality functions:
 \code{\link{qCity}()},
 \code{\link{qFirstName}()},
 \code{\link{qHuntMigBirds}()},
+\code{\link{qIssueDateRange}()},
 \code{\link{qLastName}()},
 \code{\link{qRegistrationYear}()},
 \code{\link{qState}()},

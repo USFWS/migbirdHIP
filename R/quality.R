@@ -38,6 +38,7 @@ qualityMessages <-
     qZIP(raw2)
     qBirthDate(raw2, year)
     qBirthDateRange(raw2)
+    qIssueDateRange(raw2)
     qHuntMigBirds(raw_data)
     qRegistrationYear(raw_data)
 
@@ -772,8 +773,8 @@ qBirthDate <-
 #' Birth date range message
 #'
 #' The internal \code{qBirthDateRange} function returns a message for
-#' \code{birth_date} values that do not span a period of time more than 365
-#' days.
+#' \code{birth_date} values in a file that do not span a period of time more
+#' than 365 days.
 #'
 #' @importFrom dplyr select
 #' @importFrom dplyr mutate
@@ -807,6 +808,47 @@ qBirthDateRange <-
 
     if (nrow(q) > 0) {
       message("Birth date values do not span more than 365 days.")
+      print(q)
+    }
+
+  }
+
+#' Issue date range message
+#'
+#' The internal \code{qIssueDateRange} function returns a message for
+#' \code{issue_date} values in a file that do not span a period of time more
+#' than 1 day.
+#'
+#' @importFrom dplyr filter
+#' @importFrom dplyr distinct
+#' @importFrom dplyr count
+#' @importFrom dplyr inner_join
+#' @importFrom rlang .data
+#'
+#' @param raw_data The product of \code{\link{read_hip}}
+#'
+#' @author Abby Walter, \email{abby_walter@@fws.gov}
+#'
+#' @family quality functions
+
+qIssueDateRange <-
+  function(raw_data) {
+
+    q1 <-
+      raw_data |>
+      filter(.data$file_size > 1) |>
+      distinct("source_file", "file_size")
+
+    q2 <-
+      raw_data |>
+      distinct(.data$source_file, .data$issue_date) |>
+      count(.data$source_file, name = "n_issue_dates") |>
+      filter(.data$n_issue_dates == 1)
+
+    q <- inner_join(q1, q2)
+
+    if (nrow(q) > 0) {
+      message("Issue date values do not span more than a single day.")
       print(q)
     }
 

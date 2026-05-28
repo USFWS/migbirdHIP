@@ -41,6 +41,7 @@
         - `qZIP()` - NEW
         - `qBirthDate()` - NEW
         - `qBirthDateRange()` - NEW
+        - `qIssueDateRange()` - NEW
         - `qHuntMigBirds()` - previously `huntMigBirdsMessage()`
         - `qBags()` - umbrella for existing `zeroBagsMessage()`, `naBagsMessage()` and `nonDigitBagsMessage()`
         - `qRegistrationYear()` - previously `badRegYearMessage()`
@@ -509,3 +510,4 @@ Final definitive version for the 2025-2026 season.
 # migbirdHarvestData 1.0.0
 
 - First fully functional version
+

@@ -30,6 +30,7 @@ Other quality functions:
 \code{\link{qBirthDateRange}()},
 \code{\link{qFirstName}()},
 \code{\link{qHuntMigBirds}()},
+\code{\link{qIssueDateRange}()},
 \code{\link{qLastName}()},
 \code{\link{qMiddle}()},
 \code{\link{qRegistrationYear}()},

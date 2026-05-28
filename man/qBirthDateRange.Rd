@@ -11,8 +11,8 @@ qBirthDateRange(raw_data)
 }
 \description{
 The internal \code{qBirthDateRange} function returns a message for
-\code{birth_date} values that do not span a period of time more than 365
-days.
+\code{birth_date} values in a file that do not span a period of time more
+than 365 days.
 }
 \seealso{
 Other quality functions: 
@@ -30,6 +30,7 @@ Other quality functions:
 \code{\link{qCity}()},
 \code{\link{qFirstName}()},
 \code{\link{qHuntMigBirds}()},
+\code{\link{qIssueDateRange}()},
 \code{\link{qLastName}()},
 \code{\link{qMiddle}()},
 \code{\link{qRegistrationYear}()},

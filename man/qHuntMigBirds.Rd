@@ -30,6 +30,7 @@ Other quality functions:
 \code{\link{qBirthDateRange}()},
 \code{\link{qCity}()},
 \code{\link{qFirstName}()},
+\code{\link{qIssueDateRange}()},
 \code{\link{qLastName}()},
 \code{\link{qMiddle}()},
 \code{\link{qRegistrationYear}()},
