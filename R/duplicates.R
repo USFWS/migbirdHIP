@@ -342,6 +342,7 @@ duplicateAllOnesGroupSize <-
 #' The internal \code{duplicateDecide} function is used inside of
 #' \code{\link{duplicateFix}} to deduplicate intermediate tibbles.
 #'
+#' @importFrom dtplyr lazy_dt
 #' @importFrom dplyr as_tibble
 #' @importFrom dplyr mutate
 #' @importFrom dplyr case_when
@@ -357,6 +358,7 @@ duplicateAllOnesGroupSize <-
 
 duplicateDecide <-
   function(dupes) {
+    dupes2 <- lazy_dt(dupes)
 
     dupes |>
       # Make decisions on which record to keep for each group
