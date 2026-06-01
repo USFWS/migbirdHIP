@@ -232,7 +232,6 @@ duplicateID <-
 #' @importFrom dtplyr lazy_dt
 #' @importFrom dplyr as_tibble
 #' @importFrom dplyr mutate
-#' @importFrom lubridate mdy
 #' @importFrom dplyr filter
 #' @importFrom dplyr select
 #' @importFrom rlang .data
@@ -249,21 +248,17 @@ duplicateNewest <-
       duplicates2 <- lazy_dt(duplicates)
 
       duplicates2 |>
-        # Identify records with most recent issue date
+        # Parse issue_date
         mutate(
-          x_issue_date =
-            ifelse(
-              .data$issue_date ==
-                strftime(
-                  max(mdy(.data$issue_date), na.rm = TRUE),
-                  format = "%m/%d/%Y"),
-              "newest",
-              NA),
-          .by = "duplicate_id"
-        ) |>
+          issue_date_dt = as.Date(.data$issue_date, format = "%m/%d/%Y")) |>
+        # Flag newest
+        mutate(
+          is_newest =
+            .data$issue_date_dt == max(.data$issue_date_dt, na.rm = TRUE),
+          .by = "duplicate_id") |>
         # Keep the record(s) from each group that were the most recent
-        filter(!is.na(.data$x_issue_date)) |>
-        select(-"x_issue_date") |>
+        filter(.data$is_newest) |>
+        select(-"is_newest", -"issue_date_dt") |>
         as_tibble()
     } else {
       duplicates
@@ -277,8 +272,8 @@ duplicateNewest <-
 #' containing "1" for every bag value.
 #'
 #' @importFrom dplyr mutate
-#' @importFrom purrr pmap_chr
-#' @importFrom dplyr select
+#' @importFrom dplyr if_else
+#' @importFrom dplyr across
 #' @importFrom dplyr all_of
 #'
 #' @param duplicates The tibble created by \code{\link{duplicateID}}
@@ -294,9 +289,13 @@ duplicateAllOnes <-
       # Flag records with 1 in every bag field
       mutate(
         all_ones =
-          pmap_chr(
-            select(duplicates, all_of(REF_FIELDS_BAG)),
-            \(...) ifelse(all(c(...) == "1"), "all_1s", "not_all_1s"))
+          if_else(
+            rowSums(
+              across(all_of(REF_FIELDS_BAG),
+                     ~ (. == "1"))) == length(REF_FIELDS_BAG),
+            "all_1s",
+            "not_all_1s"
+          )
       )
   }
 
@@ -438,6 +437,8 @@ duplicateSample <-
 #' @importFrom dplyr mutate
 #' @importFrom dplyr across
 #' @importFrom dplyr matches
+#' @importFrom dplyr if_else
+#' @importFrom dplyr select
 #' @importFrom rlang .data
 #'
 #' @param duplicates The tibble created by \code{\link{duplicateID}}
@@ -456,15 +457,25 @@ duplicateRecordType <-
     # columns is > 0, the record is an in-line permit.
     duplicates2 |>
       mutate(
+        non_pmt_sum =
+          rowSums(
+            across(
+              matches(eval(REGEX_NON_PMT_SPECIES)),
+              ~ as.integer(.), .names = NULL), na.rm = TRUE),
+        pmt_sum =
+          rowSums(
+            across(
+              matches("band|brant|seaducks"),
+              ~ as.integer(.), .names = NULL), na.rm = TRUE),
         record_type =
-          ifelse(
+          if_else(
             .data$dl_state %in% unique(REF_PMT_INLINE$dl_state) &
-              rowSums(across(matches(eval(REGEX_NON_PMT_SPECIES)), as.numeric),
-                      na.rm = T) == 0 &
-              rowSums(across(matches("band|brant|seaducks"), as.numeric),
-                      na.rm = T) > 0,
+              .data$non_pmt_sum == 0L & .data$pmt_sum > 0L,
             "PMT",
-            "HIP")) |>
+            "HIP"
+          )
+      ) |>
+      select(-"non_pmt_sum", -"pmt_sum") |>
       as_tibble()
   }
 
