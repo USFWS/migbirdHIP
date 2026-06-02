@@ -14,6 +14,22 @@ REF_FWF_WIDTHS <-
   c(1, 15, 1, 20, 3, 60, 20, 2, 10, 10, 10, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4,
     NA)
 
+# Vector of states in the Atlantic Flyway
+REF_STATES_AF <-
+  c("ME", "NH", "VT", "MA", "RI", "CT", "NY", "PA", "NJ", "MD", "DE", "WV",
+    "VA", "NC", "SC", "GA", "FL")
+
+# Vector of states in the Mississippi Flyway
+REF_STATES_MF <-
+  c("AL", "MS", "LA", "TN", "KY", "OH", "IL", "IA", "IN", "MI", "MN", "WI",
+    "MO", "AR")
+
+# Vector of states in the Central Flyway (contains MT, WY, CO, NM)
+REF_STATES_CF <- c("TX", "OK", "KS", "NE", "SD", "ND", "MT", "WY", "CO", "NM")
+
+# Vector of states in the Pacific Flyway
+REF_STATES_PF <- c("WA", "ID", "OR", "CA", "NV", "AZ", "UT", "AK")
+
 # Vector of state abbreviations (NOT INCLUDING Oregon or Washington) that have a
 # hunting season for both sea ducks AND brant
 REF_STATES_SD_BR <-
