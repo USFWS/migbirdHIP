@@ -718,7 +718,7 @@ issuePlot <-
           fill = "#FFFFFF",
           width = 0,
           linewidth = 3,
-          outlier.size = 3,
+          outlier.size = 2,
           position = "identity") +
         # Bad issue date colors
         scale_color_manual(
@@ -741,7 +741,6 @@ issuePlot <-
         theme_classic() +
         theme(
           axis.text = element_text(size = 11),
-          axis.text.x = element_text(angle = 60, vjust = 1, hjust = 1),
           axis.title = element_text(size = 14),
           panel.background = element_rect(color = "white"),
           panel.grid.major.y =
@@ -786,7 +785,7 @@ issuePlotDateLabel <-
       # If new year, add year to month label
       ifelse(
         is_new_year,
-        paste(mths, yrs, sep = "\n\n"),
+        paste(mths, yrs, sep = "\n"),
         mths
       )
     }
