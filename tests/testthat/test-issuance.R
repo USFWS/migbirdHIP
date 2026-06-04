@@ -264,7 +264,8 @@ test_that("issueAssign changes future registration_yr correctly", {
             paste0("05/01/", as.numeric(REF_CURRENT_SEASON) + 1))
     )
 
-  answers <- c(rep("2025", 4), "2026")
+  answers <- c(rep(REF_CURRENT_SEASON, 4),
+               as.character(as.numeric(REF_CURRENT_SEASON) + 1))
 
   suppressMessages(
     invisible(
