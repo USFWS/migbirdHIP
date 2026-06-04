@@ -2,6 +2,9 @@
 
 ## Major changes & new features
 
+- Constants and variables
+  - Changed `REF_CURRENT_SEASON` to `"2026"`
+  - Added `REF_STATES_AF`, `REF_STATES_MF`, `REF_STATES_CF`, and `REF_STATES_PF`
 - DESCRIPTION
   - Added `{dtplyr}` to Imports
 - `constants.R`
@@ -64,7 +67,10 @@
   - `issuePlot()`
     - Updated to conform to `{ggplot2}` version updates
       - Replaced `geom_segment()` `size` to `linewidth`
-      - Replaced `geom_boxplot()` `size = 3` with `linewidth = 3` AND `outlier.size = 3`
+      - Replaced `geom_boxplot()` `size = 3` with `linewidth = 2` AND `outlier.size = 2`, which is narrower than previously.
+      - Increased size of issue window segment width to make it easier for users to see if issue dates fall in, out, or across a season.
+      - Updated colors.
+      - Changed subtitle text for clarity.
       - Created `issuePlotDateLabel()` helper function to:
         - Avoid error with labeling dates in x-axis (see \#[88](https://github.com/USFWS/migbirdHIP/issues/88))
         - Avoid using `scales::label_date_short()` which would require adding `{scales}` to Imports
