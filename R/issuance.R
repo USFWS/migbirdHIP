@@ -673,7 +673,7 @@ issuePlot <-
             x = .data$issue_start, xend = .data$issue_end,
             y = reorder(.data$dl_state, desc(.data$issue_start)),
             color = .data$category),
-          linewidth = 3,
+          linewidth = 4,
           alpha = 0.4) +
         # Future issue window
         geom_segment(
@@ -682,7 +682,7 @@ issuePlot <-
             x = .data$issue_start, xend = .data$issue_end,
             y = reorder(.data$dl_state, desc(.data$issue_start)),
             color = .data$category),
-          linewidth = 3,
+          linewidth = 4,
           alpha = 0.4) +
         # Current issue window
         geom_segment(
@@ -691,22 +691,22 @@ issuePlot <-
             x = .data$issue_start, xend = .data$issue_end,
             y = reorder(.data$dl_state, desc(.data$issue_start)),
             color = .data$category),
-          linewidth = 3,
+          linewidth = 4,
           alpha = 0.4) +
         # Titles
         labs(
-          x = "Date",
+          x = "Issue date",
           y = "State",
           title = "Non-current registrations",
           subtitle =
             paste(
-              "For registrations during the overlap period from states with",
-              "issue window overlap,\nregistration year must be used to",
-              "determine if a registration is current or future.")) +
+              "Registrations that fall outside of their", REF_CURRENT_SEASON,
+              "issuance window are plotted below.\nIssue dates in an overlap",
+              "period are included based on registration year.")) +
         # Issue window colors
         scale_color_manual(
           name = "Issue window",
-          values = c("#E69F00", "#009E73", "#666666"),
+          values = c("#56B4E9", "#E69F00", "#888888"),
           labels = c("current", "future",  "past")) +
         new_scale_color() +
         # Plot bad issue dates (non-current, past, future, bad, invalid)
@@ -717,13 +717,13 @@ issuePlot <-
               color = .data$registration_yr),
           fill = "#FFFFFF",
           width = 0,
-          linewidth = 3,
+          linewidth = 2,
           outlier.size = 2,
           position = "identity") +
         # Bad issue date colors
         scale_color_manual(
           name = "Registration year\nprovided",
-          values = c("#0072B2", "#D55E00", "#F0E442", "#CC79A7", "#000000")) +
+          values = c("#000000", "#D55E00", "#CC79A7", "#F0E442", "#0072B2")) +
         scale_x_date(
           breaks = c(as.Date(paste(year - 1, "09-01", sep = "-")),
                      as.Date(paste(year - 1, "11-01", sep = "-")),
