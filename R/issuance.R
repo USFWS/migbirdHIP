@@ -705,7 +705,7 @@ issuePlot <-
               "period are included based on registration year.")) +
         # Issue window colors
         scale_color_manual(
-          name = "Issue window",
+          name = "Issue\nwindow",
           values = c("#56B4E9", "#E69F00", "#888888"),
           labels = c("current", "future",  "past")) +
         new_scale_color() +
@@ -722,7 +722,7 @@ issuePlot <-
           position = "identity") +
         # Bad issue date colors
         scale_color_manual(
-          name = "Registration year\nprovided",
+          name = "Registration\nyear\nprovided",
           values = c("#000000", "#D55E00", "#CC79A7", "#F0E442", "#0072B2")) +
         scale_x_date(
           breaks = c(as.Date(paste(year - 1, "09-01", sep = "-")),
