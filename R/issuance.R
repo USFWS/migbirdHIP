@@ -722,20 +722,17 @@ issuePlot <-
           position = "identity") +
         # Bad issue date colors
         scale_color_manual(
-          name = "Registration\nyear\nprovided",
+          name = "Registration\nyear provided",
           values = c("#000000", "#D55E00", "#CC79A7", "#F0E442", "#0072B2")) +
         scale_x_date(
           breaks = c(as.Date(paste(year - 1, "09-01", sep = "-")),
-                     as.Date(paste(year - 1, "11-01", sep = "-")),
-                     as.Date(paste(year, "01-01", sep = "-")),
+                     as.Date(paste(year - 1, "12-01", sep = "-")),
                      as.Date(paste(year, "03-01", sep = "-")),
                      as.Date(paste(year, "09-01", sep = "-")),
-                     as.Date(paste(year, "11-01", sep = "-")),
-                     as.Date(paste(year + 1, "01-01", sep = "-")),
+                     as.Date(paste(year, "12-01", sep = "-")),
                      as.Date(paste(year + 1, "03-01", sep = "-")),
                      as.Date(paste(year + 1, "09-01", sep = "-")),
-                     as.Date(paste(year + 1, "11-01", sep = "-")),
-                     as.Date(paste(year + 2, "01-01", sep = "-")),
+                     as.Date(paste(year + 1, "12-01", sep = "-")),
                      as.Date(paste(year + 2, "03-01", sep = "-"))),
           labels = issuePlotDateLabel()) +
         theme_classic() +
@@ -779,12 +776,9 @@ issuePlotDateLabel <-
       mths <- format(x, "%b")
       yrs  <- year(x)
 
-      # Identify where years transition
-      is_new_year <- c(TRUE, yrs[-1] != yrs[-length(yrs)])
-
-      # If new year, add year to month label
+      # If month is Dec, add year to axis label
       ifelse(
-        is_new_year,
+        mths == "Dec",
         paste(mths, yrs, sep = "\n"),
         mths
       )
