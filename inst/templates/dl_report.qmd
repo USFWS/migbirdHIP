@@ -595,6 +595,21 @@ bullets <-
       length(unique(final_data$dl_state)),
       " states.")
     ,
+    # Report the number of sample eligible registrations
+    paste0(
+      "* A total of ",
+      format.default(
+        nrow(proofed_data |> 
+               dplyr::filter(registration_yr == params$year)), 
+             big.mark = ","),
+      " registrations from ",
+      format.default(
+        nrow(proofed_data |> 
+               dplyr::filter(registration_yr == params$year) |> 
+               dplyr::distinct(dl_state)), 
+             big.mark = ","),
+      " states are sample eligible for the current season."
+    ),
     # Captured message outputs from other functions
     purrr::map(
       seq_len(nrow(important_statistics)),
@@ -1418,6 +1433,51 @@ bagcheck_tbl <- NULL
 ```
 
 # Issuance
+
+## All issue dates received
+
+The figure below shows all issue dates received per state that are used in the final data. The red lines delineate the download period that spans the last 2 weeks from today.
+
+```{r received_issue_dates_plot}
+#| echo: false
+#| fig.align: center
+
+dates <-
+  proofed_data |> 
+  dplyr::count(dl_state, issue_date) |> 
+  dplyr::mutate(issue_date = lubridate::mdy(issue_date)) 
+
+dates |> 
+  ggplot2::ggplot() +
+  ggplot2::geom_vline(
+    ggplot2::aes(
+      xintercept = lubridate::today() - 14), 
+    color = "red", 
+    linetype = "dashed") +
+  ggplot2::geom_vline(
+    ggplot2::aes(
+      xintercept = lubridate::today()), 
+    color = "red", 
+    linetype = "dashed") +
+  ggplot2::geom_point(
+    ggplot2::aes(
+      x = issue_date, 
+      y = dl_state, 
+      size = n)) +
+  ggplot2::labs(
+    x = "Issue date", 
+    y = "State", 
+    size = "Number of\nregistrations") +
+  ggplot2::theme_bw() +
+  ggplot2::scale_x_date(date_labels = "%B %Y") +
+  ggplot2::scale_y_discrete(limits = rev) +
+  ggplot2::scale_size_continuous(
+    breaks = scales::pretty_breaks(n = 4),
+    labels = scales::comma_format()) +
+  ggplot2::theme(
+    axis.text = ggplot2::element_text(size = 11),
+    axis.title = ggplot2::element_text(size = 14))
+```
 
 ## Non-current records
 
