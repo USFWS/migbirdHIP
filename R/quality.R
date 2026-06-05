@@ -497,7 +497,7 @@ qSummary <-
       summarize(n_bad = n(), .by = c("source_file", "file_size")) |>
       mutate(prop_bad = round(.data$n_bad / .data$file_size, 3)) |>
       arrange(desc(.data$prop_bad)) |>
-      filter(.data$prop_bad > 0.01 | .data$n_bad > 100)
+      filter((.data$prop_bad > 0.01 | .data$n_bad > 100) & .data$n_bad > 3)
   }
 
 #' Bad title message
