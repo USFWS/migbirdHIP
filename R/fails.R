@@ -9,7 +9,8 @@
 #'   \code{\link{proof}}
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family failure functions
 
 failProofed <-
   function(proofed_data) {
@@ -28,7 +29,8 @@ failProofed <-
 #' \item `r REF_ABBR_49_STATES`}
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' @references \url{https://github.com/USFWS/migbirdHIP}
+#'
+#' @family failure functions
 
 failState <-
   function(state) {

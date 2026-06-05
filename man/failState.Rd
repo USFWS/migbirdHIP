@@ -14,9 +14,18 @@ failState(state)
 \description{
 Internal function that fails if a bad state abbreviation is provided.
 }
-\references{
-\url{https://github.com/USFWS/migbirdHIP}
+\seealso{
+Other failure functions: 
+\code{\link{failBTPI}()},
+\code{\link{failCR}()},
+\code{\link{failDLdate}()},
+\code{\link{failDLstate}()},
+\code{\link{failProofed}()},
+\code{\link{failTF}()},
+\code{\link{failWidths}()},
+\code{\link{failYear}()}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}
 }
+\concept{failure functions}

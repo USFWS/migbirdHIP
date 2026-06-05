@@ -19,6 +19,8 @@ Other failure functions:
 \code{\link{failCR}()},
 \code{\link{failDLdate}()},
 \code{\link{failDLstate}()},
+\code{\link{failProofed}()},
+\code{\link{failState}()},
 \code{\link{failWidths}()},
 \code{\link{failYear}()}
 }
