@@ -837,7 +837,7 @@ qIssueDateRange <-
     q1 <-
       raw_data |>
       filter(.data$file_size > 1) |>
-      distinct("source_file", "file_size")
+      distinct(.data$source_file, .data$file_size)
 
     q2 <-
       raw_data |>
