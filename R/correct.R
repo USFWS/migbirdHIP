@@ -5,6 +5,8 @@
 #' will be reported for manual correction.
 #'
 #' @importFrom dplyr mutate
+#' @importFrom tidyr replace_na
+#' @importFrom dplyr na_if
 #' @importFrom rlang .data
 #'
 #' @param proofed_data The object created after error flagging data with
@@ -27,7 +29,7 @@ correct <-
     corrected_data <-
       proofed_data |>
       # Change NAs in errors col to "none" so that str_detect functions work
-      mutate(errors = ifelse(is.na(.data$errors), "none", .data$errors)) |>
+      mutate(errors = replace_na(.data$errors, "none")) |>
       # Title correction (change to NA if error detected)
       correctTitle() |>
       # Suffix correction (change to NA if error detected)
@@ -36,7 +38,7 @@ correct <-
       correctMiddleInitial() |>
       mutate(
         # Change "none"s back to NAs in errors col
-        errors = ifelse(.data$errors == "none", NA, .data$errors),
+        errors = na_if(.data$errors, "none"),
         # Change email to lower case
         email = tolower(.data$email)) |>
       # Email correction

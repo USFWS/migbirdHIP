@@ -15,6 +15,7 @@
 #' @importFrom dplyr left_join
 #' @importFrom stringr str_detect
 #' @importFrom stringr str_remove_all
+#' @importFrom dplyr na_if
 #' @importFrom rlang .data
 #'
 #' @param deduplicated_data The object created after deduplicating data with
@@ -87,8 +88,7 @@ proof <-
             str_remove_all(.data$errors, "NA\\-|\\-NA"),
             .data$errors)) |>
       # Add a second mutate here because we cannot pipe '.'
-      mutate(errors =
-               ifelse(str_detect(.data$errors, "^NA$"), NA, .data$errors)) |>
+      mutate(errors = na_if(.data$errors, "NA")) |>
       as_tibble()
 
     # Proof the zip codes. Are they associated with the correct states?
