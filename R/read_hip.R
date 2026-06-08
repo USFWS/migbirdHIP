@@ -52,15 +52,6 @@ read_hip <-
       message("Are you sure you supplied a season path?")
     }
 
-    # Fail if incorrect state supplied
-    assert_that(
-      state %in% c(NA, REF_ABBR_49_STATES),
-      msg =
-        paste0(
-          "`state` one of acceptable state abbreviations: ",
-          REF_ABBR_49_STATES, " or `NA`.")
-    )
-
     # Create a tibble of the HIP .txt files to be read from the provided
     # directory
     file_list <-
@@ -78,6 +69,15 @@ read_hip <-
 
     # Filter files to include only specified state (state param NA by default)
     if (!is.na(state)) {
+      # Fail if incorrect state supplied
+      assert_that(
+        state %in% REF_ABBR_49_STATES,
+        msg =
+          paste0(
+            "`state` one of acceptable state abbreviations: ",
+            REF_ABBR_49_STATES, " or `NA`.")
+      )
+
       file_list <- filter(file_list, str_detect(.data$filepath, state))
     }
 
