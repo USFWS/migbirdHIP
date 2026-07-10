@@ -275,7 +275,7 @@ failWidths <-
       map_int(\(x) max(nchar(as.character(x)), na.rm = TRUE))
 
     assert_that(
-      FALSE == TRUE %in% c(q > REF_FWF_WIDTHS),
+      !any(q > REF_FWF_WIDTHS),
       msg = "A value's length has exceeded the fixed-width field limits."
     )
   }
