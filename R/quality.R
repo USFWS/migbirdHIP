@@ -98,7 +98,7 @@ missingPIIMessage <-
     # lastname, state, or birth date
     raw_nas <-
       raw_data |>
-      mutate(n_total = n(), by = "dl_state") |>
+      mutate(n_total = n(), .by = "dl_state") |>
       filter(
         !!LOGIC_MISSING_PII |
           !!LOGIC_MISSING_ADDRESSES |
