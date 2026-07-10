@@ -106,7 +106,7 @@ errorPlotDL <-
             summarize(
               errors = sum(!is.na(.data$value)),
               total = n(),
-              by = "dl_cycle") |>
+              .by = "dl_cycle") |>
             mutate(proportion = .data$errors / .data$total) |>
             # Plot
             ggplot() +
@@ -261,8 +261,6 @@ errorPlotStates <-
     # Fail if incorrect threshold supplied
     stopifnot("Error: `threshold` parameter must be numeric." =
                 (is.numeric(threshold) | is.na(threshold)))
-    stopifnot("Error: Supply a value between 0 and 1 for `threshold`." =
-                (0 <= threshold & threshold <= 1))
 
     # Generate a table of error proportions
     state_tbl <- errorLevelErrorsByState(proofed_data)
@@ -296,6 +294,8 @@ errorPlotStates <-
         theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
 
     } else {
+      stopifnot("Error: Supply a value between 0 and 1 for `threshold`." =
+                  (0 <= threshold & threshold <= 1))
 
       # Proportion plot: threshold specified
       state_tbl <-
