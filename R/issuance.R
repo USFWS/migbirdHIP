@@ -587,7 +587,7 @@ issuePlot <-
         by = "dl_state") |>
       distinct()
 
-    if (nrow(badplot_data > 0)) {
+    if (nrow(badplot_data) > 0) {
       current <-
         REF_DATES |>
         filter(.data$state %in% badplot_data$dl_state) |>
