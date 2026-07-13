@@ -5,6 +5,7 @@ DDMMYYYY
 DL
 DNHs
 De
+Deduplication
 FWS
 MMDDYYYY
 ORCID
@@ -14,6 +15,7 @@ RMarkdown
 Rbuildignore
 Rmd
 Tabset
+Tibble
 USFWS
 YYYYMMDD
 bagCheck
@@ -21,6 +23,7 @@ brant
 ccTLDs
 csv
 deduplicate
+deduplicated
 deduplicating
 deduplication
 dev
@@ -69,5 +72,6 @@ tabset
 tibble
 tibbles
 tidyverse
+vectorize
 writeReport
 ️
