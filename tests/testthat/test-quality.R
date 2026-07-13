@@ -530,7 +530,7 @@ test_that("qSuffix does not return a message for good suffixes", {
 test_that("qAddress returns a message for bad address", {
   bad_addresses <-
     tibble(
-      address = c("80 Fox |Dr", "4 Bear’s Pl"),
+      address = c("80 Fox |Dr", "4 Bear’s Pl", "€", "11 Way–Finder Ln"),
       source_file = "ZZ20250101.txt",
       file_size = 100)
 
