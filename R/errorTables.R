@@ -74,11 +74,11 @@ errorTable <-
         filter(!is.na(.data$errors)) |>
         # Pull errors apart, delimited by hyphens
         separate_wider_delim(
-          .data$errors,
+          "errors",
           delim = "-", names_sep = "_", too_few = "align_start") |>
         # Transform errors into a single column
         pivot_longer(starts_with("errors"), names_to = "name") |>
-        select(.data$dl_state, errors = .data$value) |>
+        select("dl_state", errors = "value") |>
         filter(!is.na(.data$errors))
 
       summary_table <- errorTableSummary(proofed_data, initial_tbl, loc, field)
@@ -132,25 +132,25 @@ errorTableSummary <-
       # Summary table of errors by state and field
       initial_tbl |>
         count(.data$dl_state, .data$errors) |>
-        rename(error = .data$errors, error_count = .data$n)
+        rename(error = "errors", error_count = "n")
 
     } else if (loc == "all" & field == "none") {
       # Summary table of errors by state only
       initial_tbl |>
         count(.data$dl_state) |>
-        rename(error_count = .data$n)
+        rename(error_count = "n")
 
     } else if (loc == "none" & field == "all") {
       # Summary table of errors by field name
       initial_tbl |>
         count(.data$errors) |>
-        rename(error = .data$errors, error_count = .data$n)
+        rename(error = "errors", error_count = "n")
 
     } else if (loc == "all" & !str_detect(field, "none|all")) {
       # Summary table across all states for a particular field
       initial_tbl |>
         count(.data$errors) |>
-        rename(error = .data$errors, error_count = .data$n) |>
+        rename(error = "errors", error_count = "n") |>
         filter(.data$error == field)
 
     } else if (!str_detect(loc, "none|all") & field == "all") {
@@ -158,14 +158,14 @@ errorTableSummary <-
       initial_tbl |>
         filter(.data$dl_state == loc) |>
         count(.data$dl_state, .data$errors) |>
-        rename(error = .data$errors, error_count = .data$n)
+        rename(error = "errors", error_count = "n")
 
     } else if (!str_detect(loc, "none|all") & field == "none") {
       # Summary table for a particular state with all fields
       initial_tbl |>
         filter(.data$dl_state == loc) |>
         count(.data$dl_state) |>
-        rename(total_errors = .data$n)
+        rename(total_errors = "n")
 
     } else if (!str_detect(loc, "none|all") & !str_detect(field, "none|all")) {
       # Summary table for a particular state and particular field name
@@ -179,7 +179,7 @@ errorTableSummary <-
             count(.data$dl_state, .data$errors) |>
             rename(error = .data$errors) |>
             filter(.data$error == field) |>
-            rename(error_count = .data$n)
+            rename(error_count = "n")
 
         } else {
           message(paste0("No errors in ", field, " for ", loc, "."))
@@ -233,7 +233,7 @@ pullErrors <-
 
     pulled_error <-
       proofed_data |>
-      select(!!sym(field), .data$errors) |>
+      select(!!sym(field), "errors") |>
       filter(str_detect(.data$errors, field)) |>
       select(!!sym(field))
 

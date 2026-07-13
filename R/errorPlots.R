@@ -63,7 +63,7 @@ errorPlotDL <-
         select(c("errors", "dl_cycle")) |>
         # Pull errors apart, delimited by hyphens
         separate_wider_delim(
-          .data$errors,
+          "errors",
           delim = "-", names_sep = "_", too_few = "align_start") |>
         # Transform errors into a single column
         pivot_longer(starts_with("errors"), names_to = "name") |>
@@ -98,7 +98,7 @@ errorPlotDL <-
           select(c("errors", "dl_cycle")) |>
           # Pull errors apart, delimited by hyphens
             separate_wider_delim(
-              .data$errors,
+              "errors",
               delim = "-", names_sep = "_", too_few = "align_start") |>
             # Transform errors into a single column
             pivot_longer(starts_with("errors"), names_to = "name") |>
@@ -387,7 +387,7 @@ errorLevelErrorsByState <-
       select(c("errors", "dl_state")) |>
       mutate(total_records = n(), .by = "dl_state") |>
       separate_wider_delim(
-        .data$errors, delim = "-", names_sep = "_", too_few = "align_start") |>
+        "errors", delim = "-", names_sep = "_", too_few = "align_start") |>
       # Transform errors into a single column
       pivot_longer(starts_with("errors"), names_to = "name") |>
       filter(!is.na(.data$value)) |>
@@ -427,7 +427,7 @@ errorLevelErrorsByField <-
     proofed_data |>
       select("errors") |>
       # Pull errors apart, delimited by hyphens
-      separate_longer_delim(.data$errors, delim = "-") |>
+      separate_longer_delim("errors", delim = "-") |>
       filter(!is.na(.data$errors)) |>
       # Count number of correct values
       summarize(
