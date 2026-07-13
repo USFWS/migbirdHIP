@@ -90,8 +90,8 @@ write_hip <-
               !!sym(REF_FIELDS_BAG[x]) := as.character(.data$stateBagValue)) |>
             select(-c("stateBagValue", "spp")) |>
             rename(
-              dl_state = .data$state,
-              !!sym(REF_STRATA_NAMES[x]) := .data$FWSstratum)
+              dl_state = "state",
+              !!sym(REF_STRATA_NAMES[x]) := "FWSstratum")
         }
       )
 
@@ -242,10 +242,12 @@ write_hip <-
         }
       )
     } else {
+      dl <- unique(corrected_data$dl_cycle)
+
       # Write data to a single csv
       fwrite(
         final_table,
-        file = path,
+        file = paste0(path, "/", dl, ".csv"),
         na = "")
     }
 
