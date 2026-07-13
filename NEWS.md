@@ -91,6 +91,7 @@
 - Updated internal package test data to create character `title` values rather than numeric.
 - Following `{dplyr}` `1.2.0` release notes, update `case_when()` with `recode_values()` and `replace_when()` as appropriate.
 - Testing
+  - Add test files `test-write_hip.R`, `test-writeReport.R`, `test-errorPlots.R`, `test-errorTables.R`, and `test-files.R`.
   - Add test for `registration_yr` field, `birth_date` field, and `zip` field in `test-proof.R`
   - Update `test-proof.R` to use `getBad` family of functions
   - Update `test-fails.R` to evaluate `failWidths()`
@@ -110,6 +111,7 @@
     - Update `rmarkdown` to `>= 2.30`
     - Update `sf` to `>= 1.1-0`
 - `proof()` no longer filters out test records, since this step is completed upstream in `clean()`.
+- `write_hip(split = FALSE)` had a bug in the file naming technique that is now resolved.
 - Recommend installation in `README` and vignette changed to `pak::pak()` now that `devtools::install_github()` has been deprecated.
 - Updated package startup message in `zzz.R`
   - Version checking is now more robust; messages are more reliable and clear if a package version is out of date.
