@@ -177,7 +177,7 @@ errorTableSummary <-
         if (nrow(statefield) > 0) {
           statefield |>
             count(.data$dl_state, .data$errors) |>
-            rename(error = .data$errors) |>
+            rename(error = "errors") |>
             filter(.data$error == field) |>
             rename(error_count = "n")
 

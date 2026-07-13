@@ -117,7 +117,7 @@ fileRename <-
         as_tibble() |>
         # Pull the file name apart so we can convert the date
         separate_wider_position(
-          .data$value, c("state" = 2, "jdate" = 3, "suffix" = 4)) |>
+          "value", c("state" = 2, "jdate" = 3, "suffix" = 4)) |>
         # Convert Julian date to YYYYMMDD
         # The as.Date function calculates to the jdate + 1, so subtract a day
         # using - 1 to get the accurate date; str_remove wraps around the
