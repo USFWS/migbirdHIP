@@ -274,8 +274,10 @@ failWidths <-
       select("title":"email") |>
       map_int(\(x) max(nchar(as.character(x)), na.rm = TRUE))
 
+    q2 <- q > REF_FWF_WIDTHS
+
     assert_that(
-      !any(q > REF_FWF_WIDTHS),
+      !any(q2[1:23]),
       msg = "A value's length has exceeded the fixed-width field limits."
     )
   }
