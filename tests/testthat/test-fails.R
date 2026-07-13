@@ -126,3 +126,15 @@ test_that("failDLdate doesn't fail for good dl_date values", {
     failDLdate(tibble(dl_date = c("20250101", "20250201", "20250901")))
   )
 })
+
+test_that("failWidths fails for long fields", {
+  error_df <-
+    DF_TEST_TINI_PROOFED |>
+    mutate(lastname = "SUPERCALIFRAGILISTICEXPIALIDOCIOUS")
+
+  expect_error(failWidths(error_df))
+})
+
+test_that("failWidths doesn't fail for good field lengths", {
+  expect_no_error(failWidths(DF_TEST_MINI))
+})

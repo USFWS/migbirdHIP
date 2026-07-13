@@ -75,7 +75,7 @@
         - Avoid error with labeling dates in x-axis (see \#[88](https://github.com/USFWS/migbirdHIP/issues/88))
         - Avoid using `scales::label_date_short()` which would require adding `{scales}` to Imports
   - Deduplication functions
-    - Using `duplicateFix()` on season data took a long time to run; about 7 minutes for 3.17 million records. Changes to deduplication helper functions reduced run time to 1.23 minutes! See \#[45](https://github.com/USFWS/migbirdHIP/issues/45){.uri} for more details. Modifications used include:
+    - Using `duplicateFix()` on season data took a long time to run; about 7 minutes for 3.17 million records. Changes to deduplication helper functions reduced run time to 1.23 minutes! See [#45](https://github.com/USFWS/migbirdHIP/issues/45) for more details. Modifications used include:
       - Require `{dtplyr}` and use `dtplyr::lazy_dt`
       - Use a vectorized row sum rather than `purrr::pmap_chr()` in `duplicateAllOnes()`
       - Parse and format dates once, rather than inside each group, in `duplicateNewest()`
@@ -93,6 +93,7 @@
 - Testing
   - Add test for `registration_yr` field, `birth_date` field, and `zip` field in `test-proof.R`
   - Update `test-proof.R` to use `getBad` family of functions
+  - Update `test-fails.R` to evaluate `failWidths()`
 - Change `issuePlot()` legend to say "Registration year provided" to be clear that the value has not been changed/edited yet.
 - DESCRIPTION
   - Require R version `>= 4.5.0`
