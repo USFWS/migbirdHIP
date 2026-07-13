@@ -65,7 +65,7 @@ test_that("write_hip source_file field is stripped of folder names", {
     DF_TEST_TINI_CORRECTED |>
     mutate(source_file = "permit/AZ20260906.txt")
 
-  write_hip(DF_TEST_TINI_CORRECTED, path = out_dir, type = "HIP", split = TRUE)
+  write_hip(test_df, path = out_dir, type = "HIP", split = TRUE)
   dt <- data.table::fread(list.files(out_dir, pattern = "\\.csv$",
                                      full.names = TRUE)[1])
   expect_false(any(grepl("/", dt$source_file)))
