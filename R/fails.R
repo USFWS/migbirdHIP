@@ -258,6 +258,7 @@ failCR <-
 #' @importFrom assertthat assert_that
 #' @importFrom dplyr select
 #' @importFrom purrr map_int
+#' @importFrom tidyr replace_na
 #'
 #' @param corrected_data The object created after correcting data with
 #'   \code{\link{correct}}
@@ -272,7 +273,9 @@ failWidths <-
     q <-
       corrected_data |>
       select("title":"email") |>
-      map_int(\(x) max(nchar(as.character(x)), na.rm = TRUE))
+      map_int(\(x) max(nchar(as.character(x)))) |>
+      # If any column contains only NA values, convert NA length to 0
+      replace_na(replace = 0)
 
     q2 <- q > REF_FWF_WIDTHS
 
