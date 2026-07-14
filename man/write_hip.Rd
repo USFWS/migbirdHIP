@@ -10,7 +10,7 @@ write_hip(corrected_data, path, type, split = TRUE)
 \item{corrected_data}{The object created after correcting data with
 \code{\link{correct}}}
 
-\item{path}{The file path and file name to write the final table}
+\item{path}{Directory for data to be written}
 
 \item{type}{The type of HIP file being written out, one of: "HIP", "BT", or
 "CR"}

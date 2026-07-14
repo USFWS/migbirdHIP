@@ -25,7 +25,7 @@
 #'
 #' @param corrected_data The object created after correcting data with
 #'   \code{\link{correct}}
-#' @param path The file path and file name to write the final table
+#' @param path Directory for data to be written
 #' @param type The type of HIP file being written out, one of: "HIP", "BT", or
 #'   "CR"
 #' @param split Split the output into one .csv file per .txt file? Default is
