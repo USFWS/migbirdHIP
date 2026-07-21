@@ -17,6 +17,11 @@
 clean <-
   function(raw_data) {
 
+    # Fail gracefully if input is empty
+    if (nrow(raw_data) == 0 | is.null(raw_data)) {
+      return(raw_data)
+    }
+
     cleaned_data <-
       raw_data |>
       # Filter out any record if any bag value is not a 1-digit number
@@ -52,6 +57,11 @@ clean <-
       cranePermitBagFix() |>
       # If any permit file state submitted 2 for band_tailed_pigeon, change to 0
       btpiPermitBagFix()
+
+    # Fail gracefully if cleaned data is empty after dropping records
+    if (nrow(cleaned_data) == 0 | is.null(cleaned_data)) {
+      return(cleaned_data)
+    }
 
     # Check that the zip code for each address is associated with the correct
     # state
@@ -409,7 +419,7 @@ cranePermitBagFix <-
 #' @inheritParams clean
 #'
 #' @author Abby Walter, \email{abby_walter@@fws.gov}
-#' 
+#'
 #' @family cleaning functions
 
 btpiPermitBagFix <-

@@ -31,8 +31,14 @@
 
 proof <-
   function(deduplicated_data, year) {
+    
     failYear(year)
     questionYear(year)
+    
+    # Fail gracefully if input is empty
+    if (nrow(deduplicated_data) == 0 | is.null(deduplicated_data)) {
+      return(deduplicated_data)
+    }
 
     # Create a record key so that the errors can be joined in later (there may
     # be more than 1 error per record, so using the record_key field will not

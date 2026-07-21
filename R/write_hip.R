@@ -39,6 +39,13 @@
 
 write_hip <-
   function(corrected_data, path, type, split = TRUE) {
+
+    # Fail gracefully if input is empty
+    if (nrow(corrected_data) == 0 | is.null(corrected_data)) {
+      message("The tibble provided contains no data.")
+      return(corrected_data)
+    }
+
     failProofed(corrected_data)
     failDLstate(corrected_data)
     failDLdate(corrected_data)
