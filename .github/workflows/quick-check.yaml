@@ -22,12 +22,12 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: any::devtools, any::testthat
+          extra-packages: any::testthat
           needs: test
 
-      - name: Install migbirdHIP
-        run: devtools::install(dependencies = FALSE)
-        shell: Rscript {0}
+      - name: Install package
+        run: R CMD INSTALL . --no-docs
+        shell: bash
 
       - name: Run tests
         run: testthat::test_local()
