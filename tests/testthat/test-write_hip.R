@@ -1,18 +1,17 @@
 # This test file was generated with AI assistance using Claude Opus 4.8 in
-# Perplexity on July 10, 2026.
+# Perplexity on July 21, 2026.
 
 # write_hip ---------------------------------------------------------------
 
 # Covered exported function: write_hip
 
+# Temp-dir helper: create a fresh directory under tempdir() and return its path.
+# Each caller registers its own cleanup with an explicit on.exit(unlink(...)) so
+# teardown is visible at the call site:
+
 make_tmpdir <- function() {
   d <- tempfile("whip_")
   dir.create(d)
-  d
-}
-
-mk_dir2 <- function() {
-  d <- withr::local_tempdir(.local_envir = parent.frame())
   d
 }
 
@@ -210,7 +209,8 @@ test_that("write_hip path must be a directory", {
   # then split = FALSE writes to paste0(path, "/", dl, ".csv"). Passing a file
   # name like "out.csv" yields "out.csv//<dl>.csv" and fwrite errors because
   # that directory does not exist.
-  d <- mk_dir2()
+  d <- make_tmpdir()
+  on.exit(unlink(d, recursive = TRUE), add = TRUE)
   fp <- file.path(d, "out.csv")
   input <- DF_TEST_TINI_CORRECTED
   expect_error(
@@ -234,7 +234,8 @@ test_that("write_hip translates bag values to FWS strata (AR brant 1 -> 0)", {
   # REF_BAGS maps state=AR, spp=brant, stateBagValue=1 -> FWSstratum=0, a
   # NON-identity translation. Assert the written stratum column value, proving
   # the left_join produced the correct translated value, not merely a column.
-  d <- mk_dir2()
+  d <- make_tmpdir()
+  on.exit(unlink(d, recursive = TRUE), add = TRUE)
   input <- DF_TEST_TINI_CORRECTED |> dplyr::mutate(dl_state = "AR", brant = "1")
 
   write_hip(input, path = d, type = "HIP", split = TRUE)
@@ -262,7 +263,8 @@ bt_valid <- function() {
 }
 
 test_that("write_hip type = 'BT' writes a valid BTPI permit file", {
-  d <- mk_dir2()
+  d <- make_tmpdir()
+  on.exit(unlink(d, recursive = TRUE), add = TRUE)
   expect_no_error(
     suppressWarnings(suppressMessages(
       write_hip(bt_valid(), path = d, type = "BT", split = TRUE))))
@@ -273,7 +275,8 @@ test_that("write_hip type = 'BT' writes a valid BTPI permit file", {
 })
 
 test_that("write_hip type = 'BT' rejects a file whose band_tailed_pigeon != 2", {
-  d <- mk_dir2()
+  d <- make_tmpdir()
+  on.exit(unlink(d, recursive = TRUE), add = TRUE)
   bad <- bt_valid() |> dplyr::mutate(band_tailed_pigeon = "1")
   expect_error(
     suppressWarnings(suppressMessages(
@@ -282,7 +285,8 @@ test_that("write_hip type = 'BT' rejects a file whose band_tailed_pigeon != 2", 
 })
 
 test_that("write_hip type = 'BT' rejects a non-HIP record_type", {
-  d <- mk_dir2()
+  d <- make_tmpdir()
+  on.exit(unlink(d, recursive = TRUE), add = TRUE)
   bad <- bt_valid() |> dplyr::mutate(record_type = "PMT")
   expect_error(
     suppressWarnings(suppressMessages(
@@ -304,7 +308,8 @@ cr_valid <- function() {
 }
 
 test_that("write_hip type = 'CR' writes a valid crane permit file and strata", {
-  d <- mk_dir2()
+  d <- make_tmpdir()
+  on.exit(unlink(d, recursive = TRUE), add = TRUE)
   expect_no_error(
     suppressWarnings(suppressMessages(
       write_hip(cr_valid(), path = d, type = "CR", split = TRUE))))
@@ -317,7 +322,8 @@ test_that("write_hip type = 'CR' writes a valid crane permit file and strata", {
 })
 
 test_that("write_hip type = 'CR' rejects a file whose cranes != 2", {
-  d <- mk_dir2()
+  d <- make_tmpdir()
+  on.exit(unlink(d, recursive = TRUE), add = TRUE)
   bad <- cr_valid() |> dplyr::mutate(cranes = "1")
   expect_error(
     suppressWarnings(suppressMessages(
@@ -326,7 +332,8 @@ test_that("write_hip type = 'CR' rejects a file whose cranes != 2", {
 })
 
 test_that("write_hip type = 'CR' rejects a non-PMT record_type", {
-  d <- mk_dir2()
+  d <- make_tmpdir()
+  on.exit(unlink(d, recursive = TRUE), add = TRUE)
   bad <- cr_valid() |> dplyr::mutate(record_type = "HIP")
   expect_error(
     suppressWarnings(suppressMessages(
