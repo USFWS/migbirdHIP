@@ -11,6 +11,11 @@ make_tmpdir <- function() {
   d
 }
 
+mk_dir2 <- function() {
+  d <- withr::local_tempdir(.local_envir = parent.frame())
+  d
+}
+
 out_data <- DF_TEST_MINI |> mutate(errors = NA, record_type = "HIP")
 
 # split = TRUE ------------------------------------------------------------
@@ -222,11 +227,6 @@ test_that("write_hip path must be a directory", {
 # Internal guards exercised: failBTPI, failCR (via migbirdHIP:::) for the
 # negative cases -- internal-coupling tradeoff noted; the payoff is asserting
 # the exact stop() messages the guards raise.
-
-mk_dir2 <- function() {
-  d <- withr::local_tempdir(.local_envir = parent.frame())
-  d
-}
 
 # REF_BAGS translation VALUE assertion (the crux; not just column names)
 
