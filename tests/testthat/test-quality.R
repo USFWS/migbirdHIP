@@ -1,7 +1,6 @@
 # quality -----------------------------------------------------------------
 
-# qualityMessages
-# qSummary
+# Data quality checking function unit tests
 
 # missing data ------------------------------------------------------------
 
@@ -887,3 +886,58 @@ test_that("nonDigitBagsMessage does not return a message for good bags", {
 
 # inLinePermitDNHMessage
 # permitFileBagsMessage
+
+# qualityMessages function ------------------------------------------------
+
+# The following tests for qualityMessages() were generated with AI assistance
+# using Claude Opus 4.8 in Perplexity on July 13, 2026.
+
+# Tests for qualityMessages(). This is the umbrella that fans out to ~20 child
+# data-quality checks. We invoke it on the read-level fixture DF_TEST_MINI and
+# assert the aggregate emits the expected child messages (not merely that it
+# runs).
+
+yr <- as.numeric(migbirdHIP:::REF_CURRENT_SEASON)
+
+# Helper: collect every message() emitted by an expression.
+collect_messages <- function(expr) {
+  msgs <- character(0)
+  withCallingHandlers(
+    suppressWarnings(force(expr)),
+    message = function(m) {
+      msgs <<- c(msgs, conditionMessage(m))
+      invokeRestart("muffleMessage")
+    })
+  paste(msgs, collapse = "\n")
+}
+
+test_that("qualityMessages aggregates child field-quality messages", {
+  out <- collect_messages(
+    invisible(capture.output(qualityMessages(DF_TEST_MINI, yr))))
+
+  # Field-level checks (stable regardless of exact counts in the fixture).
+  expect_match(out, "Bad first name values detected")
+  expect_match(out, "Bad last name values detected")
+  expect_match(out, "Bad state values detected")
+  expect_match(out, "Bad zip code values detected")
+})
+
+test_that("qualityMessages reports bag, permit, and non-resident issues", {
+  out <- collect_messages(
+    invisible(capture.output(qualityMessages(DF_TEST_MINI, yr))))
+
+  # Bag-quality child (all-zero bag records get filtered).
+  expect_match(out, "in every bag field")
+  # hunt_mig_birds child.
+  expect_match(out, "value other than 2 for hunt_mig_birds")
+  # non-resident proportions child.
+  expect_match(out, "High non-resident proportions")
+})
+
+test_that("qualityMessages validates year via failYear", {
+  # Umbrella must reject an out-of-range year through failYear before doing
+  # work.
+  expect_error(
+    suppressMessages(qualityMessages(DF_TEST_MINI, 1999)),
+    "year")
+})
