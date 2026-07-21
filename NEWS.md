@@ -2,6 +2,9 @@
 
 ## Major changes & new features
 
+- GitHub Actions
+  - Run `R CMD check` nightly at 11pm Eastern and for every release.
+  - Run a quick check that `migbirdHIP` can be installed and all unit tests pass with each push.
 - Constants and variables
   - Changed `REF_CURRENT_SEASON` to `"2026"`
   - Added `REF_STATES_AF`, `REF_STATES_MF`, `REF_STATES_CF`, and `REF_STATES_PF`
@@ -89,13 +92,14 @@
 ## Minor changes / bug fixes
 
 - Updated internal package test data to create character `title` values rather than numeric.
+- Fail gracefully if input provided contains 0 rows (or data are dropped to result in 0 rows) for `clean()`, `proof()`, and `write_hip()`.
 - Following `{dplyr}` `1.2.0` release notes, update `case_when()` with `recode_values()` and `replace_when()` as appropriate.
 - Testing
   - Add test files `test-write_hip.R`, `test-writeReport.R`, `test-errorPlots.R`, `test-errorTables.R`, `test-files.R`,
   - Expanded `correctEmail()` unit testing in `test-correct.R`
   - Added `duplicateFinder()` and `duplicatePlot()` testing in `test-duplicates.R`
   - Added `qualityMessages()` testing in `test-quality.R`
-  - 
+  - Added `test-edge-inputs.R` to test empty (0-row), all-NA-in-key-columns, and single-row inputs
   - Add test for `registration_yr` field, `birth_date` field, and `zip` field in `test-proof.R`
   - Update `test-proof.R` to use `getBad` family of functions
   - Update `test-fails.R` to evaluate `failWidths()`
