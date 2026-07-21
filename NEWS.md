@@ -91,7 +91,11 @@
 - Updated internal package test data to create character `title` values rather than numeric.
 - Following `{dplyr}` `1.2.0` release notes, update `case_when()` with `recode_values()` and `replace_when()` as appropriate.
 - Testing
-  - Add test files `test-write_hip.R`, `test-writeReport.R`, `test-errorPlots.R`, `test-errorTables.R`, and `test-files.R`.
+  - Add test files `test-write_hip.R`, `test-writeReport.R`, `test-errorPlots.R`, `test-errorTables.R`, `test-files.R`,
+  - Expanded `correctEmail()` unit testing in `test-correct.R`
+  - Added `duplicateFinder()` and `duplicatePlot()` testing in `test-duplicates.R`
+  - Added `qualityMessages()` testing in `test-quality.R`
+  - 
   - Add test for `registration_yr` field, `birth_date` field, and `zip` field in `test-proof.R`
   - Update `test-proof.R` to use `getBad` family of functions
   - Update `test-fails.R` to evaluate `failWidths()`
