@@ -15,11 +15,11 @@ The internal \code{correctEmail} function is used inside of
 \code{\link{correct}} to ...
 }
 \seealso{
-Other correcting functions: 
-\code{\link{correct}()},
-\code{\link{correctMiddleInitial}()},
-\code{\link{correctSuffix}()},
-\code{\link{correctTitle}()}
+Other correcting functions:
+\code{\link[=correct]{correct()}},
+\code{\link[=correctMiddleInitial]{correctMiddleInitial()}},
+\code{\link[=correctSuffix]{correctSuffix()}},
+\code{\link[=correctTitle]{correctTitle()}}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}

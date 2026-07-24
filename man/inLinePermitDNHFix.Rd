@@ -17,15 +17,15 @@ one or more of the band_tailed_pigeon, brant, or seaducks fields indicate
 hunting.
 }
 \seealso{
-Other cleaning functions: 
-\code{\link{btpiPermitBagFix}()},
-\code{\link{clean}()},
-\code{\link{cranePermitBagFix}()},
-\code{\link{formatZip}()},
-\code{\link{missingPIIFilter}()},
-\code{\link{moveSuffixes}()},
-\code{\link{namesToUppercase}()},
-\code{\link{zipCheck}()}
+Other cleaning functions:
+\code{\link[=btpiPermitBagFix]{btpiPermitBagFix()}},
+\code{\link[=clean]{clean()}},
+\code{\link[=cranePermitBagFix]{cranePermitBagFix()}},
+\code{\link[=formatZip]{formatZip()}},
+\code{\link[=missingPIIFilter]{missingPIIFilter()}},
+\code{\link[=moveSuffixes]{moveSuffixes()}},
+\code{\link[=namesToUppercase]{namesToUppercase()}},
+\code{\link[=zipCheck]{zipCheck()}}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}

@@ -22,8 +22,8 @@ field.
 \seealso{
 \code{\link[=shiftFinder]{shiftFinder()}}
 
-Other glyph functions: 
-\code{\link{glyphCheck}()}
+Other glyph functions:
+\code{\link[=glyphCheck]{glyphCheck()}}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}

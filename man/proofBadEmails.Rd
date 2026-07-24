@@ -16,20 +16,20 @@ email addresses. Email addresses that match \code{REGEX_EMAIL} or are
 \code{NA} are considered good emails.
 }
 \seealso{
-Other proofing functions: 
-\code{\link{getBadAddress}()},
-\code{\link{getBadBirthDate}()},
-\code{\link{getBadCity}()},
-\code{\link{getBadFirstName}()},
-\code{\link{getBadHuntMigBirds}()},
-\code{\link{getBadLastName}()},
-\code{\link{getBadMiddle}()},
-\code{\link{getBadRegYear}()},
-\code{\link{getBadState}()},
-\code{\link{getBadSuffix}()},
-\code{\link{getBadTitle}()},
-\code{\link{getBadZIP}()},
-\code{\link{proof}()}
+Other proofing functions:
+\code{\link[=getBadAddress]{getBadAddress()}},
+\code{\link[=getBadBirthDate]{getBadBirthDate()}},
+\code{\link[=getBadCity]{getBadCity()}},
+\code{\link[=getBadFirstName]{getBadFirstName()}},
+\code{\link[=getBadHuntMigBirds]{getBadHuntMigBirds()}},
+\code{\link[=getBadLastName]{getBadLastName()}},
+\code{\link[=getBadMiddle]{getBadMiddle()}},
+\code{\link[=getBadRegYear]{getBadRegYear()}},
+\code{\link[=getBadState]{getBadState()}},
+\code{\link[=getBadSuffix]{getBadSuffix()}},
+\code{\link[=getBadTitle]{getBadTitle()}},
+\code{\link[=getBadZIP]{getBadZIP()}},
+\code{\link[=proof]{proof()}}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}

@@ -24,9 +24,9 @@ step will shape up the dataframe into a format ready for the database, and
 write the data to csv.
 }
 \seealso{
-Other writing functions: 
-\code{\link{failWidths}()},
-\code{\link{writeReport}()}
+Other writing functions:
+\code{\link[=failWidths]{failWidths()}},
+\code{\link[=writeReport]{writeReport()}}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}

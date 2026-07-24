@@ -18,8 +18,8 @@ renamed by converting the Julian date to YYYYMMDD format. State abbreviations
 that are in lowercase format are capitalized.
 }
 \seealso{
-Other file functions: 
-\code{\link{fileCheck}()}
+Other file functions:
+\code{\link[=fileCheck]{fileCheck()}}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}

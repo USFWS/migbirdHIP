@@ -6,7 +6,7 @@
 \alias{migbirdHIP-package}
 \title{migbirdHIP: Process USFWS Migratory Bird Harvest Information Program Data in R}
 \description{
-\if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
+\if{html}{\figure{logo.svg}{options: style='float: right' alt='logo' width='120'}}
 
 Functions designed to process and visualize data submitted to the USFWS Harvest Information Program.
 }
@@ -19,6 +19,11 @@ Useful links:
 }
 \author{
 \strong{Maintainer}: Abby Walter \email{abby_walter@fws.gov} (\href{https://orcid.org/0000-0003-4017-5596}{ORCID})
+
+Authors:
+\itemize{
+  \item Abby Walter \email{abby_walter@fws.gov} (\href{https://orcid.org/0000-0003-4017-5596}{ORCID})
+}
 
 }
 \keyword{internal}

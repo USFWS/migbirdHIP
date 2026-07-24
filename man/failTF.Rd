@@ -14,15 +14,15 @@ Internal function that fails if something other than TRUE or FALSE is
 supplied.
 }
 \seealso{
-Other failure functions: 
-\code{\link{failBTPI}()},
-\code{\link{failCR}()},
-\code{\link{failDLdate}()},
-\code{\link{failDLstate}()},
-\code{\link{failProofed}()},
-\code{\link{failState}()},
-\code{\link{failWidths}()},
-\code{\link{failYear}()}
+Other failure functions:
+\code{\link[=failBTPI]{failBTPI()}},
+\code{\link[=failCR]{failCR()}},
+\code{\link[=failDLdate]{failDLdate()}},
+\code{\link[=failDLstate]{failDLstate()}},
+\code{\link[=failProofed]{failProofed()}},
+\code{\link[=failState]{failState()}},
+\code{\link[=failWidths]{failWidths()}},
+\code{\link[=failYear]{failYear()}}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}

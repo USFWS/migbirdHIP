@@ -19,15 +19,15 @@ changes crane "2" values to "0" so that they are classified as HIP records
 until permit files are received later in the hunting season.
 }
 \seealso{
-Other cleaning functions: 
-\code{\link{btpiPermitBagFix}()},
-\code{\link{clean}()},
-\code{\link{formatZip}()},
-\code{\link{inLinePermitDNHFix}()},
-\code{\link{missingPIIFilter}()},
-\code{\link{moveSuffixes}()},
-\code{\link{namesToUppercase}()},
-\code{\link{zipCheck}()}
+Other cleaning functions:
+\code{\link[=btpiPermitBagFix]{btpiPermitBagFix()}},
+\code{\link[=clean]{clean()}},
+\code{\link[=formatZip]{formatZip()}},
+\code{\link[=inLinePermitDNHFix]{inLinePermitDNHFix()}},
+\code{\link[=missingPIIFilter]{missingPIIFilter()}},
+\code{\link[=moveSuffixes]{moveSuffixes()}},
+\code{\link[=namesToUppercase]{namesToUppercase()}},
+\code{\link[=zipCheck]{zipCheck()}}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}

@@ -16,11 +16,11 @@ The internal \code{correctSuffix} function is used inside of
 error is detected.
 }
 \seealso{
-Other correcting functions: 
-\code{\link{correct}()},
-\code{\link{correctEmail}()},
-\code{\link{correctMiddleInitial}()},
-\code{\link{correctTitle}()}
+Other correcting functions:
+\code{\link[=correct]{correct()}},
+\code{\link[=correctEmail]{correctEmail()}},
+\code{\link[=correctMiddleInitial]{correctMiddleInitial()}},
+\code{\link[=correctTitle]{correctTitle()}}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}

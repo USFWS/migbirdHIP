@@ -15,11 +15,11 @@ The internal \code{correctMiddleInitial} function changes non-alphabetic
 characters in the middle initial column to NA.
 }
 \seealso{
-Other correcting functions: 
-\code{\link{correct}()},
-\code{\link{correctEmail}()},
-\code{\link{correctSuffix}()},
-\code{\link{correctTitle}()}
+Other correcting functions:
+\code{\link[=correct]{correct()}},
+\code{\link[=correctEmail]{correctEmail()}},
+\code{\link[=correctSuffix]{correctSuffix()}},
+\code{\link[=correctTitle]{correctTitle()}}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}

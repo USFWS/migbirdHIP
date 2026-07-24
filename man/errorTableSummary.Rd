@@ -36,15 +36,15 @@ include:
 Internal function used inside of \code{\link{errorTable}}.
 }
 \seealso{
-Other error-finding functions: 
-\code{\link{errorLevelErrorsByField}()},
-\code{\link{errorLevelErrorsByState}()},
-\code{\link{errorPlotDL}()},
-\code{\link{errorPlotFields}()},
-\code{\link{errorPlotStates}()},
-\code{\link{errorTable}()},
-\code{\link{pullErrors}()},
-\code{\link{redFlags}()}
+Other error-finding functions:
+\code{\link[=errorLevelErrorsByField]{errorLevelErrorsByField()}},
+\code{\link[=errorLevelErrorsByState]{errorLevelErrorsByState()}},
+\code{\link[=errorPlotDL]{errorPlotDL()}},
+\code{\link[=errorPlotFields]{errorPlotFields()}},
+\code{\link[=errorPlotStates]{errorPlotStates()}},
+\code{\link[=errorTable]{errorTable()}},
+\code{\link[=pullErrors]{pullErrors()}},
+\code{\link[=redFlags]{redFlags()}}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}

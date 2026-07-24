@@ -15,17 +15,17 @@ Return a tibble of duplicates with a duplicate ID column identifying each
 group of records.
 }
 \seealso{
-Other deduplication functions: 
-\code{\link{duplicateAllOnes}()},
-\code{\link{duplicateAllOnesGroupSize}()},
-\code{\link{duplicateDecide}()},
-\code{\link{duplicateFields}()},
-\code{\link{duplicateFinder}()},
-\code{\link{duplicateFix}()},
-\code{\link{duplicateNewest}()},
-\code{\link{duplicatePlot}()},
-\code{\link{duplicateRecordType}()},
-\code{\link{duplicateSample}()}
+Other deduplication functions:
+\code{\link[=duplicateAllOnes]{duplicateAllOnes()}},
+\code{\link[=duplicateAllOnesGroupSize]{duplicateAllOnesGroupSize()}},
+\code{\link[=duplicateDecide]{duplicateDecide()}},
+\code{\link[=duplicateFields]{duplicateFields()}},
+\code{\link[=duplicateFinder]{duplicateFinder()}},
+\code{\link[=duplicateFix]{duplicateFix()}},
+\code{\link[=duplicateNewest]{duplicateNewest()}},
+\code{\link[=duplicatePlot]{duplicatePlot()}},
+\code{\link[=duplicateRecordType]{duplicateRecordType()}},
+\code{\link[=duplicateSample]{duplicateSample()}}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}

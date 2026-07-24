@@ -19,11 +19,11 @@ corrections in all fields. Errors that cannot be programmatically corrected
 will be reported for manual correction.
 }
 \seealso{
-Other correcting functions: 
-\code{\link{correctEmail}()},
-\code{\link{correctMiddleInitial}()},
-\code{\link{correctSuffix}()},
-\code{\link{correctTitle}()}
+Other correcting functions:
+\code{\link[=correctEmail]{correctEmail()}},
+\code{\link[=correctMiddleInitial]{correctMiddleInitial()}},
+\code{\link[=correctSuffix]{correctSuffix()}},
+\code{\link[=correctTitle]{correctTitle()}}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}

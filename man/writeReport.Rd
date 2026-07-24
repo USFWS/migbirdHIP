@@ -26,9 +26,9 @@ Create documentation with figures and tables that summarizes HIP data at a
 download cycle scale.
 }
 \seealso{
-Other writing functions: 
-\code{\link{failWidths}()},
-\code{\link{write_hip}()}
+Other writing functions:
+\code{\link[=failWidths]{failWidths()}},
+\code{\link[=write_hip]{write_hip()}}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}

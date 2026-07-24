@@ -17,8 +17,8 @@ iterates \code{\link{glyphFinder}} over the entire tibble.
 \seealso{
 \code{\link[=shiftCheck]{shiftCheck()}}
 
-Other glyph functions: 
-\code{\link{glyphFinder}()}
+Other glyph functions:
+\code{\link[=glyphFinder]{glyphFinder()}}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}

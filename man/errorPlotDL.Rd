@@ -24,25 +24,25 @@ Create a plot of errors per download cycle, either by all states in the data
 set or a specific state, province, or territory.
 }
 \seealso{
-Other error-finding functions: 
-\code{\link{errorLevelErrorsByField}()},
-\code{\link{errorLevelErrorsByState}()},
-\code{\link{errorPlotFields}()},
-\code{\link{errorPlotStates}()},
-\code{\link{errorTable}()},
-\code{\link{errorTableSummary}()},
-\code{\link{pullErrors}()},
-\code{\link{redFlags}()}
+Other error-finding functions:
+\code{\link[=errorLevelErrorsByField]{errorLevelErrorsByField()}},
+\code{\link[=errorLevelErrorsByState]{errorLevelErrorsByState()}},
+\code{\link[=errorPlotFields]{errorPlotFields()}},
+\code{\link[=errorPlotStates]{errorPlotStates()}},
+\code{\link[=errorTable]{errorTable()}},
+\code{\link[=errorTableSummary]{errorTableSummary()}},
+\code{\link[=pullErrors]{pullErrors()}},
+\code{\link[=redFlags]{redFlags()}}
 
-Other plotting functions: 
-\code{\link{duplicatePlot}()},
-\code{\link{errorLevelErrorsByField}()},
-\code{\link{errorLevelErrorsByState}()},
-\code{\link{errorPlotFields}()},
-\code{\link{errorPlotStates}()},
-\code{\link{issuePlot}()},
-\code{\link{issuePlotDateLabel}()},
-\code{\link{redFlags}()}
+Other plotting functions:
+\code{\link[=duplicatePlot]{duplicatePlot()}},
+\code{\link[=errorLevelErrorsByField]{errorLevelErrorsByField()}},
+\code{\link[=errorLevelErrorsByState]{errorLevelErrorsByState()}},
+\code{\link[=errorPlotFields]{errorPlotFields()}},
+\code{\link[=errorPlotStates]{errorPlotStates()}},
+\code{\link[=issuePlot]{issuePlot()}},
+\code{\link[=issuePlotDateLabel]{issuePlotDateLabel()}},
+\code{\link[=redFlags]{redFlags()}}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}

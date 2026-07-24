@@ -17,21 +17,21 @@ The internal \code{regYearEditMessage} function is used inside of
 for how many \code{registration_yr} values were changed.
 }
 \seealso{
-Other issuance functions: 
-\code{\link{badDateMessage}()},
-\code{\link{futureDateMessage}()},
-\code{\link{invalidDateMessage}()},
-\code{\link{issueAssign}()},
-\code{\link{issueCheck}()},
-\code{\link{issueDecide}()},
-\code{\link{issueMessages}()},
-\code{\link{issuePlot}()},
-\code{\link{issuePlotDateLabel}()},
-\code{\link{issuePrint}()},
-\code{\link{pastDateMessage}()},
-\code{\link{timeTravelMessage}()},
-\code{\link{twoSeasonMessage}()},
-\code{\link{zeroDateMessage}()}
+Other issuance functions:
+\code{\link[=badDateMessage]{badDateMessage()}},
+\code{\link[=futureDateMessage]{futureDateMessage()}},
+\code{\link[=invalidDateMessage]{invalidDateMessage()}},
+\code{\link[=issueAssign]{issueAssign()}},
+\code{\link[=issueCheck]{issueCheck()}},
+\code{\link[=issueDecide]{issueDecide()}},
+\code{\link[=issueMessages]{issueMessages()}},
+\code{\link[=issuePlot]{issuePlot()}},
+\code{\link[=issuePlotDateLabel]{issuePlotDateLabel()}},
+\code{\link[=issuePrint]{issuePrint()}},
+\code{\link[=pastDateMessage]{pastDateMessage()}},
+\code{\link[=timeTravelMessage]{timeTravelMessage()}},
+\code{\link[=twoSeasonMessage]{twoSeasonMessage()}},
+\code{\link[=zeroDateMessage]{zeroDateMessage()}}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}

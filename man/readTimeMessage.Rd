@@ -19,17 +19,17 @@ informing the user about how long it took to read in the data with
 \code{\link{read_hip}}.
 }
 \seealso{
-Other reading functions: 
-\code{\link{checkFileNameDateFormat}()},
-\code{\link{checkFileNameStateAbbr}()},
-\code{\link{dropBlankFiles}()},
-\code{\link{dropBlankLines}()},
-\code{\link{idBlankFiles}()},
-\code{\link{ignoreHolds}()},
-\code{\link{ignoreLifetime}()},
-\code{\link{ignorePermits}()},
-\code{\link{listFiles}()},
-\code{\link{read_hip}()}
+Other reading functions:
+\code{\link[=checkFileNameDateFormat]{checkFileNameDateFormat()}},
+\code{\link[=checkFileNameStateAbbr]{checkFileNameStateAbbr()}},
+\code{\link[=dropBlankFiles]{dropBlankFiles()}},
+\code{\link[=dropBlankLines]{dropBlankLines()}},
+\code{\link[=idBlankFiles]{idBlankFiles()}},
+\code{\link[=ignoreHolds]{ignoreHolds()}},
+\code{\link[=ignoreLifetime]{ignoreLifetime()}},
+\code{\link[=ignorePermits]{ignorePermits()}},
+\code{\link[=listFiles]{listFiles()}},
+\code{\link[=read_hip]{read_hip()}}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}

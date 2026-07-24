@@ -14,15 +14,15 @@ collected}
 Internal function that fails if an incorrect year is provided.
 }
 \seealso{
-Other failure functions: 
-\code{\link{failBTPI}()},
-\code{\link{failCR}()},
-\code{\link{failDLdate}()},
-\code{\link{failDLstate}()},
-\code{\link{failProofed}()},
-\code{\link{failState}()},
-\code{\link{failTF}()},
-\code{\link{failWidths}()}
+Other failure functions:
+\code{\link[=failBTPI]{failBTPI()}},
+\code{\link[=failCR]{failCR()}},
+\code{\link[=failDLdate]{failDLdate()}},
+\code{\link[=failDLstate]{failDLstate()}},
+\code{\link[=failProofed]{failProofed()}},
+\code{\link[=failState]{failState()}},
+\code{\link[=failTF]{failTF()}},
+\code{\link[=failWidths]{failWidths()}}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}

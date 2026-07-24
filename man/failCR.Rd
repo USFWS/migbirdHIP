@@ -14,15 +14,15 @@ failCR(corrected_data)
 Internal function that applies to crane permit files.
 }
 \seealso{
-Other failure functions: 
-\code{\link{failBTPI}()},
-\code{\link{failDLdate}()},
-\code{\link{failDLstate}()},
-\code{\link{failProofed}()},
-\code{\link{failState}()},
-\code{\link{failTF}()},
-\code{\link{failWidths}()},
-\code{\link{failYear}()}
+Other failure functions:
+\code{\link[=failBTPI]{failBTPI()}},
+\code{\link[=failDLdate]{failDLdate()}},
+\code{\link[=failDLstate]{failDLstate()}},
+\code{\link[=failProofed]{failProofed()}},
+\code{\link[=failState]{failState()}},
+\code{\link[=failTF]{failTF()}},
+\code{\link[=failWidths]{failWidths()}},
+\code{\link[=failYear]{failYear()}}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}

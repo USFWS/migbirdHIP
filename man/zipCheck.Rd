@@ -15,15 +15,15 @@ The internal \code{zipCheck} function checks to see if zip codes in hunter
 addresses match the address state.
 }
 \seealso{
-Other cleaning functions: 
-\code{\link{btpiPermitBagFix}()},
-\code{\link{clean}()},
-\code{\link{cranePermitBagFix}()},
-\code{\link{formatZip}()},
-\code{\link{inLinePermitDNHFix}()},
-\code{\link{missingPIIFilter}()},
-\code{\link{moveSuffixes}()},
-\code{\link{namesToUppercase}()}
+Other cleaning functions:
+\code{\link[=btpiPermitBagFix]{btpiPermitBagFix()}},
+\code{\link[=clean]{clean()}},
+\code{\link[=cranePermitBagFix]{cranePermitBagFix()}},
+\code{\link[=formatZip]{formatZip()}},
+\code{\link[=inLinePermitDNHFix]{inLinePermitDNHFix()}},
+\code{\link[=missingPIIFilter]{missingPIIFilter()}},
+\code{\link[=moveSuffixes]{moveSuffixes()}},
+\code{\link[=namesToUppercase]{namesToUppercase()}}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}

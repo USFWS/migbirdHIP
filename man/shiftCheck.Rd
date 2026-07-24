@@ -17,8 +17,8 @@ shifted.
 \seealso{
 \code{\link[=glyphCheck]{glyphCheck()}}
 
-Other shifting functions: 
-\code{\link{shiftFinder}()}
+Other shifting functions:
+\code{\link[=shiftFinder]{shiftFinder()}}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}

@@ -15,17 +15,17 @@ The internal \code{duplicateSample} function is used inside of
 evaluated using other criteria already.
 }
 \seealso{
-Other deduplication functions: 
-\code{\link{duplicateAllOnes}()},
-\code{\link{duplicateAllOnesGroupSize}()},
-\code{\link{duplicateDecide}()},
-\code{\link{duplicateFields}()},
-\code{\link{duplicateFinder}()},
-\code{\link{duplicateFix}()},
-\code{\link{duplicateID}()},
-\code{\link{duplicateNewest}()},
-\code{\link{duplicatePlot}()},
-\code{\link{duplicateRecordType}()}
+Other deduplication functions:
+\code{\link[=duplicateAllOnes]{duplicateAllOnes()}},
+\code{\link[=duplicateAllOnesGroupSize]{duplicateAllOnesGroupSize()}},
+\code{\link[=duplicateDecide]{duplicateDecide()}},
+\code{\link[=duplicateFields]{duplicateFields()}},
+\code{\link[=duplicateFinder]{duplicateFinder()}},
+\code{\link[=duplicateFix]{duplicateFix()}},
+\code{\link[=duplicateID]{duplicateID()}},
+\code{\link[=duplicateNewest]{duplicateNewest()}},
+\code{\link[=duplicatePlot]{duplicatePlot()}},
+\code{\link[=duplicateRecordType]{duplicateRecordType()}}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}

@@ -15,21 +15,21 @@ The internal \code{timeTravelMessage} function is used inside of
 if \code{issue_date} values are after the date the file was submitted.
 }
 \seealso{
-Other issuance functions: 
-\code{\link{badDateMessage}()},
-\code{\link{futureDateMessage}()},
-\code{\link{invalidDateMessage}()},
-\code{\link{issueAssign}()},
-\code{\link{issueCheck}()},
-\code{\link{issueDecide}()},
-\code{\link{issueMessages}()},
-\code{\link{issuePlot}()},
-\code{\link{issuePlotDateLabel}()},
-\code{\link{issuePrint}()},
-\code{\link{pastDateMessage}()},
-\code{\link{regYearEditMessage}()},
-\code{\link{twoSeasonMessage}()},
-\code{\link{zeroDateMessage}()}
+Other issuance functions:
+\code{\link[=badDateMessage]{badDateMessage()}},
+\code{\link[=futureDateMessage]{futureDateMessage()}},
+\code{\link[=invalidDateMessage]{invalidDateMessage()}},
+\code{\link[=issueAssign]{issueAssign()}},
+\code{\link[=issueCheck]{issueCheck()}},
+\code{\link[=issueDecide]{issueDecide()}},
+\code{\link[=issueMessages]{issueMessages()}},
+\code{\link[=issuePlot]{issuePlot()}},
+\code{\link[=issuePlotDateLabel]{issuePlotDateLabel()}},
+\code{\link[=issuePrint]{issuePrint()}},
+\code{\link[=pastDateMessage]{pastDateMessage()}},
+\code{\link[=regYearEditMessage]{regYearEditMessage()}},
+\code{\link[=twoSeasonMessage]{twoSeasonMessage()}},
+\code{\link[=zeroDateMessage]{zeroDateMessage()}}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}

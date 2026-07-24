@@ -18,17 +18,17 @@ The internal \code{listFiles} function is used inside of
 in from the provided directory.
 }
 \seealso{
-Other reading functions: 
-\code{\link{checkFileNameDateFormat}()},
-\code{\link{checkFileNameStateAbbr}()},
-\code{\link{dropBlankFiles}()},
-\code{\link{dropBlankLines}()},
-\code{\link{idBlankFiles}()},
-\code{\link{ignoreHolds}()},
-\code{\link{ignoreLifetime}()},
-\code{\link{ignorePermits}()},
-\code{\link{readTimeMessage}()},
-\code{\link{read_hip}()}
+Other reading functions:
+\code{\link[=checkFileNameDateFormat]{checkFileNameDateFormat()}},
+\code{\link[=checkFileNameStateAbbr]{checkFileNameStateAbbr()}},
+\code{\link[=dropBlankFiles]{dropBlankFiles()}},
+\code{\link[=dropBlankLines]{dropBlankLines()}},
+\code{\link[=idBlankFiles]{idBlankFiles()}},
+\code{\link[=ignoreHolds]{ignoreHolds()}},
+\code{\link[=ignoreLifetime]{ignoreLifetime()}},
+\code{\link[=ignorePermits]{ignorePermits()}},
+\code{\link[=readTimeMessage]{readTimeMessage()}},
+\code{\link[=read_hip]{read_hip()}}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}

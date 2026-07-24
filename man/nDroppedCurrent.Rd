@@ -20,9 +20,9 @@ Internal function that helps \code{\link{nDropped}} by summarizing the number
 of dropped registrations by \code{\link{issueCheck}}.
 }
 \seealso{
-Other summary functions: 
-\code{\link{nDropped}()},
-\code{\link{nDroppedClean}()}
+Other summary functions:
+\code{\link[=nDropped]{nDropped()}},
+\code{\link[=nDroppedClean]{nDroppedClean()}}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}

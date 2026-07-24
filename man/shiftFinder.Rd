@@ -17,8 +17,8 @@ shift error.
 \seealso{
 \code{\link[=glyphFinder]{glyphFinder()}}
 
-Other shifting functions: 
-\code{\link{shiftCheck}()}
+Other shifting functions:
+\code{\link[=shiftCheck]{shiftCheck()}}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}

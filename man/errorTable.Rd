@@ -35,15 +35,15 @@ Create a tibble of existing errors in the data, customizing the output with
 value specifications.
 }
 \seealso{
-Other error-finding functions: 
-\code{\link{errorLevelErrorsByField}()},
-\code{\link{errorLevelErrorsByState}()},
-\code{\link{errorPlotDL}()},
-\code{\link{errorPlotFields}()},
-\code{\link{errorPlotStates}()},
-\code{\link{errorTableSummary}()},
-\code{\link{pullErrors}()},
-\code{\link{redFlags}()}
+Other error-finding functions:
+\code{\link[=errorLevelErrorsByField]{errorLevelErrorsByField()}},
+\code{\link[=errorLevelErrorsByState]{errorLevelErrorsByState()}},
+\code{\link[=errorPlotDL]{errorPlotDL()}},
+\code{\link[=errorPlotFields]{errorPlotFields()}},
+\code{\link[=errorPlotStates]{errorPlotStates()}},
+\code{\link[=errorTableSummary]{errorTableSummary()}},
+\code{\link[=pullErrors]{pullErrors()}},
+\code{\link[=redFlags]{redFlags()}}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}

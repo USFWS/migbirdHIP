@@ -14,17 +14,17 @@ duplicateFinder(current_data)
 Determine how many duplicate records are in the data and return a table.
 }
 \seealso{
-Other deduplication functions: 
-\code{\link{duplicateAllOnes}()},
-\code{\link{duplicateAllOnesGroupSize}()},
-\code{\link{duplicateDecide}()},
-\code{\link{duplicateFields}()},
-\code{\link{duplicateFix}()},
-\code{\link{duplicateID}()},
-\code{\link{duplicateNewest}()},
-\code{\link{duplicatePlot}()},
-\code{\link{duplicateRecordType}()},
-\code{\link{duplicateSample}()}
+Other deduplication functions:
+\code{\link[=duplicateAllOnes]{duplicateAllOnes()}},
+\code{\link[=duplicateAllOnesGroupSize]{duplicateAllOnesGroupSize()}},
+\code{\link[=duplicateDecide]{duplicateDecide()}},
+\code{\link[=duplicateFields]{duplicateFields()}},
+\code{\link[=duplicateFix]{duplicateFix()}},
+\code{\link[=duplicateID]{duplicateID()}},
+\code{\link[=duplicateNewest]{duplicateNewest()}},
+\code{\link[=duplicatePlot]{duplicatePlot()}},
+\code{\link[=duplicateRecordType]{duplicateRecordType()}},
+\code{\link[=duplicateSample]{duplicateSample()}}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}

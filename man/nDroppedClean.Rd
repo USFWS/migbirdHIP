@@ -21,9 +21,9 @@ Internal function that helps \code{\link{nDropped}} by summarizing the number
 of dropped registrations by \code{\link{clean}}.
 }
 \seealso{
-Other summary functions: 
-\code{\link{nDropped}()},
-\code{\link{nDroppedCurrent}()}
+Other summary functions:
+\code{\link[=nDropped]{nDropped()}},
+\code{\link[=nDroppedCurrent]{nDroppedCurrent()}}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}

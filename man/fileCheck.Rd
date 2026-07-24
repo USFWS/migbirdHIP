@@ -16,8 +16,8 @@ Check if any files in the input folder have already been written to processed
 folder.
 }
 \seealso{
-Other file functions: 
-\code{\link{fileRename}()}
+Other file functions:
+\code{\link[=fileRename]{fileRename()}}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}

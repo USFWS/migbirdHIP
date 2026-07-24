@@ -35,9 +35,9 @@ nDropped(
 Internal function that summarizes the number of dropped registrations.
 }
 \seealso{
-Other summary functions: 
-\code{\link{nDroppedClean}()},
-\code{\link{nDroppedCurrent}()}
+Other summary functions:
+\code{\link[=nDroppedClean]{nDroppedClean()}},
+\code{\link[=nDroppedCurrent]{nDroppedCurrent()}}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}

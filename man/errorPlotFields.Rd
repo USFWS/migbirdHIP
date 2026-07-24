@@ -26,25 +26,25 @@ Create a bar plot of proportion of error per field. The plot defaults to all
 49 states, but location can be specified.
 }
 \seealso{
-Other error-finding functions: 
-\code{\link{errorLevelErrorsByField}()},
-\code{\link{errorLevelErrorsByState}()},
-\code{\link{errorPlotDL}()},
-\code{\link{errorPlotStates}()},
-\code{\link{errorTable}()},
-\code{\link{errorTableSummary}()},
-\code{\link{pullErrors}()},
-\code{\link{redFlags}()}
+Other error-finding functions:
+\code{\link[=errorLevelErrorsByField]{errorLevelErrorsByField()}},
+\code{\link[=errorLevelErrorsByState]{errorLevelErrorsByState()}},
+\code{\link[=errorPlotDL]{errorPlotDL()}},
+\code{\link[=errorPlotStates]{errorPlotStates()}},
+\code{\link[=errorTable]{errorTable()}},
+\code{\link[=errorTableSummary]{errorTableSummary()}},
+\code{\link[=pullErrors]{pullErrors()}},
+\code{\link[=redFlags]{redFlags()}}
 
-Other plotting functions: 
-\code{\link{duplicatePlot}()},
-\code{\link{errorLevelErrorsByField}()},
-\code{\link{errorLevelErrorsByState}()},
-\code{\link{errorPlotDL}()},
-\code{\link{errorPlotStates}()},
-\code{\link{issuePlot}()},
-\code{\link{issuePlotDateLabel}()},
-\code{\link{redFlags}()}
+Other plotting functions:
+\code{\link[=duplicatePlot]{duplicatePlot()}},
+\code{\link[=errorLevelErrorsByField]{errorLevelErrorsByField()}},
+\code{\link[=errorLevelErrorsByState]{errorLevelErrorsByState()}},
+\code{\link[=errorPlotDL]{errorPlotDL()}},
+\code{\link[=errorPlotStates]{errorPlotStates()}},
+\code{\link[=issuePlot]{issuePlot()}},
+\code{\link[=issuePlotDateLabel]{issuePlotDateLabel()}},
+\code{\link[=redFlags]{redFlags()}}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}

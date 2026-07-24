@@ -19,8 +19,8 @@ The internal \code{filterOutOregonPermits} function calculates the count and
 proportion of a bad bag value inside of \code{\link{bagCheck}}.
 }
 \seealso{
-Other bag functions: 
-\code{\link{bagCheck}()}
+Other bag functions:
+\code{\link[=bagCheck]{bagCheck()}}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}

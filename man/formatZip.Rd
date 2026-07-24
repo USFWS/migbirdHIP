@@ -14,15 +14,15 @@ formatZip(raw_data)
 The internal \code{formatZip} function formats zip codes.
 }
 \seealso{
-Other cleaning functions: 
-\code{\link{btpiPermitBagFix}()},
-\code{\link{clean}()},
-\code{\link{cranePermitBagFix}()},
-\code{\link{inLinePermitDNHFix}()},
-\code{\link{missingPIIFilter}()},
-\code{\link{moveSuffixes}()},
-\code{\link{namesToUppercase}()},
-\code{\link{zipCheck}()}
+Other cleaning functions:
+\code{\link[=btpiPermitBagFix]{btpiPermitBagFix()}},
+\code{\link[=clean]{clean()}},
+\code{\link[=cranePermitBagFix]{cranePermitBagFix()}},
+\code{\link[=inLinePermitDNHFix]{inLinePermitDNHFix()}},
+\code{\link[=missingPIIFilter]{missingPIIFilter()}},
+\code{\link[=moveSuffixes]{moveSuffixes()}},
+\code{\link[=namesToUppercase]{namesToUppercase()}},
+\code{\link[=zipCheck]{zipCheck()}}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}

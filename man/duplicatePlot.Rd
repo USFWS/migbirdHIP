@@ -14,27 +14,27 @@ duplicatePlot(current_data)
 Plot which fields are duplicates of individual hunters.
 }
 \seealso{
-Other deduplication functions: 
-\code{\link{duplicateAllOnes}()},
-\code{\link{duplicateAllOnesGroupSize}()},
-\code{\link{duplicateDecide}()},
-\code{\link{duplicateFields}()},
-\code{\link{duplicateFinder}()},
-\code{\link{duplicateFix}()},
-\code{\link{duplicateID}()},
-\code{\link{duplicateNewest}()},
-\code{\link{duplicateRecordType}()},
-\code{\link{duplicateSample}()}
+Other deduplication functions:
+\code{\link[=duplicateAllOnes]{duplicateAllOnes()}},
+\code{\link[=duplicateAllOnesGroupSize]{duplicateAllOnesGroupSize()}},
+\code{\link[=duplicateDecide]{duplicateDecide()}},
+\code{\link[=duplicateFields]{duplicateFields()}},
+\code{\link[=duplicateFinder]{duplicateFinder()}},
+\code{\link[=duplicateFix]{duplicateFix()}},
+\code{\link[=duplicateID]{duplicateID()}},
+\code{\link[=duplicateNewest]{duplicateNewest()}},
+\code{\link[=duplicateRecordType]{duplicateRecordType()}},
+\code{\link[=duplicateSample]{duplicateSample()}}
 
-Other plotting functions: 
-\code{\link{errorLevelErrorsByField}()},
-\code{\link{errorLevelErrorsByState}()},
-\code{\link{errorPlotDL}()},
-\code{\link{errorPlotFields}()},
-\code{\link{errorPlotStates}()},
-\code{\link{issuePlot}()},
-\code{\link{issuePlotDateLabel}()},
-\code{\link{redFlags}()}
+Other plotting functions:
+\code{\link[=errorLevelErrorsByField]{errorLevelErrorsByField()}},
+\code{\link[=errorLevelErrorsByState]{errorLevelErrorsByState()}},
+\code{\link[=errorPlotDL]{errorPlotDL()}},
+\code{\link[=errorPlotFields]{errorPlotFields()}},
+\code{\link[=errorPlotStates]{errorPlotStates()}},
+\code{\link[=issuePlot]{issuePlot()}},
+\code{\link[=issuePlotDateLabel]{issuePlotDateLabel()}},
+\code{\link[=redFlags]{redFlags()}}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}

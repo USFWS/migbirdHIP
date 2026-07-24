@@ -14,31 +14,31 @@ The internal \code{issuePlotDateLabel} function labels x-axis dates for
 \code{\link{issuePlot}}.
 }
 \seealso{
-Other issuance functions: 
-\code{\link{badDateMessage}()},
-\code{\link{futureDateMessage}()},
-\code{\link{invalidDateMessage}()},
-\code{\link{issueAssign}()},
-\code{\link{issueCheck}()},
-\code{\link{issueDecide}()},
-\code{\link{issueMessages}()},
-\code{\link{issuePlot}()},
-\code{\link{issuePrint}()},
-\code{\link{pastDateMessage}()},
-\code{\link{regYearEditMessage}()},
-\code{\link{timeTravelMessage}()},
-\code{\link{twoSeasonMessage}()},
-\code{\link{zeroDateMessage}()}
+Other issuance functions:
+\code{\link[=badDateMessage]{badDateMessage()}},
+\code{\link[=futureDateMessage]{futureDateMessage()}},
+\code{\link[=invalidDateMessage]{invalidDateMessage()}},
+\code{\link[=issueAssign]{issueAssign()}},
+\code{\link[=issueCheck]{issueCheck()}},
+\code{\link[=issueDecide]{issueDecide()}},
+\code{\link[=issueMessages]{issueMessages()}},
+\code{\link[=issuePlot]{issuePlot()}},
+\code{\link[=issuePrint]{issuePrint()}},
+\code{\link[=pastDateMessage]{pastDateMessage()}},
+\code{\link[=regYearEditMessage]{regYearEditMessage()}},
+\code{\link[=timeTravelMessage]{timeTravelMessage()}},
+\code{\link[=twoSeasonMessage]{twoSeasonMessage()}},
+\code{\link[=zeroDateMessage]{zeroDateMessage()}}
 
-Other plotting functions: 
-\code{\link{duplicatePlot}()},
-\code{\link{errorLevelErrorsByField}()},
-\code{\link{errorLevelErrorsByState}()},
-\code{\link{errorPlotDL}()},
-\code{\link{errorPlotFields}()},
-\code{\link{errorPlotStates}()},
-\code{\link{issuePlot}()},
-\code{\link{redFlags}()}
+Other plotting functions:
+\code{\link[=duplicatePlot]{duplicatePlot()}},
+\code{\link[=errorLevelErrorsByField]{errorLevelErrorsByField()}},
+\code{\link[=errorLevelErrorsByState]{errorLevelErrorsByState()}},
+\code{\link[=errorPlotDL]{errorPlotDL()}},
+\code{\link[=errorPlotFields]{errorPlotFields()}},
+\code{\link[=errorPlotStates]{errorPlotStates()}},
+\code{\link[=issuePlot]{issuePlot()}},
+\code{\link[=redFlags]{redFlags()}}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}

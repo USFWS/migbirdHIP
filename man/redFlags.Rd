@@ -22,25 +22,25 @@ Create a tibble of error data by state or field. Data are reported using a
 threshold of proportion of error.
 }
 \seealso{
-Other error-finding functions: 
-\code{\link{errorLevelErrorsByField}()},
-\code{\link{errorLevelErrorsByState}()},
-\code{\link{errorPlotDL}()},
-\code{\link{errorPlotFields}()},
-\code{\link{errorPlotStates}()},
-\code{\link{errorTable}()},
-\code{\link{errorTableSummary}()},
-\code{\link{pullErrors}()}
+Other error-finding functions:
+\code{\link[=errorLevelErrorsByField]{errorLevelErrorsByField()}},
+\code{\link[=errorLevelErrorsByState]{errorLevelErrorsByState()}},
+\code{\link[=errorPlotDL]{errorPlotDL()}},
+\code{\link[=errorPlotFields]{errorPlotFields()}},
+\code{\link[=errorPlotStates]{errorPlotStates()}},
+\code{\link[=errorTable]{errorTable()}},
+\code{\link[=errorTableSummary]{errorTableSummary()}},
+\code{\link[=pullErrors]{pullErrors()}}
 
-Other plotting functions: 
-\code{\link{duplicatePlot}()},
-\code{\link{errorLevelErrorsByField}()},
-\code{\link{errorLevelErrorsByState}()},
-\code{\link{errorPlotDL}()},
-\code{\link{errorPlotFields}()},
-\code{\link{errorPlotStates}()},
-\code{\link{issuePlot}()},
-\code{\link{issuePlotDateLabel}()}
+Other plotting functions:
+\code{\link[=duplicatePlot]{duplicatePlot()}},
+\code{\link[=errorLevelErrorsByField]{errorLevelErrorsByField()}},
+\code{\link[=errorLevelErrorsByState]{errorLevelErrorsByState()}},
+\code{\link[=errorPlotDL]{errorPlotDL()}},
+\code{\link[=errorPlotFields]{errorPlotFields()}},
+\code{\link[=errorPlotStates]{errorPlotStates()}},
+\code{\link[=issuePlot]{issuePlot()}},
+\code{\link[=issuePlotDateLabel]{issuePlotDateLabel()}}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}

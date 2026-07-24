@@ -15,15 +15,15 @@ The internal \code{missingPIIFilter} function filters out HIP registrations
 that are missing critical pieces of contact information.
 }
 \seealso{
-Other cleaning functions: 
-\code{\link{btpiPermitBagFix}()},
-\code{\link{clean}()},
-\code{\link{cranePermitBagFix}()},
-\code{\link{formatZip}()},
-\code{\link{inLinePermitDNHFix}()},
-\code{\link{moveSuffixes}()},
-\code{\link{namesToUppercase}()},
-\code{\link{zipCheck}()}
+Other cleaning functions:
+\code{\link[=btpiPermitBagFix]{btpiPermitBagFix()}},
+\code{\link[=clean]{clean()}},
+\code{\link[=cranePermitBagFix]{cranePermitBagFix()}},
+\code{\link[=formatZip]{formatZip()}},
+\code{\link[=inLinePermitDNHFix]{inLinePermitDNHFix()}},
+\code{\link[=moveSuffixes]{moveSuffixes()}},
+\code{\link[=namesToUppercase]{namesToUppercase()}},
+\code{\link[=zipCheck]{zipCheck()}}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}

@@ -15,19 +15,19 @@ Internal function that fails inside of \code{\link{write_hip}} if any value
 exceeds designated field widths.
 }
 \seealso{
-Other failure functions: 
-\code{\link{failBTPI}()},
-\code{\link{failCR}()},
-\code{\link{failDLdate}()},
-\code{\link{failDLstate}()},
-\code{\link{failProofed}()},
-\code{\link{failState}()},
-\code{\link{failTF}()},
-\code{\link{failYear}()}
+Other failure functions:
+\code{\link[=failBTPI]{failBTPI()}},
+\code{\link[=failCR]{failCR()}},
+\code{\link[=failDLdate]{failDLdate()}},
+\code{\link[=failDLstate]{failDLstate()}},
+\code{\link[=failProofed]{failProofed()}},
+\code{\link[=failState]{failState()}},
+\code{\link[=failTF]{failTF()}},
+\code{\link[=failYear]{failYear()}}
 
-Other writing functions: 
-\code{\link{writeReport}()},
-\code{\link{write_hip}()}
+Other writing functions:
+\code{\link[=writeReport]{writeReport()}},
+\code{\link[=write_hip]{write_hip()}}
 }
 \author{
 Abby Walter, \email{abby_walter@fws.gov}
