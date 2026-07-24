@@ -121,3 +121,25 @@ test_that("errorPlotStates rejects out-of-range and non-numeric thresholds", {
 test_that("errorPlotStates fails on non-proofed data", {
   expect_error(errorPlotStates(DF_TEST_MINI))
 })
+
+# extended ----------------------------------------------------------------
+
+# The following tests for errorPlotDL() were generated with AI assistance using
+# Claude Opus 4.8 in Perplexity on July 22, 2026.
+
+# errorPlots -- The original `expect_true(all(!is.na(p$data$dl_cycle)))` is
+# vacuously TRUE on empty data (all(logical(0)) == TRUE). Guard non-emptiness
+# first.
+
+test_that("errorPlotDL keeps a non-empty dl_cycle for a specific state", {
+  proofed_err <-
+    DF_TEST_TINI_DEDUPED |>
+    dplyr::mutate(zip = "000000") |>
+    proof(year = yr)
+
+  p <- errorPlotDL(proofed_err, loc = "IA")
+  expect_s3_class(p, "ggplot")
+  expect_true("dl_cycle" %in% names(p$data))
+  expect_gt(nrow(p$data), 0)                      # guard against vacuous TRUE
+  expect_true(all(!is.na(p$data$dl_cycle)))
+})

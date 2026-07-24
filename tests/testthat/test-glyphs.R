@@ -13,3 +13,11 @@ test_that("glyphCheck finds non-utf8 characters", {
 
   expect_true(nrow(glyph_checked) == 1)
 })
+
+# The following tests for glyphCheck() were generated with AI assistance using
+# Claude Opus 4.8 in Perplexity on July 22, 2026.
+
+test_that("glyphCheck messages 'All characters are UTF-8' on clean input", {
+  clean_input <- DF_TEST_MINI |> dplyr::slice_head(n = 5)
+  expect_message(glyphCheck(clean_input), "All characters are UTF-8")
+})

@@ -132,3 +132,36 @@ test_that("checkFileNameStateAbbr works", {
 
   expect_true(badformat == "error")
 })
+
+# extended argument testing -----------------------------------------------
+
+# The following tests for read_hip() were generated with AI assistance using
+# Claude Opus 4.8 in Perplexity on July 22, 2026.
+
+# unique = FALSE suppresses distinct() AND the record_key column; default keeps
+# them
+test_that("read_hip unique = FALSE retains rows and drops record_key", {
+  suppressMessages(invisible(capture.output(
+    def <- read_hip(testthat::test_path("data", "DL0902")))))
+  suppressMessages(invisible(capture.output(
+    nou <- read_hip(testthat::test_path("data", "DL0902"), unique = FALSE))))
+
+  expect_true("record_key" %in% names(def))
+  expect_false("record_key" %in% names(nou))
+  # Duplicate suppression can only add rows, never remove them.
+  expect_gte(nrow(nou), nrow(def))
+})
+
+# season = TRUE lists folders recursively. The bundled files live in
+# data/DL0902/, so a non-recursive read of the parent finds nothing, whereas
+# season = TRUE finds the two states.
+test_that("read_hip season = TRUE recurses where the default cannot", {
+  # Default (season = FALSE): no .txt directly under data/ -> hard error.
+  expect_error(
+    suppressMessages(read_hip(testthat::test_path("data"))),
+    "No file")
+
+  suppressMessages(invisible(capture.output(
+    seasoned <- read_hip(testthat::test_path("data"), season = TRUE))))
+  expect_equal(length(unique(seasoned$dl_state)), 2)
+})

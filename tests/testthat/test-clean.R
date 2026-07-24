@@ -364,3 +364,46 @@ test_that("suffixes moved from lastname to suffix", {
 
   expect_equal(nrow(bad_move), 0)
 })
+
+# zipCheck tests ----------------------------------------------------------
+
+# The following tests for zipCheck() were generated with AI assistance using
+# Claude Opus 4.8 in Perplexity on July 22, 2026.
+
+test_that("zipCheck warns and returns mismatches when >=10% zips are wrong", {
+  real_zip <- REF_ZIP_CODE$zipcode[1]  # "00501" -> state "NY"
+
+  # All 5 records claim a state ("ZZ") that does not match the zip's true
+  # state, so proportion = 5/5 = 1.0 >= 0.1 -> branch triggers.
+  wrong <-
+    dplyr::tibble(
+      source_file = "BAD.txt",
+      state = "ZZ",
+      zip = real_zip)[rep(1, 5), ]
+
+  suppressMessages(invisible(capture.output(
+    expect_message(
+      zipCheck(wrong),
+      "do not correspond to provided"))))
+
+  suppressMessages(invisible(capture.output(res <- zipCheck(wrong))))
+  expect_s3_class(res, "data.frame")
+  expect_true(all(c("source_file", "n", "proportion") %in% names(res)))
+  expect_equal(res$n, 5L)
+  expect_gte(res$proportion, 0.1)
+})
+
+test_that("zipCheck is silent below the threshold (1 of 20 = 5%)", {
+  real_zip <- REF_ZIP_CODE$zipcode[1]
+  true_state <- REF_ZIP_CODE$state[1]
+
+  # 19 matching + 1 mismatching -> proportion 0.05 < 0.1 and n = 1 < 100.
+  ok <-
+    dplyr::tibble(
+      source_file = "OK.txt",
+      state = c(rep(true_state, 19), "ZZ"),
+      zip = real_zip)
+
+  expect_no_message(zipCheck(ok))
+  expect_null(suppressMessages(zipCheck(ok)))
+})

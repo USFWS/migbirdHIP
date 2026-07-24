@@ -1,8 +1,10 @@
 # correct function --------------------------------------------------------
 
+yr <- as.numeric(REF_CURRENT_SEASON)
+
 test_that("correct input and output have the same number of records", {
 
-  test_correct <- correct(DF_TEST_TINI_PROOFED, as.numeric(REF_CURRENT_SEASON))
+  test_correct <- correct(DF_TEST_TINI_PROOFED, yr)
   expect_equal(nrow(DF_TEST_TINI_PROOFED), nrow(test_correct))
 })
 
@@ -14,7 +16,7 @@ test_that("correct title works", {
       title = ifelse(record_key == "record_1", 3, title),
       errors = ifelse(record_key == "record_1", "title", NA))
 
-  test_correct <- correct(bad_title, as.numeric(REF_CURRENT_SEASON))
+  test_correct <- correct(bad_title, yr)
   expect_false(identical(test_correct$title, bad_title$title))
 })
 
@@ -26,7 +28,7 @@ test_that("correct suffix works", {
       suffix = ifelse(record_key == "record_1", "ESQ", suffix),
       errors = ifelse(record_key == "record_1", "suffix", NA))
 
-  test_correct <- correct(bad_suffix, as.numeric(REF_CURRENT_SEASON))
+  test_correct <- correct(bad_suffix, yr)
   expect_false(identical(test_correct$suffix, bad_suffix$suffix))
 })
 
@@ -38,7 +40,7 @@ test_that("correct middle initial works", {
       middle = ifelse(record_key == "record_1", "3", middle),
       errors = ifelse(record_key == "record_1", "middle", NA))
 
-  test_correct <- correct(bad_middle, as.numeric(REF_CURRENT_SEASON))
+  test_correct <- correct(bad_middle, yr)
   expect_false(identical(test_correct$middle, bad_middle$middle))
 })
 
@@ -50,8 +52,50 @@ test_that("correct email: adding period before TLD works", {
       email = ifelse(record_key == "record_1", "bugsbunny@gmailcom", email),
       errors = ifelse(record_key == "record_1", "email", NA))
 
-  test_correct <- correct(bad_email, as.numeric(REF_CURRENT_SEASON))
+  test_correct <- correct(bad_email, yr)
   expect_false(identical(test_correct$email, bad_email$email))
+})
+
+
+# correct function cont'd -------------------------------------------------
+
+# The following tests for correct() were generated with AI assistance using
+# Claude Opus 4.8 in Perplexity on July 22, 2026.
+
+# Replacements for above tests which prove change, not correctness. These assert
+# the corrected field is actually NA.
+
+test_that("correct title sets the flagged title to NA (correctness)", {
+  bad_title <-
+    DF_TEST_TINI_PROOFED |>
+    dplyr::mutate(
+      title = ifelse(record_key == "record_1", 3, title),
+      errors = ifelse(record_key == "record_1", "title", NA))
+
+  test_correct <- correct(bad_title, yr)
+  expect_true(is.na(test_correct$title[test_correct$record_key == "record_1"]))
+})
+
+test_that("correct suffix sets the flagged suffix to NA (correctness)", {
+  bad_suffix <-
+    DF_TEST_TINI_PROOFED |>
+    dplyr::mutate(
+      suffix = ifelse(record_key == "record_1", "ESQ", suffix),
+      errors = ifelse(record_key == "record_1", "suffix", NA))
+
+  test_correct <- correct(bad_suffix, yr)
+  expect_true(is.na(test_correct$suffix[test_correct$record_key == "record_1"]))
+})
+
+test_that("correct middle sets the flagged middle to NA (correctness)", {
+  bad_middle <-
+    DF_TEST_TINI_PROOFED |>
+    dplyr::mutate(
+      middle = ifelse(record_key == "record_1", "3", middle),
+      errors = ifelse(record_key == "record_1", "middle", NA))
+
+  test_correct <- correct(bad_middle, yr)
+  expect_true(is.na(test_correct$middle[test_correct$record_key == "record_1"]))
 })
 
 # correctEmail function ---------------------------------------------------

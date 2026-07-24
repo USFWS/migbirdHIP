@@ -95,14 +95,19 @@
 - Fail gracefully if input provided contains 0 rows (or data are dropped to result in 0 rows) for `clean()`, `proof()`, and `write_hip()`.
 - Following `{dplyr}` `1.2.0` release notes, update `case_when()` with `recode_values()` and `replace_when()` as appropriate.
 - Testing
-  - Add test files `test-write_hip.R`, `test-writeReport.R`, `test-errorPlots.R`, `test-errorTables.R`, `test-files.R`,
-  - Expanded `correctEmail()` unit testing in `test-correct.R`
-  - Added `duplicateFinder()` and `duplicatePlot()` testing in `test-duplicates.R`
-  - Added `qualityMessages()` testing in `test-quality.R`
-  - Added `test-edge-inputs.R` to test empty (0-row), all-NA-in-key-columns, and single-row inputs
-  - Add test for `registration_yr` field, `birth_date` field, and `zip` field in `test-proof.R`
-  - Update `test-proof.R` to use `getBad` family of functions
-  - Update `test-fails.R` to evaluate `failWidths()`
+  - Added test files
+    - Added: `test-quality.R`, `test-write_hip.R`, `test-writeReport.R`, `test-errorPlots.R`, `test-errorTables.R`, and `test-files.R`
+    - Added `test-edge-inputs.R` to test empty (0-row), all-NA-in-key-columns, and single-row inputs.
+  - Expanded unit testing
+    - `correctEmail()` testing and that `correct()` changes values to `NA` as expected in `test-correct.R`
+    - `duplicateFinder()` and `duplicatePlot()` testing in `test-duplicates.R`
+    - Testing passing messages in `test-glyphs.R` and `test-shifts.R`
+    - Added tests for `registration_yr` field, `birth_date` field, and `zip` field in `test-proof.R`
+    - Added tests for `unique = FALSE` and `season = TRUE` in `test-read_hip.R`
+    - Updated `test-proof.R` to use `getBad` family of functions
+    - Updated `test-fails.R` to evaluate `failWidths()`
+    - Added `bagCheck()` tests to `test-bags.R`
+    - Added `zipCheck()` tests to `text-clean.R`
 - Change `issuePlot()` legend to say "Registration year provided" to be clear that the value has not been changed/edited yet.
 - DESCRIPTION
   - Require R version `>= 4.5.0`

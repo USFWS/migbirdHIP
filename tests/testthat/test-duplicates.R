@@ -325,3 +325,18 @@ test_that("duplicatePlot maps total_count to y and duplicate_field to x", {
   expect_match(rlang::as_label(p$mapping$y), "total_count")
 })
 
+test_that("duplicatePlot maps duplicate_field to the x aesthetic", {
+  inject_email_dupe <- function() {
+    base <- DF_TEST_MINI |> dplyr::slice_head(n = 5)
+    dupe <- base |>
+      dplyr::slice_head(n = 1) |>
+      dplyr::mutate(
+        email = "second-address@example.com",
+        record_key = "rk_injected")
+    dplyr::bind_rows(base, dupe)
+  }
+
+  p <- suppressMessages(duplicatePlot(inject_email_dupe()))
+  expect_match(rlang::as_label(p$mapping$x), "duplicate_field")
+  expect_match(rlang::as_label(p$mapping$y), "total_count")
+})

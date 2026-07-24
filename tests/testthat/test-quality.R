@@ -884,8 +884,41 @@ test_that("nonDigitBagsMessage does not return a message for good bags", {
 
 # permits -----------------------------------------------------------------
 
-# inLinePermitDNHMessage
-# permitFileBagsMessage
+# The following tests for inLinePermitDNHMessage() and permitFileBagsMessage()
+# were generated with AI assistance using Claude Opus 4.8 in Perplexity on July
+# 22, 2026.
+
+test_that("inLinePermitDNHMessage flags OR/WA in-line permits not marked '2'", {
+  dnh <-
+    DF_TEST_MINI |>
+    dplyr::slice_head(n = 1) |>
+    dplyr::mutate(
+      dl_state = "OR",
+      hunt_mig_birds = "1",
+      ducks_bag = "0", geese_bag = "0", dove_bag = "0", woodcock_bag = "0",
+      coots_snipe = "0", rails_gallinules = "0", cranes = "0",
+      band_tailed_pigeon = "2", brant = "0", seaducks = "0")
+
+  suppressMessages(invisible(capture.output(
+    expect_message(
+      migbirdHIP:::inLinePermitDNHMessage(dnh),
+      "do not contain 2 for hunt_mig_birds"))))
+})
+
+test_that("permitFileBagsMessage flags non-zero permit-species bags", {
+  pmt <-
+    DF_TEST_MINI |>
+    dplyr::slice_head(n = 1) |>
+    dplyr::mutate(
+      dl_state = "CO",
+      cranes = "1",
+      band_tailed_pigeon = "0")
+
+  suppressMessages(invisible(capture.output(
+    expect_message(
+      migbirdHIP:::permitFileBagsMessage(pmt),
+      "non-zero bag values for permit species"))))
+})
 
 # qualityMessages function ------------------------------------------------
 
