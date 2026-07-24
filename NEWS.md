@@ -102,6 +102,7 @@
   - `write_hip(split = FALSE)` had a bug in the file naming technique that is now resolved.
   - `issueDecide()` renders `mdy(issue_date)` only once, and then deselects the column, rather than calling it seven times in the `case_when()`
   - `fileCheck()` now runs `list.files()` only once per path
+  - Reduce repetition in `errorPlotDL()`
 - Testing
   - Added test files
     - Added: `test-quality.R`, `test-write_hip.R`, `test-writeReport.R`, `test-errorPlots.R`, `test-errorTables.R`, and `test-files.R`
