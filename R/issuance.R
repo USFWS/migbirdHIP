@@ -466,6 +466,7 @@ issueAssign <-
 #' @importFrom dplyr mutate
 #' @importFrom dplyr case_when
 #' @importFrom dplyr replace_when
+#' @importFrom dplyr select
 #' @importFrom lubridate mdy
 #' @importFrom lubridate interval
 #' @importFrom lubridate %within%
@@ -485,37 +486,39 @@ issueDecide <-
 
     clean_data |>
       mutate(
+        # Pre-compute mdy(issue_date)
+        mdy_issue_date = mdy(.data$issue_date),
         # Create decision field
         decision =
           case_when(
             # Records are past when issue_date is before issue_start
-            mdy(.data$issue_date) < .data$issue_start ~ "past",
+            mdy_issue_date < .data$issue_start ~ "past",
             # For 2-season states with overlapping start/end dates, records
             # are either current or future depending on the registration year
             # value
             dl_state %in% REF_STATES_2SEASON &
-              mdy(.data$issue_date) %within%
+              mdy_issue_date %within%
               interval(.data$issue_start + 365, .data$issue_end) ~
               "overlap",
             # Records are current when the issue_date falls between
             # issue_start and issue_end
-            mdy(.data$issue_date) %within%
+            mdy_issue_date %within%
               interval(.data$issue_start, .data$issue_end) ~
               "current",
             # Records are invalid when they fall outside of the issue window
             # (after issue end date but before next season's start date)
-            !mdy(.data$issue_date) %within%
+            !mdy_issue_date %within%
               interval(.data$issue_start, .data$issue_end) &
-              !mdy(.data$issue_date) %within%
+              !mdy_issue_date %within%
                 interval(.data$issue_start + 365, .data$issue_end + 365) &
-              mdy(.data$issue_date) %within%
+              mdy_issue_date %within%
                 interval(.data$issue_end, .data$issue_end + 365) ~
                 "invalid",
             # Future records are issued after the last day of hunting and
             # after the projected issue start date for next season (the
             # registration_yr may need to be changed to +1)
-            mdy(.data$issue_date) > .data$issue_end &
-              mdy(.data$issue_date) %within%
+            mdy_issue_date > .data$issue_end &
+              mdy_issue_date %within%
                 interval(.data$issue_start + 365, .data$issue_end + 365) ~
                 "future",
             TRUE ~ "bad issue dates")

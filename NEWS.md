@@ -91,9 +91,16 @@
 
 ## Minor changes / bug fixes
 
-- Updated internal package test data to create character `title` values rather than numeric.
-- Fail gracefully if input provided contains 0 rows (or data are dropped to result in 0 rows) for `clean()`, `proof()`, and `write_hip()`.
-- Following `{dplyr}` `1.2.0` release notes, update `case_when()` with `recode_values()` and `replace_when()` as appropriate.
+- Dependency updates
+  - Following `{dplyr}` `1.2.0` release notes, update `case_when()` with `recode_values()` and `replace_when()` as appropriate.
+- Internal package data
+  - Updated internal package test data to create character `title` values rather than numeric.
+- Functions
+  - Fail gracefully if input provided contains 0 rows (or data are dropped to result in 0 rows) for `clean()`, `proof()`, and `write_hip()`.
+  - Change `issuePlot()` legend to say "Registration year provided" to be clear that the value has not been changed/edited yet.
+  - `proof()` no longer filters out test records, since this step is completed upstream in `clean()`.
+  - `write_hip(split = FALSE)` had a bug in the file naming technique that is now resolved.
+  - `issueDecide()` renders `mdy(issue_date)` only once, and then deselects the column, rather than calling it seven times in the `case_when()`
 - Testing
   - Added test files
     - Added: `test-quality.R`, `test-write_hip.R`, `test-writeReport.R`, `test-errorPlots.R`, `test-errorTables.R`, and `test-files.R`
@@ -108,7 +115,6 @@
     - Updated `test-fails.R` to evaluate `failWidths()`
     - Added `bagCheck()` tests to `test-bags.R`
     - Added `zipCheck()` tests to `text-clean.R`
-- Change `issuePlot()` legend to say "Registration year provided" to be clear that the value has not been changed/edited yet.
 - DESCRIPTION
   - Require R version `>= 4.5.0`
   - Imports
@@ -123,8 +129,6 @@
   - Suggests
     - Update `rmarkdown` to `>= 2.30`
     - Update `sf` to `>= 1.1-0`
-- `proof()` no longer filters out test records, since this step is completed upstream in `clean()`.
-- `write_hip(split = FALSE)` had a bug in the file naming technique that is now resolved.
 - Recommend installation in `README` and vignette changed to `pak::pak()` now that `devtools::install_github()` has been deprecated.
 - Updated package startup message in `zzz.R`
   - Version checking is now more robust; messages are more reliable and clear if a package version is out of date.
