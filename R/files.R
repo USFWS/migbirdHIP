@@ -32,22 +32,23 @@ fileCheck <-
     if (!str_detect(processed_path, "\\/$")) {
       processed_path <- paste0(processed_path, "/")
     }
+
+    raw_path_files <- list.files(raw_path, recursive = FALSE)
+    processed_path_files <- list.files(processed_path, recursive = FALSE)
+
     if (TRUE %in%
-       (str_replace(list.files(raw_path, recursive = F), "TXT", "txt") %in%
-        str_replace(list.files(processed_path, recursive = F), "csv", "txt"))) {
+       (str_replace(raw_path_files, "TXT", "txt") %in%
+        str_replace(processed_path_files, "csv", "txt"))) {
       message(
         "The following files have already been written to the processed dir.")
 
       repeated <-
         tibble(
-          filename =
-            str_replace(list.files(raw_path, recursive = F), "TXT", "txt"),
+          filename = str_replace(raw_path_files, "TXT", "txt"),
           origin = "input") |>
         bind_rows(
           tibble(
-            filename =
-              str_replace(
-                list.files(processed_path, recursive = F), "csv", "txt"),
+            filename = str_replace(processed_path_files, "csv", "txt"),
             origin = "processed")
         ) |>
         group_by(.data$filename) |>
