@@ -9,6 +9,7 @@
 #' @importFrom dplyr filter
 #' @importFrom dplyr mutate
 #' @importFrom dplyr summarize
+#' @importFrom dplyr count
 #' @importFrom dplyr left_join
 #' @importFrom dplyr anti_join
 #' @importFrom dplyr inner_join

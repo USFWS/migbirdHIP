@@ -4,9 +4,7 @@
 #' set or a specific state, province, or territory.
 #'
 #' @importFrom dplyr select
-#' @importFrom dplyr group_by
 #' @importFrom dplyr summarize
-#' @importFrom dplyr ungroup
 #' @importFrom dplyr mutate
 #' @importFrom dplyr filter
 #' @importFrom dplyr n

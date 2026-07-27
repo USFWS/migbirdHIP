@@ -237,6 +237,7 @@ proofBadEmails <-
 #' @importFrom dplyr mutate
 #' @importFrom stringr str_to_upper
 #' @importFrom dplyr filter
+#' @importFrom rlang .data
 #'
 #' @param data Harvest Information Program registration data
 #'
