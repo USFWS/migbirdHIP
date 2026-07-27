@@ -547,6 +547,7 @@ issueDecide <-
 #' @importFrom dplyr left_join
 #' @importFrom dplyr rename
 #' @importFrom dplyr distinct
+#' @importFrom dplyr tribble
 #' @importFrom lubridate mdy
 #' @importFrom lubridate ymd
 #' @importFrom dplyr tibble
@@ -612,64 +613,54 @@ issuePlot <-
           issue_end = .data$issue_end + 365,
           category = "future")
 
+      month_grid <-
+        tribble(
+          ~date, ~type,
+          ymd(paste0(year - 2, "-09-01")), "dashed",
+          ymd(paste0(year - 2, "-10-01")), "dotted",
+          ymd(paste0(year - 2, "-11-01")), "dotted",
+          ymd(paste0(year - 2, "-12-01")), "dotted",
+          ymd(paste0(year - 1, "-01-01")), "dotted",
+          ymd(paste0(year - 1, "-02-01")), "dotted",
+          ymd(paste0(year - 1, "-03-01")), "dashed",
+          ymd(paste0(year - 1, "-09-01")), "dashed",
+          ymd(paste0(year - 1, "-10-01")), "dotted",
+          ymd(paste0(year - 1, "-11-01")), "dotted",
+          ymd(paste0(year - 1, "-12-01")), "dotted",
+          ymd(paste0(year, "-01-01")), "dotted",
+          ymd(paste0(year, "-02-01")), "dotted",
+          ymd(paste0(year, "-03-01")), "dashed",
+          ymd(paste0(year, "-09-01")), "dashed",
+          ymd(paste0(year, "-10-01")), "dotted",
+          ymd(paste0(year, "-11-01")), "dotted",
+          ymd(paste0(year, "-12-01")), "dotted",
+          ymd(paste0(year + 1, "-01-01")), "dotted",
+          ymd(paste0(year + 1, "-02-01")), "dotted",
+          ymd(paste0(year + 1, "-03-01")), "dashed",
+          ymd(paste0(year + 1, "-09-01")), "dashed",
+          ymd(paste0(year + 1, "-10-01")), "dotted",
+          ymd(paste0(year + 1, "-11-01")), "dotted",
+          ymd(paste0(year + 1, "-12-01")), "dotted",
+          ymd(paste0(year + 2, "-01-01")), "dotted",
+          ymd(paste0(year + 2, "-02-01")), "dotted",
+          ymd(paste0(year + 2, "-03-01")), "dashed",
+        )
+
+      dotted_vlines <- month_grid |> filter(.data$type == "dotted")
+      dashed_vlines <- month_grid |> filter(.data$type == "dashed")
+
       badplot <-
         ggplot() +
-        geom_vline(xintercept =
-                     ymd(paste0(year - 2, "-09-01")), linetype = "dashed") +
-        geom_vline(xintercept =
-                     ymd(paste0(year - 2, "-10-01")), linetype = "dotted") +
-        geom_vline(xintercept =
-                     ymd(paste0(year - 2, "-11-01")), linetype = "dotted") +
-        geom_vline(xintercept =
-                     ymd(paste0(year - 2, "-12-01")), linetype = "dotted") +
-        geom_vline(xintercept =
-                     ymd(paste0(year - 1, "-01-01")), linetype = "dotted") +
-        geom_vline(xintercept =
-                     ymd(paste0(year - 1, "-02-01")), linetype = "dotted") +
-        geom_vline(xintercept =
-                     ymd(paste0(year - 1, "-03-01")), linetype = "dashed") +
-        geom_vline(xintercept =
-                     ymd(paste0(year - 1, "-09-01")), linetype = "dashed") +
-        geom_vline(xintercept =
-                     ymd(paste0(year - 1, "-10-01")), linetype = "dotted") +
-        geom_vline(xintercept =
-                     ymd(paste0(year - 1, "-11-01")), linetype = "dotted") +
-        geom_vline(xintercept =
-                     ymd(paste0(year - 1, "-12-01")), linetype = "dotted") +
-        geom_vline(xintercept =
-                     ymd(paste0(year, "-01-01")), linetype = "dotted") +
-        geom_vline(xintercept =
-                     ymd(paste0(year, "-02-01")), linetype = "dotted") +
-        geom_vline(xintercept =
-                     ymd(paste0(year, "-03-01")), linetype = "dashed") +
-        geom_vline(xintercept =
-                     ymd(paste0(year, "-09-01")), linetype = "dashed") +
-        geom_vline(xintercept =
-                     ymd(paste0(year, "-10-01")), linetype = "dotted") +
-        geom_vline(xintercept =
-                     ymd(paste0(year, "-11-01")), linetype = "dotted") +
-        geom_vline(xintercept =
-                     ymd(paste0(year, "-12-01")), linetype = "dotted") +
-        geom_vline(xintercept =
-                     ymd(paste0(year + 1, "-01-01")), linetype = "dotted") +
-        geom_vline(xintercept =
-                     ymd(paste0(year + 1, "-02-01")), linetype = "dotted") +
-        geom_vline(xintercept =
-                     ymd(paste0(year + 1, "-03-01")), linetype = "dashed") +
-        geom_vline(xintercept =
-                     ymd(paste0(year + 1, "-09-01")), linetype = "dashed") +
-        geom_vline(xintercept =
-                     ymd(paste0(year + 1, "-10-01")), linetype = "dotted") +
-        geom_vline(xintercept =
-                     ymd(paste0(year + 1, "-11-01")), linetype = "dotted") +
-        geom_vline(xintercept =
-                     ymd(paste0(year + 1, "-12-01")), linetype = "dotted") +
-        geom_vline(xintercept =
-                     ymd(paste0(year + 2, "-01-01")), linetype = "dotted") +
-        geom_vline(xintercept =
-                     ymd(paste0(year + 2, "-02-01")), linetype = "dotted") +
-        geom_vline(xintercept =
-                     ymd(paste0(year + 2, "-03-01")), linetype = "dashed") +
+        geom_vline(
+          data = dotted_vlines,
+          aes(xintercept = .data$date),
+          linetype = "dotted",
+          show.legend = FALSE) +
+        geom_vline(
+          data = dashed_vlines,
+          aes(xintercept = .data$date),
+          linetype = "dashed",
+          show.legend = FALSE) +
         # Past issue window
         geom_segment(
           data = past,
