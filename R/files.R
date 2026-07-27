@@ -4,6 +4,7 @@
 #' folder.
 #'
 #' @importFrom stringr str_replace
+#' @importFrom stringr str_detect
 #' @importFrom dplyr tibble
 #' @importFrom dplyr bind_rows
 #' @importFrom dplyr group_by

@@ -5,9 +5,6 @@
 #'
 #' @importFrom dplyr mutate
 #' @importFrom dplyr filter
-#' @importFrom dplyr pull
-#' @importFrom dplyr n
-#' @importFrom dplyr select
 #' @importFrom dplyr distinct
 #' @importFrom dplyr rename
 #' @importFrom dplyr cur_group_id
@@ -259,6 +256,7 @@ ignoreHolds <-
 #'
 #' @importFrom dplyr filter
 #' @importFrom stringr str_detect
+#' @importFrom rlang .data
 #'
 #' @param filelist The file list tibble created by \code{\link{listFiles}}
 #'
@@ -305,7 +303,6 @@ idBlankFiles <-
 #' directory, and remove them from the file list so they are not read in.
 #'
 #' @importFrom dplyr filter
-#' @importFrom dplyr pull
 #' @importFrom rlang .data
 #'
 #' @param filelist The file list tibble created by \code{\link{listFiles}}

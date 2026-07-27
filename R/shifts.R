@@ -9,6 +9,7 @@
 #' @importFrom dplyr relocate
 #' @importFrom dplyr select
 #' @importFrom dplyr filter
+#' @importFrom dplyr all_of
 #' @importFrom tidyr unite
 #' @importFrom stringr str_remove_all
 #' @importFrom rlang .data

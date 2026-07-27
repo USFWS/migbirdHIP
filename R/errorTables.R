@@ -5,14 +5,9 @@
 #'
 #' @importFrom dplyr select
 #' @importFrom dplyr filter
-#' @importFrom dplyr mutate
-#' @importFrom dplyr row_number
 #' @importFrom tidyr separate_wider_delim
 #' @importFrom tidyr pivot_longer
 #' @importFrom dplyr starts_with
-#' @importFrom dplyr rename
-#' @importFrom dplyr count
-#' @importFrom stringr str_detect
 #' @importFrom rlang .data
 #' @importFrom assertthat assert_that
 #'
@@ -97,6 +92,7 @@ errorTable <-
 #' @importFrom dplyr filter
 #' @importFrom dplyr rename
 #' @importFrom dplyr count
+#' @importFrom stringr str_detect
 #' @importFrom rlang .data
 #'
 #' @param proofed_data The object created after error flagging data with

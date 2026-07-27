@@ -8,7 +8,6 @@
 #' @importFrom dplyr mutate
 #' @importFrom dplyr filter
 #' @importFrom dplyr arrange
-#' @importFrom stringr str_detect
 #' @importFrom rlang .data
 #'
 #' @param raw_data The tibble created after reading in data with
@@ -46,6 +45,7 @@ glyphFinder <-
 #' @importFrom dplyr relocate
 #' @importFrom dplyr filter
 #' @importFrom dplyr arrange
+#' @importFrom rlang sym
 #' @importFrom rlang .data
 #'
 #' @inheritParams clean

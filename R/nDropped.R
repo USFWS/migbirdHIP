@@ -5,8 +5,8 @@
 #' @importFrom dplyr bind_rows
 #' @importFrom dplyr tibble
 #' @importFrom dplyr filter
+#' @importFrom dplyr group_by
 #' @importFrom rlang .data
-#' @importFrom assertthat assert_that
 #'
 #' @param raw_data The object created after reading in data with
 #'   \code{\link{read_hip}}

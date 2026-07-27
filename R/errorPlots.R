@@ -3,13 +3,13 @@
 #' Create a plot of errors per download cycle, either by all states in the data
 #' set or a specific state, province, or territory.
 #'
-#' @importFrom stringr str_detect
 #' @importFrom dplyr select
 #' @importFrom dplyr group_by
 #' @importFrom dplyr summarize
 #' @importFrom dplyr ungroup
 #' @importFrom dplyr mutate
 #' @importFrom dplyr filter
+#' @importFrom dplyr n
 #' @importFrom tidyr separate_wider_delim
 #' @importFrom tidyr pivot_longer
 #' @importFrom dplyr starts_with
@@ -117,7 +117,6 @@ errorPlotDL <-
 #' Create a bar plot of proportion of error per field. The plot defaults to all
 #' 49 states, but location can be specified.
 #'
-#' @importFrom stringr str_detect
 #' @importFrom dplyr filter
 #' @importFrom ggplot2 ggplot
 #' @importFrom ggplot2 aes
@@ -129,6 +128,7 @@ errorPlotDL <-
 #' @importFrom ggplot2 theme
 #' @importFrom ggplot2 element_text
 #' @importFrom ggplot2 expansion
+#' @importFrom stats reorder
 #' @importFrom rlang .data
 #' @importFrom assertthat assert_that
 #'
@@ -211,7 +211,6 @@ errorPlotFields <-
 #'
 #' Create a bar plot of errors by state, either by count or proportion.
 #'
-#' @importFrom stringr str_detect
 #' @importFrom dplyr filter
 #' @importFrom ggplot2 ggplot
 #' @importFrom ggplot2 aes
@@ -222,7 +221,9 @@ errorPlotFields <-
 #' @importFrom ggplot2 scale_y_continuous
 #' @importFrom ggplot2 expansion
 #' @importFrom ggplot2 theme_classic
+#' @importFrom ggplot2 theme
 #' @importFrom ggplot2 element_text
+#' @importFrom rlang .data
 #'
 #' @param proofed_data The object created after error flagging data with
 #'   \code{\link{proof}} or \code{\link{correct}}
@@ -433,7 +434,6 @@ errorLevelErrorsByField <-
 #' @importFrom dplyr desc
 #' @importFrom dplyr select
 #' @importFrom dplyr relocate
-#' @importFrom stringr str_detect
 #' @importFrom rlang .data
 #'
 #' @param proofed_data A proofed data table created by \code{\link{proof}}

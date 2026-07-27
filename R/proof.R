@@ -31,10 +31,10 @@
 
 proof <-
   function(deduplicated_data, year) {
-    
+
     failYear(year)
     questionYear(year)
-    
+
     # Fail gracefully if input is empty
     if (nrow(deduplicated_data) == 0 | is.null(deduplicated_data)) {
       return(deduplicated_data)
@@ -134,6 +134,7 @@ proof <-
 #' @importFrom stringr str_length
 #' @importFrom stringr str_extract
 #' @importFrom dplyr select
+#' @importFrom rlang .data
 #'
 #' @param keyed_data An tibble used internally in \code{\link{proof}}
 #'
@@ -233,6 +234,8 @@ proofBadEmails <-
 #' \code{\link{proof}} and \code{\link{qualityMessages}} to filter to
 #' \code{title} values that are not expected. Used by \code{\link{qTitle}}.
 #'
+#' @importFrom dplyr mutate
+#' @importFrom stringr str_to_upper
 #' @importFrom dplyr filter
 #'
 #' @param data Harvest Information Program registration data
@@ -259,6 +262,7 @@ getBadTitle <-
 #'
 #' @importFrom dplyr filter
 #' @importFrom stringr str_detect
+#' @importFrom rlang .data
 #'
 #' @param data Harvest Information Program registration data
 #'
@@ -279,6 +283,7 @@ getBadFirstName <-
 #' \code{middle} values that are not expected.  Used by \code{\link{qMiddle}}.
 #'
 #' @importFrom dplyr filter
+#' @importFrom rlang .data
 #'
 #' @param data Harvest Information Program registration data
 #'
@@ -301,6 +306,7 @@ getBadMiddle <-
 #'
 #' @importFrom dplyr filter
 #' @importFrom stringr str_detect
+#' @importFrom rlang .data
 #'
 #' @param data Harvest Information Program registration data
 #'
@@ -321,6 +327,7 @@ getBadLastName <-
 #' \code{suffix} values that are not expected. Used by \code{\link{qSuffix}}.
 #'
 #' @importFrom dplyr filter
+#' @importFrom rlang .data
 #'
 #' @param data Harvest Information Program registration data
 #'
@@ -342,6 +349,7 @@ getBadSuffix <-
 #'
 #' @importFrom dplyr filter
 #' @importFrom stringr str_detect
+#' @importFrom rlang .data
 #'
 #' @param data Harvest Information Program registration data
 #'
@@ -363,6 +371,7 @@ getBadAddress <-
 #'
 #' @importFrom dplyr filter
 #' @importFrom stringr str_detect
+#' @importFrom rlang .data
 #'
 #' @param data Harvest Information Program registration data
 #'
@@ -383,6 +392,7 @@ getBadCity <-
 #' \code{state} values that are not expected. Used by \code{\link{qState}}.
 #'
 #' @importFrom dplyr filter
+#' @importFrom rlang .data
 #'
 #' @param data Harvest Information Program registration data
 #'
@@ -404,6 +414,7 @@ getBadState <-
 #'
 #' @importFrom dplyr filter
 #' @importFrom stringr str_extract
+#' @importFrom rlang .data
 #'
 #' @param data Harvest Information Program registration data
 #'
@@ -431,6 +442,7 @@ getBadZIP <-
 #' @importFrom dplyr filter
 #' @importFrom stringr str_detect
 #' @importFrom dplyr select
+#' @importFrom rlang .data
 #'
 #' @param data Harvest Information Program registration data
 #' @param year The year in which the Harvest Information Program data were
@@ -470,6 +482,7 @@ getBadBirthDate <-
 #' \code{hunt_mig_birds} values that are not expected.
 #'
 #' @importFrom dplyr filter
+#' @importFrom rlang .data
 #'
 #' @param data Harvest Information Program registration data
 #'
@@ -485,12 +498,13 @@ getBadHuntMigBirds <-
 
 #' Get bad registration year values
 #'
-#' The internal \code{getBadRegistrationYear} function is used inside of
+#' The internal \code{getBadRegYear} function is used inside of
 #' \code{\link{proof}} and \code{\link{qualityMessages}} to filter to
 #' \code{registration_yr} values that are not expected. We expect the
 #' registration_yr to equal the current hunting season.
 #'
 #' @importFrom dplyr filter
+#' @importFrom rlang .data
 #'
 #' @param data Harvest Information Program registration data
 #' @param year The year in which the Harvest Information Program data were

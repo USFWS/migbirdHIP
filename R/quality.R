@@ -252,6 +252,7 @@ inLinePermitDNHMessage <-
 #' @importFrom dplyr rename
 #' @importFrom dplyr mutate
 #' @importFrom purrr list_rbind
+#' @importFrom rlang sym
 #' @importFrom rlang .data
 #'
 #' @inheritParams clean
@@ -387,7 +388,6 @@ nonResidentMessage <-
 #' @importFrom dplyr arrange
 #' @importFrom dplyr desc
 #' @importFrom stringr str_extract
-#' @importFrom dplyr filter_out
 #' @importFrom dtplyr lazy_dt
 #' @importFrom dplyr as_tibble
 #' @importFrom rlang .data
@@ -479,6 +479,7 @@ interStateDuplicatesMessage <-
 #'
 #' @importFrom dplyr summarize
 #' @importFrom dplyr n
+#' @importFrom dplyr mutate
 #' @importFrom dplyr arrange
 #' @importFrom dplyr desc
 #' @importFrom dplyr filter
@@ -534,6 +535,7 @@ qTitle <-
 #'
 #' @importFrom dplyr mutate
 #' @importFrom stringr str_to_upper
+#' @importFrom rlang .data
 #'
 #' @inheritParams clean
 #'
@@ -589,6 +591,7 @@ qMiddle <-
 #'
 #' @importFrom dplyr mutate
 #' @importFrom stringr str_to_upper
+#' @importFrom rlang .data
 #'
 #' @inheritParams clean
 #'
@@ -619,6 +622,7 @@ qLastName <-
 #'
 #' @importFrom dplyr mutate
 #' @importFrom stringr str_to_upper
+#' @importFrom rlang .data
 #'
 #' @inheritParams clean
 #'
@@ -1000,7 +1004,6 @@ naBagsMessage <-
 #' @importFrom tidyr unite
 #' @importFrom dplyr matches
 #' @importFrom dplyr select
-#' @importFrom rlang .data
 #'
 #' @inheritParams clean
 #'

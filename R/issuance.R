@@ -267,7 +267,7 @@ futureDateMessage <-
 
 #' Return message if past issue_date values are detected
 #'
-#' The internal \code{futureDateMessage} function is used inside of
+#' The internal \code{pastDateMessage} function is used inside of
 #' \code{\link{issueMessages}} and \code{\link{issueCheck}} to return a message
 #' if past \code{issue_date} values are detected.
 #'
@@ -547,10 +547,10 @@ issueDecide <-
 #' @importFrom dplyr left_join
 #' @importFrom dplyr rename
 #' @importFrom dplyr distinct
+#' @importFrom dplyr desc
 #' @importFrom dplyr tribble
 #' @importFrom lubridate mdy
 #' @importFrom lubridate ymd
-#' @importFrom dplyr tibble
 #' @importFrom ggplot2 aes
 #' @importFrom ggplot2 labs
 #' @importFrom ggplot2 ggplot
@@ -565,6 +565,7 @@ issueDecide <-
 #' @importFrom ggplot2 coord_cartesian
 #' @importFrom ggplot2 theme
 #' @importFrom ggplot2 theme_classic
+#' @importFrom stats reorder
 #' @importFrom ggnewscale new_scale_color
 #' @importFrom rlang .data
 #'

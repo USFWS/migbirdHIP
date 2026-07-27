@@ -45,7 +45,7 @@ failState <-
 
 #' Fail if there is an NA in dl_state
 #'
-#' The internal \code{qDLstate} function is used inside of
+#' The internal \code{failDLstate} function is used inside of
 #' \code{\link{write_hip}}.
 #'
 #' @importFrom assertthat assert_that
@@ -67,7 +67,7 @@ failDLstate <-
 
 #' Fail if there is an NA in dl_date
 #'
-#' The internal \code{qDLdate} function is used inside of
+#' The internal \code{failDLdate} function is used inside of
 #' \code{\link{write_hip}}.
 #'
 #' @importFrom assertthat assert_that

@@ -8,6 +8,8 @@
 #' @importFrom dplyr filter
 #' @importFrom dplyr bind_rows
 #' @importFrom dplyr select
+#' @importFrom dplyr group_by
+#' @importFrom dplyr ungroup
 #' @importFrom rlang syms
 #' @importFrom dplyr n
 #' @importFrom dplyr distinct
@@ -530,6 +532,8 @@ duplicateFields <-
 #' @importFrom dplyr n
 #' @importFrom dplyr ungroup
 #' @importFrom dplyr arrange
+#' @importFrom dplyr count
+#' @importFrom dplyr cur_group_id
 #' @importFrom stringr str_detect
 #' @importFrom rlang syms
 #' @importFrom dplyr reframe
@@ -607,7 +611,6 @@ duplicateFinder <-
 #' @importFrom dplyr replace_when
 #' @importFrom dplyr reframe
 #' @importFrom stringr str_detect
-#' @importFrom dplyr group_by
 #' @importFrom ggplot2 ggplot
 #' @importFrom ggplot2 aes
 #' @importFrom stats reorder

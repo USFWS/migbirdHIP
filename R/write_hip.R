@@ -12,6 +12,7 @@
 #' @importFrom dplyr distinct
 #' @importFrom dplyr pull
 #' @importFrom dplyr count
+#' @importFrom dplyr n
 #' @importFrom rlang sym
 #' @importFrom rlang :=
 #' @importFrom stringr str_detect
