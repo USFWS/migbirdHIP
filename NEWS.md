@@ -1,4 +1,18 @@
-# migbirdHIP (dev version)
+# migbirdHIP 2026.0.0
+
+## Versioning scheme change
+
+Starting with the 2026-2027 season, version numbers will follow a calendar versioning scheme (`YEAR.STAGE.PATCH`) instead of semantic versioning (`MAJOR.MINOR.PATCH`). The new convention will be more informative to users looking to downgrade `migbirdHIP`, since release tags will be based on the applicable migratory game bird hunting season rather than arbitrary numbers. Previous releases will retain their original version numbers, which are still defined in `variables.R`.
+
+Version component definitions:
+
+- `YEAR` - the year of the migratory game bird hunting season (e.g. `2026` for the `2026-2027` season).
+- `STAGE` - the maturity of the season's release, either `0` or `1`:
+  - `0` = the season is ongoing; used for releases between July and the following April, approximately (e.g. `2026.0.12`).
+  - `1` = the definitive package version for the entire season, indicating a stable build that should be used if downgrading (e.g., `2026.1.0` for an April 2027 definitive version).
+- `PATCH` - incremental fixes within the current stage:
+  - For an ongoing season, a bug fix would be released as `2026.0.3` and subsequent new feature would be released as `2026.0.4`.
+  - For critical fixes after a definitive season release, to be avoided unless necessary (e.g., `2026.1.1`).
 
 ## Major changes & new features
 
@@ -32,7 +46,7 @@
       - `getBadZIP()`
       - `getBadBirthDate()`
       - `getBadHuntMigBirds()`
-      - `getBadRegistrationYear()`
+      - `getBadRegYear()`
   - Data quality checking functions in `quality.R`
     - `qualityMessages()`
       - Refactored from function previously named `readMessages()`. This function is intended to be used after `read_hip()` and before `clean()`.
@@ -65,6 +79,10 @@
     - New helper functions:
       - `dropBlankLines()` - delete blank lines or lines that contain only `"Result"` (see [#27](https://github.com/USFWS/migbirdHIP/issues/27))
       - `readTimeMessage()` - moved the `read_hip()` code chunk pertaining to read time duration to its own internal function.
+  - Bag checking functions
+    - `bagCheck()` was refactored to be more efficient, and as a result, internal function `summarizeBadBags()` was deleted because it is no longer needed.
+    - Run time of `bagCheck()` decreased marginally.
+    - `bagCheck()` now reports count and proportion for `NA` bag values; previously, `NA` bag values were reported but not counted.
   - `questionYear()`
     - New function that questions if the user intends to supply a year value different than the current season year; replaces a duplicated code chunk in `proof()` and `correct()`, and added to `issueCheck()`.
   - `issuePlot()`
@@ -97,12 +115,13 @@
   - Updated internal package test data to create character `title` values rather than numeric.
 - Functions
   - Fail gracefully if input provided contains 0 rows (or data are dropped to result in 0 rows) for `clean()`, `proof()`, and `write_hip()`.
-  - Change `issuePlot()` legend to say "Registration year provided" to be clear that the value has not been changed/edited yet.
+  - Changed `issuePlot()` legend to say "Registration year provided" to be clear that the value has not been changed/edited yet.
   - `proof()` no longer filters out test records, since this step is completed upstream in `clean()`.
   - `write_hip(split = FALSE)` had a bug in the file naming technique that is now resolved.
   - `issueDecide()` renders `mdy(issue_date)` only once, and then deselects the column, rather than calling it seven times in the `case_when()`
   - `fileCheck()` now runs `list.files()` only once per path
-  - Reduce repetition in `errorPlotDL()`
+  - Reduced repetition in `errorPlotDL()`
+  - Reduced `geom_vline()` repetition in `issuePlot()`
 - Testing
   - Added test files
     - Added: `test-quality.R`, `test-write_hip.R`, `test-writeReport.R`, `test-errorPlots.R`, `test-errorTables.R`, and `test-files.R`
