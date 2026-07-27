@@ -4,12 +4,10 @@
 #' bag values were submitted.
 #'
 #' @importFrom dplyr select
+#' @importFrom dplyr n
 #' @importFrom dplyr all_of
-#' @importFrom dplyr distinct
 #' @importFrom dplyr filter
-#' @importFrom dplyr group_by
 #' @importFrom dplyr mutate
-#' @importFrom dplyr ungroup
 #' @importFrom dplyr left_join
 #' @importFrom dplyr anti_join
 #' @importFrom dplyr inner_join
@@ -18,8 +16,6 @@
 #' @importFrom dplyr desc
 #' @importFrom dplyr contains
 #' @importFrom tidyr pivot_longer
-#' @importFrom purrr map
-#' @importFrom purrr list_rbind
 #' @importFrom rlang .data
 #'
 #' @param deduplicated_data The object created after deduplicating data with
@@ -72,24 +68,25 @@ bagCheck <-
         .by = c("dl_state", "spp")
       )
 
+    # Total number of records per state
+    state_totals <-
+      deduplicated_data |>
+      count(.data$dl_state, name = "n_state")
+
     # Do any species bag values in the HIP data fall outside what is expected in
     # the REF_BAGS?
     bad_bag_values <-
       deduplicated_data |>
       select(c("dl_state", all_of(REF_FIELDS_BAG))) |>
-      group_by(.data$dl_state) |>
       pivot_longer(
         cols = !contains("dl"),
         names_to = "spp",
         values_to = "bad_bag_value") |>
-      ungroup() |>
-      distinct() |>
-      left_join(
+      summarize(n = n(), .by = c("dl_state", "spp", "bad_bag_value")) |>
+      anti_join(
         non_pmt_file_bags_ref |>
-          mutate(bad_bag_value = .data$stateBagValue),
-        by = c("dl_state", "spp", "bad_bag_value")
-      ) |>
-      filter(is.na(.data$stateBagValue)) |>
+          rename(bad_bag_value = "stateBagValue"),
+        by = c("dl_state", "spp", "bad_bag_value")) |>
       # Filter out permit file states with unexpected 0s (they were created by
       # permitBagFix) for btpi and cranes
       filter(
@@ -106,62 +103,17 @@ bagCheck <-
     if (nrow(bad_bag_values) > 0) {
 
       bad_bag_values |>
-        select(-"stateBagValue") |>
-        left_join(
-          bags_by_state,
-          by = c("dl_state", "spp")) |>
+        left_join(bags_by_state, by = c("dl_state", "spp")) |>
+        left_join(state_totals, by = "dl_state") |>
+        mutate(
+          proportion =
+            paste0(round(.data$n / .data$n_state, 2) * 100, "%")) |>
         arrange(desc(.data$expected_bag_value)) |>
-        left_join(
-          map(
-            seq_len(nrow(bad_bag_values)),
-            \(x) summarizeBadBags(deduplicated_data, bad_bag_values, x)
-            ) |>
-            list_rbind(),
-          by = c("dl_state", "spp", "bad_bag_value"))
+        select(
+          "dl_state", "spp", "bad_bag_value", "expected_bag_value", "n",
+          "proportion")
     } else {
       message("No bag abnormalities detected.")
     }
 
-  }
-
-#' Summarize count and proportion of bad bag values
-#'
-#' The internal \code{filterOutOregonPermits} function calculates the count and
-#' proportion of a bad bag value inside of \code{\link{bagCheck}}.
-#'
-#' @importFrom dplyr select
-#' @importFrom dplyr distinct
-#' @importFrom dplyr filter
-#' @importFrom dplyr mutate
-#' @importFrom rlang sym
-#' @importFrom dplyr n
-#' @importFrom rlang .data
-#'
-#' @param deduplicated_data The object created after deduplicating data with
-#'   \code{\link{duplicateFix}}
-#' @param bad_bag_values Bad bag values df
-#' @param x Row number
-#'
-#' @author Abby Walter, \email{abby_walter@@fws.gov}
-#'
-#' @family bag functions
-
-summarizeBadBags <-
-  function(deduplicated_data, bad_bag_values, x) {
-    deduplicated_data |>
-      select(c("dl_state", bad_bag_values[[x, 2]])) |>
-      filter(.data$dl_state == bad_bag_values[[x, 1]]) |>
-      mutate(n_state = n()) |>
-      filter(!!sym(bad_bag_values[[x, 2]]) == bad_bag_values[[x, 3]]) |>
-      mutate(
-        n_bad_bags = n(),
-        spp = bad_bag_values[[x, 2]]) |>
-      select(-bad_bag_values[[x, 2]]) |>
-      mutate(
-        proportion =
-          paste0(round(.data$n_bad_bags / .data$n_state, 2) * 100, "%"),
-        bad_bag_value = bad_bag_values[[x, 3]]) |>
-      distinct(
-        .data$dl_state, .data$spp, .data$bad_bag_value, n = .data$n_bad_bags,
-        .data$proportion)
   }

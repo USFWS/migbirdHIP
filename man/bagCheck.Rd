@@ -14,10 +14,6 @@ bagCheck(deduplicated_data)
 After fixing the data with \code{\link{duplicateFix}}, see if any unexpected
 bag values were submitted.
 }
-\seealso{
-Other bag functions:
-\code{\link[=summarizeBadBags]{summarizeBadBags()}}
-}
 \author{
 Abby Walter, \email{abby_walter@fws.gov}
 }
