@@ -11,7 +11,7 @@ failDLstate(corrected_data)
 \code{\link{correct}}}
 }
 \description{
-The internal \code{qDLstate} function is used inside of
+The internal \code{failDLstate} function is used inside of
 \code{\link{write_hip}}.
 }
 \seealso{

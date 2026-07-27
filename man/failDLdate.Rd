@@ -11,7 +11,7 @@ failDLdate(corrected_data)
 \code{\link{correct}}}
 }
 \description{
-The internal \code{qDLdate} function is used inside of
+The internal \code{failDLdate} function is used inside of
 \code{\link{write_hip}}.
 }
 \seealso{

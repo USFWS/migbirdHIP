@@ -13,7 +13,7 @@ getBadRegYear(data, year)
 collected}
 }
 \description{
-The internal \code{getBadRegistrationYear} function is used inside of
+The internal \code{getBadRegYear} function is used inside of
 \code{\link{proof}} and \code{\link{qualityMessages}} to filter to
 \code{registration_yr} values that are not expected. We expect the
 registration_yr to equal the current hunting season.

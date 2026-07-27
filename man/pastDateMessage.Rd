@@ -10,7 +10,7 @@ pastDateMessage(issue_assignments)
 \item{issue_assignments}{An intermediate tibble in \code{\link{issueCheck}}}
 }
 \description{
-The internal \code{futureDateMessage} function is used inside of
+The internal \code{pastDateMessage} function is used inside of
 \code{\link{issueMessages}} and \code{\link{issueCheck}} to return a message
 if past \code{issue_date} values are detected.
 }
