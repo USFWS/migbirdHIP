@@ -533,7 +533,8 @@ issueDecide <-
             .data$decision == "overlap" & .data$registration_yr == year + 1 ~
               "future"
           )
-      )
+      ) |>
+      select(-"mdy_issue_date")
   }
 
 #' Plot issue date errors
