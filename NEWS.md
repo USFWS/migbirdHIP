@@ -14,6 +14,16 @@ Version component definitions:
   - For an ongoing season, a bug fix would be released as `2026.0.3` and subsequent new feature would be released as `2026.0.4`.
   - For critical fixes after a definitive season release, to be avoided unless necessary (e.g., `2026.1.1`).
 
+## Use of artificial intelligence
+
+AI tools approved and offered by the U.S. Department of the Interior were used to aid in the development of `v2026.0.0`. All AI-generated and AI-assisted code, tests, and review were checked, approved, and often re-worded or changed by the `migbirdHIP` package author before inclusion. The only fully AI-generated code included in the package is new unit tests, which are clearly labeled in code comments. Anthropic's Claude Opus 4.8 and Opus 5 (both via Perplexity) were the primary models used to generate and review code, with the occasional use of other available models in Perplexity (chosen by Perplexity Computer's default orchestration), in July 2026.
+
+AI was used for tasks such as:
+
+- Identifying gaps in unit test coverage and subsequently writing new unit tests, which are labeled in code comments.
+- Assisting in function refactoring (but not independently rewriting functions).
+- Agentic code review to help find typos and errors.
+
 ## Major changes & new features
 
 - GitHub Actions
