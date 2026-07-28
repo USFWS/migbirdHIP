@@ -19,6 +19,7 @@ vignette: >
     -   [fileRename](#filerename)
     -   [fileCheck](#filecheck)
     -   [read_hip](#read_hip)
+    -   [qualityMessages](#qualitymessages)
     -   [glyphCheck](#glyphcheck)
     -   [shiftCheck](#shiftcheck)
     -   [clean](#clean)
@@ -62,7 +63,7 @@ pak::pak("USFWS/migbirdHIP")
 To install a past release, use the example below and substitute the appropriate version number. Releases are documented in the [README](https://github.com/USFWS/migbirdHIP/blob/main/README.md#releases).
 
 ```{r, releases, eval = FALSE}
-pak::pak("USFWS/migbirdHIP@v1.2.8")
+pak::pak("USFWS/migbirdHIP@v2026.0.0")
 ```
 
 ### Load {#load}
@@ -95,7 +96,7 @@ This function also converts lowercase state abbreviations to uppercase.
 The current hunting season year must be supplied to the `year` parameter to accurately convert dates.
 
 ```{r rename, eval = FALSE}
-fileRename(path = "C:/HIP/raw_data/DL0901", year = 2025)
+fileRename(path = "C:/HIP/raw_data/DL0901", year = 2026)
 ```
 
 ### fileCheck {#filecheck}
@@ -126,7 +127,7 @@ raw_data <- read_hip(paste0(here::here(), "/inst/extdata/DL0901/"))
 -   a specific download (e.g., `season = FALSE`, the default; `path` must be to the download's subdirectory)
 -   an entire season (e.g., `season = TRUE`, and `path` is to the directory containing all download subdirectories)
 
-Use `unique = TRUE` to read in a frame without exact duplicates, or `unique = FALSE` to read in all registrations including exact duplicates.
+Use `unique = TRUE` to read in a frame without exact duplicates, or `unique = FALSE` to read in all registrations including exact duplicates. **Important:** the `record_key` field is not created if `unique = FALSE`, which is required in some following steps (e.g., `duplicateFix()`, `proof()`).
 
 Data are read in an expected format beginning with the `title` field and ending with `email` field. Additional fields are created by `read_hip()`: `dl_state`, `dl_date`, `source_file`, `dl_cycle`, `dl_key`, `record_key`.
 
@@ -135,23 +136,30 @@ Data are read in an expected format beginning with the `title` field and ending 
 -   From subfolders named `"hold"`, `"permit"`, or `"lifetime"`.
 -   Permit and lifetime HIP registrations must be read in and processed in a different workflow than the one outlined in this vignette.
 
+#### The `read_hip()` function fails if:
+
+-   The state abbreviation in the file name is not found in the list of 49 continental US states.
+-   The date in the file name is formatted incorrectly.
+
 #### The `read_hip()` function returns a message if:
 
--   There is a `dl_state` not found in the list of 49 continental US states
--   `MMDDYYYY` or `DDMMYYYY` format suspected in `dl_date`
 -   Blank files are found in the directory
+
+
+As an example, we will use the default `read_hip()` settings to read in all of the states from download 0901, using fake HIP data files located in the `extdata/DL0901/` directory of the R package.
+
+### qualityMessages {#qualitymessages}
+
+#### The `qualityMessages()` function returns a message if:
+
 -   `NA` values detected in one or more ID fields (`firstname`, `lastname`, `state`, `birth_date`) for \>10% of a file and/or \>100 registrations
 -   All emails are missing from a file
 -   Test records are found
 -   Any registration has a `0` in every bag field
 -   Any registration has an `NA` in every bag field
 -   Any registration contains a bag value that is not a 1-digit number
--   There is an `NA` in `dl_state`
--   There is an `NA` in `dl_date`
 -   For presumed solo permit DNHs; if any OR or WA `hunt_mig_birds` does not equal `2` when non-permit bags are `0` and one of `band_tailed_pigeon`, `brant`, and/or `seaduck` is `2`.
 -   Any registration_yr is not equal to `REF_CURRENT_SEASON` or `REF_CURRENT_SEASON + 1`
-
-As an example, we will use the default `read_hip()` settings to read in all of the states from download 0901, using fake HIP data files located in the `extdata/DL0901/` directory of the R package.
 
 ### glyphCheck {#glyphcheck}
 
@@ -182,6 +190,9 @@ clean_data <- clean(raw_data)
 -   Any bag value is not a 1-digit number.
 -   `NA` or `0` for every bag field
 -   Test record is detected
+    -   `firstname` and `lastname` are `"TEST"`
+    -   `lastname` is `"INAUDIBLE"`
+    -   `firstname` is one of: `"INAUDIBLE", "BLANK", "USER", "TEST", "RESIDENT"`
 -   One of:
     -   `firstname`, `lastname`, `state`, or `birth_date` is `NA`
     -   `address` AND `email` are `NA`, `city`
@@ -205,20 +216,20 @@ clean_data <- clean(raw_data)
     -   Insert a hyphen in 9 digit zip codes with a middle space
     -   Delete trailing -0000 and -\_\_\_\_
 -   `hunt_mig_birds`
-    -   For Oregon and/or Washington, if `HuntY` is `0` and if `band_tailed_pigeon`, `brant`, or `seaduck` is `2`, change `hunt_mig_birds` field from `0` to `2`
+    -   For Oregon and/or Washington, if `hunt_mig_birds` is `0` and if `band_tailed_pigeon`, `brant`, or `seaduck` is `2`, change `hunt_mig_birds` field from `0` to `2`
 -   `band_tailed_pigeon`
-    -   If any permit file states submitted a `2` for crane, change the `2` to a `0`
--   `cranes`
     -   If any permit file states submitted a `2` for band_tailed_pigeon, change the `2` to a `0`
+-   `cranes`
+    -   If any permit file states submitted a `2` for crane, change the `2` to a `0`
 
 In addition to the changes listed above, the internal `zipCheck()` function returns a message from `clean()` if zip codes are detected that do not correspond to provided state of residence for \>10% of a file and/or \>100 registrations.
 
 ### issueCheck {#issuecheck}
 
-The `issueCheck()` function assesses the validity of the `issue_date` field based on the current hunting season's HIP issuance start and end dates (not season open and close dates). A plot is automatically returned for past and future registrations; to skip plotting, specify `plot = F`.
+The `issueCheck()` function assesses the validity of the `issue_date` field based on the current hunting season's HIP issuance start and end dates (not season open and close dates). A plot is automatically returned for past and future registrations. The plot is skipped by default, so to plot the data write `plot = TRUE`.
 
 ```{r, issuecheck, eval = F}
-current_data <- issueCheck(clean_data, year = 2025, plot = F)
+current_data <- issueCheck(clean_data, year = 2026, plot = FALSE)
 ```
 
 ```{r, createcurrent, include = F}
@@ -228,10 +239,10 @@ current_data <- clean_data
 #### Criteria evaluated and changes made:
 
 -   **Past registration:** a registration's `issue_date` is before the start date of HIP issuance for its state; these registrations are filtered out.
--   **Overlap registration:** registrations from 2-season states with an `issue_date` between the start of next season's issue start and this season's issue end fall into the `"overlap"` category; these registrations are assigned `"current"` if `registration_yr` is equal to `REF_SEASON_CURRENT` or `"future"` if `registration_yr` is `REF_SEASON_CURRENT + 1`.
--   **Current registration:** a registration's `issue_date` falls between the start and end dates of HIP issuance for its state; `registration_yr` is overwritten with `REF_SEASON_CURRENT`.
--   **Future registration:** a registration has an `issue_date` after the last day of issuance for its state for this season AND the `issue_date` falls between the projected issue start and end dates for next season; the `registration_yr` is changed to `REF_SEASON_CURRENT + 1`.
--   **Invalid registration:** a registration's `issue_date` does not fall in the issue window for this season or next season; the date falls in the gap between issue windows.
+-   **Overlap registration:** registrations from 2-season states with an `issue_date` between the start of next season's issue start and this season's issue end fall into the `"overlap"` category; these registrations are assigned `"current"` if `registration_yr` is equal to `year` or `"future"` if `registration_yr` is `year + 1`.
+-   **Current registration:** a registration's `issue_date` falls between the start and end dates of HIP issuance for its state; `registration_yr` is overwritten with `year`.
+-   **Future registration:** a registration has an `issue_date` after the last day of issuance for its state for this season AND the `issue_date` falls between the projected issue start and end dates for next season; the `registration_yr` is changed to `year + 1`.
+-   **Invalid registration:** a registration's `issue_date` does not fall in the issue window for this season or next season; the date falls in the gap between issue windows. These registrations are filtered out.
 -   **Bad `issue_date`:** a registration's `issue_date` cannot be evaluated, likely because it's formatted incorrectly or is illogical; these registrations are filtered out.
 -   Return message if any registration's `issue_date` is after the file was submitted.
 
@@ -278,7 +289,9 @@ A new field called `record_type` is added to the data after the above deduplicat
 
 Running `bagCheck()` ensures species "bag" values are in order. This function searches for values in species group columns that are not typical or expected by the US Fish and Wildlife Service. If a value outside of the normal range is detected, an output tibble is created. Each row in the output contains the state, species, unusual stratum value, and a list of the normal values we would expect.
 
-If a value for a species group is given in the HIP data that doesn't match anything in our records, the species reported in the output will have `NA` values in the `normal_strata` column. These species are not hunted in the reported states.
+In-line permit records are not included in this check, to prevent `ducks_bag = "0"` values from popping up when we know those don't count.
+
+If a value for a species group is given in the HIP data that doesn't match anything in our records, the species reported in the output will have `NA` values in the `expected_bag_value` column. These species are not hunted in the reported states.
 
 ```{r, bagCheck}
 bagCheck(deduplicated_data)
@@ -291,16 +304,14 @@ After data are cleaned and checked in the steps above, we run `proof()` to check
 Values that are considered irregular are flagged in a new field called `errors`. For each existing field (`r paste(migbirdHIP:::REF_FIELDS_ALL, collapse = ", ")`), values are compared to standard expected formats. If they do not conform, the field name is pasted as a string in the `errors` column. Each row can have anywhere from zero errors (`NA`) to all field names listed. Multiple errors per registration are hyphen delimited. A typical `errors` value would look like: `"suffix-address-zip"`, `"zip"`, or `"middle-email"`.
 
 ```{r, proof}
-proofed_data <- proof(deduplicated_data, year = 2025)
+proofed_data <- proof(deduplicated_data, year = 2026)
 ```
 
 #### What gets flagged in the `errors` field and why:
 
--   `"test_record"`
-    -   `firstname` and `lastname` are `"TEST"`
-    -   `lastname` is `"INAUDIBLE"`
-    -   `firstname` is one of: `"INAUDIBLE", "BLANK", "USER", "TEST", "RESIDENT"`
--   `"title"` if `title` is not one of: `NA`, `0`, `1` or `2`.
+-   `"title"` 
+    -   If `title` is not one of: `NA`, `0`, `1` or `2`.
+    -   If common first names are assigned the wrong title.
 -   `"firstname"`
     -   `firstname` contains anything other than letters, apostrophe(s), space(s), and/or hyphen(s)
     -   `firstname` contains less than 2 letters
@@ -320,7 +331,12 @@ proofed_data <- proof(deduplicated_data, year = 2025)
     -   `r paste0(c(migbirdHIP:::REF_ABBR_49_STATES, migbirdHIP:::REF_ABBR_USA, migbirdHIP:::REF_ABBR_CANADA), collapse = ", ")`
 -   `"zip"`
     -   If a registration's `address` doesn't have a `zip` that should be in their reported address `state` of residence
--   `"birth_date"` if the year in `birth_date` is more than `100` or less than `0` years ago
+    -   If the fist 5 digits of `zip` are not in `REF_ZIP_CODE$zipcode` at all.
+-   `"birth_date"`
+   - If the date is formatted poorly (per `REGEX_DATE_FORMAT`).
+   - If the date can't be parsed by `lubridate::mdy()`.
+   - If the date is later than today.
+   - If the date is earlier than `09/01/(REF_CURRENT_SEASON - 100)`.
 -   `"hunt_mig_birds"` if not equal to `1` or `2`
 -   `"registration_yr"` if not equal to the HIP data collection year
 -   `"email"`
@@ -342,7 +358,7 @@ proofed_data <- proof(deduplicated_data, year = 2025)
 Data can be corrected by running the `correct()` function with year of the Harvest Information Program supplied to the `year` parameter.
 
 ```{r correct}
-corrected_data <- correct(proofed_data, year = 2025)
+corrected_data <- correct(proofed_data, year = 2026)
 ```
 
 #### Changes and corrections include:
@@ -378,13 +394,13 @@ duplicatePlot(current_data)
 The `errorPlotFields()` function can be run on all states...
 
 ```{r errorfieldsplotall, fig.cap = "Figure 2. Plot of all location's errors by field name.", fig.width = 6, fig.height = 3.6, dpi = 300, out.width = 500, fig.align = "center"}
-errorPlotFields(proofed_data, loc = "all", year = 2025)
+errorPlotFields(proofed_data, loc = "all", year = 2026)
 ```
 
 ... or it can be limited to just one.
 
-```{r errorfieldsplotsc, fig.cap = "Figure 3. Plot of Louisiana's errors by field name.", fig.width = 6, fig.height = 3.6, dpi = 300, out.width = 500, fig.align = "center"}
-errorPlotFields(proofed_data, loc = "LA", year = 2025)
+```{r errorfieldsplotla, fig.cap = "Figure 3. Plot of Louisiana's errors by field name.", fig.width = 6, fig.height = 3.6, dpi = 300, out.width = 500, fig.align = "center"}
+errorPlotFields(proofed_data, loc = "LA", year = 2026)
 ```
 
 It is possible to add any `ggplot2` components to these plots. A plot can be altered with `facet_wrap` using either `dl_cycle` or `dl_date`. The example below demonstrates how this package's functions can interact with `tidyverse` and shows an example of an `errorPlotFields` with `facet_wrap` (using a subset of 4 download cycles).
@@ -393,7 +409,7 @@ It is possible to add any `ggplot2` components to these plots. A plot can be alt
 errorPlotFields(
   hipdata2025 |>
     filter(str_detect(dl_cycle, "0800|0901|0902|1001")),
-    year = 2025) +
+    year = 2026) +
   theme(
     axis.text.x = element_text(angle = 90, vjust = 0, hjust = 1),
     legend.position = "bottom") +
@@ -404,7 +420,7 @@ errorPlotFields(
 
 The `errorPlotStates()` function plots error proportions per state. A threshold value must be set to only view states above a certain proportion of error (in the example below, `threshold = 0.05` indicates an error tolerance of 5%). Bar labels are error counts.
 
-```{r errorplotstates, fig.cap = "Figure 5. Plot of proportion of error by state.", fig.width = 6, fig.height = 4, dpi = 300, out.width = 500, fig.align = "center"}
+```{r errorplotstates, fig.cap = "Figure 4. Plot of proportion of error by state.", fig.width = 6, fig.height = 4, dpi = 300, out.width = 500, fig.align = "center"}
 errorPlotStates(proofed_data, threshold = 0.05)
 ```
 
@@ -482,11 +498,16 @@ errorTable(proofed_data, loc = "CA", field = "dove_bag")
 
 ### write_hip {#write_hip}
 
-After the data have been corrected, the data are ready to be written out. Use `write_hip()` to do final processing to the data, which includes 1) adding in FWS strata and 2) setting `NA` values to blank strings. If `split = FALSE`, the final table will be saved as a single `.csv` to your specified path. If `split = TRUE` (default), one `.csv` file per each input `.txt` source file will be written to the specified directory.
+After the data have been corrected, the data are ready to be written out. Use `write_hip()` to do final processing to the data, which includes 1) adding in FWS strata and 2) setting `NA` values to blank strings. The `write_hip()` function will fail if there is an `NA` in `dl_state` or if there is an `NA` in `dl_date`. It will also fail if any value exceeds the database character limits (see `failWidths()` helper function). 
+
+If `split = FALSE`, the final table will be saved as a single `.csv` to your specified path. If `split = TRUE` (default), one `.csv` file per each input `.txt` source file will be written to the specified directory.
+
+The `type` argument helps apply additional checks for permits; supply `"HIP"` for HIP data from a regular download, or `"CR"` or `"BT"` for separate permit file records. If `type = "HIP"`, writing data will fail if there are more `record_type = "PMT"` records in the `corrected_data` than `record_type = "HIP"` records.
 
 ```{r, writecsv, eval = FALSE}
 
-write_hip(corrected_data, path = "C:/HIP/processed_data/")
+write_hip(
+  corrected_data, path = "C:/HIP/processed_data/", type = "HIP", split = TRUE)
 
 ```
 
@@ -499,7 +520,7 @@ The `writeReport()` function can be used to automatically generate an R markdown
 writeReport(
   raw_path = "C:/HIP/DL0901/",
   temp_path = "C:/HIP/corrected_data",
-  year = 2025,
+  year = 2026,
   dl = "0901",
   dir = "C:/HIP/dl_reports",
   file = "DL0901_report")
