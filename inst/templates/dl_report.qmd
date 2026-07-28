@@ -476,22 +476,7 @@ file_list <-
 pmts <-
   cleaned_data |>
   # Classify solo permit records as PMT
-  dplyr::mutate_at(
-    dplyr::vars(dplyr::matches("bag|coots|rails|cranes|band|brant|seaducks")),
-    ~as.numeric(.)) |>
-  dplyr::mutate(
-    other_sum =
-      rowSums(dplyr::across(dplyr::matches("bag|coots|rails")), na.rm = T),
-    special_sum =
-      rowSums(dplyr::across(dplyr::matches("cranes|band|brant|seaducks")),
-              na.rm = T),
-    record_type =
-      ifelse(
-        other_sum == 0 &
-          special_sum > 0 &
-          dl_state %in% unique(migbirdHIP:::REF_PMT_INLINE$dl_state),
-        "PMT",
-        NA)) |>
+  migbirdHIP:::duplicateRecordType() |>
   dplyr::filter(record_type == "PMT") |>
   dplyr::pull(record_key)
 
@@ -592,7 +577,7 @@ bullets <-
       length(
         unique(
           stringr::str_extract(file_list, "^[A-Z]{2}"))),
-      " states.")
+      " states (count includes blank lines).")
     ,
     # Count of retained lines of data, files, states
     paste0(
