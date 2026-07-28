@@ -1,10 +1,10 @@
 #' Return messages to console for common or catastrophic data quality issues
 #'
-#' The \code{qualityMessages} function is used to return messages for
-#' missing PII, missing email addresses, all-zero bag records, non-numeric bag
-#' values, NAs in dl_state, NAs in dl_date, bad title assignments, high
-#' proportions of non-resident hunters in a file, inter-state duplicates, low
-#' range of issue dates in a file, and low range of birth dates in a file.
+#' The \code{qualityMessages} function is used to return messages for missing
+#' PII, missing email addresses, all-zero bag records, non-numeric bag values,
+#' bad title assignments, high proportions of non-resident hunters in a file,
+#' inter-state duplicates, low range of issue dates in a file, and low range of
+#' birth dates in a file.
 #'
 #' @importFrom dplyr n
 #' @importFrom dplyr mutate
