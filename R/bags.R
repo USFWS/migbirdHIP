@@ -45,11 +45,12 @@ bagCheck <-
       mutate(stateBagValue  = as.character(.data$stateBagValue))
 
     # The following nested joins remove all values that are not 0 or 1 from
-    # REF_BAGS for state/species combinations in REF_PMT_FILES (e.g. 2s are
-    # not acceptable in regular HIP pre-processing for CO cranes, so this
-    # resulting tibble will only contain a line for CO cranes = 1). This rule is
-    # also applied in internal function `permitBagFix()`, please refer to that
-    # function if this comment is still unclear.
+    # REF_BAGS for state/species combinations in REF_PMT_FILES (e.g. 2s are not
+    # acceptable in regular HIP pre-processing for CO cranes, so this resulting
+    # tibble will only contain a line for CO cranes = 1). This rule is also
+    # applied in internal functions `btpiPermitBagFix()` and
+    # `cranePermitBagFix()`, please refer to those functions if this comment is
+    # still unclear.
     non_pmt_file_bags_ref <-
       anti_join(
         mini_bags_ref,
@@ -90,7 +91,7 @@ bagCheck <-
           rename(bad_bag_value = "stateBagValue"),
         by = c("dl_state", "spp", "bad_bag_value")) |>
       # Filter out permit file states with unexpected 0s (they were created by
-      # permitBagFix) for btpi and cranes
+      # permitBagFix funs) for btpi and cranes
       filter(
         !(.data$dl_state %in%
             REF_PMT_FILES$dl_state[REF_PMT_FILES$spp == "band_tailed_pigeon"] &
