@@ -113,9 +113,11 @@ AI was used for tasks such as:
       - Fully vectorize `duplicateRecordType()` by avoiding repeated `across(matches(...), as.numeric)` conversions by doing one conversion and two `rowSums()`
   - Helper functions
     - New `assignFlyway()` function added, mainly to be used by the HIP dashboard.
+    - `errorLevelErrorsByState()` edited to calculate based on 13 possible errors per record, not 14 (`proof()` dropped `"test_record"`).
 - Download report template
   - Add a plot of all issue dates received per state on the issuance tab.
   - Add a bullet point for total number of sample eligible registrations to the agenda tab.
+  - Minor miscellaneous updates to match function changes, `ggplot2` deprecations, typos, etc.
 
 ## Minor changes / bug fixes
 
