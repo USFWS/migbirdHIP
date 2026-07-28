@@ -376,8 +376,8 @@ errorLevelErrorsByState <-
       select(c("dl_state", "total_records", errors = "value")) |>
       reframe(
         count_errors = n(),
-        count_correct = (.data$total_records * 14) - .data$count_errors,
-        proportion = .data$count_errors / (.data$total_records * 14),
+        count_correct = (.data$total_records * 13) - .data$count_errors,
+        proportion = .data$count_errors / (.data$total_records * 13),
         .by = "dl_state") |>
       distinct()
   }
