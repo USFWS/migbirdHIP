@@ -24,10 +24,6 @@ issueCheck <-
     failYear(year)
     failTF(plot)
 
-    if (year != REF_CURRENT_SEASON) {
-      message("! Are you sure you want to run this using year = ", year, "?")
-    }
-
     # Stop if all values in record_key field are NA (causes problems with
     # joining later)
     assert_that(
