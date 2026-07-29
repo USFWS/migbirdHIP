@@ -36,7 +36,9 @@ test_that("duplicateFinder handles a 0-row input gracefully (NULL, no error)", {
 })
 
 test_that("write_hip() handles a 0-row input gracefully", {
-  d <- withr::local_tempdir()
+  d <- tempfile("whip_")
+  dir.create(d)
+  on.exit(unlink(d, recursive = TRUE), add = TRUE)
   expect_no_error(
     suppressMessages(
       write_hip(test_data3, path = d, type = "HIP")))
@@ -60,7 +62,9 @@ test_that("clean() with all-NA PII collapses to 0 rows then fails gracefully", {
 })
 
 test_that("write_hip() gives a CLEAR error when dl_state is all NA", {
-  d <- withr::local_tempdir()
+  d <- tempfile("whip_")
+  dir.create(d)
+  on.exit(unlink(d, recursive = TRUE), add = TRUE)
   bad <- DF_TEST_TINI_CORRECTED |> dplyr::mutate(dl_state = NA_character_)
   expect_error(
     write_hip(bad, path = d, type = "HIP"),
