@@ -168,6 +168,12 @@ Data are read in an expected format beginning with the `title` field and ending 
 
 ### qualityMessages {#qualitymessages}
 
+The `qualityMessages()` function was designed to find issues in HIP registrations before data get too far in the pre-processing pipeline. It requires this season's start year to be provided to the `year` parameter (e.g., `year = 2026` for the 2026-2027 hunting season). Messages are printed the console for the user to determine the level of severity and what action to take next. 
+
+```{r qualitymessages}
+qualityMessages(raw_data, 2026)
+```
+
 #### The `qualityMessages()` function returns a message if:
 
 -   `NA` values are detected in one or more ID fields (`firstname`, `lastname`, `state`, `birth_date`) for \>10% of a file and/or \>100 registrations.
