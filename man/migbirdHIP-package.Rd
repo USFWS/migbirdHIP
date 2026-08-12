@@ -13,7 +13,7 @@ Functions designed to process and visualize data submitted to the USFWS Harvest 
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://www.fws.gov/project/migratory-bird-hunter-survey-diary-survey}
+  \item \url{https://usfws.github.io/migbirdHIP/}
 }
 
 }
