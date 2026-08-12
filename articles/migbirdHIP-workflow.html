@@ -83,6 +83,7 @@
 </li>
 <li><a href="#load">Load</a></li>
 <li><a href="#functions-overview">Functions overview</a></li>
+<li><a href="#example-data">Example data</a></li>
 </ul>
 </li>
 <li>
@@ -182,6 +183,51 @@ Overview of migbirdHIP functions in a flowchart format.
 </p>
 </div>
 </div>
+<div class="section level3">
+<h3 id="example-data">Example data<a class="anchor" aria-label="anchor" href="#example-data"></a>
+</h3>
+<p>Example data are included in the <code>migbirdHIP</code> R package in
+two formats. Raw data files are provided with fake names, addresses, and
+other registration values, mainly to include examples and tests for
+reading in data. In addition, small data objects derived from the fake
+registrations are exported to users.</p>
+<div class="section level4">
+<h4 id="raw-data">Raw data<a class="anchor" aria-label="anchor" href="#raw-data"></a>
+</h4>
+<p>Raw data in the form of fake HIP registration data files were
+generated with <code>data-raw/create_fake_HIP_data.R</code>. The 49
+files (one for each state) are stored in the <code>migbirdHIP</code> R
+package under <code>inst/extdata/</code>. You can test <a href="#read_hip">read_hip()</a> with the files in this directory.</p>
+</div>
+<div class="section level4">
+<h4 id="exported-data">Exported data<a class="anchor" aria-label="anchor" href="#exported-data"></a>
+</h4>
+<p>There are 7 data objects stored in <code>/data/</code> as
+<code>.rda</code> files. Users can call these objects by name (e.g.,
+<code>DF_TEST_MINI</code>) and query their documentation (e.g.,
+<code><a href="../reference/DF_TEST_MINI.html">?DF_TEST_MINI</a></code>) from the console after loading
+<code>migbirdHIP</code>.</p>
+<p>The biggest object is <code>DF_TEST_MINI</code> with ~1,600 rows.
+This tibble represents “raw data” and doesn’t contain the
+<code>record_key</code> field. The other 6 objects all begin with the
+<code>DF_TEST_TINI_</code> prefix and represent HIP data at various
+points during pre-processing. They are small, containing only 3 rows per
+object, but exhibit properties that are expected from each intermediate
+output. For example, <code>DF_TEST_TINI_PROOFED</code> contains the
+<code>errors</code> field. Users can run these objects in
+<code>migbirdHIP</code> package functions.</p>
+<p>List of exported data objects:</p>
+<ul>
+<li><code>DF_TEST_MINI</code></li>
+<li><code>DF_TEST_TINI_READ</code></li>
+<li><code>DF_TEST_TINI_CLEANED</code></li>
+<li><code>DF_TEST_TINI_CURRENT</code></li>
+<li><code>DF_TEST_TINI_DEDUPED</code></li>
+<li><code>DF_TEST_TINI_PROOFED</code></li>
+<li><code>DF_TEST_TINI_CORRECTED</code></li>
+</ul>
+</div>
+</div>
 </div>
 <div class="section level2">
 <h2 id="part-a-data-import-and-cleaning">Part A: Data Import and Cleaning<a class="anchor" aria-label="anchor" href="#part-a-data-import-and-cleaning"></a>
@@ -225,13 +271,12 @@ the processed folder using <code><a href="../reference/fileCheck.html">fileCheck
 <code><a href="../reference/read_hip.html">read_hip()</a></code>. Files must adhere to a 10-character naming
 convention to successfully be read in (2-letter capitalized state
 abbreviation followed by <code>YYYYMMDD</code>); if files were submitted
-with a 5-digit format or lowercase state abbreviation, run <a href="#filerename">fileRename</a> first.</p>
-<p><strong>Note:</strong> In the <code><a href="../reference/read_hip.html">read_hip()</a></code> example below,
-we use an internal directory to read in fake HIP data files, which
-allows the function to demonstrate its errors and messages. (The testing
-data were generated with <code>data-raw/create_fake_HIP_data.R</code>
-and are stored under <code>inst/extdata/</code>.) All other examples in
-this vignette will use <code>C:/</code> drive examples for clarity.</p>
+with a 5-digit format or lowercase state abbreviation, run <a href="#filerename">fileRename()</a> first.</p>
+<p>In the example below, we will use the default <code><a href="../reference/read_hip.html">read_hip()</a></code>
+settings to read in all of the fake HIP data files from an internal
+package directory (read more in the <a href="#example-data">example
+data</a> section). All other examples in this vignette will use
+<code>C:/</code> drive examples for clarity.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">raw_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_hip.html">read_hip</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html" class="external-link">here</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"/inst/extdata/DL0901/"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## Time to read in 49 files: 0 sec</span></span></code></pre>
@@ -240,18 +285,18 @@ this vignette will use <code>C:/</code> drive examples for clarity.</p>
 for:<a class="anchor" aria-label="anchor" href="#the-read_hip-function-allows-data-to-be-read-in-for"></a>
 </h4>
 <ul>
-<li>all states (e.g., <code>state = NA</code>, the default)</li>
-<li>a specific state (e.g., <code>state = "DE"</code>)</li>
-<li>a specific download (e.g., <code>season = FALSE</code>, the default;
-<code>path</code> must be to the download’s subdirectory)</li>
-<li>an entire season (e.g., <code>season = TRUE</code>, and
+<li>All states (e.g., <code>state = NA</code>, the default).</li>
+<li>A specific state (e.g., <code>state = "DE"</code>).</li>
+<li>A specific download (e.g., <code>season = FALSE</code>, the default;
+<code>path</code> must be to the download’s subdirectory).</li>
+<li>An entire season (e.g., <code>season = TRUE</code>, and
 <code>path</code> is to the directory containing all download
-subdirectories)</li>
+subdirectories).</li>
 </ul>
 <p>Use <code>unique = TRUE</code> to read in a frame without exact
 duplicates, or <code>unique = FALSE</code> to read in all registrations
 including exact duplicates. <strong>Important:</strong> the
-<code>record_key</code> field is not created if
+<code>record_key</code> field is not created for
 <code>unique = FALSE</code>, which is required in some following steps
 (e.g., <code><a href="../reference/duplicateFix.html">duplicateFix()</a></code>, <code><a href="../reference/proof.html">proof()</a></code>).</p>
 <p>Data are read in an expected format beginning with the
@@ -283,41 +328,213 @@ in a different workflow than the one outlined in this vignette.</li>
 <h4 id="the-read_hip-function-returns-a-message-if">The <code>read_hip()</code> function returns a message if:<a class="anchor" aria-label="anchor" href="#the-read_hip-function-returns-a-message-if"></a>
 </h4>
 <ul>
-<li>Blank files are found in the directory</li>
+<li>Blank files are found in the directory.</li>
 </ul>
-<p>As an example, we will use the default <code><a href="../reference/read_hip.html">read_hip()</a></code>
-settings to read in all of the states from download 0901, using fake HIP
-data files located in the <code>extdata/DL0901/</code> directory of the
-R package.</p>
 </div>
 </div>
 <div class="section level3">
 <h3 id="qualitymessages">qualityMessages<a class="anchor" aria-label="anchor" href="#qualitymessages"></a>
 </h3>
+<p>The <code><a href="../reference/qualityMessages.html">qualityMessages()</a></code> function was designed to find
+issues in HIP registrations before data get too far in the
+pre-processing pipeline. It requires this season’s start year to be
+provided to the <code>year</code> parameter (e.g.,
+<code>year = 2026</code> for the 2026-2027 hunting season). Messages are
+printed the console for the user to determine the level of severity and
+what action to take next.</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/qualityMessages.html">qualityMessages</a></span><span class="op">(</span><span class="va">raw_data</span>, <span class="fl">2026</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## Bad first name values detected.</span></span></code></pre>
+<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 10 × 4</span></span></span>
+<span><span class="co">##    source_file     file_size n_bad prop_bad</span></span>
+<span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> /FL20260904.txt       225     6    0.027</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> /MS20260808.txt       226     6    0.027</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> /MI20260831.txt       225     5    0.022</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> /NY20260905.txt       227     5    0.022</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> /SD20260903.txt       226     5    0.022</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> /VA20260827.txt       227     5    0.022</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> /AR20260907.txt       226     4    0.018</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> /DE20260813.txt       225     4    0.018</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> /OK20260823.txt       226     4    0.018</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">10</span> /OR20260807.txt       225     4    0.018</span></span></code></pre>
+<pre><code><span><span class="co">## Bad last name values detected.</span></span></code></pre>
+<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 16 × 4</span></span></span>
+<span><span class="co">##    source_file     file_size n_bad prop_bad</span></span>
+<span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> /KY20260821.txt       226     8    0.035</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> /CT20260901.txt       225     7    0.031</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> /CO20260827.txt       225     6    0.027</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> /AL20260803.txt       225     5    0.022</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> /MS20260808.txt       226     5    0.022</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> /WY20260822.txt       225     5    0.022</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> /AZ20260816.txt       226     4    0.018</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> /IA20260906.txt       225     4    0.018</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> /KS20260901.txt       225     4    0.018</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">10</span> /MO20260813.txt       226     4    0.018</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">11</span> /NC20260829.txt       225     4    0.018</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">12</span> /ND20260828.txt       228     4    0.018</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">13</span> /NE20260815.txt       225     4    0.018</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">14</span> /TN20260901.txt       225     4    0.018</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">15</span> /UT20260815.txt       225     4    0.018</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">16</span> /VA20260827.txt       227     4    0.018</span></span></code></pre>
+<pre><code><span><span class="co">## Bad suffix values detected.</span></span></code></pre>
+<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 49 × 4</span></span></span>
+<span><span class="co">##    source_file     file_size n_bad prop_bad</span></span>
+<span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> /ME20260815.txt       225   128    0.569</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> /NC20260829.txt       225   122    0.542</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> /WA20260816.txt       226   122    0.54 </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> /AL20260803.txt       225   121    0.538</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> /AZ20260816.txt       226   121    0.535</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> /NV20260810.txt       225   120    0.533</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> /WI20260824.txt       225   120    0.533</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> /LA20260804.txt       225   119    0.529</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> /MA20260804.txt       227   119    0.524</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">10</span> /NE20260815.txt       225   118    0.524</span></span>
+<span><span class="co">## <span style="color: #949494;"># ℹ 39 more rows</span></span></span></code></pre>
+<pre><code><span><span class="co">## Bad state values detected.</span></span></code></pre>
+<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 49 × 4</span></span></span>
+<span><span class="co">##    source_file     file_size n_bad prop_bad</span></span>
+<span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> /CT20260901.txt       225    20    0.089</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> /OH20260903.txt       227    20    0.088</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> /LA20260804.txt       225    19    0.084</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> /NM20260814.txt       227    19    0.084</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> /WV20260820.txt       226    18    0.08 </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> /ME20260815.txt       225    17    0.076</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> /NV20260810.txt       225    17    0.076</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> /AR20260907.txt       226    16    0.071</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> /KS20260901.txt       225    16    0.071</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">10</span> /KY20260821.txt       226    16    0.071</span></span>
+<span><span class="co">## <span style="color: #949494;"># ℹ 39 more rows</span></span></span></code></pre>
+<pre><code><span><span class="co">## Bad zip code values detected.</span></span></code></pre>
+<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 49 × 4</span></span></span>
+<span><span class="co">##    source_file     file_size n_bad prop_bad</span></span>
+<span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> /ME20260815.txt       225   145    0.644</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> /MA20260804.txt       227   145    0.639</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> /AK20260813.txt       225   143    0.636</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> /NE20260815.txt       225   140    0.622</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> /CT20260901.txt       225   138    0.613</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> /WV20260820.txt       226   138    0.611</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> /CO20260827.txt       225   137    0.609</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> /FL20260904.txt       225   137    0.609</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> /OR20260807.txt       225   137    0.609</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">10</span> /NM20260814.txt       227   138    0.608</span></span>
+<span><span class="co">## <span style="color: #949494;"># ℹ 39 more rows</span></span></span></code></pre>
+<pre><code><span><span class="co">## Error: 112 records detected with a value other than 2 for hunt_mig_birds.</span></span></code></pre>
+<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 45 × 3</span></span></span>
+<span><span class="co">##    source_file     hunt_mig_birds     n</span></span>
+<span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> /AK20260813.txt 1                  2</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> /AL20260803.txt 1                  1</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> /AZ20260816.txt 1                  1</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> /CA20260808.txt 1                  4</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> /CO20260827.txt 1                  1</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> /CT20260901.txt 1                  3</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> /DE20260813.txt 1                  3</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> /FL20260904.txt 1                  4</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> /GA20260831.txt 1                  4</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">10</span> /IA20260906.txt 1                  3</span></span>
+<span><span class="co">## <span style="color: #949494;"># ℹ 35 more rows</span></span></span></code></pre>
+<pre><code><span><span class="co">## Error: 11 records have a '0' in every bag field; these records will be filtered out.</span></span></code></pre>
+<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 11 × 2</span></span></span>
+<span><span class="co">##    source_file     record_key  </span></span>
+<span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> /CT20260901.txt record_1468 </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> /GA20260831.txt record_2182 </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> /ND20260828.txt record_5884 </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> /ND20260828.txt record_5900 </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> /OR20260807.txt record_7966 </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> /OR20260807.txt record_8121 </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> /OR20260807.txt record_8124 </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> /WA20260816.txt record_10185</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> /WA20260816.txt record_10192</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">10</span> /WA20260816.txt record_10300</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">11</span> /WV20260820.txt record_10720</span></span></code></pre>
+<pre><code><span><span class="co">## Error: 1 test records detected; these records will be filtered out.</span></span></code></pre>
+<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 1 × 4</span></span></span>
+<span><span class="co">##   source_file     record_key   firstname lastname</span></span>
+<span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">1</span> /WA20260816.txt record_10181 TEST      TEST</span></span></code></pre>
+<pre><code><span><span class="co">## Error: 1 in-line permit records from OR and/or WA do not contain 2 for hunt_mig_birds; they will be edited.</span></span></code></pre>
+<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 1 × 6</span></span></span>
+<span><span class="co">##   source_file     hunt_mig_birds band_tailed_pigeon brant seaducks     n</span></span>
+<span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">1</span> /WA20260816.txt 1              0                  0     2            1</span></span></code></pre>
+<pre><code><span><span class="co">## Error: 1702 records with non-zero bag values for permit species from permit file states; they will be edited.</span></span></code></pre>
+<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 18 × 4</span></span></span>
+<span><span class="co">##    source_file     spp                strata     n</span></span>
+<span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> /CO20260827.txt cranes             1         97</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> /CO20260827.txt cranes             2        128</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> /KS20260901.txt cranes             2        112</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> /MN20260904.txt cranes             2        114</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> /MT20260817.txt cranes             2        113</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> /ND20260828.txt cranes             2        102</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> /ND20260828.txt cranes             9          1</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> /NM20260814.txt cranes             1        110</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> /NM20260814.txt cranes             2        117</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">10</span> /OK20260823.txt cranes             2        110</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">11</span> /OK20260823.txt cranes             9          1</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">12</span> /TX20260903.txt cranes             2        111</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">13</span> /WY20260822.txt cranes             1         69</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">14</span> /WY20260822.txt cranes             2         76</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">15</span> /CO20260827.txt band_tailed_pigeon 2        114</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">16</span> /NM20260814.txt band_tailed_pigeon 1        114</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">17</span> /NM20260814.txt band_tailed_pigeon 2        113</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">18</span> /UT20260815.txt band_tailed_pigeon 2        100</span></span></code></pre>
+<pre><code><span><span class="co">## Error: 3 registrations are missing critical combinations of PII (making up &gt;10% of a file and/or &gt;100 records).</span></span></code></pre>
+<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 3 × 3</span></span></span>
+<span><span class="co">##   dl_state     n proportion</span></span>
+<span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">1</span> CT          26       0.12</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">2</span> NM          22       0.1 </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">3</span> OH          22       0.1</span></span></code></pre>
+<pre><code><span><span class="co">## Error: High non-resident proportions.</span></span></code></pre>
+<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 49 × 4</span></span></span>
+<span><span class="co">##    source_file     nonresident_n nonresident_prop contributing                  </span></span>
+<span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                         </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> /ID20260904.txt           217 95.6%            CA (6.2%), TX (5.7%), PA (5.3…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> /RI20260905.txt           214 95.1%            NY (6.7%), PA (6.7%), TX (6.2…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> /IN20260826.txt           214 94.7%            NY (5.8%), CA (5.3%), TX (4.4…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> /VT20260831.txt           214 94.7%            CA (5.8%), NY (5.3%), VA (4.9…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> /NE20260815.txt           213 94.7%            NY (6.7%), TX (5.3%), CA (5.3…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> /ND20260828.txt           215 94.3%            NY (5.3%), CA (4.8%), MA (3.9…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> /SD20260903.txt           213 94.2%            CA (8%), TX (5.3%), NY (4.9%) </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> /OK20260823.txt           213 94.2%            CA (6.6%), KY (4.9%), NY (4%) </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> /MD20260829.txt           212 94.2%            IA (6.2%), NY (4.9%), WV (4%) </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">10</span> /OR20260807.txt           212 94.2%            CA (6.2%), VA (5.8%), NJ (4%) </span></span>
+<span><span class="co">## <span style="color: #949494;"># ℹ 39 more rows</span></span></span></code></pre>
 <div class="section level4">
 <h4 id="the-qualitymessages-function-returns-a-message-if">The <code>qualityMessages()</code> function returns a message
 if:<a class="anchor" aria-label="anchor" href="#the-qualitymessages-function-returns-a-message-if"></a>
 </h4>
 <ul>
 <li>
-<code>NA</code> values detected in one or more ID fields
+<code>NA</code> values are detected in one or more ID fields
 (<code>firstname</code>, <code>lastname</code>, <code>state</code>,
 <code>birth_date</code>) for &gt;10% of a file and/or &gt;100
-registrations</li>
-<li>All emails are missing from a file</li>
-<li>Test records are found</li>
-<li>Any registration has a <code>0</code> in every bag field</li>
-<li>Any registration has an <code>NA</code> in every bag field</li>
+registrations.</li>
+<li>All emails are missing from a file.</li>
+<li>Test records are found.</li>
+<li>Any registration has a <code>0</code> in every bag field.</li>
+<li>Any registration has an <code>NA</code> in every bag field.</li>
 <li>Any registration contains a bag value that is not a 1-digit
-number</li>
-<li>For presumed solo permit DNHs; if any OR or WA
-<code>hunt_mig_birds</code> does not equal <code>2</code> when
-non-permit bags are <code>0</code> and one of
+number.</li>
+<li>For presumed solo permit did-not-hunts; if any Oregon or Washington
+<code>hunt_mig_birds</code> registration value does not equal
+<code>2</code> when non-permit bags are <code>0</code> and one of
 <code>band_tailed_pigeon</code>, <code>brant</code>, and/or
 <code>seaduck</code> is <code>2</code>.</li>
-<li>Any registration_yr is not equal to <code>REF_CURRENT_SEASON</code>
-or <code>REF_CURRENT_SEASON + 1</code>
-</li>
+<li>Any <code>registration_yr</code> is not equal to
+<code>REF_CURRENT_SEASON</code> or
+<code>REF_CURRENT_SEASON + 1</code>.</li>
+<li>Any file contains a <code>state</code> value not equal to
+<code>dl_state</code> that makes up 10% or more of the file’s
+registrations.</li>
+<li>Any inter-state duplicates are detected.</li>
 </ul>
 </div>
 </div>
@@ -330,7 +547,7 @@ field name but no other helpful information. The
 <code><a href="../reference/glyphCheck.html">glyphCheck()</a></code> function identifies values containing
 non-UTF-8 glyphs/characters and prints them with the source file in the
 console so they can be edited.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/glyphCheck.html">glyphCheck</a></span><span class="op">(</span><span class="va">raw_data</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## All characters are UTF-8</span></span></code></pre>
 </div>
@@ -339,7 +556,7 @@ console so they can be edited.</p>
 </h3>
 <p>Find and print any rows that have a line shift error with
 <code><a href="../reference/shiftCheck.html">shiftCheck()</a></code>.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/shiftCheck.html">shiftCheck</a></span><span class="op">(</span><span class="va">raw_data</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## No line shifts detected.</span></span></code></pre>
 </div>
@@ -348,7 +565,7 @@ console so they can be edited.</p>
 </h3>
 <p>The <code><a href="../reference/clean.html">clean()</a></code> function performs data cleaning and filters
 out bad registrations.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">clean_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/clean.html">clean</a></span><span class="op">(</span><span class="va">raw_data</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## A total of 919 2s converted to 0s for permit file states:</span></span></code></pre>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 9 × 3</span></span></span>
@@ -375,36 +592,32 @@ out bad registrations.</p>
 </h4>
 <ul>
 <li>Any bag value is not a 1-digit number.</li>
-<li>
-<code>NA</code> or <code>0</code> for every bag field</li>
-<li>Test record is detected
+<li>Every bag field is <code>NA</code> or <code>0</code>.</li>
+<li>A test record is detected:
 <ul>
 <li>
 <code>firstname</code> and <code>lastname</code> are
-<code>"TEST"</code>
-</li>
+<code>"TEST"</code>.</li>
 <li>
-<code>lastname</code> is <code>"INAUDIBLE"</code>
-</li>
+<code>lastname</code> is <code>"INAUDIBLE"</code>.</li>
 <li>
-<code>firstname</code> is one of:
-<code>"INAUDIBLE", "BLANK", "USER", "TEST", "RESIDENT"</code>
-</li>
+<code>firstname</code> is one of: <code>"INAUDIBLE"</code>,
+<code>"BLANK"</code>, <code>"USER"</code>, <code>"TEST"</code>, or
+<code>"RESIDENT"</code>.</li>
 </ul>
 </li>
-<li>One of:
+<li>There is missing contact/identification information:
 <ul>
 <li>
-<code>firstname</code>, <code>lastname</code>, <code>state</code>,
-or <code>birth_date</code> is <code>NA</code>
-</li>
+<code>NA</code> value in <code>firstname</code>,
+<code>lastname</code>, <code>state</code>, or
+<code>birth_date</code>.</li>
 <li>
-<code>address</code> AND <code>email</code> are <code>NA</code>,
-<code>city</code>
-</li>
-<li>AND/OR <code>zip</code> AND <code>email</code> are
-<code>NA</code>
-</li>
+<code>NA</code> for <code>address</code> <em>and</em>
+<code>email</code>.</li>
+<li>
+<code>NA</code> for <code>email</code> <em>and</em>
+<code>city</code> and/or <code>zip</code>.</li>
 </ul>
 </li>
 </ul>
@@ -416,66 +629,71 @@ or <code>birth_date</code> is <code>NA</code>
 <li>
 <code>firstname</code>
 <ul>
-<li>Change to uppercase</li>
-<li>If a suffix value is detected (e.g. JR, SR, 1ST-20TH and 1-20 in
-Roman numerals, excluding XVIII) delete it. Delete white space around
-string.</li>
+<li>Change to uppercase.</li>
+<li>If a suffix value is detected (e.g., <code>JR</code>,
+<code>SR</code>, <code>1ST</code> to <code>20TH</code>, and
+<code>1</code> to <code>20</code> in Roman numerals, excluding
+<code>XVIII</code>) delete it.</li>
+<li>Delete white space around string.</li>
 </ul>
 </li>
 <li>
 <code>lastname</code>
 <ul>
-<li>Change to uppercase</li>
-<li>If a suffix value is detected (e.g. JR, SR, 1ST-20TH and 1-20 in
-Roman numerals, excluding XVIII) delete it. Delete white space around
-string.</li>
+<li>Change to uppercase.</li>
+<li>If a suffix value is detected (e.g., <code>JR</code>,
+<code>SR</code>, <code>1ST</code> to <code>20TH</code>, and
+<code>1</code> to <code>20</code> in Roman numerals, excluding
+<code>XVIII</code>) delete it.</li>
+<li>Delete white space around string.</li>
 </ul>
 </li>
 <li>
 <code>suffix</code>
 <ul>
-<li>Change to uppercase</li>
-<li>If a suffix value is detected in firstname or lastname, replace the
-suffix field with that value. Values that are searched for include JR,
-SR, 1ST-20TH and 1-20 in Roman numerals, excluding XVIII. Periods and
-commas are deleted.</li>
+<li>Change to uppercase.</li>
+<li>If a suffix is detected in <code>firstname</code> or
+<code>lastname</code>, replace the <code>suffix</code> with that value.
+Values that are searched for include <code>JR</code>, <code>SR</code>,
+<code>1ST</code> to <code>20TH</code>, and <code>1</code> to
+<code>20</code> in Roman numerals, excluding <code>XVIII</code>.</li>
+<li>Periods and commas are deleted.</li>
 </ul>
 </li>
 <li>
 <code>zip</code>
 <ul>
-<li>Remove ending hyphen from zip codes with only 5 digits</li>
-<li>Remove ending 0 from zip codes with 10 digits</li>
-<li>Insert a hyphen in continuous 9 digit zip codes</li>
-<li>Insert a hyphen in 9 digit zip codes with a middle space</li>
-<li>Delete trailing -0000 and -____</li>
+<li>Remove ending hyphen from zip codes with only 5 digits.</li>
+<li>Remove ending <code>0</code> from zip codes with 10 digits.</li>
+<li>Insert a hyphen in continuous 9-digit zip codes.</li>
+<li>Insert a hyphen in 9-digit zip codes with a middle space.</li>
+<li>Delete trailing <code>-0000</code> and <code>-____</code>.</li>
 </ul>
 </li>
 <li>
 <code>hunt_mig_birds</code>
 <ul>
-<li>For Oregon and/or Washington, if <code>hunt_mig_birds</code> is
-<code>0</code> and if <code>band_tailed_pigeon</code>,
-<code>brant</code>, or <code>seaduck</code> is <code>2</code>, change
-<code>hunt_mig_birds</code> field from <code>0</code> to
-<code>2</code>
-</li>
+<li>For Oregon and Washington, if a registration’s
+<code>hunt_mig_birds</code> value is <code>0</code> and if
+<code>band_tailed_pigeon</code>, <code>brant</code>, or
+<code>seaduck</code> is <code>2</code>, change
+<code>hunt_mig_birds</code> value from <code>0</code> to
+<code>2</code>.</li>
 </ul>
 </li>
 <li>
 <code>band_tailed_pigeon</code>
 <ul>
 <li>If any permit file states submitted a <code>2</code> for
-band_tailed_pigeon, change the <code>2</code> to a <code>0</code>
-</li>
+<code>band_tailed_pigeon</code>, change the <code>2</code> to a
+<code>0</code>.</li>
 </ul>
 </li>
 <li>
 <code>cranes</code>
 <ul>
-<li>If any permit file states submitted a <code>2</code> for crane,
-change the <code>2</code> to a <code>0</code>
-</li>
+<li>If any permit file states submitted a <code>2</code> for
+<code>cranes</code>, change the <code>2</code> to a <code>0</code>.</li>
 </ul>
 </li>
 </ul>
@@ -489,13 +707,14 @@ registrations.</p>
 <div class="section level3">
 <h3 id="issuecheck">issueCheck<a class="anchor" aria-label="anchor" href="#issuecheck"></a>
 </h3>
-<p>The <code><a href="../reference/issueCheck.html">issueCheck()</a></code> function assesses the validity of the
-<code>issue_date</code> field based on the current hunting season’s HIP
-issuance start and end dates (not season open and close dates). A plot
-is automatically returned for past and future registrations. The plot is
-skipped by default, so to plot the data write
+<p>The <code><a href="../reference/issueCheck.html">issueCheck()</a></code> function assesses the validity of a
+registration’s <code>issue_date</code> value. It does this based on the
+current hunting season’s HIP issue window start date and end date (not
+season open and close dates) for the state in which the registration was
+issued. A plot is automatically returned for past and future
+registrations. The plot is skipped by default, so to make one, specify
 <code>plot = TRUE</code>.</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">current_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/issueCheck.html">issueCheck</a></span><span class="op">(</span><span class="va">clean_data</span>, year <span class="op">=</span> <span class="fl">2026</span>, plot <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <div class="section level4">
 <h4 id="criteria-evaluated-and-changes-made">Criteria evaluated and changes made:<a class="anchor" aria-label="anchor" href="#criteria-evaluated-and-changes-made"></a>
@@ -534,7 +753,7 @@ These registrations are filtered out.</li>
 <code>issue_date</code> cannot be evaluated, likely because it’s
 formatted incorrectly or is illogical; these registrations are filtered
 out.</li>
-<li>Return message if any registration’s <code>issue_date</code> is
+<li>Return message if any registration’s <code>issue_date</code> falls
 after the file was submitted.</li>
 </ul>
 </div>
@@ -549,8 +768,8 @@ more than one registration. Registrations are grouped by
 <code>registration_yr</code> to identify unique hunters. If the same
 hunter has 2 or more registrations, the fields that are not identical
 are counted and summarized.</p>
-<p>Plot the duplicates with <a href="#duplicateplot">duplicatePlot</a>.</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<p>Plot the duplicates with <a href="#duplicateplot">duplicatePlot()</a>.</p>
+<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/duplicateFinder.html">duplicateFinder</a></span><span class="op">(</span><span class="va">current_data</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## There are 38 registrations with duplicates; 76 total duplicated records.</span></span></code></pre>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 2 × 2</span></span></span>
@@ -567,20 +786,20 @@ be resolved by <code><a href="../reference/duplicateFix.html">duplicateFix()</a>
 when more than one registration has the same <code>firstname</code>,
 <code>lastname</code>, <code>state</code>, <code>birth_date</code>,
 <code>dl_state</code>, and <code>registration_yr</code>. Only 1 HIP
-registration per hunter can be kept. For in-line permit states (WA, OR),
-permit records are submitted separately from HIP registrations. Multiple
-permits are allowed. We differentiate <code>HIP</code> and
-<code>PMT</code> records from in-line permit states, we check the values
-in the non-permit species fields (<code>ducks_bag</code>,
-<code>geese_bag</code>, <code>dove_bag</code>,
-<code>woodcock_bag</code>, <code>coots_snipe</code>,
-<code>rails_gallinules</code>). HIP registrations contain non-zero
-values in those columns, but permit records always have <code>0</code>
+registration per hunter per state can be kept. For in-line permit states
+(WA, OR), permit records are submitted separately from HIP
+registrations. Multiple permits are allowed. We differentiate
+<code>HIP</code> and <code>PMT</code> records in in-line permit states
+by checking the values in non-permit species fields
+(<code>ducks_bag</code>, <code>geese_bag</code>, <code>dove_bag</code>,
+<code>woodcock_bag</code>, <code>coots_snipe</code>, and
+<code>rails_gallinules</code>); HIP registrations contain non-zero
+values in those fields, but permit records always have <code>0</code>
 values.</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">deduplicated_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/duplicateFix.html">duplicateFix</a></span><span class="op">(</span><span class="va">current_data</span><span class="op">)</span></span></code></pre></div>
 <p>To decide which HIP registration to keep from a group, we follow a
-series of logic.</p>
+series of logical steps.</p>
 <div class="section level4">
 <h4 id="for-sea-duck-and-brant-states">For sea duck and brant states:<a class="anchor" aria-label="anchor" href="#for-sea-duck-and-brant-states"></a>
 </h4>
@@ -588,10 +807,12 @@ series of logic.</p>
 VA</p>
 <ol style="list-style-type: decimal">
 <li>Keep registration(s) with the most recent issue date.</li>
-<li>Exclude registrations with all 1s or all 0s in bag columns from
-consideration.</li>
-<li>Keep any registrations that have a 2 for either brant or sea duck
-(for seaduck and brant states), or 2 for seaduck (Maine only).</li>
+<li>Exclude registrations with all <code>1</code> values or all
+<code>0</code> values in bag fields from consideration.</li>
+<li>Keep any registrations that have a <code>2</code> for either
+<code>brant</code> or <code>seaducks</code> (for sea duck <em>and</em>
+brant states), or <code>2</code> for <code>seaducks</code> (Maine
+only).</li>
 <li>If more than one registration remains, choose to keep one
 randomly.</li>
 </ol>
@@ -605,35 +826,34 @@ LA, MI, MN, MS, MO, MT, NE, NV, NM, ND, OH, OK, OR, PA, SC, SD, TN, TX,
 UT, VT, WA, WV, WI, WY</p>
 <ol style="list-style-type: decimal">
 <li>Keep registration(s) with the most recent issue date.</li>
-<li>Exclude registrations with all 1s or all 0s in bag columns from
-consideration, if possible.</li>
+<li>Exclude registrations with all <code>1</code> values or all
+<code>0</code> values in bag fields from consideration, if
+possible.</li>
 <li>If more than one registration remains, choose to keep one
 randomly.</li>
 </ol>
 <p>A new field called <code>record_type</code> is added to the data
-after the above deduplicating process. Every HIP registration is labeled
-<code>HIP</code>. In-line permit states WA and OR send HIP and permit
-records separately, which are labeled <code>HIP</code> and
-<code>PMT</code> respectively.</p>
+after the above deduplication process. Every HIP registration is labeled
+<code>HIP</code>. Registrations from in-line permit states (Washington
+and Oregon) can be labeled <code>HIP</code> or <code>PMT</code>.</p>
 </div>
 </div>
 <div class="section level3">
 <h3 id="bagcheck">bagCheck<a class="anchor" aria-label="anchor" href="#bagcheck"></a>
 </h3>
-<p>Running <code><a href="../reference/bagCheck.html">bagCheck()</a></code> ensures species “bag” values are in
-order. This function searches for values in species group columns that
-are not typical or expected by the US Fish and Wildlife Service. If a
-value outside of the normal range is detected, an output tibble is
-created. Each row in the output contains the state, species, unusual
-stratum value, and a list of the normal values we would expect.</p>
+<p>The <code><a href="../reference/bagCheck.html">bagCheck()</a></code> function searches for values that are not
+typical or expected in all species group fields. If a value outside of
+the normal range is detected, an output tibble is created. Each row in
+the output contains the state, species, unusual value, and a list of the
+normal values we would expect. If a value for a species group is
+provided that doesn’t match anything in our records, the output will
+show <code>NA</code> values in the <code>expected_bag_value</code>
+column. These species do not have a hunting season in the reported
+states.</p>
 <p>In-line permit records are not included in this check, to prevent
 <code>ducks_bag = "0"</code> values from popping up when we know those
 don’t count.</p>
-<p>If a value for a species group is given in the HIP data that doesn’t
-match anything in our records, the species reported in the output will
-have <code>NA</code> values in the <code>expected_bag_value</code>
-column. These species are not hunted in the reported states.</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb48"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/bagCheck.html">bagCheck</a></span><span class="op">(</span><span class="va">deduplicated_data</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 84 × 6</span></span></span>
 <span><span class="co">##    dl_state spp          bad_bag_value expected_bag_value     n proportion</span></span>
@@ -653,27 +873,27 @@ column. These species are not hunted in the reported states.</p>
 <div class="section level3">
 <h3 id="proof">proof<a class="anchor" aria-label="anchor" href="#proof"></a>
 </h3>
-<p>After data are cleaned and checked in the steps above, we run
-<code><a href="../reference/proof.html">proof()</a></code> to check for errors. Note that no actual
-corrections or data changes take place as a result of this function. The
-year of the Harvest Information Program must be supplied to the
-<code>year</code> parameter, which aids in checking
-<code>registration_yr</code>, <code>issue_date</code> and
-<code>birth_date</code>.</p>
-<p>Values that are considered irregular are flagged in a new field
-called <code>errors</code>. For each existing field (title, firstname,
-middle, lastname, suffix, address, city, state, zip, birth_date,
-issue_date, hunt_mig_birds, ducks_bag, geese_bag, dove_bag,
-woodcock_bag, coots_snipe, rails_gallinules, cranes, band_tailed_pigeon,
-brant, seaducks, registration_yr, email), values are compared to
-standard expected formats. If they do not conform, the field name is
-pasted as a string in the <code>errors</code> column. Each row can have
-anywhere from zero errors (<code>NA</code>) to all field names listed.
-Multiple errors per registration are hyphen delimited. A typical
-<code>errors</code> value would look like:
-<code>"suffix-address-zip"</code>, <code>"zip"</code>, or
-<code>"middle-email"</code>.</p>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<p>We run <code><a href="../reference/proof.html">proof()</a></code> to check the data for errors. The
+season’s start year must be supplied to the <code>year</code> parameter
+(e.g., <code>year = 2026</code> for the 2026-2027 hunting season). This
+helps to check values in <code>registration_yr</code> and
+<code>birth_date</code>. The output of the <code><a href="../reference/proof.html">proof()</a></code> function
+contains a new field called <code>errors</code>.</p>
+<p>The fields proofed for errors include <code>title</code>,
+<code>firstname</code>, <code>middle</code>, <code>lastname</code>,
+<code>suffix</code>, <code>address</code>, <code>city</code>,
+<code>state</code>, <code>zip</code>, <code>birth_date</code>,
+<code>hunt_mig_birds</code>, <code>registration_yr</code>, and
+<code>email</code>. When values are found to be irregular, the field
+name(s) is/are added to <code>errors</code>. The <code>errors</code>
+field pastes all of the registration’s errors together as a
+hyphen-delimited string; a row can have zero errors (e.g.,
+<code>NA</code>), one error (e.g., <code>"zip"</code>), two errors
+(e.g., <code>"suffix-zip"</code>), three errors (e.g.,
+<code>"suffix-address-zip"</code>), etc; up to all 12 field names.</p>
+<p>Note that no actual corrections or data changes take place as a
+result of the <code><a href="../reference/proof.html">proof()</a></code> function.</p>
+<div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">proofed_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/proof.html">proof</a></span><span class="op">(</span><span class="va">deduplicated_data</span>, year <span class="op">=</span> <span class="fl">2026</span><span class="op">)</span></span></code></pre></div>
 <div class="section level4">
 <h4 id="what-gets-flagged-in-the-errors-field-and-why">What gets flagged in the <code>errors</code> field and why:<a class="anchor" aria-label="anchor" href="#what-gets-flagged-in-the-errors-field-and-why"></a>
@@ -692,26 +912,24 @@ Multiple errors per registration are hyphen delimited. A typical
 <ul>
 <li>
 <code>firstname</code> contains anything other than letters,
-apostrophe(s), space(s), and/or hyphen(s)</li>
+apostrophe(s), space(s), and/or hyphen(s).</li>
 <li>
-<code>firstname</code> contains less than 2 letters</li>
+<code>firstname</code> contains less than 2 letters.</li>
 <li>
-<code>firstname</code> contains <code>"AKA"</code>
-</li>
+<code>firstname</code> contains <code>"AKA"</code>.</li>
 </ul>
 </li>
 <li>
 <code>"middle"</code> if <code>middle</code> is not exactly 1 letter
-or <code>NA</code>
-</li>
+or <code>NA</code>.</li>
 <li>
 <code>"lastname"</code>
 <ul>
 <li>
 <code>lastname</code> contains anything except letters,
-apostrophe(s), space(s), hyphen(s), and/or period(s)</li>
+apostrophe(s), space(s), hyphen(s), and/or period(s).</li>
 <li>
-<code>lastname</code> contains less than 2 letters</li>
+<code>lastname</code> contains less than 2 letters.</li>
 </ul>
 </li>
 <li>
@@ -721,32 +939,32 @@ apostrophe(s), space(s), hyphen(s), and/or period(s)</li>
 <code>suffix</code> should be one of:
 <code>I, II, III, IV, V, VI, VII, VIII, IX, X, XI, XII, XIII, XIV, XV, XVI, XVII, XIX, XX, 1ST, 2ND, 3RD, 4TH, 5TH, 6TH, 7TH, 8TH, 9TH, 10TH, 11TH, 12TH, 13TH, 14TH, 15TH, 16TH, 17TH, 18TH, 19TH, 20TH, JR, SR</code>.</li>
 <li>Note that <code>XVIII</code> is excluded (exceeds 4 character
-limit)</li>
+limit).</li>
 </ul>
 </li>
 <li>
 <code>"address"</code> if <code>address</code> contains a
-<code>|</code>, tab, or non-UTF8 character</li>
+<code>|</code>, tab, or non-UTF8 character.</li>
 <li>
 <code>"city"</code>
 <ul>
 <li>
 <code>city</code> contains anything other than letters, space(s),
-hyphen(s), apostrophe(s), and/or period(s)</li>
+hyphen(s), apostrophe(s), and/or period(s).</li>
 <li>
-<code>city</code> contains less than 3 letters</li>
+<code>city</code> contains less than 3 letters.</li>
 </ul>
 </li>
 <li>
-<code>"state"</code> if <code>state</code> is not contained in the
-following list of abbreviations for US states and territories and
-Canadian provinces and territories:
+<code>"state"</code>
 <ul>
-<li>AL, AK, AZ, AR, CA, CO, CT, DE, FL, GA, ID, IL, IN, IA, KS, KY, LA,
-ME, MD, MA, MI, MN, MS, MO, MT, NE, NV, NH, NJ, NM, NY, NC, ND, OH, OK,
-OR, PA, RI, SC, SD, TN, TX, UT, VT, VA, WA, WV, WI, WY, DC, AS, GU, MP,
-PR, VI, UM, MH, FM, PW, AA, AE, AP, AB, BC, MB, NB, NL, NS, NT, NU, ON,
-PE, PQ, QC, SK, YT</li>
+<li>If <code>state</code> is not contained in the following list of
+abbreviations for US states and territories and Canadian provinces and
+territories: AL, AK, AZ, AR, CA, CO, CT, DE, FL, GA, ID, IL, IN, IA, KS,
+KY, LA, ME, MD, MA, MI, MN, MS, MO, MT, NE, NV, NH, NJ, NM, NY, NC, ND,
+OH, OK, OR, PA, RI, SC, SD, TN, TX, UT, VT, VA, WA, WV, WI, WY, DC, AS,
+GU, MP, PR, VI, UM, MH, FM, PW, AA, AE, AP, AB, BC, MB, NB, NL, NS, NT,
+NU, ON, PE, PQ, QC, SK, YT.</li>
 </ul>
 </li>
 <li>
@@ -754,55 +972,59 @@ PE, PQ, QC, SK, YT</li>
 <ul>
 <li>If a registration’s <code>address</code> doesn’t have a
 <code>zip</code> that should be in their reported address
-<code>state</code> of residence</li>
+<code>state</code> of residence.</li>
 <li>If the fist 5 digits of <code>zip</code> are not in
 <code>REF_ZIP_CODE$zipcode</code> at all.</li>
 </ul>
 </li>
-<li><code>"birth_date"</code></li>
+<li>
+<code>"birth_date"</code>
+<ul>
 <li>If the date is formatted poorly (per
 <code>REGEX_DATE_FORMAT</code>).</li>
 <li>If the date can’t be parsed by <code><a href="https://lubridate.tidyverse.org/reference/ymd.html" class="external-link">lubridate::mdy()</a></code>.</li>
 <li>If the date is later than today.</li>
 <li>If the date is earlier than
 <code>09/01/(REF_CURRENT_SEASON - 100)</code>.</li>
-<li>
-<code>"hunt_mig_birds"</code> if not equal to <code>1</code> or
-<code>2</code>
+</ul>
 </li>
 <li>
-<code>"registration_yr"</code> if not equal to the HIP data
-collection year</li>
+<code>"hunt_mig_birds"</code> if not equal to <code>1</code> or
+<code>2</code>.</li>
+<li>
+<code>"registration_yr"</code> if not equal to the current
+season.</li>
 <li>
 <code>"email"</code>
 <ul>
 <li>
 <code>email</code> does not match universally accepted email regex
-(see <code>REGEX_EMAIL</code>)</li>
+(see <code>REGEX_EMAIL</code>).</li>
 <li>
-<code>email</code> is obfuscative
+<code>email</code> is obfuscative:
 <ul>
-<li>e.g.,
-<code>none@gmail.com, nottoday@gmail.co``m, fake.fake@gmail.com``, n@a.com, x@y.com, brian@na.com</code>,
-etc (see <code>REGEX_EMAIL_OBFUSCATIVE_LOCALPART</code>,
+<li>e.g., <code>none@gmail.com</code>, <code>nottoday@gmail.com</code>,
+<code>fake.fake@gmail.com</code>, <code>n@a.com</code>,
+<code>x@y.com</code>, <code>brian@na.com</code>, etc (see
+<code>REGEX_EMAIL_OBFUSCATIVE_LOCALPART</code>,
 <code>REGEX_EMAIL_OBFUSCATIVE_DOMAIN</code>, and
-<code>REGEX_EMAIL_OBFUSCATIVE_ADDRESS</code>)</li>
+<code>REGEX_EMAIL_OBFUSCATIVE_ADDRESS</code>).</li>
 <li>A repeated character is detected, e.g. <code>aaa@a.com</code> (see
-<code>REGEX_EMAIL_REPEATED_CHAR</code>)</li>
+<code>REGEX_EMAIL_REPEATED_CHAR</code>).</li>
 <li>The domain is <code>tpwd.texas.gov</code> or some variation (see
-<code>REGEX_EMAIL_OBFUSCATIVE_TPWD</code>)</li>
+<code>REGEX_EMAIL_OBFUSCATIVE_TPWD</code>).</li>
 <li>A <code>walmart.com</code> domain is preceded by only numbers (see
-<code>REGEX_EMAIL_OBFUSCATIVE_WALMART</code>)</li>
+<code>REGEX_EMAIL_OBFUSCATIVE_WALMART</code>).</li>
 </ul>
 </li>
 <li>
-<code>email</code> is longer than 100 characters</li>
-<li>A common domain name (e.g., gmail, yahoo) has a common typo</li>
+<code>email</code> is longer than 100 characters.</li>
+<li>A common domain name (e.g., gmail, yahoo) has a common typo.</li>
 <li>A common domain name doesn’t have a matching top-level domain (e.g.,
-<code>gmail.net</code> or <code>hotmail.gov</code>)</li>
+<code>gmail.net</code> or <code>hotmail.gov</code>).</li>
 <li>The address has a bad top-level domain (e.g., <code>.comcom</code>,
-<code>.ccom</code>, etc.)</li>
-<li>The email is missing a top-level domain</li>
+<code>.ccom</code>, etc).</li>
+<li>The email is missing a top-level domain.</li>
 <li>The top-level domain period is missing (e.g.,
 <code>gmailcom</code>).</li>
 </ul>
@@ -813,43 +1035,48 @@ etc (see <code>REGEX_EMAIL_OBFUSCATIVE_LOCALPART</code>,
 <div class="section level3">
 <h3 id="correct">correct<a class="anchor" aria-label="anchor" href="#correct"></a>
 </h3>
-<p>Data can be corrected by running the <code><a href="../reference/correct.html">correct()</a></code> function
-with year of the Harvest Information Program supplied to the
-<code>year</code> parameter.</p>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<p>Data can be corrected by running the <code><a href="../reference/correct.html">correct()</a></code> function.
+Users must provide the season’s start year to the <code>year</code>
+parameter (e.g., <code>year = 2026</code> for the 2026-2027 hunting
+season).</p>
+<div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">corrected_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/correct.html">correct</a></span><span class="op">(</span><span class="va">proofed_data</span>, year <span class="op">=</span> <span class="fl">2026</span><span class="op">)</span></span></code></pre></div>
 <div class="section level4">
 <h4 id="changes-and-corrections-include">Changes and corrections include:<a class="anchor" aria-label="anchor" href="#changes-and-corrections-include"></a>
 </h4>
 <ul>
-<li><p><code>title</code> is changed to <code>NA</code> if
-<code>"title"</code> is in the <code>errors</code> field</p></li>
-<li><p><code>middle</code> is changed to <code>NA</code> if
-<code>"middle"</code> is in the <code>errors</code> field</p></li>
-<li><p><code>suffix</code> is changed to <code>NA</code> if
-<code>"suffix"</code> is in the <code>errors</code> field</p></li>
 <li>
-<p><code>email</code></p>
+<code>title</code> is changed to <code>NA</code> if
+<code>"title"</code> is in the <code>errors</code> field.</li>
+<li>
+<code>middle</code> is changed to <code>NA</code> if
+<code>"middle"</code> is in the <code>errors</code> field.</li>
+<li>
+<code>suffix</code> is changed to <code>NA</code> if
+<code>"suffix"</code> is in the <code>errors</code> field.</li>
+<li>
+<code>email</code>
 <ul>
 <li>Add endings to common domains if missing (e.g. <code>@gmail</code>
 would become <code>@gmail.com</code>), for domains including:
 <ul>
-<li><code>gmail, yahoo, hotmail, aol, icloud, comcast, outlook, sbcglobal, att, msn, live, bellsouth, charter, ymail, me, verizon, cox, earthlink, protonmail, pm, mail, duck, ducks</code></li>
+<li>
+<code>gmail, yahoo, hotmail, aol, icloud, comcast, outlook, sbcglobal, att, msn, live, bellsouth, charter, ymail, me, verizon, cox, earthlink, protonmail, pm, mail, duck, ducks</code>.</li>
 </ul>
 </li>
 <li>Add top-level domain period(s) if:
 <ul>
-<li>Missing before <code>com, net, edu, gov, org</code>
-</li>
-<li>Missing in
-<code>navymil, mailmil, armymil; add multiple periods if missing to usnavymil, usafmil, usarmymil, usacearmymil</code>
-</li>
+<li>Missing before <code>com, net, edu, gov, org</code>.</li>
+<li>Missing in <code>navymil, mailmil, armymil</code>; add multiple
+periods if missing to
+<code>usnavymil, usafmil, usarmymil, usacearmymil</code>.</li>
 </ul>
 </li>
 </ul>
 </li>
-<li><p><code>errors</code> is updated by re-running <code><a href="../reference/proof.html">proof()</a></code>
-inside of <code><a href="../reference/correct.html">correct()</a></code></p></li>
+<li>
+<code>errors</code> is updated by re-running <code><a href="../reference/proof.html">proof()</a></code>
+inside of <code><a href="../reference/correct.html">correct()</a></code>.</li>
 </ul>
 </div>
 </div>
@@ -861,7 +1088,7 @@ inside of <code><a href="../reference/correct.html">correct()</a></code></p></li
 <h3 id="duplicateplot">duplicatePlot<a class="anchor" aria-label="anchor" href="#duplicateplot"></a>
 </h3>
 <p>Plot duplicates with <code><a href="../reference/duplicatePlot.html">duplicatePlot()</a></code>.</p>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/duplicatePlot.html">duplicatePlot</a></span><span class="op">(</span><span class="va">current_data</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## There are 38 registrations with duplicates; 76 total duplicated records.</span></span></code></pre>
 <div class="figure" style="text-align: center">
@@ -875,7 +1102,7 @@ Figure 1. Plot of types of duplicates.
 </h3>
 <p>The <code><a href="../reference/errorPlotFields.html">errorPlotFields()</a></code> function can be run on all
 states…</p>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/errorPlotFields.html">errorPlotFields</a></span><span class="op">(</span><span class="va">proofed_data</span>, loc <span class="op">=</span> <span class="st">"all"</span>, year <span class="op">=</span> <span class="fl">2026</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
 <img src="migbirdHIP-workflow_files/figure-html/errorfieldsplotall-1.png" class="r-plt" alt="Figure 2. Plot of all location's errors by field name." width="500"><p class="caption">
@@ -883,7 +1110,7 @@ Figure 2. Plot of all location’s errors by field name.
 </p>
 </div>
 <p>… or it can be limited to just one.</p>
-<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/errorPlotFields.html">errorPlotFields</a></span><span class="op">(</span><span class="va">proofed_data</span>, loc <span class="op">=</span> <span class="st">"LA"</span>, year <span class="op">=</span> <span class="fl">2026</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
 <img src="migbirdHIP-workflow_files/figure-html/errorfieldsplotla-1.png" class="r-plt" alt="Figure 3. Plot of Louisiana's errors by field name." width="500"><p class="caption">
@@ -897,7 +1124,7 @@ demonstrates how this package’s functions can interact with
 <code>tidyverse</code> and shows an example of an
 <code>errorPlotFields</code> with <code>facet_wrap</code> (using a
 subset of 4 download cycles).</p>
-<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb56"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/errorPlotFields.html">errorPlotFields</a></span><span class="op">(</span></span>
 <span>  <span class="va">hipdata2025</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu">str_detect</span><span class="op">(</span><span class="va">dl_cycle</span>, <span class="st">"0800|0901|0902|1001"</span><span class="op">)</span><span class="op">)</span>,</span>
@@ -915,7 +1142,7 @@ per state. A threshold value must be set to only view states above a
 certain proportion of error (in the example below,
 <code>threshold = 0.05</code> indicates an error tolerance of 5%). Bar
 labels are error counts.</p>
-<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb57"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/errorPlotStates.html">errorPlotStates</a></span><span class="op">(</span><span class="va">proofed_data</span>, threshold <span class="op">=</span> <span class="fl">0.05</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
 <img src="migbirdHIP-workflow_files/figure-html/errorplotstates-1.png" class="r-plt" alt="Figure 4. Plot of proportion of error by state." width="500"><p class="caption">
@@ -931,7 +1158,7 @@ entire season of data. The <code><a href="../reference/errorPlotDL.html">errorPl
 proportion of error per download cycle over the course of the hunting
 season. Location may be specified with the <code>loc</code> parameter to
 see a particular state over time.</p>
-<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb58"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/errorPlotDL.html">errorPlotDL</a></span><span class="op">(</span><span class="va">hipdata2025</span>, loc <span class="op">=</span> <span class="st">"MI"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
 <img src="../reference/figures/errorPlot_dl.png" class="r-plt" alt="errorPlot_dl example output" width="70%"><p class="caption">
@@ -946,12 +1173,12 @@ errorPlot_dl example output
 actual values that were flagged as errors in a particular field. In this
 example, we find that the <code>suffix</code> field contains several
 values that are not accepted.</p>
-<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb59"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/pullErrors.html">pullErrors</a></span><span class="op">(</span><span class="va">proofed_data</span>, field <span class="op">=</span> <span class="st">"suffix"</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] "DDS" "MD"  "PHD" "DVM"</span></span></code></pre>
 <p>Running <code><a href="../reference/pullErrors.html">pullErrors()</a></code> on a field that has no errors will
 return a message.</p>
-<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb61"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/pullErrors.html">pullErrors</a></span><span class="op">(</span><span class="va">proofed_data</span>, field <span class="op">=</span> <span class="st">"dove_bag"</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## Success! All values are correct.</span></span></code></pre>
 </div>
@@ -959,10 +1186,10 @@ return a message.</p>
 <h3 id="errortable">errorTable<a class="anchor" aria-label="anchor" href="#errortable"></a>
 </h3>
 <p>The <code><a href="../reference/errorTable.html">errorTable()</a></code> function returns error data as a
-tibble, which can be assessed as needed or exported to create records of
-download cycle errors. The basic function reports errors by both
+tibble, which can be assessed as needed, or exported to create records
+of download cycle errors. The basic function reports errors by both
 location and field.</p>
-<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb63"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/errorTable.html">errorTable</a></span><span class="op">(</span><span class="va">proofed_data</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 261 × 3</span></span></span>
 <span><span class="co">##    dl_state error      error_count</span></span>
@@ -980,7 +1207,7 @@ location and field.</p>
 <span><span class="co">## <span style="color: #949494;"># ℹ 251 more rows</span></span></span></code></pre>
 <p>Errors can be reported by only location by turning off the
 <code>field</code> parameter.</p>
-<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb65"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/errorTable.html">errorTable</a></span><span class="op">(</span><span class="va">proofed_data</span>, field <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 49 × 2</span></span></span>
 <span><span class="co">##    dl_state error_count</span></span>
@@ -998,7 +1225,7 @@ location and field.</p>
 <span><span class="co">## <span style="color: #949494;"># ℹ 39 more rows</span></span></span></code></pre>
 <p>Errors can be reported by only field by turning off the
 <code>loc</code> parameter.</p>
-<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb67"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/errorTable.html">errorTable</a></span><span class="op">(</span><span class="va">proofed_data</span>, loc <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 6 × 2</span></span></span>
 <span><span class="co">##   error      error_count</span></span>
@@ -1011,7 +1238,7 @@ location and field.</p>
 <span><span class="co">## <span style="color: #BCBCBC;">6</span> zip               <span style="text-decoration: underline;">5</span>963</span></span></code></pre>
 <p>Location can be specified using one of the 49 contiguous state
 abbreviations.</p>
-<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb69"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/errorTable.html">errorTable</a></span><span class="op">(</span><span class="va">proofed_data</span>, loc <span class="op">=</span> <span class="st">"CA"</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 5 × 3</span></span></span>
 <span><span class="co">##   dl_state error     error_count</span></span>
@@ -1021,26 +1248,28 @@ abbreviations.</p>
 <span><span class="co">## <span style="color: #BCBCBC;">3</span> CA       lastname            2</span></span>
 <span><span class="co">## <span style="color: #BCBCBC;">4</span> CA       suffix             69</span></span>
 <span><span class="co">## <span style="color: #BCBCBC;">5</span> CA       zip               129</span></span></code></pre>
-<p>Field can be specified (one of: all, none, title, firstname, middle,
-lastname, suffix, address, city, state, zip, birth_date, issue_date,
-hunt_mig_birds, ducks_bag, geese_bag, dove_bag, woodcock_bag,
-coots_snipe, rails_gallinules, cranes, band_tailed_pigeon, brant,
-seaducks, registration_yr, email).</p>
-<div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
+<p>Field can be specified (one of: <code>"all"</code>,
+<code>"none"</code>, <code>"title"</code>, <code>"firstname"</code>,
+<code>"middle"</code>, <code>"lastname"</code>, <code>"suffix"</code>,
+<code>"address"</code>, <code>"city"</code>, <code>"state"</code>,
+<code>"zip"</code>, <code>"birth_date"</code>,
+<code>"hunt_mig_birds"</code>, <code>"registration_yr"</code>,
+<code>"email"</code>).</p>
+<div class="sourceCode" id="cb71"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/errorTable.html">errorTable</a></span><span class="op">(</span><span class="va">proofed_data</span>, field <span class="op">=</span> <span class="st">"suffix"</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 1 × 2</span></span></span>
 <span><span class="co">##   error  error_count</span></span>
 <span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
 <span><span class="co">## <span style="color: #BCBCBC;">1</span> suffix        <span style="text-decoration: underline;">3</span>363</span></span></code></pre>
 <p>Total errors for a location can be pulled.</p>
-<div class="sourceCode" id="cb48"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb73"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/errorTable.html">errorTable</a></span><span class="op">(</span><span class="va">proofed_data</span>, loc <span class="op">=</span> <span class="st">"CA"</span>, field <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 1 × 2</span></span></span>
 <span><span class="co">##   dl_state total_errors</span></span>
 <span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
 <span><span class="co">## <span style="color: #BCBCBC;">1</span> CA                203</span></span></code></pre>
 <p>Total errors for a field in a particular location can be pulled.</p>
-<div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb75"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/errorTable.html">errorTable</a></span><span class="op">(</span><span class="va">proofed_data</span>, loc <span class="op">=</span> <span class="st">"CA"</span>, field <span class="op">=</span> <span class="st">"dove_bag"</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## No errors in dove_bag for CA.</span></span></code></pre>
 </div>
@@ -1071,9 +1300,12 @@ records. If <code>type = "HIP"</code>, writing data will fail if there
 are more <code>record_type = "PMT"</code> records in the
 <code>corrected_data</code> than <code>record_type = "HIP"</code>
 records.</p>
-<div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb77"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/write_hip.html">write_hip</a></span><span class="op">(</span></span>
-<span>  <span class="va">corrected_data</span>, path <span class="op">=</span> <span class="st">"C:/HIP/processed_data/"</span>, type <span class="op">=</span> <span class="st">"HIP"</span>, split <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<span>  <span class="va">corrected_data</span>, </span>
+<span>  path <span class="op">=</span> <span class="st">"C:/HIP/processed_data/"</span>, </span>
+<span>  type <span class="op">=</span> <span class="st">"HIP"</span>, </span>
+<span>  split <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="writereport">writeReport<a class="anchor" aria-label="anchor" href="#writereport"></a>
@@ -1081,7 +1313,7 @@ records.</p>
 <p>The <code><a href="../reference/writeReport.html">writeReport()</a></code> function can be used to automatically
 generate an R markdown document with figures, tables, and summary
 statistics. This can be done at the end of a download cycle.</p>
-<div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb78"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/writeReport.html">writeReport</a></span><span class="op">(</span></span>
 <span>  raw_path <span class="op">=</span> <span class="st">"C:/HIP/DL0901/"</span>,</span>
 <span>  temp_path <span class="op">=</span> <span class="st">"C:/HIP/corrected_data"</span>,</span>

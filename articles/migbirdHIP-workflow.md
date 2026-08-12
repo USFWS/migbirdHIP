@@ -7,6 +7,7 @@
     - [Releases](#releases)
   - [Load](#load)
   - [Functions overview](#functions-overview)
+  - [Example data](#example-data)
 - [Part A: Data Import and Cleaning](#part-a-data-import-and-cleaning)
   - [fileRename](#filerename)
   - [fileCheck](#filecheck)
@@ -89,6 +90,48 @@ format.](../reference/figures/migbirdHIP_flowchart.svg)
 
 Overview of migbirdHIP functions in a flowchart format.
 
+### Example data
+
+Example data are included in the `migbirdHIP` R package in two formats.
+Raw data files are provided with fake names, addresses, and other
+registration values, mainly to include examples and tests for reading in
+data. In addition, small data objects derived from the fake
+registrations are exported to users.
+
+#### Raw data
+
+Raw data in the form of fake HIP registration data files were generated
+with `data-raw/create_fake_HIP_data.R`. The 49 files (one for each
+state) are stored in the `migbirdHIP` R package under `inst/extdata/`.
+You can test [read_hip()](#read_hip) with the files in this directory.
+
+#### Exported data
+
+There are 7 data objects stored in `/data/` as `.rda` files. Users can
+call these objects by name (e.g., `DF_TEST_MINI`) and query their
+documentation (e.g.,
+[`?DF_TEST_MINI`](https://usfws.github.io/migbirdHIP/reference/DF_TEST_MINI.md))
+from the console after loading `migbirdHIP`.
+
+The biggest object is `DF_TEST_MINI` with ~1,600 rows. This tibble
+represents “raw data” and doesn’t contain the `record_key` field. The
+other 6 objects all begin with the `DF_TEST_TINI_` prefix and represent
+HIP data at various points during pre-processing. They are small,
+containing only 3 rows per object, but exhibit properties that are
+expected from each intermediate output. For example,
+`DF_TEST_TINI_PROOFED` contains the `errors` field. Users can run these
+objects in `migbirdHIP` package functions.
+
+List of exported data objects:
+
+- `DF_TEST_MINI`
+- `DF_TEST_TINI_READ`
+- `DF_TEST_TINI_CLEANED`
+- `DF_TEST_TINI_CURRENT`
+- `DF_TEST_TINI_DEDUPED`
+- `DF_TEST_TINI_PROOFED`
+- `DF_TEST_TINI_CORRECTED`
+
 ## Part A: Data Import and Cleaning
 
 ### fileRename
@@ -139,15 +182,14 @@ Read HIP data from fixed-width `.txt` files using
 Files must adhere to a 10-character naming convention to successfully be
 read in (2-letter capitalized state abbreviation followed by
 `YYYYMMDD`); if files were submitted with a 5-digit format or lowercase
-state abbreviation, run [fileRename](#filerename) first.
+state abbreviation, run [fileRename()](#filerename) first.
 
-**Note:** In the
+In the example below, we will use the default
 [`read_hip()`](https://usfws.github.io/migbirdHIP/reference/read_hip.md)
-example below, we use an internal directory to read in fake HIP data
-files, which allows the function to demonstrate its errors and messages.
-(The testing data were generated with `data-raw/create_fake_HIP_data.R`
-and are stored under `inst/extdata/`.) All other examples in this
-vignette will use `C:/` drive examples for clarity.
+settings to read in all of the fake HIP data files from an internal
+package directory (read more in the [example data](#example-data)
+section). All other examples in this vignette will use `C:/` drive
+examples for clarity.
 
 ``` r
 
@@ -158,16 +200,16 @@ raw_data <- read_hip(paste0(here::here(), "/inst/extdata/DL0901/"))
 
 #### The `read_hip()` function allows data to be read in for:
 
-- all states (e.g., `state = NA`, the default)
-- a specific state (e.g., `state = "DE"`)
-- a specific download (e.g., `season = FALSE`, the default; `path` must
-  be to the download’s subdirectory)
-- an entire season (e.g., `season = TRUE`, and `path` is to the
-  directory containing all download subdirectories)
+- All states (e.g., `state = NA`, the default).
+- A specific state (e.g., `state = "DE"`).
+- A specific download (e.g., `season = FALSE`, the default; `path` must
+  be to the download’s subdirectory).
+- An entire season (e.g., `season = TRUE`, and `path` is to the
+  directory containing all download subdirectories).
 
 Use `unique = TRUE` to read in a frame without exact duplicates, or
 `unique = FALSE` to read in all registrations including exact
-duplicates. **Important:** the `record_key` field is not created if
+duplicates. **Important:** the `record_key` field is not created for
 `unique = FALSE`, which is required in some following steps (e.g.,
 [`duplicateFix()`](https://usfws.github.io/migbirdHIP/reference/duplicateFix.md),
 [`proof()`](https://usfws.github.io/migbirdHIP/reference/proof.md)).
@@ -192,30 +234,230 @@ ending with `email` field. Additional fields are created by
 
 #### The `read_hip()` function returns a message if:
 
-- Blank files are found in the directory
-
-As an example, we will use the default
-[`read_hip()`](https://usfws.github.io/migbirdHIP/reference/read_hip.md)
-settings to read in all of the states from download 0901, using fake HIP
-data files located in the `extdata/DL0901/` directory of the R package.
+- Blank files are found in the directory.
 
 ### qualityMessages
 
+The
+[`qualityMessages()`](https://usfws.github.io/migbirdHIP/reference/qualityMessages.md)
+function was designed to find issues in HIP registrations before data
+get too far in the pre-processing pipeline. It requires this season’s
+start year to be provided to the `year` parameter (e.g., `year = 2026`
+for the 2026-2027 hunting season). Messages are printed the console for
+the user to determine the level of severity and what action to take
+next.
+
+``` r
+
+qualityMessages(raw_data, 2026)
+```
+
+    ## Bad first name values detected.
+
+    ## # A tibble: 10 × 4
+    ##    source_file     file_size n_bad prop_bad
+    ##    <chr>               <int> <int>    <dbl>
+    ##  1 /FL20260904.txt       225     6    0.027
+    ##  2 /MS20260808.txt       226     6    0.027
+    ##  3 /MI20260831.txt       225     5    0.022
+    ##  4 /NY20260905.txt       227     5    0.022
+    ##  5 /SD20260903.txt       226     5    0.022
+    ##  6 /VA20260827.txt       227     5    0.022
+    ##  7 /AR20260907.txt       226     4    0.018
+    ##  8 /DE20260813.txt       225     4    0.018
+    ##  9 /OK20260823.txt       226     4    0.018
+    ## 10 /OR20260807.txt       225     4    0.018
+
+    ## Bad last name values detected.
+
+    ## # A tibble: 16 × 4
+    ##    source_file     file_size n_bad prop_bad
+    ##    <chr>               <int> <int>    <dbl>
+    ##  1 /KY20260821.txt       226     8    0.035
+    ##  2 /CT20260901.txt       225     7    0.031
+    ##  3 /CO20260827.txt       225     6    0.027
+    ##  4 /AL20260803.txt       225     5    0.022
+    ##  5 /MS20260808.txt       226     5    0.022
+    ##  6 /WY20260822.txt       225     5    0.022
+    ##  7 /AZ20260816.txt       226     4    0.018
+    ##  8 /IA20260906.txt       225     4    0.018
+    ##  9 /KS20260901.txt       225     4    0.018
+    ## 10 /MO20260813.txt       226     4    0.018
+    ## 11 /NC20260829.txt       225     4    0.018
+    ## 12 /ND20260828.txt       228     4    0.018
+    ## 13 /NE20260815.txt       225     4    0.018
+    ## 14 /TN20260901.txt       225     4    0.018
+    ## 15 /UT20260815.txt       225     4    0.018
+    ## 16 /VA20260827.txt       227     4    0.018
+
+    ## Bad suffix values detected.
+
+    ## # A tibble: 49 × 4
+    ##    source_file     file_size n_bad prop_bad
+    ##    <chr>               <int> <int>    <dbl>
+    ##  1 /ME20260815.txt       225   128    0.569
+    ##  2 /NC20260829.txt       225   122    0.542
+    ##  3 /WA20260816.txt       226   122    0.54 
+    ##  4 /AL20260803.txt       225   121    0.538
+    ##  5 /AZ20260816.txt       226   121    0.535
+    ##  6 /NV20260810.txt       225   120    0.533
+    ##  7 /WI20260824.txt       225   120    0.533
+    ##  8 /LA20260804.txt       225   119    0.529
+    ##  9 /MA20260804.txt       227   119    0.524
+    ## 10 /NE20260815.txt       225   118    0.524
+    ## # ℹ 39 more rows
+
+    ## Bad state values detected.
+
+    ## # A tibble: 49 × 4
+    ##    source_file     file_size n_bad prop_bad
+    ##    <chr>               <int> <int>    <dbl>
+    ##  1 /CT20260901.txt       225    20    0.089
+    ##  2 /OH20260903.txt       227    20    0.088
+    ##  3 /LA20260804.txt       225    19    0.084
+    ##  4 /NM20260814.txt       227    19    0.084
+    ##  5 /WV20260820.txt       226    18    0.08 
+    ##  6 /ME20260815.txt       225    17    0.076
+    ##  7 /NV20260810.txt       225    17    0.076
+    ##  8 /AR20260907.txt       226    16    0.071
+    ##  9 /KS20260901.txt       225    16    0.071
+    ## 10 /KY20260821.txt       226    16    0.071
+    ## # ℹ 39 more rows
+
+    ## Bad zip code values detected.
+
+    ## # A tibble: 49 × 4
+    ##    source_file     file_size n_bad prop_bad
+    ##    <chr>               <int> <int>    <dbl>
+    ##  1 /ME20260815.txt       225   145    0.644
+    ##  2 /MA20260804.txt       227   145    0.639
+    ##  3 /AK20260813.txt       225   143    0.636
+    ##  4 /NE20260815.txt       225   140    0.622
+    ##  5 /CT20260901.txt       225   138    0.613
+    ##  6 /WV20260820.txt       226   138    0.611
+    ##  7 /CO20260827.txt       225   137    0.609
+    ##  8 /FL20260904.txt       225   137    0.609
+    ##  9 /OR20260807.txt       225   137    0.609
+    ## 10 /NM20260814.txt       227   138    0.608
+    ## # ℹ 39 more rows
+
+    ## Error: 112 records detected with a value other than 2 for hunt_mig_birds.
+
+    ## # A tibble: 45 × 3
+    ##    source_file     hunt_mig_birds     n
+    ##    <chr>           <chr>          <int>
+    ##  1 /AK20260813.txt 1                  2
+    ##  2 /AL20260803.txt 1                  1
+    ##  3 /AZ20260816.txt 1                  1
+    ##  4 /CA20260808.txt 1                  4
+    ##  5 /CO20260827.txt 1                  1
+    ##  6 /CT20260901.txt 1                  3
+    ##  7 /DE20260813.txt 1                  3
+    ##  8 /FL20260904.txt 1                  4
+    ##  9 /GA20260831.txt 1                  4
+    ## 10 /IA20260906.txt 1                  3
+    ## # ℹ 35 more rows
+
+    ## Error: 11 records have a '0' in every bag field; these records will be filtered out.
+
+    ## # A tibble: 11 × 2
+    ##    source_file     record_key  
+    ##    <chr>           <chr>       
+    ##  1 /CT20260901.txt record_1468 
+    ##  2 /GA20260831.txt record_2182 
+    ##  3 /ND20260828.txt record_5884 
+    ##  4 /ND20260828.txt record_5900 
+    ##  5 /OR20260807.txt record_7966 
+    ##  6 /OR20260807.txt record_8121 
+    ##  7 /OR20260807.txt record_8124 
+    ##  8 /WA20260816.txt record_10185
+    ##  9 /WA20260816.txt record_10192
+    ## 10 /WA20260816.txt record_10300
+    ## 11 /WV20260820.txt record_10720
+
+    ## Error: 1 test records detected; these records will be filtered out.
+
+    ## # A tibble: 1 × 4
+    ##   source_file     record_key   firstname lastname
+    ##   <chr>           <chr>        <chr>     <chr>   
+    ## 1 /WA20260816.txt record_10181 TEST      TEST
+
+    ## Error: 1 in-line permit records from OR and/or WA do not contain 2 for hunt_mig_birds; they will be edited.
+
+    ## # A tibble: 1 × 6
+    ##   source_file     hunt_mig_birds band_tailed_pigeon brant seaducks     n
+    ##   <chr>           <chr>          <chr>              <chr> <chr>    <int>
+    ## 1 /WA20260816.txt 1              0                  0     2            1
+
+    ## Error: 1702 records with non-zero bag values for permit species from permit file states; they will be edited.
+
+    ## # A tibble: 18 × 4
+    ##    source_file     spp                strata     n
+    ##    <chr>           <chr>              <chr>  <int>
+    ##  1 /CO20260827.txt cranes             1         97
+    ##  2 /CO20260827.txt cranes             2        128
+    ##  3 /KS20260901.txt cranes             2        112
+    ##  4 /MN20260904.txt cranes             2        114
+    ##  5 /MT20260817.txt cranes             2        113
+    ##  6 /ND20260828.txt cranes             2        102
+    ##  7 /ND20260828.txt cranes             9          1
+    ##  8 /NM20260814.txt cranes             1        110
+    ##  9 /NM20260814.txt cranes             2        117
+    ## 10 /OK20260823.txt cranes             2        110
+    ## 11 /OK20260823.txt cranes             9          1
+    ## 12 /TX20260903.txt cranes             2        111
+    ## 13 /WY20260822.txt cranes             1         69
+    ## 14 /WY20260822.txt cranes             2         76
+    ## 15 /CO20260827.txt band_tailed_pigeon 2        114
+    ## 16 /NM20260814.txt band_tailed_pigeon 1        114
+    ## 17 /NM20260814.txt band_tailed_pigeon 2        113
+    ## 18 /UT20260815.txt band_tailed_pigeon 2        100
+
+    ## Error: 3 registrations are missing critical combinations of PII (making up >10% of a file and/or >100 records).
+
+    ## # A tibble: 3 × 3
+    ##   dl_state     n proportion
+    ##   <chr>    <int>      <dbl>
+    ## 1 CT          26       0.12
+    ## 2 NM          22       0.1 
+    ## 3 OH          22       0.1
+
+    ## Error: High non-resident proportions.
+
+    ## # A tibble: 49 × 4
+    ##    source_file     nonresident_n nonresident_prop contributing                  
+    ##    <chr>                   <int> <chr>            <chr>                         
+    ##  1 /ID20260904.txt           217 95.6%            CA (6.2%), TX (5.7%), PA (5.3…
+    ##  2 /RI20260905.txt           214 95.1%            NY (6.7%), PA (6.7%), TX (6.2…
+    ##  3 /IN20260826.txt           214 94.7%            NY (5.8%), CA (5.3%), TX (4.4…
+    ##  4 /VT20260831.txt           214 94.7%            CA (5.8%), NY (5.3%), VA (4.9…
+    ##  5 /NE20260815.txt           213 94.7%            NY (6.7%), TX (5.3%), CA (5.3…
+    ##  6 /ND20260828.txt           215 94.3%            NY (5.3%), CA (4.8%), MA (3.9…
+    ##  7 /SD20260903.txt           213 94.2%            CA (8%), TX (5.3%), NY (4.9%) 
+    ##  8 /OK20260823.txt           213 94.2%            CA (6.6%), KY (4.9%), NY (4%) 
+    ##  9 /MD20260829.txt           212 94.2%            IA (6.2%), NY (4.9%), WV (4%) 
+    ## 10 /OR20260807.txt           212 94.2%            CA (6.2%), VA (5.8%), NJ (4%) 
+    ## # ℹ 39 more rows
+
 #### The `qualityMessages()` function returns a message if:
 
-- `NA` values detected in one or more ID fields (`firstname`,
+- `NA` values are detected in one or more ID fields (`firstname`,
   `lastname`, `state`, `birth_date`) for \>10% of a file and/or \>100
-  registrations
-- All emails are missing from a file
-- Test records are found
-- Any registration has a `0` in every bag field
-- Any registration has an `NA` in every bag field
-- Any registration contains a bag value that is not a 1-digit number
-- For presumed solo permit DNHs; if any OR or WA `hunt_mig_birds` does
-  not equal `2` when non-permit bags are `0` and one of
-  `band_tailed_pigeon`, `brant`, and/or `seaduck` is `2`.
-- Any registration_yr is not equal to `REF_CURRENT_SEASON` or
-  `REF_CURRENT_SEASON + 1`
+  registrations.
+- All emails are missing from a file.
+- Test records are found.
+- Any registration has a `0` in every bag field.
+- Any registration has an `NA` in every bag field.
+- Any registration contains a bag value that is not a 1-digit number.
+- For presumed solo permit did-not-hunts; if any Oregon or Washington
+  `hunt_mig_birds` registration value does not equal `2` when non-permit
+  bags are `0` and one of `band_tailed_pigeon`, `brant`, and/or
+  `seaduck` is `2`.
+- Any `registration_yr` is not equal to `REF_CURRENT_SEASON` or
+  `REF_CURRENT_SEASON + 1`.
+- Any file contains a `state` value not equal to `dl_state` that makes
+  up 10% or more of the file’s registrations.
+- Any inter-state duplicates are detected.
 
 ### glyphCheck
 
@@ -282,51 +524,52 @@ clean_data <- clean(raw_data)
 #### Registrations are dropped if:
 
 - Any bag value is not a 1-digit number.
-- `NA` or `0` for every bag field
-- Test record is detected
-  - `firstname` and `lastname` are `"TEST"`
-  - `lastname` is `"INAUDIBLE"`
-  - `firstname` is one of:
-    `"INAUDIBLE", "BLANK", "USER", "TEST", "RESIDENT"`
-- One of:
-  - `firstname`, `lastname`, `state`, or `birth_date` is `NA`
-  - `address` AND `email` are `NA`, `city`
-  - AND/OR `zip` AND `email` are `NA`
+- Every bag field is `NA` or `0`.
+- A test record is detected:
+  - `firstname` and `lastname` are `"TEST"`.
+  - `lastname` is `"INAUDIBLE"`.
+  - `firstname` is one of: `"INAUDIBLE"`, `"BLANK"`, `"USER"`, `"TEST"`,
+    or `"RESIDENT"`.
+- There is missing contact/identification information:
+  - `NA` value in `firstname`, `lastname`, `state`, or `birth_date`.
+  - `NA` for `address` *and* `email`.
+  - `NA` for `email` *and* `city` and/or `zip`.
 
 #### Changes include:
 
 - `firstname`
-  - Change to uppercase
-  - If a suffix value is detected (e.g. JR, SR, 1ST-20TH and 1-20 in
-    Roman numerals, excluding XVIII) delete it. Delete white space
-    around string.
+  - Change to uppercase.
+  - If a suffix value is detected (e.g., `JR`, `SR`, `1ST` to `20TH`,
+    and `1` to `20` in Roman numerals, excluding `XVIII`) delete it.
+  - Delete white space around string.
 - `lastname`
-  - Change to uppercase
-  - If a suffix value is detected (e.g. JR, SR, 1ST-20TH and 1-20 in
-    Roman numerals, excluding XVIII) delete it. Delete white space
-    around string.
+  - Change to uppercase.
+  - If a suffix value is detected (e.g., `JR`, `SR`, `1ST` to `20TH`,
+    and `1` to `20` in Roman numerals, excluding `XVIII`) delete it.
+  - Delete white space around string.
 - `suffix`
-  - Change to uppercase
-  - If a suffix value is detected in firstname or lastname, replace the
-    suffix field with that value. Values that are searched for include
-    JR, SR, 1ST-20TH and 1-20 in Roman numerals, excluding XVIII.
-    Periods and commas are deleted.
+  - Change to uppercase.
+  - If a suffix is detected in `firstname` or `lastname`, replace the
+    `suffix` with that value. Values that are searched for include `JR`,
+    `SR`, `1ST` to `20TH`, and `1` to `20` in Roman numerals, excluding
+    `XVIII`.
+  - Periods and commas are deleted.
 - `zip`
-  - Remove ending hyphen from zip codes with only 5 digits
-  - Remove ending 0 from zip codes with 10 digits
-  - Insert a hyphen in continuous 9 digit zip codes
-  - Insert a hyphen in 9 digit zip codes with a middle space
-  - Delete trailing -0000 and -\_\_\_\_
+  - Remove ending hyphen from zip codes with only 5 digits.
+  - Remove ending `0` from zip codes with 10 digits.
+  - Insert a hyphen in continuous 9-digit zip codes.
+  - Insert a hyphen in 9-digit zip codes with a middle space.
+  - Delete trailing `-0000` and `-____`.
 - `hunt_mig_birds`
-  - For Oregon and/or Washington, if `hunt_mig_birds` is `0` and if
-    `band_tailed_pigeon`, `brant`, or `seaduck` is `2`, change
-    `hunt_mig_birds` field from `0` to `2`
+  - For Oregon and Washington, if a registration’s `hunt_mig_birds`
+    value is `0` and if `band_tailed_pigeon`, `brant`, or `seaduck` is
+    `2`, change `hunt_mig_birds` value from `0` to `2`.
 - `band_tailed_pigeon`
-  - If any permit file states submitted a `2` for band_tailed_pigeon,
-    change the `2` to a `0`
+  - If any permit file states submitted a `2` for `band_tailed_pigeon`,
+    change the `2` to a `0`.
 - `cranes`
-  - If any permit file states submitted a `2` for crane, change the `2`
-    to a `0`
+  - If any permit file states submitted a `2` for `cranes`, change the
+    `2` to a `0`.
 
 In addition to the changes listed above, the internal
 [`zipCheck()`](https://usfws.github.io/migbirdHIP/reference/zipCheck.md)
@@ -339,11 +582,12 @@ residence for \>10% of a file and/or \>100 registrations.
 
 The
 [`issueCheck()`](https://usfws.github.io/migbirdHIP/reference/issueCheck.md)
-function assesses the validity of the `issue_date` field based on the
-current hunting season’s HIP issuance start and end dates (not season
-open and close dates). A plot is automatically returned for past and
-future registrations. The plot is skipped by default, so to plot the
-data write `plot = TRUE`.
+function assesses the validity of a registration’s `issue_date` value.
+It does this based on the current hunting season’s HIP issue window
+start date and end date (not season open and close dates) for the state
+in which the registration was issued. A plot is automatically returned
+for past and future registrations. The plot is skipped by default, so to
+make one, specify `plot = TRUE`.
 
 ``` r
 
@@ -373,7 +617,7 @@ current_data <- issueCheck(clean_data, year = 2026, plot = FALSE)
 - **Bad `issue_date`:** a registration’s `issue_date` cannot be
   evaluated, likely because it’s formatted incorrectly or is illogical;
   these registrations are filtered out.
-- Return message if any registration’s `issue_date` is after the file
+- Return message if any registration’s `issue_date` falls after the file
   was submitted.
 
 ### duplicateFinder
@@ -386,7 +630,7 @@ Registrations are grouped by `firstname`, `lastname`, `state`,
 hunters. If the same hunter has 2 or more registrations, the fields that
 are not identical are counted and summarized.
 
-Plot the duplicates with [duplicatePlot](#duplicateplot).
+Plot the duplicates with [duplicatePlot()](#duplicateplot).
 
 ``` r
 
@@ -408,14 +652,14 @@ resolved by
 [`duplicateFix()`](https://usfws.github.io/migbirdHIP/reference/duplicateFix.md).
 Duplicates are identified when more than one registration has the same
 `firstname`, `lastname`, `state`, `birth_date`, `dl_state`, and
-`registration_yr`. Only 1 HIP registration per hunter can be kept. For
-in-line permit states (WA, OR), permit records are submitted separately
-from HIP registrations. Multiple permits are allowed. We differentiate
-`HIP` and `PMT` records from in-line permit states, we check the values
-in the non-permit species fields (`ducks_bag`, `geese_bag`, `dove_bag`,
-`woodcock_bag`, `coots_snipe`, `rails_gallinules`). HIP registrations
-contain non-zero values in those columns, but permit records always have
-`0` values.
+`registration_yr`. Only 1 HIP registration per hunter per state can be
+kept. For in-line permit states (WA, OR), permit records are submitted
+separately from HIP registrations. Multiple permits are allowed. We
+differentiate `HIP` and `PMT` records in in-line permit states by
+checking the values in non-permit species fields (`ducks_bag`,
+`geese_bag`, `dove_bag`, `woodcock_bag`, `coots_snipe`, and
+`rails_gallinules`); HIP registrations contain non-zero values in those
+fields, but permit records always have `0` values.
 
 ``` r
 
@@ -423,17 +667,18 @@ deduplicated_data <- duplicateFix(current_data)
 ```
 
 To decide which HIP registration to keep from a group, we follow a
-series of logic.
+series of logical steps.
 
 #### For sea duck and brant states:
 
 These states include: AK, CA, CT, DE, MA, MD, NC, NH, NJ, NY, RI, VA
 
 1.  Keep registration(s) with the most recent issue date.
-2.  Exclude registrations with all 1s or all 0s in bag columns from
-    consideration.
-3.  Keep any registrations that have a 2 for either brant or sea duck
-    (for seaduck and brant states), or 2 for seaduck (Maine only).
+2.  Exclude registrations with all `1` values or all `0` values in bag
+    fields from consideration.
+3.  Keep any registrations that have a `2` for either `brant` or
+    `seaducks` (for sea duck *and* brant states), or `2` for `seaducks`
+    (Maine only).
 4.  If more than one registration remains, choose to keep one randomly.
 
 #### For HIP registrations from in-line permit states and all other states:
@@ -443,33 +688,30 @@ LA, MI, MN, MS, MO, MT, NE, NV, NM, ND, OH, OK, OR, PA, SC, SD, TN, TX,
 UT, VT, WA, WV, WI, WY
 
 1.  Keep registration(s) with the most recent issue date.
-2.  Exclude registrations with all 1s or all 0s in bag columns from
-    consideration, if possible.
+2.  Exclude registrations with all `1` values or all `0` values in bag
+    fields from consideration, if possible.
 3.  If more than one registration remains, choose to keep one randomly.
 
 A new field called `record_type` is added to the data after the above
-deduplicating process. Every HIP registration is labeled `HIP`. In-line
-permit states WA and OR send HIP and permit records separately, which
-are labeled `HIP` and `PMT` respectively.
+deduplication process. Every HIP registration is labeled `HIP`.
+Registrations from in-line permit states (Washington and Oregon) can be
+labeled `HIP` or `PMT`.
 
 ### bagCheck
 
-Running
+The
 [`bagCheck()`](https://usfws.github.io/migbirdHIP/reference/bagCheck.md)
-ensures species “bag” values are in order. This function searches for
-values in species group columns that are not typical or expected by the
-US Fish and Wildlife Service. If a value outside of the normal range is
+function searches for values that are not typical or expected in all
+species group fields. If a value outside of the normal range is
 detected, an output tibble is created. Each row in the output contains
-the state, species, unusual stratum value, and a list of the normal
-values we would expect.
+the state, species, unusual value, and a list of the normal values we
+would expect. If a value for a species group is provided that doesn’t
+match anything in our records, the output will show `NA` values in the
+`expected_bag_value` column. These species do not have a hunting season
+in the reported states.
 
 In-line permit records are not included in this check, to prevent
 `ducks_bag = "0"` values from popping up when we know those don’t count.
-
-If a value for a species group is given in the HIP data that doesn’t
-match anything in our records, the species reported in the output will
-have `NA` values in the `expected_bag_value` column. These species are
-not hunted in the reported states.
 
 ``` r
 
@@ -493,24 +735,28 @@ bagCheck(deduplicated_data)
 
 ### proof
 
-After data are cleaned and checked in the steps above, we run
+We run
 [`proof()`](https://usfws.github.io/migbirdHIP/reference/proof.md) to
-check for errors. Note that no actual corrections or data changes take
-place as a result of this function. The year of the Harvest Information
-Program must be supplied to the `year` parameter, which aids in checking
-`registration_yr`, `issue_date` and `birth_date`.
+check the data for errors. The season’s start year must be supplied to
+the `year` parameter (e.g., `year = 2026` for the 2026-2027 hunting
+season). This helps to check values in `registration_yr` and
+`birth_date`. The output of the
+[`proof()`](https://usfws.github.io/migbirdHIP/reference/proof.md)
+function contains a new field called `errors`.
 
-Values that are considered irregular are flagged in a new field called
-`errors`. For each existing field (title, firstname, middle, lastname,
-suffix, address, city, state, zip, birth_date, issue_date,
-hunt_mig_birds, ducks_bag, geese_bag, dove_bag, woodcock_bag,
-coots_snipe, rails_gallinules, cranes, band_tailed_pigeon, brant,
-seaducks, registration_yr, email), values are compared to standard
-expected formats. If they do not conform, the field name is pasted as a
-string in the `errors` column. Each row can have anywhere from zero
-errors (`NA`) to all field names listed. Multiple errors per
-registration are hyphen delimited. A typical `errors` value would look
-like: `"suffix-address-zip"`, `"zip"`, or `"middle-email"`.
+The fields proofed for errors include `title`, `firstname`, `middle`,
+`lastname`, `suffix`, `address`, `city`, `state`, `zip`, `birth_date`,
+`hunt_mig_birds`, `registration_yr`, and `email`. When values are found
+to be irregular, the field name(s) is/are added to `errors`. The
+`errors` field pastes all of the registration’s errors together as a
+hyphen-delimited string; a row can have zero errors (e.g., `NA`), one
+error (e.g., `"zip"`), two errors (e.g., `"suffix-zip"`), three errors
+(e.g., `"suffix-address-zip"`), etc; up to all 12 field names.
+
+Note that no actual corrections or data changes take place as a result
+of the
+[`proof()`](https://usfws.github.io/migbirdHIP/reference/proof.md)
+function.
 
 ``` r
 
@@ -524,74 +770,74 @@ proofed_data <- proof(deduplicated_data, year = 2026)
   - If common first names are assigned the wrong title.
 - `"firstname"`
   - `firstname` contains anything other than letters, apostrophe(s),
-    space(s), and/or hyphen(s)
-  - `firstname` contains less than 2 letters
-  - `firstname` contains `"AKA"`
-- `"middle"` if `middle` is not exactly 1 letter or `NA`
+    space(s), and/or hyphen(s).
+  - `firstname` contains less than 2 letters.
+  - `firstname` contains `"AKA"`.
+- `"middle"` if `middle` is not exactly 1 letter or `NA`.
 - `"lastname"`
   - `lastname` contains anything except letters, apostrophe(s),
-    space(s), hyphen(s), and/or period(s)
-  - `lastname` contains less than 2 letters
+    space(s), hyphen(s), and/or period(s).
+  - `lastname` contains less than 2 letters.
 - `"suffix"`
   - `suffix` should be one of:
     `I, II, III, IV, V, VI, VII, VIII, IX, X, XI, XII, XIII, XIV, XV, XVI, XVII, XIX, XX, 1ST, 2ND, 3RD, 4TH, 5TH, 6TH, 7TH, 8TH, 9TH, 10TH, 11TH, 12TH, 13TH, 14TH, 15TH, 16TH, 17TH, 18TH, 19TH, 20TH, JR, SR`.
-  - Note that `XVIII` is excluded (exceeds 4 character limit)
-- `"address"` if `address` contains a `|`, tab, or non-UTF8 character
+  - Note that `XVIII` is excluded (exceeds 4 character limit).
+- `"address"` if `address` contains a `|`, tab, or non-UTF8 character.
 - `"city"`
   - `city` contains anything other than letters, space(s), hyphen(s),
-    apostrophe(s), and/or period(s)
-  - `city` contains less than 3 letters
-- `"state"` if `state` is not contained in the following list of
-  abbreviations for US states and territories and Canadian provinces and
-  territories:
-  - AL, AK, AZ, AR, CA, CO, CT, DE, FL, GA, ID, IL, IN, IA, KS, KY, LA,
-    ME, MD, MA, MI, MN, MS, MO, MT, NE, NV, NH, NJ, NM, NY, NC, ND, OH,
-    OK, OR, PA, RI, SC, SD, TN, TX, UT, VT, VA, WA, WV, WI, WY, DC, AS,
-    GU, MP, PR, VI, UM, MH, FM, PW, AA, AE, AP, AB, BC, MB, NB, NL, NS,
-    NT, NU, ON, PE, PQ, QC, SK, YT
+    apostrophe(s), and/or period(s).
+  - `city` contains less than 3 letters.
+- `"state"`
+  - If `state` is not contained in the following list of abbreviations
+    for US states and territories and Canadian provinces and
+    territories: AL, AK, AZ, AR, CA, CO, CT, DE, FL, GA, ID, IL, IN, IA,
+    KS, KY, LA, ME, MD, MA, MI, MN, MS, MO, MT, NE, NV, NH, NJ, NM, NY,
+    NC, ND, OH, OK, OR, PA, RI, SC, SD, TN, TX, UT, VT, VA, WA, WV, WI,
+    WY, DC, AS, GU, MP, PR, VI, UM, MH, FM, PW, AA, AE, AP, AB, BC, MB,
+    NB, NL, NS, NT, NU, ON, PE, PQ, QC, SK, YT.
 - `"zip"`
   - If a registration’s `address` doesn’t have a `zip` that should be in
-    their reported address `state` of residence
+    their reported address `state` of residence.
   - If the fist 5 digits of `zip` are not in `REF_ZIP_CODE$zipcode` at
     all.
 - `"birth_date"`
-- If the date is formatted poorly (per `REGEX_DATE_FORMAT`).
-- If the date can’t be parsed by
-  [`lubridate::mdy()`](https://lubridate.tidyverse.org/reference/ymd.html).
-- If the date is later than today.
-- If the date is earlier than `09/01/(REF_CURRENT_SEASON - 100)`.
-- `"hunt_mig_birds"` if not equal to `1` or `2`
-- `"registration_yr"` if not equal to the HIP data collection year
+  - If the date is formatted poorly (per `REGEX_DATE_FORMAT`).
+  - If the date can’t be parsed by
+    [`lubridate::mdy()`](https://lubridate.tidyverse.org/reference/ymd.html).
+  - If the date is later than today.
+  - If the date is earlier than `09/01/(REF_CURRENT_SEASON - 100)`.
+- `"hunt_mig_birds"` if not equal to `1` or `2`.
+- `"registration_yr"` if not equal to the current season.
 - `"email"`
   - `email` does not match universally accepted email regex (see
-    `REGEX_EMAIL`)
-  - `email` is obfuscative
-    - e.g.,
-      ``` none@gmail.com, nottoday@gmail.co``m, fake.fake@gmail.com``, n@a.com, x@y.com, brian@na.com ```,
-      etc (see `REGEX_EMAIL_OBFUSCATIVE_LOCALPART`,
+    `REGEX_EMAIL`).
+  - `email` is obfuscative:
+    - e.g., `none@gmail.com`, `nottoday@gmail.com`,
+      `fake.fake@gmail.com`, `n@a.com`, `x@y.com`, `brian@na.com`, etc
+      (see `REGEX_EMAIL_OBFUSCATIVE_LOCALPART`,
       `REGEX_EMAIL_OBFUSCATIVE_DOMAIN`, and
-      `REGEX_EMAIL_OBFUSCATIVE_ADDRESS`)
+      `REGEX_EMAIL_OBFUSCATIVE_ADDRESS`).
     - A repeated character is detected, e.g. `aaa@a.com` (see
-      `REGEX_EMAIL_REPEATED_CHAR`)
+      `REGEX_EMAIL_REPEATED_CHAR`).
     - The domain is `tpwd.texas.gov` or some variation (see
-      `REGEX_EMAIL_OBFUSCATIVE_TPWD`)
+      `REGEX_EMAIL_OBFUSCATIVE_TPWD`).
     - A `walmart.com` domain is preceded by only numbers (see
-      `REGEX_EMAIL_OBFUSCATIVE_WALMART`)
-  - `email` is longer than 100 characters
-  - A common domain name (e.g., gmail, yahoo) has a common typo
+      `REGEX_EMAIL_OBFUSCATIVE_WALMART`).
+  - `email` is longer than 100 characters.
+  - A common domain name (e.g., gmail, yahoo) has a common typo.
   - A common domain name doesn’t have a matching top-level domain (e.g.,
-    `gmail.net` or `hotmail.gov`)
+    `gmail.net` or `hotmail.gov`).
   - The address has a bad top-level domain (e.g., `.comcom`, `.ccom`,
-    etc.)
-  - The email is missing a top-level domain
+    etc).
+  - The email is missing a top-level domain.
   - The top-level domain period is missing (e.g., `gmailcom`).
 
 ### correct
 
 Data can be corrected by running the
 [`correct()`](https://usfws.github.io/migbirdHIP/reference/correct.md)
-function with year of the Harvest Information Program supplied to the
-`year` parameter.
+function. Users must provide the season’s start year to the `year`
+parameter (e.g., `year = 2026` for the 2026-2027 hunting season).
 
 ``` r
 
@@ -600,26 +846,21 @@ corrected_data <- correct(proofed_data, year = 2026)
 
 #### Changes and corrections include:
 
-- `title` is changed to `NA` if `"title"` is in the `errors` field
-
-- `middle` is changed to `NA` if `"middle"` is in the `errors` field
-
-- `suffix` is changed to `NA` if `"suffix"` is in the `errors` field
-
+- `title` is changed to `NA` if `"title"` is in the `errors` field.
+- `middle` is changed to `NA` if `"middle"` is in the `errors` field.
+- `suffix` is changed to `NA` if `"suffix"` is in the `errors` field.
 - `email`
-
   - Add endings to common domains if missing (e.g. `@gmail` would become
     `@gmail.com`), for domains including:
-    - `gmail, yahoo, hotmail, aol, icloud, comcast, outlook, sbcglobal, att, msn, live, bellsouth, charter, ymail, me, verizon, cox, earthlink, protonmail, pm, mail, duck, ducks`
+    - `gmail, yahoo, hotmail, aol, icloud, comcast, outlook, sbcglobal, att, msn, live, bellsouth, charter, ymail, me, verizon, cox, earthlink, protonmail, pm, mail, duck, ducks`.
   - Add top-level domain period(s) if:
-    - Missing before `com, net, edu, gov, org`
-    - Missing in
-      `navymil, mailmil, armymil; add multiple periods if missing to usnavymil, usafmil, usarmymil, usacearmymil`
-
+    - Missing before `com, net, edu, gov, org`.
+    - Missing in `navymil, mailmil, armymil`; add multiple periods if
+      missing to `usnavymil, usafmil, usarmymil, usacearmymil`.
 - `errors` is updated by re-running
   [`proof()`](https://usfws.github.io/migbirdHIP/reference/proof.md)
   inside of
-  [`correct()`](https://usfws.github.io/migbirdHIP/reference/correct.md)
+  [`correct()`](https://usfws.github.io/migbirdHIP/reference/correct.md).
 
 ## Part B: Data Visualization and Tabulation
 
@@ -753,9 +994,9 @@ pullErrors(proofed_data, field = "dove_bag")
 
 The
 [`errorTable()`](https://usfws.github.io/migbirdHIP/reference/errorTable.md)
-function returns error data as a tibble, which can be assessed as needed
-or exported to create records of download cycle errors. The basic
-function reports errors by both location and field.
+function returns error data as a tibble, which can be assessed as
+needed, or exported to create records of download cycle errors. The
+basic function reports errors by both location and field.
 
 ``` r
 
@@ -834,11 +1075,10 @@ errorTable(proofed_data, loc = "CA")
     ## 4 CA       suffix             69
     ## 5 CA       zip               129
 
-Field can be specified (one of: all, none, title, firstname, middle,
-lastname, suffix, address, city, state, zip, birth_date, issue_date,
-hunt_mig_birds, ducks_bag, geese_bag, dove_bag, woodcock_bag,
-coots_snipe, rails_gallinules, cranes, band_tailed_pigeon, brant,
-seaducks, registration_yr, email).
+Field can be specified (one of: `"all"`, `"none"`, `"title"`,
+`"firstname"`, `"middle"`, `"lastname"`, `"suffix"`, `"address"`,
+`"city"`, `"state"`, `"zip"`, `"birth_date"`, `"hunt_mig_birds"`,
+`"registration_yr"`, `"email"`).
 
 ``` r
 
@@ -901,7 +1141,10 @@ than `record_type = "HIP"` records.
 ``` r
 
 write_hip(
-  corrected_data, path = "C:/HIP/processed_data/", type = "HIP", split = TRUE)
+  corrected_data, 
+  path = "C:/HIP/processed_data/", 
+  type = "HIP", 
+  split = TRUE)
 ```
 
 ### writeReport

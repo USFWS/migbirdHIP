@@ -7,7 +7,7 @@ Harvest Information Program.
 
 Useful links:
 
-- <https://www.fws.gov/project/migratory-bird-hunter-survey-diary-survey>
+- <https://usfws.github.io/migbirdHIP/>
 
 ## Author
 
