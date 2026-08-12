@@ -7,7 +7,7 @@ Authors@R:
 Description: Functions designed to process and visualize data submitted to
     the USFWS Harvest Information Program.
 License: CC0
-URL: https://www.fws.gov/project/migratory-bird-hunter-survey-diary-survey
+URL: https://usfws.github.io/migbirdHIP/
 Depends: 
     R (>= 4.5.0)
 Imports: 

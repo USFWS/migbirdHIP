@@ -46,10 +46,6 @@ vignette: >
 
 The `migbirdHIP` package was created by the U.S. Fish and Wildlife Service (USFWS) to process, clean, and visualize Harvest Information Program (HIP) registration data.
 
-Every year, migratory game bird hunters must register for HIP in the state(s) they plan to hunt by providing their name, address, date of birth, and hunting success from the previous year. All 49 contiguous states are responsible for collecting this information and submitting hunter registrations to the USFWS. Raw data submitted by the states are processed in this package.
-
-The USFWS has been using HIP registrations since 1999 to select hunters for the Migratory Bird Harvest Survey (Diary Survey) and the Parts Collection Survey (Wing Survey). Only a small proportion of HIP registrants are chosen to complete these surveys each year. The USFWS ultimately uses these data to generate annual harvest estimates. To read more about HIP and the surveys, visit: <https://www.fws.gov/harvestsurvey/> and <https://www.fws.gov/library/collections/migratory-bird-hunting-activity-and-harvest-reports>
-
 ### Installation {#installation}
 
 The package can be installed from the USFWS GitHub repository using:

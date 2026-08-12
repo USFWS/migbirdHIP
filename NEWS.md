@@ -29,6 +29,7 @@ AI was used for tasks such as:
 - GitHub Actions
   - Run `R CMD check` nightly at 11pm Eastern and for every release.
   - Run a quick check that `migbirdHIP` can be installed and all unit tests pass with each push.
+  - Added `pkgdown` build.
 - Constants and variables
   - Changed `REF_CURRENT_SEASON` to `"2026"`
   - Added `REF_STATES_AF`, `REF_STATES_MF`, `REF_STATES_CF`, and `REF_STATES_PF`
