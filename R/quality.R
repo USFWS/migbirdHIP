@@ -849,7 +849,7 @@ qIssueDateRange <-
       count(.data$source_file, name = "n_issue_dates") |>
       filter(.data$n_issue_dates == 1)
 
-    q <- inner_join(q1, q2)
+    q <- inner_join(q1, q2, by = "source_file")
 
     if (nrow(q) > 0) {
       message("Issue date values do not span more than a single day.")
