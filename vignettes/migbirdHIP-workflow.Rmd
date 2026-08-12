@@ -168,7 +168,7 @@ Data are read in an expected format beginning with the `title` field and ending 
 
 ### qualityMessages {#qualitymessages}
 
-#### The `qualityMessages()` function returns a message:
+#### The `qualityMessages()` function returns a message if:
 
 -   `NA` values are detected in one or more ID fields (`firstname`, `lastname`, `state`, `birth_date`) for \>10% of a file and/or \>100 registrations.
 -   All emails are missing from a file.
@@ -178,6 +178,8 @@ Data are read in an expected format beginning with the `title` field and ending 
 -   Any registration contains a bag value that is not a 1-digit number.
 -   For presumed solo permit did-not-hunts; if any Oregon or Washington `hunt_mig_birds` registration value does not equal `2` when non-permit bags are `0` and one of `band_tailed_pigeon`, `brant`, and/or `seaduck` is `2`.
 -   Any `registration_yr` is not equal to `REF_CURRENT_SEASON` or `REF_CURRENT_SEASON + 1`.
+-   Any file contains a `state` value not equal to `dl_state` that makes up 10% or more of the file's registrations.
+-   Any inter-state duplicates are detected.
 
 ### glyphCheck {#glyphcheck}
 
