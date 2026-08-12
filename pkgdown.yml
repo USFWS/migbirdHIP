@@ -1,0 +1,9 @@
+pandoc: 3.8.3
+pkgdown: 2.2.1
+pkgdown_sha: ~
+articles:
+  migbirdHIP-workflow: migbirdHIP-workflow.html
+last_built: 2026-08-12T16:05Z
+urls:
+  reference: https://usfws.github.io/migbirdHIP/reference
+  article: https://usfws.github.io/migbirdHIP/articles

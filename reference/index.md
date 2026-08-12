@@ -1,0 +1,272 @@
+# Package index
+
+## All functions
+
+- [`DF_TEST_MINI`](https://usfws.github.io/migbirdHIP/reference/DF_TEST_MINI.md)
+  : Miniature fake HIP data
+- [`DF_TEST_TINI_CLEANED`](https://usfws.github.io/migbirdHIP/reference/DF_TEST_TINI_CLEANED.md)
+  : Tiny fake HIP data, partially processed by clean()
+- [`DF_TEST_TINI_CORRECTED`](https://usfws.github.io/migbirdHIP/reference/DF_TEST_TINI_CORRECTED.md)
+  : Tiny fake HIP data, partially processed by correct()
+- [`DF_TEST_TINI_CURRENT`](https://usfws.github.io/migbirdHIP/reference/DF_TEST_TINI_CURRENT.md)
+  : Tiny fake HIP data, partially processed by issueCheck()
+- [`DF_TEST_TINI_DEDUPED`](https://usfws.github.io/migbirdHIP/reference/DF_TEST_TINI_DEDUPED.md)
+  : Tiny fake HIP data, partially processed by duplicateFix()
+- [`DF_TEST_TINI_PROOFED`](https://usfws.github.io/migbirdHIP/reference/DF_TEST_TINI_PROOFED.md)
+  : Tiny fake HIP data, partially processed by proof()
+- [`DF_TEST_TINI_READ`](https://usfws.github.io/migbirdHIP/reference/DF_TEST_TINI_READ.md)
+  : Tiny fake HIP data, as if it were read in by read_hip()
+- [`assignFlyway()`](https://usfws.github.io/migbirdHIP/reference/assignFlyway.md)
+  : Assign flyway as new field
+- [`badDateMessage()`](https://usfws.github.io/migbirdHIP/reference/badDateMessage.md)
+  : Return message if bad issue dates detected
+- [`bagCheck()`](https://usfws.github.io/migbirdHIP/reference/bagCheck.md)
+  : Check bag values
+- [`btpiPermitBagFix()`](https://usfws.github.io/migbirdHIP/reference/btpiPermitBagFix.md)
+  : Fix band-tailed pigeon permit bag values
+- [`checkFileNameDateFormat()`](https://usfws.github.io/migbirdHIP/reference/checkFileNameDateFormat.md)
+  : Check HIP file name date formatting
+- [`checkFileNameStateAbbr()`](https://usfws.github.io/migbirdHIP/reference/checkFileNameStateAbbr.md)
+  : Check HIP file name state abbreviations
+- [`clean()`](https://usfws.github.io/migbirdHIP/reference/clean.md) :
+  Clean data
+- [`correct()`](https://usfws.github.io/migbirdHIP/reference/correct.md)
+  : Correct data
+- [`correctEmail()`](https://usfws.github.io/migbirdHIP/reference/correctEmail.md)
+  : Correct email
+- [`correctMiddleInitial()`](https://usfws.github.io/migbirdHIP/reference/correctMiddleInitial.md)
+  : Correct middle initials
+- [`correctSuffix()`](https://usfws.github.io/migbirdHIP/reference/correctSuffix.md)
+  : Correct suffix
+- [`correctTitle()`](https://usfws.github.io/migbirdHIP/reference/correctTitle.md)
+  : Correct title
+- [`cranePermitBagFix()`](https://usfws.github.io/migbirdHIP/reference/cranePermitBagFix.md)
+  : Fix crane permit bag values
+- [`dropBlankFiles()`](https://usfws.github.io/migbirdHIP/reference/dropBlankFiles.md)
+  : Drop blank files
+- [`dropBlankLines()`](https://usfws.github.io/migbirdHIP/reference/dropBlankLines.md)
+  : Drop blank lines
+- [`duplicateAllOnes()`](https://usfws.github.io/migbirdHIP/reference/duplicateAllOnes.md)
+  : Flag all-one records in a group of duplicates
+- [`duplicateAllOnesGroupSize()`](https://usfws.github.io/migbirdHIP/reference/duplicateAllOnesGroupSize.md)
+  : Evaluate group sizes of all-one/not-all-one records
+- [`duplicateDecide()`](https://usfws.github.io/migbirdHIP/reference/duplicateDecide.md)
+  : Decide which duplicate records should be kept or dropped
+- [`duplicateFields()`](https://usfws.github.io/migbirdHIP/reference/duplicateFields.md)
+  : Find causes of duplication
+- [`duplicateFinder()`](https://usfws.github.io/migbirdHIP/reference/duplicateFinder.md)
+  : Find duplicates
+- [`duplicateFix()`](https://usfws.github.io/migbirdHIP/reference/duplicateFix.md)
+  : Fix duplicates
+- [`duplicateID()`](https://usfws.github.io/migbirdHIP/reference/duplicateID.md)
+  : Create a tibble of duplicates with an ID column
+- [`duplicateNewest()`](https://usfws.github.io/migbirdHIP/reference/duplicateNewest.md)
+  : Find the most recent records out of a group of duplicates
+- [`duplicatePlot()`](https://usfws.github.io/migbirdHIP/reference/duplicatePlot.md)
+  : Plot duplicates
+- [`duplicateRecordType()`](https://usfws.github.io/migbirdHIP/reference/duplicateRecordType.md)
+  : Set record type
+- [`duplicateSample()`](https://usfws.github.io/migbirdHIP/reference/duplicateSample.md)
+  : De-duplicate by randomly sampling intermediate tibbles
+- [`errorLevelErrorsByField()`](https://usfws.github.io/migbirdHIP/reference/errorLevelErrorsByField.md)
+  : Calculate error-level errors by field
+- [`errorLevelErrorsByState()`](https://usfws.github.io/migbirdHIP/reference/errorLevelErrorsByState.md)
+  : Calculate error-level errors by state
+- [`errorPlotDL()`](https://usfws.github.io/migbirdHIP/reference/errorPlotDL.md)
+  : Plot errors across download cycles
+- [`errorPlotFields()`](https://usfws.github.io/migbirdHIP/reference/errorPlotFields.md)
+  : Plot HIP errors by field
+- [`errorPlotStates()`](https://usfws.github.io/migbirdHIP/reference/errorPlotStates.md)
+  : Plot errors by state
+- [`errorTable()`](https://usfws.github.io/migbirdHIP/reference/errorTable.md)
+  : Table of errors
+- [`errorTableSummary()`](https://usfws.github.io/migbirdHIP/reference/errorTableSummary.md)
+  : Summary table of errors
+- [`failBTPI()`](https://usfws.github.io/migbirdHIP/reference/failBTPI.md)
+  : Fail if BTPI permit file contains bad values
+- [`failCR()`](https://usfws.github.io/migbirdHIP/reference/failCR.md) :
+  Fail if crane permit file contains bad values
+- [`failDLdate()`](https://usfws.github.io/migbirdHIP/reference/failDLdate.md)
+  : Fail if there is an NA in dl_date
+- [`failDLstate()`](https://usfws.github.io/migbirdHIP/reference/failDLstate.md)
+  : Fail if there is an NA in dl_state
+- [`failState()`](https://usfws.github.io/migbirdHIP/reference/failState.md)
+  : Fail if bad state abbreviation supplied
+- [`failTF()`](https://usfws.github.io/migbirdHIP/reference/failTF.md) :
+  Fail if TRUE or FALSE is not supplied
+- [`failWidths()`](https://usfws.github.io/migbirdHIP/reference/failWidths.md)
+  : Fail if field widths are exceeded by any value
+- [`failProofed()`](https://usfws.github.io/migbirdHIP/reference/failproofed.md)
+  : Fail if non-proofed data frame supplied
+- [`failYear()`](https://usfws.github.io/migbirdHIP/reference/failyear.md)
+  : Fail if incorrect year supplied
+- [`fileCheck()`](https://usfws.github.io/migbirdHIP/reference/fileCheck.md)
+  : Check for repeat files
+- [`fileRename()`](https://usfws.github.io/migbirdHIP/reference/fileRename.md)
+  : Raw HIP file name correction
+- [`formatZip()`](https://usfws.github.io/migbirdHIP/reference/formatZip.md)
+  : Format zip codes
+- [`futureDateMessage()`](https://usfws.github.io/migbirdHIP/reference/futureDateMessage.md)
+  : Return message if future issue_date values are detected
+- [`getBadAddress()`](https://usfws.github.io/migbirdHIP/reference/getBadAddress.md)
+  : Get bad address values
+- [`getBadBirthDate()`](https://usfws.github.io/migbirdHIP/reference/getBadBirthDate.md)
+  : Get bad birth date values
+- [`getBadCity()`](https://usfws.github.io/migbirdHIP/reference/getBadCity.md)
+  : Get bad city values
+- [`getBadFirstName()`](https://usfws.github.io/migbirdHIP/reference/getBadFirstName.md)
+  : Get bad first name values
+- [`getBadHuntMigBirds()`](https://usfws.github.io/migbirdHIP/reference/getBadHuntMigBirds.md)
+  : Get bad hunt mig birds values
+- [`getBadLastName()`](https://usfws.github.io/migbirdHIP/reference/getBadLastName.md)
+  : Get bad last name values
+- [`getBadMiddle()`](https://usfws.github.io/migbirdHIP/reference/getBadMiddle.md)
+  : Get bad middle initial values
+- [`getBadRegYear()`](https://usfws.github.io/migbirdHIP/reference/getBadRegYear.md)
+  : Get bad registration year values
+- [`getBadState()`](https://usfws.github.io/migbirdHIP/reference/getBadState.md)
+  : Get bad state values
+- [`getBadSuffix()`](https://usfws.github.io/migbirdHIP/reference/getBadSuffix.md)
+  : Get bad suffix values
+- [`getBadTitle()`](https://usfws.github.io/migbirdHIP/reference/getBadTitle.md)
+  : Get bad title values
+- [`getBadZIP()`](https://usfws.github.io/migbirdHIP/reference/getBadZIP.md)
+  : Get bad zip code values
+- [`glyphCheck()`](https://usfws.github.io/migbirdHIP/reference/glyphCheck.md)
+  : Find non-UTF-8 glyphs/characters in any field
+- [`glyphFinder()`](https://usfws.github.io/migbirdHIP/reference/glyphFinder.md)
+  : Find non-UTF-8 glyphs/characters in a field
+- [`idBlankFiles()`](https://usfws.github.io/migbirdHIP/reference/idBlankFiles.md)
+  : Identify blank files
+- [`ignoreHolds()`](https://usfws.github.io/migbirdHIP/reference/ignoreHolds.md)
+  : Ignore hold files
+- [`ignoreLifetime()`](https://usfws.github.io/migbirdHIP/reference/ignoreLifetime.md)
+  : Ignore lifetime files
+- [`ignorePermits()`](https://usfws.github.io/migbirdHIP/reference/ignorePermits.md)
+  : Ignore permit files
+- [`inLinePermitDNHFix()`](https://usfws.github.io/migbirdHIP/reference/inLinePermitDNHFix.md)
+  : In-line permit did-not-hunt fix
+- [`inLinePermitDNHMessage()`](https://usfws.github.io/migbirdHIP/reference/inLinePermitDNHMessage.md)
+  : In-line permit did-not-hunt message
+- [`interStateDuplicatesMessage()`](https://usfws.github.io/migbirdHIP/reference/interStateDuplicatesMessage.md)
+  : Inter-state duplicates message
+- [`invalidDateMessage()`](https://usfws.github.io/migbirdHIP/reference/invalidDateMessage.md)
+  : Return message if invalid issue_date values are detected
+- [`issueAssign()`](https://usfws.github.io/migbirdHIP/reference/issueAssign.md)
+  : Assign registration_yr values using issueDecide
+- [`issueCheck()`](https://usfws.github.io/migbirdHIP/reference/issueCheck.md)
+  : Check issue dates and license years
+- [`issueDecide()`](https://usfws.github.io/migbirdHIP/reference/issueDecide.md)
+  : Assign decisions to records using issue date and registration year
+- [`issueMessages()`](https://usfws.github.io/migbirdHIP/reference/issueMessages.md)
+  : Return messages to console for issueCheck insights
+- [`issuePlot()`](https://usfws.github.io/migbirdHIP/reference/issuePlot.md)
+  : Plot issue date errors
+- [`issuePlotDateLabel()`](https://usfws.github.io/migbirdHIP/reference/issuePlotDateLabel.md)
+  : Label dates for issue date plot
+- [`issuePrint()`](https://usfws.github.io/migbirdHIP/reference/issuePrint.md)
+  : Print results of issueCheck changes
+- [`listFiles()`](https://usfws.github.io/migbirdHIP/reference/listFiles.md)
+  : List files
+- [`missingEmailsMessage()`](https://usfws.github.io/migbirdHIP/reference/missingEmailsMessage.md)
+  : Return message if all emails are missing or are exactly the same in
+  a file with more than 10 registrations
+- [`missingPIIFilter()`](https://usfws.github.io/migbirdHIP/reference/missingPIIFilter.md)
+  : Missing PII filter
+- [`missingPIIMessage()`](https://usfws.github.io/migbirdHIP/reference/missingPIIMessage.md)
+  : Return message for records with blank or NA values in firstname,
+  lastname, state, or birth date
+- [`moveSuffixes()`](https://usfws.github.io/migbirdHIP/reference/moveSuffixes.md)
+  : Move suffixes
+- [`nDropped()`](https://usfws.github.io/migbirdHIP/reference/nDropped.md)
+  : Summary table of how many registrations were dropped
+- [`nDroppedClean()`](https://usfws.github.io/migbirdHIP/reference/nDroppedClean.md)
+  : Summary table of how many registrations were dropped by clean
+- [`nDroppedCurrent()`](https://usfws.github.io/migbirdHIP/reference/nDroppedCurrent.md)
+  : Summary table of how many registrations were dropped by issueCheck
+- [`naBagsMessage()`](https://usfws.github.io/migbirdHIP/reference/naBagsMessage.md)
+  : Return message if any record has an NA in every bag field
+- [`namesToUppercase()`](https://usfws.github.io/migbirdHIP/reference/namesToUppercase.md)
+  : Names to uppercase
+- [`nonDigitBagsMessage()`](https://usfws.github.io/migbirdHIP/reference/nonDigitBagsMessage.md)
+  : Return message if any record contains a bag value that is not a
+  1-digit number
+- [`nonResidentMessage()`](https://usfws.github.io/migbirdHIP/reference/nonResidentMessage.md)
+  : High non-resident hunter proportion message
+- [`pastDateMessage()`](https://usfws.github.io/migbirdHIP/reference/pastDateMessage.md)
+  : Return message if past issue_date values are detected
+- [`permitFileBagsMessage()`](https://usfws.github.io/migbirdHIP/reference/permitFileBagsMessage.md)
+  : Permit file non-zero bag values message
+- [`proof()`](https://usfws.github.io/migbirdHIP/reference/proof.md) :
+  Proof data and flag errors
+- [`proofBadEmails()`](https://usfws.github.io/migbirdHIP/reference/proofBadEmails.md)
+  : Proof bad emails
+- [`pullErrors()`](https://usfws.github.io/migbirdHIP/reference/pullErrors.md)
+  : Pull flagged errors
+- [`qAddress()`](https://usfws.github.io/migbirdHIP/reference/qAddress.md)
+  : Bad address message
+- [`qBags()`](https://usfws.github.io/migbirdHIP/reference/qBags.md) :
+  Bad bag messages
+- [`qBirthDate()`](https://usfws.github.io/migbirdHIP/reference/qBirthDate.md)
+  : Bad birth dates message
+- [`qBirthDateRange()`](https://usfws.github.io/migbirdHIP/reference/qBirthDateRange.md)
+  : Birth date range message
+- [`qCity()`](https://usfws.github.io/migbirdHIP/reference/qCity.md) :
+  Bad city message
+- [`qFirstName()`](https://usfws.github.io/migbirdHIP/reference/qFirstName.md)
+  : Bad first name message
+- [`qHuntMigBirds()`](https://usfws.github.io/migbirdHIP/reference/qHuntMigBirds.md)
+  : Return message if records with bad values for hunt_mig_birds are
+  detected
+- [`qIssueDateRange()`](https://usfws.github.io/migbirdHIP/reference/qIssueDateRange.md)
+  : Issue date range message
+- [`qLastName()`](https://usfws.github.io/migbirdHIP/reference/qLastName.md)
+  : Bad last name message
+- [`qMiddle()`](https://usfws.github.io/migbirdHIP/reference/qMiddle.md)
+  : Bad middle initial message
+- [`qRegistrationYear()`](https://usfws.github.io/migbirdHIP/reference/qRegistrationYear.md)
+  : Bad registration_yr message
+- [`qState()`](https://usfws.github.io/migbirdHIP/reference/qState.md) :
+  Bad state message
+- [`qSuffix()`](https://usfws.github.io/migbirdHIP/reference/qSuffix.md)
+  : Bad suffix message
+- [`qSummary()`](https://usfws.github.io/migbirdHIP/reference/qSummary.md)
+  : Quality summary
+- [`qTitle()`](https://usfws.github.io/migbirdHIP/reference/qTitle.md) :
+  Bad title message
+- [`qZIP()`](https://usfws.github.io/migbirdHIP/reference/qZIP.md) : Bad
+  zip code message
+- [`qualityMessages()`](https://usfws.github.io/migbirdHIP/reference/qualityMessages.md)
+  : Return messages to console for common or catastrophic data quality
+  issues
+- [`questionYear()`](https://usfws.github.io/migbirdHIP/reference/questionYear.md)
+  : Question if correct year supplied
+- [`readTimeMessage()`](https://usfws.github.io/migbirdHIP/reference/readTimeMessage.md)
+  : Read time message
+- [`read_hip()`](https://usfws.github.io/migbirdHIP/reference/read_hip.md)
+  : Read in data
+- [`redFlags()`](https://usfws.github.io/migbirdHIP/reference/redFlags.md)
+  : Pull bad data
+- [`regYearEditMessage()`](https://usfws.github.io/migbirdHIP/reference/regYearEditMessage.md)
+  : Return message for changed registration_yr values
+- [`shiftCheck()`](https://usfws.github.io/migbirdHIP/reference/shiftCheck.md)
+  : Check for frame shifts
+- [`shiftFinder()`](https://usfws.github.io/migbirdHIP/reference/shiftFinder.md)
+  : Find frame shifts
+- [`testRecordMessage()`](https://usfws.github.io/migbirdHIP/reference/testRecordMessage.md)
+  : Return message if test record is found
+- [`timeTravelMessage()`](https://usfws.github.io/migbirdHIP/reference/timeTravelMessage.md)
+  : Return message if an issue date is after the file was submitted
+- [`twoSeasonMessage()`](https://usfws.github.io/migbirdHIP/reference/twoSeasonMessage.md)
+  : Return message if registrations are detected from two-season overlap
+  windows
+- [`writeReport()`](https://usfws.github.io/migbirdHIP/reference/writeReport.md)
+  : Write an R markdown report from template
+- [`write_hip()`](https://usfws.github.io/migbirdHIP/reference/write_hip.md)
+  : Modify corrected data table format and write as csv
+- [`zeroBagsMessage()`](https://usfws.github.io/migbirdHIP/reference/zeroBagsMessage.md)
+  : Return message if any record has a "0" in every bag field
+- [`zeroDateMessage()`](https://usfws.github.io/migbirdHIP/reference/zeroDateMessage.md)
+  : Return message for 00/00/0000 issue_date value(s)
+- [`zipCheck()`](https://usfws.github.io/migbirdHIP/reference/zipCheck.md)
+  : Check if zip codes are associated with the correct state
