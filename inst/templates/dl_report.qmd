@@ -1155,8 +1155,8 @@ if (params$dl == "0800") {
         c("#ffffb2", "#56B4E9", "#0072B2", "#E69F00", "#999999")) +
     ggplot2::theme(
       legend.position = "bottom",
-      legend.text = element_text(vjust = -8.5), 
-      legend.title = element_text(vjust = 0.2)) +
+      legend.text = ggplot2::element_text(vjust = -8.5), 
+      legend.title = ggplot2::element_text(vjust = 0.2)) +
     ggplot2::guides(
       fill = ggplot2::guide_legend(
         theme = ggplot2::theme(legend.text.position = "top")))
