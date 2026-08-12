@@ -1,11 +1,10 @@
 # Workflow derived from https://github.com/r-lib/actions/tree/v2/examples
 # Full R CMD check run nightly and for releases
 on:
-  # Nightly run on default branch
+  # Run nightly (07:00 UTC is 2:00/3:00 AM Eastern)
   schedule:
-    - cron: '0 3 * * *'   # 03:00 UTC nightly; adjust as needed
-
-  # On release tags (e.g. v1.2.3)
+    - cron: '0 7 * * *'
+  # Run on release tags (e.g., v2026.0.0)
   push:
     tags:
       - 'v*'
