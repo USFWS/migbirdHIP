@@ -840,6 +840,8 @@ qIssueDateRange <-
 
     q1 <-
       raw_data |>
+      # Exclude North Dakota
+      filter(.data$dl_state != "ND") |>
       filter(.data$file_size > 1) |>
       distinct(.data$source_file, .data$file_size)
 
