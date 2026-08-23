@@ -3,7 +3,7 @@ pkgdown: 2.2.1
 pkgdown_sha: ~
 articles:
   migbirdHIP-workflow: migbirdHIP-workflow.html
-last_built: 2026-08-16T07:15Z
+last_built: 2026-08-23T07:15Z
 urls:
   reference: https://usfws.github.io/migbirdHIP/reference
   article: https://usfws.github.io/migbirdHIP/articles
