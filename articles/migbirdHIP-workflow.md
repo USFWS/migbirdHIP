@@ -73,7 +73,7 @@ the package version was intended for.
 library(migbirdHIP)
 ```
 
-    ## migbirdHIP v2026.0.0
+    ## migbirdHIP v2026.0.1
     ## Compatible with 2026-2027 HIP data
 
 ### Functions overview
@@ -718,7 +718,7 @@ In-line permit records are not included in this check, to prevent
 bagCheck(deduplicated_data)
 ```
 
-    ## # A tibble: 84 × 6
+    ## # A tibble: 88 × 6
     ##    dl_state spp          bad_bag_value expected_bag_value     n proportion
     ##    <chr>    <chr>        <chr>         <chr>              <int> <chr>     
     ##  1 MD       woodcock_bag 9             2, 3, 5                1 0%        
@@ -731,7 +731,7 @@ bagCheck(deduplicated_data)
     ##  8 MT       coots_snipe  9             1, 2, 3, 4, 5          1 0%        
     ##  9 NC       ducks_bag    9             1, 2, 3, 4, 5          1 0%        
     ## 10 NC       dove_bag     9             1, 2, 3, 4, 5          1 0%        
-    ## # ℹ 74 more rows
+    ## # ℹ 78 more rows
 
 ### proof
 
