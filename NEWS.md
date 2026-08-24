@@ -1,3 +1,12 @@
+# migbirdHIP 2026.0.1
+
+## Minor changes / bug fixes
+
+- Exclude North Dakota from being evaluated by `qIssueDateRange()`.
+- Updated `REF_BAGS` for AR `cranes`, `band_tailed_pigeon`, `brant`, and `seaducks` to expect state bag value of `0`.
+- Updated `REF_DATES` for SD issue window start date to be `5/6/2026`.
+- Edited `regYearEditMessage()` message text to contain sum of affected registrations.
+
 # migbirdHIP 2026.0.0
 
 ## Versioning scheme change
