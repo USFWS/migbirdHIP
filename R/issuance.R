@@ -118,7 +118,7 @@ regYearEditMessage <-
     if (nrow(edited_years) >= 1) {
       message(
         paste(
-          "A total of", nrow(edited_years), "registration_yr values were",
+          "A total of", sum(edited_years$n), "registration_yr values were",
           "changed.")
       )
       print(
