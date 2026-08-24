@@ -1,3 +1,9 @@
+# migbirdHIP 2026.0.2
+
+## Minor changes / bug fixes
+
+- Fix bug in `REF_DATES`.
+
 # migbirdHIP 2026.0.1
 
 ## Minor changes / bug fixes
