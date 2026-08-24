@@ -73,7 +73,7 @@ the package version was intended for.
 library(migbirdHIP)
 ```
 
-    ## migbirdHIP v2026.0.1
+    ## migbirdHIP v2026.0.2
     ## Compatible with 2026-2027 HIP data
 
 ### Functions overview

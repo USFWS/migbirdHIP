@@ -8,13 +8,13 @@
 ## Citation
 
 Walter A (2026). *migbirdHIP: Process USFWS Migratory Bird Harvest
-Information Program Data in R*. R package version 2026.0.1,
+Information Program Data in R*. R package version 2026.0.2,
 <https://usfws.github.io/migbirdHIP/>.
 
     @Manual{,
       title = {migbirdHIP: Process USFWS Migratory Bird Harvest Information Program Data in R},
       author = {Abby Walter},
       year = {2026},
-      note = {R package version 2026.0.1},
+      note = {R package version 2026.0.2},
       url = {https://usfws.github.io/migbirdHIP/},
     }
