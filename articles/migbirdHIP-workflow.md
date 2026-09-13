@@ -1051,7 +1051,7 @@ errorTable(proofed_data, loc = "none")
     ## # A tibble: 6 × 2
     ##   error      error_count
     ##   <chr>            <int>
-    ## 1 birth_date          29
+    ## 1 birth_date          28
     ## 2 email              154
     ## 3 firstname          105
     ## 4 lastname           130
