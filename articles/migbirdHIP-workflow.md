@@ -1003,20 +1003,20 @@ basic function reports errors by both location and field.
 errorTable(proofed_data)
 ```
 
-    ## # A tibble: 257 × 3
-    ##    dl_state error      error_count
-    ##    <chr>    <chr>            <int>
-    ##  1 AK       email                3
-    ##  2 AK       firstname            1
-    ##  3 AK       lastname             2
-    ##  4 AK       suffix              71
-    ##  5 AK       zip                131
-    ##  6 AL       birth_date           1
-    ##  7 AL       email                1
-    ##  8 AL       firstname            1
-    ##  9 AL       lastname             5
-    ## 10 AL       suffix              79
-    ## # ℹ 247 more rows
+    ## # A tibble: 256 × 3
+    ##    dl_state error     error_count
+    ##    <chr>    <chr>           <int>
+    ##  1 AK       email               3
+    ##  2 AK       firstname           1
+    ##  3 AK       lastname            2
+    ##  4 AK       suffix             71
+    ##  5 AK       zip               131
+    ##  6 AL       email               1
+    ##  7 AL       firstname           1
+    ##  8 AL       lastname            5
+    ##  9 AL       suffix             79
+    ## 10 AL       zip               122
+    ## # ℹ 246 more rows
 
 Errors can be reported by only location by turning off the `field`
 parameter.
@@ -1030,7 +1030,7 @@ errorTable(proofed_data, field = "none")
     ##    dl_state error_count
     ##    <chr>          <int>
     ##  1 AK               208
-    ##  2 AL               209
+    ##  2 AL               208
     ##  3 AR               200
     ##  4 AZ               212
     ##  5 CA               203
@@ -1051,7 +1051,7 @@ errorTable(proofed_data, loc = "none")
     ## # A tibble: 6 × 2
     ##   error      error_count
     ##   <chr>            <int>
-    ## 1 birth_date          28
+    ## 1 birth_date          27
     ## 2 email              154
     ## 3 firstname          105
     ## 4 lastname           130
