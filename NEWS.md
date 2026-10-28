@@ -1,3 +1,9 @@
+# migbirdHIP 2026.0.3
+
+## Minor changes / bug fixes
+
+- Update `REF_BAGS` for MN WK, MN DV, and ID DV.
+
 # migbirdHIP 2026.0.2
 
 ## Minor changes / bug fixes
